@@ -6,4 +6,4 @@
         default => 'badge-gray',
     };
 @endphp
-<span class="badge {{ $classes }}">{{ ucfirst($run->status) }}</span>
+<span class="badge {{ $classes }}">{{ __(ucfirst($run->status)) }}</span>

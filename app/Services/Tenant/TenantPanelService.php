@@ -667,7 +667,7 @@ class TenantPanelService
         // theme would leave the storefront with no fallback, so we guard it.
         if ($theme->is_universal) {
             throw new \DomainException(
-                'Universal themes cannot be deactivated directly — activate another universal theme to replace it.'
+                __('Universal themes cannot be deactivated directly — activate another universal theme to replace it.')
             );
         }
 

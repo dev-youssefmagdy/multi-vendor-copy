@@ -36,7 +36,7 @@ $hasAiContent – bool true when caption comes from AI social posts
     $platforms = [
         [
             'id'    => 'facebook',
-            'label' => 'Facebook',
+            'label' => __('Facebook'),
             'icon'  => '👍',
             'color' => '#1877f2',
             // Facebook sharer only uses the URL; content is pulled via OG meta tags on the product page.
@@ -44,7 +44,7 @@ $hasAiContent – bool true when caption comes from AI social posts
         ],
         [
             'id'    => 'twitter',
-            'label' => 'X / Twitter',
+            'label' => __('X / Twitter'),
             'icon'  => '𝕏',
             'color' => '#000',
             'url'   => 'https://twitter.com/intent/tweet?text=' . $encodedTweetText . '&url=' . $encodedUrl,
@@ -102,8 +102,7 @@ $hasAiContent – bool true when caption comes from AI social posts
         <div style="flex:1;min-width:0;">
             <div class="entity-title" style="margin-bottom:4px;">{{ $shareTitle }}</div>
             @if ($hasAiContent)
-                <span class="badge badge-cyan" style="font-size:10px;margin-bottom:6px;display:inline-block;">✦ AI
-                    Caption</span>
+                <span class="badge badge-cyan" style="font-size:10px;margin-bottom:6px;display:inline-block;">{{ __('✦ AI Caption') }}</span>
             @endif
             <p class="entity-subtitle"
                 style="margin:0;font-size:12px;white-space:pre-wrap;line-height:1.5;max-height:80px;overflow:hidden;">
@@ -118,8 +117,8 @@ $hasAiContent – bool true when caption comes from AI social posts
                 style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--t3);">{{ $shareUrl }}</code>
             <button type="button" class="btn btn-secondary btn-sm" style="flex-shrink:0;font-size:11px;"
                 @click="navigator.clipboard.writeText('{{ addslashes($shareUrl) }}'); copiedUrl=true; setTimeout(()=>copiedUrl=false,2000)">
-                <span x-show="!copiedUrl">Copy Link</span>
-                <span x-show="copiedUrl">✓ Copied</span>
+                <span x-show="!copiedUrl">{{ __('Copy Link') }}</span>
+                <span x-show="copiedUrl">{{ __('✓ Copied') }}</span>
             </button>
         </div>
     @endif
@@ -130,17 +129,16 @@ $hasAiContent – bool true when caption comes from AI social posts
             <a href="{{ $p['url'] }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary"
                 style="display:flex;align-items:center;gap:8px;justify-content:center;font-size:13px;padding:10px 12px;border-color:{{ $p['color'] }}20;">
                 <span style="font-size:16px;">{{ $p['icon'] }}</span>
-                <span>{{ $p['label'] }}</span>
+                <span>{{ __($p['label']) }}</span>
             </a>
         @endforeach
     </div>
 
     <p class="entity-subtitle mt-4" style="font-size:11px;">
         @if ($hasAiContent)
-            Caption sourced from AI-generated social posts. Share links open the platform's native share dialog.
+            {{ __('Caption sourced from AI-generated social posts. Share links open the platform\'s native share dialog.') }}
         @else
-            Using default product details (no AI post generated yet). Generate social posts first to get AI-crafted
-            captions.
+            {{ __('Using default product details (no AI post generated yet). Generate social posts first to get AI-crafted captions.') }}
         @endif
     </p>
 

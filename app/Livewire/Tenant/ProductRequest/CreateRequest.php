@@ -23,9 +23,9 @@ class CreateRequest extends ContentPage
     protected function pageMeta(): array
     {
         return [
-            'title'       => 'New Product Request',
-            'badge'       => 'Catalog',
-            'description' => 'Describe the product you want added to the Neozena catalog.',
+            'title'       => __('New Product Request'),
+            'badge'       => __('Catalog'),
+            'description' => __('Describe the product you want added to the Neozena catalog.'),
         ];
     }
 
@@ -106,7 +106,7 @@ class CreateRequest extends ContentPage
         } catch (\Throwable) {
         }
 
-        $this->toast('Product request submitted successfully.');
+        $this->toast(__('Product request submitted successfully.'));
         $this->redirect(route('tenant.product-requests.show', $request->id));
     }
 }

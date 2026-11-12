@@ -52,10 +52,10 @@ final class OnboardingController extends PanelController
         $this->service->markTourSeen();
 
         if ($request->boolean('skipped')) {
-            return $this->success('Tour skipped.', redirect: route('tenant.onboarding', ['tab' => 'setup']));
+            return $this->success(__('Tour skipped.'), redirect: route('tenant.onboarding', ['tab' => 'setup']));
         }
 
-        return $this->success('Tour completed.', redirect: route('tenant.onboarding', ['tab' => 'setup']));
+        return $this->success(__('Tour completed.'), redirect: route('tenant.onboarding', ['tab' => 'setup']));
     }
 
     public function saveLogo(SaveLogoRequest $request, TenantPanelService $appearanceService): JsonResponse
@@ -90,7 +90,7 @@ final class OnboardingController extends PanelController
             'logo_path_en' => $savedLogoPathEn,
         ]);
 
-        return $this->success('Logo saved successfully.', [
+        return $this->success(__('Logo saved successfully.'), [
             'setup' => $this->setupProgress(),
             'logo' => [
                 'mode' => $validated['logo_mode'],
@@ -111,7 +111,7 @@ final class OnboardingController extends PanelController
     {
         $this->service->skipPaymentReadiness();
 
-        return $this->success('Payment readiness marked as complete.', [
+        return $this->success(__('Payment readiness marked as complete.'), [
             'setup' => $this->setupProgress(),
         ]);
     }
@@ -120,7 +120,7 @@ final class OnboardingController extends PanelController
     {
         $this->service->dismissSetup();
 
-        return $this->success('Setup complete — your store is ready.', redirect: route('tenant.dashboard'));
+        return $this->success(__('Setup complete — your store is ready.'), redirect: route('tenant.dashboard'));
     }
 
     private function setupProgress(): array

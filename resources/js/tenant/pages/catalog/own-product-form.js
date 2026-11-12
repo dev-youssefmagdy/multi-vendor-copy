@@ -1,4 +1,5 @@
 import '@tenant-css/pages/own-products.css';
+import { t } from '../../core/i18n.js';
 
 const form = document.getElementById('own-product-form');
 if (form) {
@@ -109,7 +110,7 @@ if (form) {
     }
 
     function populateOptions(optionSelect, variationId, desiredValue) {
-        optionSelect.innerHTML = '<option value="">Select option value</option>';
+        optionSelect.innerHTML = `<option value="">${t('Select option value')}</option>`;
         const group = variationId ? variationGroups[variationId] : null;
         if (!group) return;
 

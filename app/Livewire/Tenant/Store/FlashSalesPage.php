@@ -50,14 +50,14 @@ class FlashSalesPage extends ListPage
         $country = $this->countryId ? Country::query()->find($this->countryId) : null;
 
         return [
-            'title' => $country ? "Flash Sales — {$country->flag_emoji} {$country->name}" : 'Flash Sales — Default',
-            'badge' => 'Storefront',
+            'title' => $country ? __('Flash Sales — :flag :name', ['flag' => $country->flag_emoji, 'name' => $country->name]) : __('Flash Sales — Default'),
+            'badge' => __('Storefront'),
             'description' => $country
-                ? "Flash sale campaigns for visitors from {$country->name}."
-                : 'Default flash sales shown when no country-specific campaigns exist.',
-            'actionLabel' => 'Add Flash Sale',
-            'tableTitle' => 'Flash Sale Campaigns',
-            'headers' => ['Product', 'Banner', 'Discount', 'Window', 'Source', 'Status', 'Actions'],
+                ? __('Flash sale campaigns for visitors from :name.', ['name' => $country->name])
+                : __('Default flash sales shown when no country-specific campaigns exist.'),
+            'actionLabel' => __('Add Flash Sale'),
+            'tableTitle' => __('Flash Sale Campaigns'),
+            'headers' => [__('Product'), __('Banner'), __('Discount'), __('Window'), __('Source'), __('Status'), __('Actions')],
         ];
     }
 
@@ -69,14 +69,14 @@ class FlashSalesPage extends ListPage
 
         return array_merge(parent::pageData(), [
             'actionMethod' => 'openCreateModal',
-            'secondaryActionLabel' => '← All Countries',
+            'secondaryActionLabel' => __('← All Countries'),
             'secondaryActionUrl' => route('tenant.store.flash-sales.index'),
             'records' => $records,
             'statistics' => [
-                ['label' => 'Flash Sales', 'value' => number_format($stats['total']), 'caption' => 'Discount campaigns configured', 'dot' => 'dot-cyan'],
-                ['label' => 'Active', 'value' => number_format($stats['active']), 'caption' => 'Currently running campaigns', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Avg Discount', 'value' => number_format($stats['avg_discount'], 2) . '%', 'caption' => 'Average configured discount', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
-                ['label' => 'Products', 'value' => number_format($stats['products']), 'caption' => 'Unique products enrolled in flash sales', 'dot' => 'dot-violet'],
+                ['label' => __('Flash Sales'), 'value' => number_format($stats['total']), 'caption' => __('Discount campaigns configured'), 'dot' => 'dot-cyan'],
+                ['label' => __('Active'), 'value' => number_format($stats['active']), 'caption' => __('Currently running campaigns'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Avg Discount'), 'value' => number_format($stats['avg_discount'], 2) . '%', 'caption' => __('Average configured discount'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Products'), 'value' => number_format($stats['products']), 'caption' => __('Unique products enrolled in flash sales'), 'dot' => 'dot-violet'],
             ],
             'rows' => collect($records->items())->map(fn(FlashSale $flashSale) => [
                 $this->productSummaryCell($flashSale),
@@ -86,18 +86,18 @@ class FlashSalesPage extends ListPage
                 e(number_format((float) $flashSale->discount_percentage, 2)) . '%',
                 e(optional($flashSale->start_date)->format('M d, Y') ?: '-') . ' - ' . e(optional($flashSale->end_date)->format('M d, Y') ?: '-'),
                 $flashSale->central_flash_sale_id
-                ? '<span class="badge badge-cyan">Platform</span>'
-                : '<span class="badge badge-indigo">Store</span>',
-                '<span class="badge ' . ($flashSale->active ? 'badge-green' : 'badge-amber') . '">' . e($flashSale->active ? 'Active' : 'Inactive') . '</span>',
+                ? '<span class="badge badge-cyan">' . e(__('Platform')) . '</span>'
+                : '<span class="badge badge-indigo">' . e(__('Store')) . '</span>',
+                '<span class="badge ' . ($flashSale->active ? 'badge-green' : 'badge-amber') . '">' . e($flashSale->active ? __('Active') : __('Inactive')) . '</span>',
                 $flashSale->central_flash_sale_id
-                ? '<span style="font-size:11.5px;color:var(--t3);">Managed by platform</span>'
-                : '<div class="flex gap-2"><button type="button" class="btn btn-secondary btn-sm" wire:click="editFlashSale(' . $flashSale->id . ')">Edit</button><button type="button" class="btn btn-secondary btn-sm" wire:click="confirmDelete(' . $flashSale->id . ')">Delete</button></div>',
+                ? '<span style="font-size:11.5px;color:var(--t3);">' . e(__('Managed by platform')) . '</span>'
+                : '<div class="flex gap-2"><button type="button" class="btn btn-secondary btn-sm" wire:click="editFlashSale(' . $flashSale->id . ')">' . e(__('Edit')) . '</button><button type="button" class="btn btn-secondary btn-sm" wire:click="confirmDelete(' . $flashSale->id . ')">' . e(__('Delete')) . '</button></div>',
             ])->all(),
             'modalModel' => 'showFormModal',
-            'modalTitle' => $this->flashSaleId ? 'Edit Flash Sale' : 'Add Flash Sale',
+            'modalTitle' => $this->flashSaleId ? __('Edit Flash Sale') : __('Add Flash Sale'),
             'modalCloseAction' => 'closeModal',
             'modalSubmitAction' => 'save',
-            'modalSubmitLabel' => $this->flashSaleId ? 'Update Flash Sale' : 'Create Flash Sale',
+            'modalSubmitLabel' => $this->flashSaleId ? __('Update Flash Sale') : __('Create Flash Sale'),
             'modalContentView' => 'livewire.tenant.store.partials.flash-sale-form',
             'modalContentData' => [],
         ]);
@@ -148,7 +148,7 @@ class FlashSalesPage extends ListPage
 
         $maxPercentage = (float) (tenant('profit_percentage') ?? 0);
         if ((float) $validated['discountPercentage'] >= $maxPercentage) {
-            $this->addError('discountPercentage', "Discount percentage must be less than the store's profit percentage ({$maxPercentage}%).");
+            $this->addError('discountPercentage', __("Discount percentage must be less than the store's profit percentage (:max%).", ['max' => $maxPercentage]));
             return;
         }
 
@@ -182,18 +182,18 @@ class FlashSalesPage extends ListPage
 
         $this->closeModal();
         $this->resetForm();
-        $this->toast($flashSaleId ? 'Flash sale updated successfully.' : 'Flash sale created successfully.');
+        $this->toast($flashSaleId ? __('Flash sale updated successfully.') : __('Flash sale created successfully.'));
     }
 
     public function confirmDelete(int $flashSaleId): void
     {
-        $this->confirmAction('deleteFlashSale', [$flashSaleId], ['title' => 'Delete flash sale?', 'confirmButtonText' => 'Delete flash sale']);
+        $this->confirmAction('deleteFlashSale', [$flashSaleId], ['title' => __('Delete flash sale?'), 'confirmButtonText' => __('Delete flash sale')]);
     }
 
     public function deleteFlashSale(int $flashSaleId, TenantPanelService $service): void
     {
         $service->deleteModel(FlashSale::query()->findOrFail($flashSaleId));
-        $this->toast('Flash sale deleted successfully.');
+        $this->toast(__('Flash sale deleted successfully.'));
     }
 
     public function closeModal(): void
@@ -242,7 +242,7 @@ class FlashSalesPage extends ListPage
             unset($this->selectedProductLabels[$id], $this->selectedProductImages[$id]);
         } else {
             $this->productIds[] = $strId;
-            $this->selectedProductLabels[$id] = $this->productSearchResults[$id] ?? 'Product #' . $id;
+            $this->selectedProductLabels[$id] = $this->productSearchResults[$id] ?? __('Product #:id', ['id' => $id]);
             $this->selectedProductImages[$id] = $this->productSearchImages[$id] ?? asset('elora/assets/images/product-default.png');
         }
     }
@@ -310,7 +310,7 @@ class FlashSalesPage extends ListPage
             $discountAmount = $sellPrice * ($discountPct / 100);
 
             if ($discountAmount > $vendorProfit) {
-                $name = $this->selectedProductLabels[(int) $product->id] ?? ('Product #' . $product->id);
+                $name = $this->selectedProductLabels[(int) $product->id] ?? __('Product #:id', ['id' => $product->id]);
                 $maxPct = $sellPrice > 0 ? floor(($vendorProfit / $sellPrice) * 100) : 0;
                 $errors[] = __("The discount for ':product' cannot exceed :max% (vendor profit margin).", [
                     'product' => $name,
@@ -333,11 +333,11 @@ class FlashSalesPage extends ListPage
             : collect($flashSale->product)->filter();
 
         if ($products->isEmpty()) {
-            return e('No products linked');
+            return e(__('No products linked'));
         }
 
         $names = $products
-            ->map(fn(\App\Models\Tenant\Product $product) => $product->translationValue('name') ?? $product->slug ?? 'Product #' . $product->id)
+            ->map(fn(\App\Models\Tenant\Product $product) => $product->translationValue('name') ?? $product->slug ?? __('Product #:id', ['id' => $product->id]))
             ->values();
 
         $primary = e((string) $names->first());

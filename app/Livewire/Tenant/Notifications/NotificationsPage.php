@@ -15,9 +15,9 @@ class NotificationsPage extends TenantPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Notifications',
-            'badge' => 'Inbox',
-            'description' => 'View all notifications from the admin team including order updates and product assignments.',
+            'title' => __('Notifications'),
+            'badge' => __('Inbox'),
+            'description' => __('View all notifications from the admin team including order updates and product assignments.'),
         ];
     }
 
@@ -43,7 +43,7 @@ class NotificationsPage extends TenantPage
     public function markAllRead(): void
     {
         TenantNotification::unread()->update(['is_read' => true]);
-        $this->toast('All notifications marked as read.');
+        $this->toast(__('All notifications marked as read.'));
     }
 
     public function markRead(int $id): void

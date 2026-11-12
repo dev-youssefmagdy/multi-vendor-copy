@@ -103,7 +103,7 @@ class AddEditProduct extends Component
             $snapshot = app(TenantPanelRepository::class)->centralProductSnapshot((int) $validated['centralProductId']);
 
             if (!$snapshot) {
-                $this->addError('centralProductId', 'The selected central product could not be found.');
+                $this->addError('centralProductId', __('The selected central product could not be found.'));
 
                 return null;
             }
@@ -157,10 +157,10 @@ class AddEditProduct extends Component
         CacheVersion::bumpMany(['ProductBadge', 'Product']);
 
         if ($editRequestSubmitted) {
-            session()->flash('status', 'Product updated. Your changes to the product name/description have been submitted for admin review and will be applied once approved.');
+            session()->flash('status', __('Product updated. Your changes to the product name/description have been submitted for admin review and will be applied once approved.'));
             session()->flash('status_type', 'info');
         } else {
-            session()->flash('status', $this->productId ? 'Product updated successfully.' : 'Product created successfully.');
+            session()->flash('status', $this->productId ? __('Product updated successfully.') : __('Product created successfully.'));
         }
 
         return redirect()->route('tenant.products.edit', $product);
@@ -216,8 +216,8 @@ class AddEditProduct extends Component
         }
 
         return view('livewire.tenant.product.add-edit-product', [
-            'pageTitle' => $this->productId ? 'Edit Product' : 'Add Product',
-            'pageDescription' => $this->productId ? 'Update vendor sale pricing, visibility, synced variants, and translated storefront content.' : 'Create a tenant product mapped to central catalog resources and pricing.',
+            'pageTitle' => $this->productId ? __('Edit Product') : __('Add Product'),
+            'pageDescription' => $this->productId ? __('Update vendor sale pricing, visibility, synced variants, and translated storefront content.') : __('Create a tenant product mapped to central catalog resources and pricing.'),
             'languages' => $repository->activeLanguages(),
             'categories' => $repository->categoryOptions(),
             'categoryTree' => $repository->categoryTreeOptions(),

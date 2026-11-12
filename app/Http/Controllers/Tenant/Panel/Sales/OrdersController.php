@@ -52,22 +52,22 @@ final class OrdersController extends PanelController
 
         return view('tenant.pages.sales.orders.index', [
             'stats' => Metric::cards([
-                ['label' => 'Orders', 'value' => $stats['total'], 'format' => 'number', 'caption' => 'Orders in this tenant database.', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
-                ['label' => 'Paid', 'value' => $stats['paid'], 'format' => 'number', 'caption' => 'Orders with successful payment capture.', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Processing', 'value' => $stats['processing'], 'format' => 'number', 'caption' => 'Orders currently moving through fulfillment.', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
-                ['label' => 'Collected', 'value' => $stats['collected'], 'format' => 'currency', 'caption' => 'Paid order value collected by the tenant.', 'dot' => 'dot-violet'],
+                ['label' => __('Orders'), 'value' => $stats['total'], 'format' => 'number', 'caption' => __('Orders in this tenant database.'), 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
+                ['label' => __('Paid'), 'value' => $stats['paid'], 'format' => 'number', 'caption' => __('Orders with successful payment capture.'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Processing'), 'value' => $stats['processing'], 'format' => 'number', 'caption' => __('Orders currently moving through fulfillment.'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Collected'), 'value' => $stats['collected'], 'format' => 'currency', 'caption' => __('Paid order value collected by the tenant.'), 'dot' => 'dot-violet'],
             ]),
-            'statusOptions' => collect(OrderStatus::cases())->mapWithKeys(fn (OrderStatus $status) => [$status->value => $status->label()])->all(),
+            'statusOptions' => collect(OrderStatus::cases())->mapWithKeys(fn (OrderStatus $status) => [$status->value => __($status->label())])->all(),
             'columns' => [
                 TableColumn::index(),
-                TableColumn::make('uuid', 'Order'),
-                TableColumn::make('customer', 'Customer')->orderable(false),
-                TableColumn::make('value', 'Value')->name('grand_total'),
+                TableColumn::make('uuid', __('Order')),
+                TableColumn::make('customer', __('Customer'))->orderable(false),
+                TableColumn::make('value', __('Value'))->name('grand_total'),
                 // Vendor-facing queue: only what the vendor owes the platform (client request).
                 TableColumn::make('vendor_own_platform', __('Platform Dues'))->orderable(false)->searchable(false),
-                TableColumn::make('status', 'Status')->orderable(false),
-                TableColumn::make('gateway', 'Gateway')->orderable(false)->searchable(false),
-                TableColumn::make('placed_at', 'Placed At')->name('created_at'),
+                TableColumn::make('status', __('Status'))->orderable(false),
+                TableColumn::make('gateway', __('Gateway'))->orderable(false)->searchable(false),
+                TableColumn::make('placed_at', __('Placed At'))->name('created_at'),
                 TableColumn::actions(),
             ],
         ]);
@@ -97,11 +97,11 @@ final class OrdersController extends PanelController
     {
         $filters = $this->filters($request, ['search', 'status']);
 
-        $headers = ['Order UUID', 'Customer', 'Customer Email', 'Items', 'Grand Total', 'Discount %', 'Shipping', 'Vendor Profit', 'Platform Profit', 'Vendor Owes Platform', 'Platform Owes Vendor', 'Status', 'Payment Method', 'Paid', 'Placed At'];
+        $headers = [__('Order UUID'), __('Customer'), __('Customer Email'), __('Items'), __('Grand Total'), __('Discount %'), __('Shipping'), __('Vendor Profit'), __('Platform Profit'), __('Vendor Owes Platform'), __('Platform Owes Vendor'), __('Status'), __('Payment Method'), __('Paid'), __('Placed At')];
 
         $rows = $this->repo->exportOrders($filters)->map(fn (Order $order) => [
             $order->uuid,
-            $order->customer?->full_name ?? 'Guest',
+            $order->customer?->full_name ?? __('Guest'),
             $order->customer?->email ?? '',
             $order->items_count,
             number_format((float) $order->grand_total, 2),
@@ -111,9 +111,9 @@ final class OrdersController extends PanelController
             number_format(OrderProfitCalculator::platformProfitForOrder($order), 2),
             number_format(OrderProfitCalculator::vendorOwnPlatformForOrder($order), 2),
             number_format(OrderProfitCalculator::platformOwnVendorForOrder($order), 2),
-            $order->status->label(),
-            str((string) $order->payment_method)->replace(['_', '-'], ' ')->headline()->toString(),
-            $order->paid ? 'Paid' : 'Unpaid',
+            __($order->status->label()),
+            __((string) str((string) $order->payment_method)->replace(['_', '-'], ' ')->headline()),
+            $order->paid ? __('Paid') : __('Unpaid'),
             $order->created_at?->format('Y-m-d H:i') ?? '',
         ]);
 
@@ -152,11 +152,11 @@ final class OrdersController extends PanelController
                 && app(OrderCancellationPolicy::class)->canCancel($order, CancellationActor::Vendor, app(OrderPolicyService::class)),
             'cancel_reasons' => CancellationReason::options(CancellationActor::Vendor),
             'cancellation' => $order->isCancelled() ? [
-                'status' => $order->status->label(),
-                'reason' => $order->cancellation_reason?->label(),
+                'status' => __($order->status->label()),
+                'reason' => __($order->cancellation_reason?->label()),
                 'note' => $order->cancellation_note,
                 'cancelled_at' => $order->cancelled_at?->format('M d, Y H:i'),
-                'cancelled_by' => $order->cancelled_by_type?->label(),
+                'cancelled_by' => __($order->cancelled_by_type?->label()),
             ] : null,
             'can_manage_refunds' => $canManageRefunds,
             // Manual "Refund" button: not offered on orders of the vendor's own products (client rule).
@@ -164,7 +164,7 @@ final class OrdersController extends PanelController
             'refundable_amount' => app(RefundService::class)->refundableAmount($order),
             'refunded_amount' => round((float) $order->refunded_amount, 2),
             'payment_state' => $paymentState->value,
-            'payment_state_label' => $paymentState->label(),
+            'payment_state_label' => __($paymentState->label()),
             'payment_state_color' => $paymentState->color(),
             'refunds' => $order->refundsQuery()->latest('id')->get()->map(fn (Refund $refund) => RefundPresenter::panel($refund))->values()->all(),
         ];
@@ -198,13 +198,13 @@ final class OrdersController extends PanelController
         $detail = $this->repo->orderDetail($order);
 
         if (! ($detail['can_update_shipping'] ?? false)) {
-            throw new PanelActionException('Shipping status can only be updated for your own products orders.', 403);
+            throw new PanelActionException(__('Shipping status can only be updated for your own products orders.'), 403);
         }
 
         $status = OrderShippingStatus::tryFrom($request->validated('shipping_status'));
 
         if (! $status) {
-            return $this->failure('Invalid shipping status selected.', 422);
+            return $this->failure(__('Invalid shipping status selected.'), 422);
         }
 
         try {
@@ -215,7 +215,7 @@ final class OrdersController extends PanelController
 
         $freshDetail = $this->repo->orderDetail($updated);
 
-        return $this->success('Shipping status updated successfully.', [
+        return $this->success(__('Shipping status updated successfully.'), [
             'shipping_status' => $freshDetail['shipping_status'],
             'shipping_status_value' => $freshDetail['shipping_status_value'],
             'status' => $freshDetail['status'],
@@ -316,7 +316,7 @@ final class OrdersController extends PanelController
     private function orderRefundState(Order $order): array
     {
         return [
-            'status' => $order->status->label(),
+            'status' => __($order->status->label()),
             'status_value' => $order->status->value,
             'payment_state' => $order->paymentState()->value,
             'payment_state_label' => $order->paymentState()->label(),

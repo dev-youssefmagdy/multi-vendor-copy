@@ -1,12 +1,14 @@
+import { t } from './i18n.js';
+
 function cssVar(name) {
     return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
 
 export async function confirm({
-    title = 'Are you sure?',
-    text = 'This action cannot be undone.',
-    confirmText = 'Confirm',
-    cancelText = 'Cancel',
+    title = t('Are you sure?'),
+    text = t('This action cannot be undone.'),
+    confirmText = t('Confirm'),
+    cancelText = t('Cancel'),
     icon = 'warning',
     danger = false,
 } = {}) {

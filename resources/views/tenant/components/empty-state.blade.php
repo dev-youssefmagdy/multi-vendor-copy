@@ -1,4 +1,4 @@
-@props(['title' => 'No records found', 'copy' => null, 'icon' => null])
+@props(['title' => __('No records found'), 'copy' => null, 'icon' => null])
 
 <div class="empty-state">
     @if($icon)<div class="empty-state-icon">{!! $icon !!}</div>@endif

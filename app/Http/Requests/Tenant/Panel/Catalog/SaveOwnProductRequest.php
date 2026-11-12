@@ -96,14 +96,14 @@ final class SaveOwnProductRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'base_price' => 'base price',
+            'base_price' => __('base price'),
             'category_ids' => 'categories',
             'badge_ids' => 'badges',
-            'primary_image' => 'primary image',
-            'gallery_files' => 'gallery files',
+            'primary_image' => __('primary image'),
+            'gallery_files' => __('gallery files'),
             'return_window_days' => 'return window (days)',
-            'return_fee' => 'return fee',
-            'return_conditions' => 'return conditions',
+            'return_fee' => __('return fee'),
+            'return_conditions' => __('return conditions'),
         ];
     }
 
@@ -141,7 +141,7 @@ final class SaveOwnProductRequest extends TenantFormRequest
                 }
 
                 if (in_array($sig, $seen, true)) {
-                    $validator->errors()->add('variants', 'Duplicate variant combination — each variant must be unique.');
+                    $validator->errors()->add('variants', __('Duplicate variant combination — each variant must be unique.'));
 
                     return;
                 }

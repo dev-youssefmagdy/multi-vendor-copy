@@ -21,9 +21,9 @@ class CreateTicket extends ContentPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'New Support Ticket',
-            'badge' => 'Help Desk',
-            'description' => 'Describe your issue and the marketplace admin team will get back to you.',
+            'title' => __('New Support Ticket'),
+            'badge' => __('Help Desk'),
+            'description' => __('Describe your issue and the marketplace admin team will get back to you.'),
         ];
     }
 
@@ -97,7 +97,7 @@ class CreateTicket extends ContentPage
             sentAt: now()->toIso8601String(),
         ));
 
-        $this->toast('Support ticket created successfully.');
+        $this->toast(__('Support ticket created successfully.'));
         $this->redirect(route('tenant.support.show', $ticket->id));
     }
 }

@@ -20,9 +20,9 @@ class CreateBrandRequest extends TenantPage
     protected function pageMeta(): array
     {
         return [
-            'pageTitle' => 'New Brand Request',
-            'badge' => 'Brands',
-            'pageDescription' => 'Submit a new brand request. Our team will review it and update the status.',
+            'pageTitle' => __('New Brand Request'),
+            'badge' => __('Brands'),
+            'pageDescription' => __('Submit a new brand request. Our team will review it and update the status.'),
         ];
     }
 
@@ -65,7 +65,7 @@ class CreateBrandRequest extends TenantPage
             'status' => BrandRequestStatus::Pending->value,
         ]);
 
-        session()->flash('status', 'Brand request submitted successfully. We will update you when the status changes.');
+        session()->flash('status', __('Brand request submitted successfully. We will update you when the status changes.'));
         $this->redirect(route('tenant.brand-requests.index'));
     }
 }

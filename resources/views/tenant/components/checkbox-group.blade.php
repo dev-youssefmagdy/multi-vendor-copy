@@ -25,7 +25,7 @@
     @if($selectAll)
         <label class="toggle-field t-checkbox-group-all" data-checkbox-group-all>
             <input type="checkbox">
-            <span>Select all</span>
+            <span>{{ __('Select all') }}</span>
         </label>
     @endif
     <div class="t-checkbox-group" data-checkbox-group style="--cols: {{ $columns }}">
@@ -34,7 +34,7 @@
             <label class="toggle-field">
                 <input type="checkbox" name="{{ $htmlName }}[]" value="{{ $option['value'] }}"
                     @if(in_array((string) $option['value'], array_map('strval', $resolved), true)) checked @endif>
-                <span>{{ $option['label'] }}</span>
+                <span>{{ __($option['label']) }}</span>
             </label>
         @endforeach
     </div>

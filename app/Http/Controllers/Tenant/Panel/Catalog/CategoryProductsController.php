@@ -31,6 +31,6 @@ final class CategoryProductsController extends PanelController
 
         CacheVersion::bumpMany(['Category', 'Product']);
 
-        return $this->success('Product order saved.');
+        return $this->success(__('Product order saved.'));
     }
 }

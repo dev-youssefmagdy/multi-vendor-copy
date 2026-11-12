@@ -1,12 +1,12 @@
 @extends('tenant.layouts.app')
 
-@section('title', 'Compliance Center')
+@section('title', __('Compliance Center'))
 
 @section('content')
-    <x-tenant::page-header title="Compliance Center" badge="Compliance"
-        description="Business, owner, company, banking, and verification details required to keep your store in good standing. Each section below saves independently.">
+    <x-tenant::page-header :title="__('Compliance Center')" :badge="__('Compliance')"
+        :description="__('Business, owner, company, banking, and verification details required to keep your store in good standing. Each section below saves independently.')">
         <x-slot:meta>
-            <span class="badge {{ $completionPercent >= 100 ? 'badge-green' : 'badge-amber' }}">{{ $completionPercent }}% Complete</span>
+            <span class="badge {{ $completionPercent >= 100 ? 'badge-green' : 'badge-amber' }}">{{ __(':completionPercent% Complete', ['completionPercent' => $completionPercent]) }}</span>
         </x-slot:meta>
     </x-tenant::page-header>
 
@@ -23,26 +23,26 @@
                     </svg>
                 </div>
                 <div>
-                    <h3 class="panel-title">Business Info</h3>
-                    <p class="panel-copy">Where your business legally operates from.</p>
+                    <h3 class="panel-title">{{ __('Business Info') }}</h3>
+                    <p class="panel-copy">{{ __('Where your business legally operates from.') }}</p>
                 </div>
                 <div class="acct-section-save">
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="submit" class="btn btn-primary">{{ __('Save Changes') }}</button>
                 </div>
             </div>
             <div class="form-grid form-grid-2">
-                <x-tenant::select name="accountType" label="Account Type" required
-                    :options="['individual' => 'Individual', 'company' => 'Company']" :value="$accountType"
-                    help="Choose Company to enable the Company Info section." />
-                <x-tenant::input name="businessName" label="Business Name" required maxlength="255" :value="$businessName" />
-                <x-tenant::input name="storeName" label="Store Name" required maxlength="255" :value="$storeName" />
-                <x-tenant::select2 name="countryId" label="Country" placeholder="Select country"
+                <x-tenant::select name="accountType" :label="__('Account Type')" required
+                    :options="['individual' => __('Individual'), 'company' => __('Company')]" :value="$accountType"
+                    :help="__('Choose Company to enable the Company Info section.')" />
+                <x-tenant::input name="businessName" :label="__('Business Name')" required maxlength="255" :value="$businessName" />
+                <x-tenant::input name="storeName" :label="__('Store Name')" required maxlength="255" :value="$storeName" />
+                <x-tenant::select2 name="countryId" :label="__('Country')" :placeholder="__('Select country')"
                     :options="$countries->pluck('name', 'id')->all()" :value="$countryId" />
-                <x-tenant::select2 name="cityId" label="City" placeholder="Select city" required
+                <x-tenant::select2 name="cityId" :label="__('City')" :placeholder="__('Select city')" required
                     :options="$cities->pluck('name', 'id')->all()" :value="$cityId" :disabled="$cities->isEmpty()"
                     data-cities-url="{{ route('tenant.settings.compliance.cities-by-country', ['countryId' => '__ID__']) }}" />
-                <x-tenant::phone name="phone" label="Phone" required :value="$phone" />
-                <x-tenant::input type="email" name="email" label="Email" required maxlength="255" :value="$email" />
+                <x-tenant::phone name="phone" :label="__('Phone')" required :value="$phone" />
+                <x-tenant::input type="email" name="email" :label="__('Email')" required maxlength="255" :value="$email" />
             </div>
         </section>
     </x-tenant::form>
@@ -60,18 +60,18 @@
                     </svg>
                 </div>
                 <div>
-                    <h3 class="panel-title">Owner Info</h3>
-                    <p class="panel-copy">The legal owner or representative of this store.</p>
+                    <h3 class="panel-title">{{ __('Owner Info') }}</h3>
+                    <p class="panel-copy">{{ __('The legal owner or representative of this store.') }}</p>
                 </div>
                 <div class="acct-section-save">
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="submit" class="btn btn-primary">{{ __('Save Changes') }}</button>
                 </div>
             </div>
             <div class="form-grid form-grid-2">
-                <x-tenant::input name="ownerName" label="Owner Full Name" required maxlength="255" :value="$ownerName" />
-                <x-tenant::input name="ownerIdNumber" label="Owner ID / Passport Number" required maxlength="100" :value="$ownerIdNumber" />
-                <x-tenant::input type="date" name="ownerDob" label="Date of Birth (optional)" :value="$ownerDob" />
-                <x-tenant::input name="ownerContact" label="Owner Contact Details" placeholder="Phone or alternate email" maxlength="100" :value="$ownerContact" />
+                <x-tenant::input name="ownerName" :label="__('Owner Full Name')" required maxlength="255" :value="$ownerName" />
+                <x-tenant::input name="ownerIdNumber" :label="__('Owner ID / Passport Number')" required maxlength="100" :value="$ownerIdNumber" />
+                <x-tenant::input type="date" name="ownerDob" :label="__('Date of Birth (optional)')" :value="$ownerDob" />
+                <x-tenant::input name="ownerContact" :label="__('Owner Contact Details')" :placeholder="__('Phone or alternate email')" maxlength="100" :value="$ownerContact" />
             </div>
         </section>
     </x-tenant::form>
@@ -91,27 +91,27 @@
                     </svg>
                 </div>
                 <div>
-                    <h3 class="panel-title">Company Info (if applicable)</h3>
-                    <p class="panel-copy">Registered company details, if you operate under a legal entity.</p>
+                    <h3 class="panel-title">{{ __('Company Info (if applicable)') }}</h3>
+                    <p class="panel-copy">{{ __('Registered company details, if you operate under a legal entity.') }}</p>
                 </div>
                 <div class="acct-section-save">
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="submit" class="btn btn-primary">{{ __('Save Changes') }}</button>
                 </div>
             </div>
             <fieldset style="border:0;padding:0;margin:0;min-width:0">
             <div class="form-grid form-grid-2">
-                <x-tenant::input name="companyName" label="Company Name" maxlength="255" :value="$companyName" />
-                <x-tenant::input name="registrationNumber" label="Commercial Registration Number" required maxlength="100" :value="$registrationNumber" />
-                <x-tenant::input type="date" name="registrationExpiry" label="Registration Expiry Date" :value="$registrationExpiry" />
-                <x-tenant::input name="vatNumber" label="VAT / Tax Registration Number" maxlength="100" :value="$vatNumber" />
+                <x-tenant::input name="companyName" :label="__('Company Name')" maxlength="255" :value="$companyName" />
+                <x-tenant::input name="registrationNumber" :label="__('Commercial Registration Number')" required maxlength="100" :value="$registrationNumber" />
+                <x-tenant::input type="date" name="registrationExpiry" :label="__('Registration Expiry Date')" :value="$registrationExpiry" />
+                <x-tenant::input name="vatNumber" :label="__('VAT / Tax Registration Number')" maxlength="100" :value="$vatNumber" />
                 <div class="acct-span-full">
-                    <label class="field-label">Commercial Registration Document</label>
+                    <label class="field-label">{{ __('Commercial Registration Document') }}</label>
                     <input type="hidden" name="existing_registration_document_path" value="{{ $registrationDocumentPath }}">
                     @if ($registrationDocumentPath)
                         <div class="compliance-current-doc">
-                            <a href="{{ $registrationDocumentPath }}" target="_blank" class="btn btn-secondary btn-sm">View uploaded document</a>
+                            <a href="{{ $registrationDocumentPath }}" target="_blank" class="btn btn-secondary btn-sm">{{ __('View uploaded document') }}</a>
                             <label class="compliance-remove-label">
-                                <input type="checkbox" name="remove_registration_document" value="1"> Remove
+                                <input type="checkbox" name="remove_registration_document" value="1"> {{ __('Remove') }}
                             </label>
                         </div>
                     @endif
@@ -136,19 +136,19 @@
                     </svg>
                 </div>
                 <div>
-                    <h3 class="panel-title">Bank Account</h3>
-                    <p class="panel-copy">Used to process payouts for your store's earnings.</p>
+                    <h3 class="panel-title">{{ __('Bank Account') }}</h3>
+                    <p class="panel-copy">{{ __('Used to process payouts for your store\'s earnings.') }}</p>
                 </div>
                 <div class="acct-section-save">
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="submit" class="btn btn-primary">{{ __('Save Changes') }}</button>
                 </div>
             </div>
             <div class="form-grid form-grid-2">
-                <x-tenant::input name="bankName" label="Bank Name" required maxlength="255" :value="$bankName" />
-                <x-tenant::input name="bankHolderName" label="Account Holder Name" required maxlength="255" :value="$bankHolderName" />
+                <x-tenant::input name="bankName" :label="__('Bank Name')" required maxlength="255" :value="$bankName" />
+                <x-tenant::input name="bankHolderName" :label="__('Account Holder Name')" required maxlength="255" :value="$bankHolderName" />
                 <x-tenant::input name="bankIban" label="IBAN" maxlength="100" :value="$bankIban" />
-                <x-tenant::input name="bankAccountNumber" label="Account Number" required maxlength="100" :value="$bankAccountNumber" />
-                <x-tenant::select2 name="currencyId" label="Currency" placeholder="Select currency"
+                <x-tenant::input name="bankAccountNumber" :label="__('Account Number')" required maxlength="100" :value="$bankAccountNumber" />
+                <x-tenant::select2 name="currencyId" :label="__('Currency')" :placeholder="__('Select currency')"
                     :options="$currencies->mapWithKeys(fn ($c) => [$c->id => $c->code.' — '.$c->name])->all()" :value="$currencyId" />
             </div>
         </section>
@@ -167,22 +167,22 @@
                     </svg>
                 </div>
                 <div>
-                    <h3 class="panel-title">Verification Documents</h3>
-                    <p class="panel-copy">Upload the documents our compliance team needs to verify your store.</p>
+                    <h3 class="panel-title">{{ __('Verification Documents') }}</h3>
+                    <p class="panel-copy">{{ __('Upload the documents our compliance team needs to verify your store.') }}</p>
                 </div>
                 <div class="acct-section-save">
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="submit" class="btn btn-primary">{{ __('Save Changes') }}</button>
                 </div>
             </div>
             <div class="form-grid form-grid-2">
                 <div>
-                    <label class="field-label">National ID</label>
+                    <label class="field-label">{{ __('National ID') }}</label>
                     <input type="hidden" name="existing_doc_national_id_path" value="{{ $docNationalIdPath }}">
                     @if ($docNationalIdPath)
                         <div class="compliance-current-doc">
-                            <a href="{{ $docNationalIdPath }}" target="_blank" class="btn btn-secondary btn-sm">View</a>
+                            <a href="{{ $docNationalIdPath }}" target="_blank" class="btn btn-secondary btn-sm">{{ __('View') }}</a>
                             <label class="compliance-remove-label">
-                                <input type="checkbox" name="remove_doc_national_id" value="1"> Remove
+                                <input type="checkbox" name="remove_doc_national_id" value="1"> {{ __('Remove') }}
                             </label>
                         </div>
                     @endif
@@ -192,12 +192,12 @@
                 <input type="hidden" name="existing_doc_commercial_registration_path" value="{{ $docCommercialRegistrationPath }}">
                 @if($accountType === 'company')
                 <div>
-                    <label class="field-label">Commercial Registration</label>
+                    <label class="field-label">{{ __('Commercial Registration') }}</label>
                     @if ($docCommercialRegistrationPath)
                         <div class="compliance-current-doc">
-                            <a href="{{ $docCommercialRegistrationPath }}" target="_blank" class="btn btn-secondary btn-sm">View</a>
+                            <a href="{{ $docCommercialRegistrationPath }}" target="_blank" class="btn btn-secondary btn-sm">{{ __('View') }}</a>
                             <label class="compliance-remove-label">
-                                <input type="checkbox" name="remove_doc_commercial_registration" value="1"> Remove
+                                <input type="checkbox" name="remove_doc_commercial_registration" value="1"> {{ __('Remove') }}
                             </label>
                         </div>
                     @endif
@@ -208,12 +208,12 @@
                 <input type="hidden" name="existing_doc_tax_certificate_path" value="{{ $docTaxCertificatePath }}">
                 @if($accountType === 'company')
                 <div>
-                    <label class="field-label">Tax Certificate</label>
+                    <label class="field-label">{{ __('Tax Certificate') }}</label>
                     @if ($docTaxCertificatePath)
                         <div class="compliance-current-doc">
-                            <a href="{{ $docTaxCertificatePath }}" target="_blank" class="btn btn-secondary btn-sm">View</a>
+                            <a href="{{ $docTaxCertificatePath }}" target="_blank" class="btn btn-secondary btn-sm">{{ __('View') }}</a>
                             <label class="compliance-remove-label">
-                                <input type="checkbox" name="remove_doc_tax_certificate" value="1"> Remove
+                                <input type="checkbox" name="remove_doc_tax_certificate" value="1"> {{ __('Remove') }}
                             </label>
                         </div>
                     @endif
@@ -221,15 +221,15 @@
                 </div>
                 @endif
                 <div class="acct-span-full">
-                    <label class="field-label">Additional Documents</label>
+                    <label class="field-label">{{ __('Additional Documents') }}</label>
                     @if (!empty($docAdditionalPaths))
                         <div class="compliance-additional-docs">
                             @foreach ($docAdditionalPaths as $i => $path)
                                 <span class="compliance-current-doc">
                                     <input type="hidden" name="existing_doc_additional_paths[]" value="{{ $path }}">
-                                    <a href="{{ $path }}" target="_blank" class="btn btn-secondary btn-sm">Document {{ $i + 1 }}</a>
+                                    <a href="{{ $path }}" target="_blank" class="btn btn-secondary btn-sm">{{ __('Document :i', ['i' => $i + 1]) }}</a>
                                     <label class="compliance-remove-label">
-                                        <input type="checkbox" name="remove_doc_additional_paths[]" value="{{ $path }}"> Remove
+                                        <input type="checkbox" name="remove_doc_additional_paths[]" value="{{ $path }}"> {{ __('Remove') }}
                                     </label>
                                 </span>
                             @endforeach
@@ -250,18 +250,18 @@
                 </svg>
             </div>
             <div>
-                <h3 class="panel-title">Store Policies</h3>
-                <p class="panel-copy">Your Return, Privacy, Terms, and Shipping pages, managed under Storefront → Pages.</p>
+                <h3 class="panel-title">{{ __('Store Policies') }}</h3>
+                <p class="panel-copy">{{ __('Your Return, Privacy, Terms, and Shipping pages, managed under Storefront → Pages.') }}</p>
             </div>
         </div>
         <div class="form-grid form-grid-2">
             @foreach ($policyPages as $entry)
                 <div class="compliance-policy-row">
-                    <span class="field-label" style="margin:0;">{{ $entry['label'] }}</span>
+                    <span class="field-label" style="margin:0;">{{ __($entry['label']) }}</span>
                     @if ($entry['page'])
-                        <a href="{{ route('tenant.store.pages.edit', $entry['page']->id) }}" class="btn btn-secondary btn-sm">Edit page</a>
+                        <a href="{{ route('tenant.store.pages.edit', $entry['page']->id) }}" class="btn btn-secondary btn-sm">{{ __('Edit page') }}</a>
                     @else
-                        <a href="{{ route('tenant.store.pages.create') }}" class="btn btn-secondary btn-sm">Create page</a>
+                        <a href="{{ route('tenant.store.pages.create') }}" class="btn btn-secondary btn-sm">{{ __('Create page') }}</a>
                     @endif
                 </div>
             @endforeach

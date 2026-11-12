@@ -42,10 +42,10 @@ final class TranslationsController extends PanelController
             'aiTranslationEnabled' => $this->limitService->aiTranslationEnabled(tenant()),
             'columns' => [
                 TableColumn::select(),
-                TableColumn::make('key', 'Key')->orderable(false),
-                TableColumn::make('default', 'Default text')->orderable(false),
-                TableColumn::make('translation', 'Translation')->orderable(false),
-                TableColumn::actions('Actions'),
+                TableColumn::make('key', __('Key'))->orderable(false),
+                TableColumn::make('default', __('Default text'))->orderable(false),
+                TableColumn::make('translation', __('Translation'))->orderable(false),
+                TableColumn::actions(__('Actions')),
             ],
         ]);
     }
@@ -108,7 +108,7 @@ final class TranslationsController extends PanelController
             throw new PanelActionException($e->getMessage(), 422);
         }
 
-        return $this->success('Translation saved successfully.');
+        return $this->success(__('Translation saved successfully.'));
     }
 
     public function translateKeyWithAi(AiTranslateKeyRequest $request, Language $language, OpenAiTranslationService $ai): JsonResponse
@@ -127,7 +127,7 @@ final class TranslationsController extends PanelController
 
         $this->limitService->incrementCounter(tenant(), 'ai_calls_count');
 
-        return $this->success('Key translated with AI successfully.', ['value' => $value]);
+        return $this->success(__('Key translated with AI successfully.'), ['value' => $value]);
     }
 
     public function translateSelectedWithAi(AiTranslateKeysRequest $request, Language $language, OpenAiTranslationService $ai): JsonResponse
@@ -137,7 +137,7 @@ final class TranslationsController extends PanelController
         $keys = $request->validated()['keys'] ?? [];
 
         if ($keys === []) {
-            throw new PanelActionException('Select at least one key to translate.', 422);
+            throw new PanelActionException(__('Select at least one key to translate.'), 422);
         }
 
         if (!$this->limitService->canPerform(tenant(), PlanLimitService::FEATURE_AI_CALLS)) {
@@ -147,7 +147,7 @@ final class TranslationsController extends PanelController
         $count = $this->service->translateKeysWithAi($language, $keys, $ai);
         $this->limitService->incrementCounter(tenant(), 'ai_calls_count');
 
-        return $this->success("{$count} key(s) translated with AI successfully.");
+        return $this->success(__(':count key(s) translated with AI successfully.', ['count' => $count]));
     }
 
     public function translateStore(Language $language): JsonResponse
@@ -166,7 +166,7 @@ final class TranslationsController extends PanelController
         TranslateStoreJob::dispatch(tenant()->getTenantKey(), $language->id, triggeredBy: auth('tenant')->id());
         $this->limitService->incrementCounter(tenant(), 'ai_calls_count');
 
-        return $this->success('Store translation queued. This may take a while.');
+        return $this->success(__('Store translation queued. This may take a while.'));
     }
 
     public function status(Language $language): JsonResponse

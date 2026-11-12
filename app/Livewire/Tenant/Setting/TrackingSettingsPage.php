@@ -35,9 +35,9 @@ class TrackingSettingsPage extends TenantPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Tracking',
-            'badge' => 'Settings',
-            'description' => 'Connect Facebook, TikTok, Snapchat pixels and Google Analytics to your storefront.',
+            'title' => __('Tracking'),
+            'badge' => __('Settings'),
+            'description' => __('Connect Facebook, TikTok, Snapchat pixels and Google Analytics to your storefront.'),
         ];
     }
 
@@ -49,7 +49,7 @@ class TrackingSettingsPage extends TenantPage
             'snapchatPixelId' => ['nullable', 'string', 'max:64'],
             'gaMeasurementId' => ['nullable', 'string', 'max:32', 'regex:/^G-[A-Z0-9]+$/'],
         ], [
-            'gaMeasurementId.regex' => 'The GA4 Measurement ID must look like G-XXXXXXXX.',
+            'gaMeasurementId.regex' => __('The GA4 Measurement ID must look like G-XXXXXXXX.'),
         ]);
 
         $values = [
@@ -66,6 +66,6 @@ class TrackingSettingsPage extends TenantPage
             );
         }
 
-        $this->toast('Tracking settings saved successfully.');
+        $this->toast(__('Tracking settings saved successfully.'));
     }
 }

@@ -83,10 +83,10 @@
 </style>
 
 <div class="span-2">
-    <label class="field-label">Logo</label>
+    <label class="field-label">{{ __('Logo') }}</label>
 
     <div class="logo-builder-modes">
-        @foreach (['text' => 'Text Logo', 'image' => 'Image Logo'] as $mode => $label)
+        @foreach (['text' => __('Text Logo'), 'image' => __('Image Logo')] as $mode => $label)
             <button type="button" class="logo-builder-mode {{ $logoMode === $mode ? 'act' : '' }}"
                 wire:click="$set('logoMode', '{{ $mode }}')">{{ $label }}</button>
         @endforeach
@@ -95,27 +95,27 @@
     @if ($logoMode === 'text')
         <div style="margin-bottom:12px;display:flex;flex-wrap:wrap;align-items:center;gap:20px;">
             <div style="display:flex;align-items:center;gap:10px;">
-                <label class="field-label" style="margin:0;">Text Color</label>
+                <label class="field-label" style="margin:0;">{{ __('Text Color') }}</label>
                 <input type="color" class="logo-builder-color" wire:model.live="logoColor" />
                 <span class="panel-copy">{{ $logoColor }}</span>
             </div>
             <div style="display:flex;align-items:center;gap:10px;">
-                <label class="field-label" style="margin:0;">Background Color</label>
+                <label class="field-label" style="margin:0;">{{ __('Background Color') }}</label>
                 <input type="color" class="logo-builder-color" wire:model.live="logoBgColorHex"
                     @if ($logoBgColor === 'transparent') disabled @endif
                     style="{{ $logoBgColor === 'transparent' ? 'opacity:.4;cursor:not-allowed;' : '' }}" />
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
                     <input type="checkbox" wire:click="toggleLogoBgTransparent"
                         @checked($logoBgColor === 'transparent') />
-                    <span class="panel-copy">Transparent</span>
+                    <span class="panel-copy">{{ __('Transparent') }}</span>
                 </label>
                 <span class="panel-copy">{{ $logoBgColor }}</span>
             </div>
             <div style="display:flex;align-items:center;gap:10px;">
-                <label class="field-label" style="margin:0;">Shape</label>
+                <label class="field-label" style="margin:0;">{{ __('Shape') }}</label>
                 <x-select wire:model.live="logoShape" style="width:auto;">
-                    <option value="rectangle">Rectangle</option>
-                    <option value="rounded">Rounded</option>
+                    <option value="rectangle">{{ __('Rectangle') }}</option>
+                    <option value="rounded">{{ __('Rounded') }}</option>
                 </x-select>
             </div>
         </div>
@@ -130,14 +130,14 @@
         <div class="logo-builder-grid">
             {{-- Arabic --}}
             <div class="locale-fields-group">
-                <span class="locale-badge">Arabic</span>
+                <span class="locale-badge">{{ __('Arabic') }}</span>
 
-                <label class="field-label">Logo Text</label>
+                <label class="field-label">{{ __('Logo Text') }}</label>
                 <x-input type="text" dir="rtl" wire:model.live.debounce.300ms="logoTextAr"
                     :error="$errors->has('logoTextAr')" />
                 @error('logoTextAr')<div class="field-error">{{ $message }}</div>@enderror
 
-                <label class="field-label" style="margin-top:10px;">Font</label>
+                <label class="field-label" style="margin-top:10px;">{{ __('Font') }}</label>
                 <x-select wire:model.live="logoFontAr">
                     @foreach ($fonts['ar'] as $key => $font)
                         <option value="{{ $key }}" style="font-family:{{ $font['family'] }}">{{ $font['label'] }}</option>
@@ -151,14 +151,14 @@
 
             {{-- English --}}
             <div class="locale-fields-group">
-                <span class="locale-badge">English</span>
+                <span class="locale-badge">{{ __('English') }}</span>
 
-                <label class="field-label">Logo Text</label>
+                <label class="field-label">{{ __('Logo Text') }}</label>
                 <x-input type="text" wire:model.live.debounce.300ms="logoTextEn"
                     :error="$errors->has('logoTextEn')" />
                 @error('logoTextEn')<div class="field-error">{{ $message }}</div>@enderror
 
-                <label class="field-label" style="margin-top:10px;">Font</label>
+                <label class="field-label" style="margin-top:10px;">{{ __('Font') }}</label>
                 <x-select wire:model.live="logoFontEn">
                     @foreach ($fonts['en'] as $key => $font)
                         <option value="{{ $key }}" style="font-family:{{ $font['family'] }}">{{ $font['label'] }}</option>
@@ -166,7 +166,7 @@
                 </x-select>
 
                 <div class="logo-builder-preview">
-                    <span style="font-family:{{ $fonts['en'][$logoFontEn]['family'] ?? "'Poppins', sans-serif" }};color:{{ $logoColor }};background-color:{{ $logoBgColor }};border-radius:{{ $previewRadius }};padding:0.4em 0.9em;">{{ $logoTextEn !== '' ? $logoTextEn : 'Store Name' }}</span>
+                    <span style="font-family:{{ $fonts['en'][$logoFontEn]['family'] ?? "'Poppins', sans-serif" }};color:{{ $logoColor }};background-color:{{ $logoBgColor }};border-radius:{{ $previewRadius }};padding:0.4em 0.9em;">{{ $logoTextEn !== '' ? $logoTextEn : __('Store Name') }}</span>
                 </div>
             </div>
         </div>
@@ -174,36 +174,36 @@
         <div class="logo-builder-grid">
             {{-- Arabic --}}
             <div class="locale-fields-group">
-                <span class="locale-badge">Arabic</span>
+                <span class="locale-badge">{{ __('Arabic') }}</span>
                 <x-dropzone id="logo-upload-ar" style="width:100%" model="logoUploadAr" :multiple="false"
-                    accept="image/*" label="Upload Arabic logo" sublabel="PNG, JPG, SVG, WEBP up to 2MB" />
+                    accept="image/*" :label="__('Upload Arabic logo')" :sublabel="__('PNG, JPG, SVG, WEBP up to 2MB')" />
                 @error('logoUploadAr')<div class="field-error">{{ $message }}</div>@enderror
 
                 <div class="logo-builder-preview">
                     @if ($logoUploadAr)
-                        <img src="{{ $logoUploadAr->temporaryUrl() }}" alt="Arabic logo preview" class="logo-preview-img" />
+                        <img src="{{ $logoUploadAr->temporaryUrl() }}" alt="{{ __('Arabic logo preview') }}" class="logo-preview-img" />
                     @elseif ($logoPathAr)
-                        <img src="{{ $logoPathAr }}" alt="Arabic logo" class="logo-preview-img" />
+                        <img src="{{ $logoPathAr }}" alt="{{ __('Arabic logo') }}" class="logo-preview-img" />
                     @else
-                        <span class="panel-copy" style="font-size:13px;color:#666;">No Arabic logo uploaded.</span>
+                        <span class="panel-copy" style="font-size:13px;color:#666;">{{ __('No Arabic logo uploaded.') }}</span>
                     @endif
                 </div>
             </div>
 
             {{-- English --}}
             <div class="locale-fields-group">
-                <span class="locale-badge">English</span>
+                <span class="locale-badge">{{ __('English') }}</span>
                 <x-dropzone id="logo-upload-en" style="width:100%" model="logoUploadEn" :multiple="false"
-                    accept="image/*" label="Upload English logo" sublabel="PNG, JPG, SVG, WEBP up to 2MB" />
+                    accept="image/*" :label="__('Upload English logo')" :sublabel="__('PNG, JPG, SVG, WEBP up to 2MB')" />
                 @error('logoUploadEn')<div class="field-error">{{ $message }}</div>@enderror
 
                 <div class="logo-builder-preview">
                     @if ($logoUploadEn)
-                        <img src="{{ $logoUploadEn->temporaryUrl() }}" alt="English logo preview" class="logo-preview-img" />
+                        <img src="{{ $logoUploadEn->temporaryUrl() }}" alt="{{ __('English logo preview') }}" class="logo-preview-img" />
                     @elseif ($logoPathEn)
-                        <img src="{{ $logoPathEn }}" alt="English logo" class="logo-preview-img" />
+                        <img src="{{ $logoPathEn }}" alt="{{ __('English logo') }}" class="logo-preview-img" />
                     @else
-                        <span class="panel-copy" style="font-size:13px;color:#666;">No English logo uploaded.</span>
+                        <span class="panel-copy" style="font-size:13px;color:#666;">{{ __('No English logo uploaded.') }}</span>
                     @endif
                 </div>
             </div>

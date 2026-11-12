@@ -1,6 +1,6 @@
 @extends('tenant.layouts.app')
 
-@section('title', 'Products')
+@section('title', __('Products'))
 
 @php
     $page = $products->currentPage();
@@ -20,9 +20,9 @@
         <div class="pm-newbar fu d1" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 16px;padding:12px 16px;border:1px solid var(--ds-border, #e5e7eb);border-radius:12px;background:var(--ds-surface, #fff)">
             <p style="margin:0;font-size:14px">
                 @if(($pendingNewCount ?? 0) > 0)
-                    <strong>{{ $pendingNewCount }} new {{ \Illuminate\Support\Str::plural('product', $pendingNewCount) }}</strong> from the platform {{ $pendingNewCount === 1 ? 'is' : 'are' }} not in your store yet.
+                    <strong>{{ $pendingNewCount === 1 ? __(':count new product', ['count' => $pendingNewCount]) : __(':count new products', ['count' => $pendingNewCount]) }}</strong> {{ $pendingNewCount === 1 ? __('from the platform is not in your store yet.') : __('from the platform are not in your store yet.') }}
                 @else
-                    Your store is up to date with the platform catalog.
+                    {{ __('Your store is up to date with the platform catalog.') }}
                 @endif
             </p>
             <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
@@ -31,30 +31,30 @@
                     @foreach(request()->except(['sort', 'page']) as $k => $v)
                         @if(is_scalar($v))<input type="hidden" name="{{ $k }}" value="{{ $v }}">@endif
                     @endforeach
-                    <select name="sort" onchange="this.form.submit()" aria-label="Sort products" style="height:44px;border-radius:12px;padding:0 12px;border:1px solid var(--ds-border, #e5e7eb);background:var(--ds-surface, #fff);color:inherit">
-                        @foreach(['' => 'Default order', 'sales_desc' => 'Most sold', 'sales_asc' => 'Least sold', 'price_asc' => 'Price: low to high', 'price_desc' => 'Price: high to low'] as $value => $label)
+                    <select name="sort" onchange="this.form.submit()" aria-label="{{ __('Sort products') }}" style="height:44px;border-radius:12px;padding:0 12px;border:1px solid var(--ds-border, #e5e7eb);background:var(--ds-surface, #fff);color:inherit">
+                        @foreach(['' => __('Default order'), 'sales_desc' => __('Most sold'), 'sales_asc' => __('Least sold'), 'price_asc' => __('Price: low to high'), 'price_desc' => __('Price: high to low')] as $value => $label)
                             <option value="{{ $value }}" @selected(request('sort', '') === $value)>{{ $label }}</option>
                         @endforeach
                     </select>
                 </form>
-                <a href="{{ route('tenant.products.new') }}" class="btn btn-lg">New products</a>
+                <a href="{{ route('tenant.products.new') }}" class="btn btn-lg">{{ __('New products') }}</a>
                 @if(($pendingNewCount ?? 0) > 0)
                     <form method="POST" action="{{ route('tenant.products.sync-new') }}">
                         @csrf
-                        <button type="submit" class="btn btn-primary btn-lg">Sync new products ({{ $pendingNewCount }})</button>
+                        <button type="submit" class="btn btn-primary btn-lg">{{ __('Sync new products (:pendingNewCount)', ['pendingNewCount' => $pendingNewCount]) }}</button>
                     </form>
                 @endif
             </div>
         </div>
 
         @if(!empty($imageSearchIds))
-            <p class="pm-note fu d1">Showing products matching your image search.</p>
+            <p class="pm-note fu d1">{{ __('Showing products matching your image search.') }}</p>
         @endif
 
         @if($products->isEmpty())
             <div class="pm-empty fu d2">
-                <h3>{{ $hasFilters ? 'No products match your search' : 'No products yet' }}</h3>
-                <p>{{ $hasFilters ? 'Try a different search.' : 'Add your first product to see it here.' }}</p>
+                <h3>{{ $hasFilters ? __('No products match your search') : __('No products yet') }}</h3>
+                <p>{{ $hasFilters ? __('Try a different search.') : __('Add your first product to see it here.') }}</p>
             </div>
         @else
             <div class="pm-grid fu d2">
@@ -65,13 +65,13 @@
         @endif
 
         @if($products->total() > 0)
-            <nav class="tc-pagination" aria-label="Products pages">
-                <p>Show <strong>{{ $products->count() }}</strong> of {{ $products->total() }} result</p>
+            <nav class="tc-pagination" aria-label="{{ __('Products pages') }}">
+                <p>{{ __('Show') }} <strong>{{ $products->count() }}</strong> {{ __('of :total result', ['total' => $products->total()]) }}</p>
                 <div class="tc-pages">
                     @if($products->onFirstPage())
-                        <span class="tc-page-btn is-text is-disabled" aria-disabled="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg> Previous</span>
+                        <span class="tc-page-btn is-text is-disabled" aria-disabled="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg> {{ __('Previous') }}</span>
                     @else
-                        <a href="{{ $products->previousPageUrl() }}" class="tc-page-btn is-text" rel="prev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg> Previous</a>
+                        <a href="{{ $products->previousPageUrl() }}" class="tc-page-btn is-text" rel="prev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg> {{ __('Previous') }}</a>
                     @endif
 
                     @foreach($pages as $i => $n)
@@ -84,9 +84,9 @@
                     @endforeach
 
                     @if($products->hasMorePages())
-                        <a href="{{ $products->nextPageUrl() }}" class="tc-page-btn is-next" rel="next">Next <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+                        <a href="{{ $products->nextPageUrl() }}" class="tc-page-btn is-next" rel="next">{{ __('Next') }} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
                     @else
-                        <span class="tc-page-btn is-next is-disabled" aria-disabled="true">Next <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span>
+                        <span class="tc-page-btn is-next is-disabled" aria-disabled="true">{{ __('Next') }} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span>
                     @endif
                 </div>
             </nav>

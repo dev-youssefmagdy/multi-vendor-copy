@@ -73,12 +73,12 @@ class BladeThemeService
 
         $absolutePath = $file->getRealPath();
         if (!$absolutePath) {
-            throw new RuntimeException('The uploaded file could not be read.');
+            throw new RuntimeException(__('The uploaded file could not be read.'));
         }
 
         $zip = new ZipArchive();
         if ($zip->open($absolutePath) !== true) {
-            throw new RuntimeException('The uploaded file is not a valid ZIP archive.');
+            throw new RuntimeException(__('The uploaded file is not a valid ZIP archive.'));
         }
 
         $allNormalized = [];
@@ -93,7 +93,7 @@ class BladeThemeService
                 $normalized = str_replace('\\', '/', $name);
 
                 if (Str::startsWith($normalized, '/') || str_contains($normalized, '../') || str_contains($normalized, '..\\')) {
-                    throw new RuntimeException('The archive contains an invalid or unsafe path: ' . $name);
+                    throw new RuntimeException(__('The archive contains an invalid or unsafe path: :path', ['path' => $name]));
                 }
 
                 if (Str::endsWith($normalized, '/')) {
@@ -479,7 +479,7 @@ class BladeThemeService
             $variant = HomeVariant::query()->findOrFail($homeVariantId);
 
             if (!$variant->blade_theme_id) {
-                throw new RuntimeException('This variant has no linked blade theme.');
+                throw new RuntimeException(__('This variant has no linked blade theme.'));
             }
 
             $bladeTheme = BladeTheme::query()

@@ -17,9 +17,9 @@ class BrandRequestsList extends TenantPage
     protected function pageMeta(): array
     {
         return [
-            'pageTitle' => 'Brand Requests',
-            'badge' => 'Brands',
-            'pageDescription' => 'Track the status of your brand requests to the admin team.',
+            'pageTitle' => __('Brand Requests'),
+            'badge' => __('Brands'),
+            'pageDescription' => __('Track the status of your brand requests to the admin team.'),
         ];
     }
 

@@ -40,16 +40,16 @@ final class PaymentGatewaysController extends PanelController
             'recommendations' => $recommendations,
             'fromOnboarding' => request()->query('from') === 'onboarding',
             'stats' => Metric::cards([
-                ['label' => 'Gateways', 'value' => $gateways->count(), 'format' => 'number', 'caption' => 'Payment methods available to this tenant', 'dot' => 'dot-cyan'],
-                ['label' => 'Live Mode', 'value' => $gateways->where('mode', PaymentGatewayMode::Live)->count(), 'format' => 'number', 'caption' => 'Gateways currently in live mode', 'dot' => 'dot-amber'],
+                ['label' => __('Gateways'), 'value' => $gateways->count(), 'format' => 'number', 'caption' => __('Payment methods available to this tenant'), 'dot' => 'dot-cyan'],
+                ['label' => __('Live Mode'), 'value' => $gateways->where('mode', PaymentGatewayMode::Live)->count(), 'format' => 'number', 'caption' => __('Gateways currently in live mode'), 'dot' => 'dot-amber'],
             ]),
             'columns' => [
-                TableColumn::make('gateway', 'Gateway')->orderable(false),
-                TableColumn::make('mode', 'Mode')->orderable(false),
-                TableColumn::make('status', 'Status')->orderable(false),
-                TableColumn::make('connection', 'Connection')->orderable(false),
-                TableColumn::make('webhook', 'Webhook')->orderable(false),
-                TableColumn::make('monitoring', 'Monitoring')->orderable(false),
+                TableColumn::make('gateway', __('Gateway'))->orderable(false),
+                TableColumn::make('mode', __('Mode'))->orderable(false),
+                TableColumn::make('status', __('Status'))->orderable(false),
+                TableColumn::make('connection', __('Connection'))->orderable(false),
+                TableColumn::make('webhook', __('Webhook'))->orderable(false),
+                TableColumn::make('monitoring', __('Monitoring'))->orderable(false),
                 TableColumn::actions(),
             ],
         ]);
@@ -60,8 +60,8 @@ final class PaymentGatewaysController extends PanelController
         return DataTables::collection($this->repo->paymentGateways())
             ->addIndexColumn()
             ->editColumn('gateway', fn (PaymentGateway $gateway) => view('tenant.pages.settings.payment-gateways._cols.gateway', ['gateway' => $gateway])->render())
-            ->editColumn('mode', fn (PaymentGateway $gateway) => e($gateway->mode->label()))
-            ->editColumn('status', fn (PaymentGateway $gateway) => '<span class="badge '.($gateway->is_active ? 'badge-green' : 'badge-amber').'">'.e($gateway->is_active ? 'Active' : 'Inactive').'</span>')
+            ->editColumn('mode', fn (PaymentGateway $gateway) => e(__($gateway->mode->label())))
+            ->editColumn('status', fn (PaymentGateway $gateway) => '<span class="badge '.($gateway->is_active ? 'badge-green' : 'badge-amber').'">'.e($gateway->is_active ? __('Active') : __('Inactive')).'</span>')
             ->editColumn('connection', fn (PaymentGateway $gateway) => view('tenant.pages.settings.payment-gateways._cols.connection', ['gateway' => $gateway])->render())
             ->editColumn('webhook', fn (PaymentGateway $gateway) => view('tenant.pages.settings.payment-gateways._cols.webhook', ['gateway' => $gateway])->render())
             ->editColumn('monitoring', fn (PaymentGateway $gateway) => view('tenant.pages.settings.payment-gateways._cols.monitoring', ['gateway' => $gateway])->render())
@@ -78,7 +78,7 @@ final class PaymentGatewaysController extends PanelController
         $requiredFields = collect($keys)
             ->map(fn (string $key) => [
                 'key' => $key,
-                'label' => Str::headline($key),
+                'label' => __((string) Str::headline($key)),
                 'type' => $this->fieldType($key),
                 'value' => (string) ($values[$key] ?? ''),
             ])
@@ -145,7 +145,7 @@ final class PaymentGatewaysController extends PanelController
             $gateway->update(['connection_status' => $result['ok'] ? 'connected' : 'not_connected']);
 
             if (!$result['ok']) {
-                $message = 'Connection failed: '.$result['message'];
+                $message = __('Connection failed: :error', ['error' => $result['message']]);
 
                 return $this->failure($message, 422, ['required_fields' => [$message]]);
             }
@@ -163,13 +163,13 @@ final class PaymentGatewaysController extends PanelController
 
         if ($fromOnboarding) {
             return $this->success(
-                $useOwn ? 'Connected and saved successfully.' : 'Gateway configuration updated successfully.',
+                $useOwn ? __('Connected and saved successfully.') : __('Gateway configuration updated successfully.'),
                 [],
                 route('tenant.onboarding', ['tab' => 'setup']),
             );
         }
 
-        return $this->success($useOwn ? 'Connected and saved successfully.' : 'Gateway configuration updated successfully.');
+        return $this->success($useOwn ? __('Connected and saved successfully.') : __('Gateway configuration updated successfully.'));
     }
 
     public function validateUpdate(SavePaymentGatewayRequest $request, PaymentGateway $gateway): JsonResponse

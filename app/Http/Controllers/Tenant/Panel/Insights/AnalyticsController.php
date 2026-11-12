@@ -29,11 +29,11 @@ final class AnalyticsController extends PanelController
         return view('tenant.pages.insights.index', app($module)->viewData() + [
             'activeTab' => $tab,
             'tabs' => collect(self::TABS)->map(fn (array $meta, string $slug) => [
-                'label' => $meta[1],
+                'label' => __($meta[1]),
                 'url' => route('tenant.analytics', ['tab' => $slug]),
                 'active' => $slug === $tab,
             ])->all(),
-            'donutCaption' => $donutCaption,
+            'donutCaption' => __($donutCaption),
         ]);
     }
 }

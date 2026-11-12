@@ -42,7 +42,7 @@
             <option value="{{ $option['value'] }}"
                 @if($multiple ? in_array((string) $option['value'], array_map('strval', $selected), true) : (string) $option['value'] === (string) $selected) selected @endif
                 @if($option['disabled'] ?? false) disabled @endif
-            >{{ str_repeat('— ', $option['level'] ?? 0) }}{{ $option['label'] }}</option>
+            >{{ str_repeat('— ', $option['level'] ?? 0) }}{{ __($option['label']) }}</option>
         @endforeach
     </select>
 </x-tenant::field>

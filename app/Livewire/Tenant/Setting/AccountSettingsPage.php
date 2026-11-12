@@ -37,24 +37,24 @@ class AccountSettingsPage extends ContentPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Account Settings',
-            'badge' => 'Settings',
-            'description' => 'Maintain the tenant account profile used by the vendor control panel.',
-            'contentIntro' => 'This page updates the central tenant record while staying within the tenant panel shell.',
+            'title' => __('Account Settings'),
+            'badge' => __('Settings'),
+            'description' => __('Maintain the tenant account profile used by the vendor control panel.'),
+            'contentIntro' => __('This page updates the central tenant record while staying within the tenant panel shell.'),
             'formAction' => 'save',
-            'submitLabel' => 'Save Account',
+            'submitLabel' => __('Save Account'),
             'fieldGroups' => [
                 [
-                    'title' => 'Profile',
-                    'description' => 'Tenant admin credentials and storefront identity details.',
+                    'title' => __('Profile'),
+                    'description' => __('Tenant admin credentials and storefront identity details.'),
                     'gridClass' => 'form-grid-2',
                     'fields' => [
-                        ['label' => 'Admin Name', 'model' => 'adminName'],
-                        ['label' => 'Admin Email', 'model' => 'adminEmail', 'type' => 'email'],
-                        ['label' => 'Store Phone', 'model' => 'phone'],
-                        ['label' => 'Shop Name', 'model' => 'shopName'],
+                        ['label' => __('Admin Name'), 'model' => 'adminName'],
+                        ['label' => __('Admin Email'), 'model' => 'adminEmail', 'type' => 'email'],
+                        ['label' => __('Store Phone'), 'model' => 'phone'],
+                        ['label' => __('Shop Name'), 'model' => 'shopName'],
                         // ['label' => 'Address', 'model' => 'address', 'wrapperClass' => 'span-2'],
-                        ['label' => 'New Admin Password', 'model' => 'password', 'type' => 'password', 'wrapperClass' => 'span-2'],
+                        ['label' => __('New Admin Password'), 'model' => 'password', 'type' => 'password', 'wrapperClass' => 'span-2'],
                     ],
                 ]
             ],
@@ -82,6 +82,6 @@ class AccountSettingsPage extends ContentPage
         ]);
 
         $this->password = '';
-        $this->toast('Account settings updated successfully.');
+        $this->toast(__('Account settings updated successfully.'));
     }
 }

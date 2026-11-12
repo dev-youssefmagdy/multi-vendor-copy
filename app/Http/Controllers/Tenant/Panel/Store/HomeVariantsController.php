@@ -56,7 +56,7 @@ final class HomeVariantsController extends PanelController
             $rowDefs = $countries->map(fn (Country $country) => [
                 'country_id' => $country->id,
                 'label' => trim(($country->flag_emoji ?? '').' '.$country->name),
-            ])->prepend(['country_id' => null, 'label' => 'Default (All Countries)']);
+            ])->prepend(['country_id' => null, 'label' => __('Default (All Countries)')]);
 
             foreach ($rowDefs as $def) {
                 $selection = $selections->get($def['country_id'] ?? 0);
@@ -81,9 +81,9 @@ final class HomeVariantsController extends PanelController
             'availableVariants' => $availableVariants,
             'rows' => $dtRows,
             'columns' => [
-                TableColumn::make('scope', 'Scope')->orderable(false),
-                TableColumn::make('variant', 'Variant')->orderable(false),
-                TableColumn::make('colors', 'Colors')->orderable(false),
+                TableColumn::make('scope', __('Scope'))->orderable(false),
+                TableColumn::make('variant', __('Variant'))->orderable(false),
+                TableColumn::make('colors', __('Colors'))->orderable(false),
             ],
         ]);
     }
@@ -109,7 +109,7 @@ final class HomeVariantsController extends PanelController
                 ->delete();
             CacheVersion::bumpMany(['TenantHomeVariant', 'TenantThemeColor']);
 
-            return $this->success('Reverted to the theme\'s default variant.');
+            return $this->success(__('Reverted to the theme\'s default variant.'));
         }
 
         TenantHomeVariant::query()->updateOrCreate(
@@ -117,7 +117,7 @@ final class HomeVariantsController extends PanelController
             ['home_variant_id' => $variantId]
         );
 
-        return $this->success('Home page variant saved.');
+        return $this->success(__('Home page variant saved.'));
     }
 
     private function resolveThemeId(Request $request, Collection $themes): ?int

@@ -84,7 +84,7 @@ class PageBuilderPage extends TenantPage
             );
         }
 
-        $this->toast('Section order saved.');
+        $this->toast(__('Section order saved.'));
     }
 
     public function toggleVisibility(string $sectionKey): void
@@ -113,7 +113,7 @@ class PageBuilderPage extends TenantPage
 
         $row->update(['is_visible' => !$row->is_visible]);
 
-        $this->toast('Section visibility updated.');
+        $this->toast(__('Section visibility updated.'));
     }
 
     protected function pageView(): string
@@ -124,9 +124,9 @@ class PageBuilderPage extends TenantPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Page Builder',
-            'badge' => 'Storefront',
-            'description' => 'Reorder and show/hide sections on your storefront Home page.',
+            'title' => __('Page Builder'),
+            'badge' => __('Storefront'),
+            'description' => __('Reorder and show/hide sections on your storefront Home page.'),
         ];
     }
 

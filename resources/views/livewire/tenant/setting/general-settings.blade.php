@@ -3,25 +3,24 @@
     <div class="page-head fu d0">
         <div>
             <div class="page-title-row">
-                <h1 class="D page-title">General Settings</h1>
-                <span class="page-badge">Settings</span>
+                <h1 class="D page-title">{{ __('General Settings') }}</h1>
+                <span class="page-badge">{{ __('Settings') }}</span>
             </div>
-            <p class="page-copy">Store-wide defaults used across the vendor control panel.</p>
+            <p class="page-copy">{{ __('Store-wide defaults used across the vendor control panel.') }}</p>
         </div>
     </div>
 
     <section class="card form-card fu d1 gs-card">
         <div class="gs-section-head">
-            <h3 class="panel-title">Default Profit Percentage</h3>
+            <h3 class="panel-title">{{ __('Default Profit Percentage') }}</h3>
             <p class="panel-copy">
-                Used as the markup for every product. Saving recalculates
-                "Your Price" (including fixed shipping) on every product and variant.
+                {{ __('Used as the markup for every product. Saving recalculates "Your Price" (including fixed shipping) on every product and variant.') }}
             </p>
         </div>
 
         <div class="form-grid gs-grid">
             <div>
-                <label class="field-label">Profit Percentage (%)</label>
+                <label class="field-label">{{ __('Profit Percentage (%)') }}</label>
                 <x-input type="number" step="0.01" min="0" wire:model.defer="profitPercentage" :error="$errors->has('profitPercentage')" />
                 @error('profitPercentage')<div class="field-error">{{ $message }}</div>@enderror
             </div>
@@ -29,8 +28,8 @@
             <div class="gs-actions">
                 <x-btn type="button"
                        wire:click="save"
-                       wire:confirm="This will recalculate and overwrite the 'Your Price' for every product and variant using this profit percentage. Continue?">
-                    Save
+                       :wire:confirm="__('This will recalculate and overwrite the \'Your Price\' for every product and variant using this profit percentage. Continue?')">
+                    {{ __('Save') }}
                 </x-btn>
             </div>
         </div>
@@ -39,16 +38,15 @@
     <section class="card form-card fu d2 gs-card">
         <div class="gs-section-head gs-section-head-row">
             <div>
-                <h3 class="panel-title">Target Countries</h3>
+                <h3 class="panel-title">{{ __('Target Countries') }}</h3>
                 <p class="panel-copy">
-                    Countries your store currently targets. This is read-only —
-                    request a change and an admin will review and apply it.
+                    {{ __('Countries your store currently targets. This is read-only — request a change and an admin will review and apply it.') }}
                 </p>
             </div>
             @if ($pendingCountryRequest)
-                <span class="page-badge">Pending review</span>
+                <span class="page-badge">{{ __('Pending review') }}</span>
             @else
-                <x-btn type="button" wire:click="openCountryRequestModal">Request Change</x-btn>
+                <x-btn type="button" wire:click="openCountryRequestModal">{{ __('Request Change') }}</x-btn>
             @endif
         </div>
 
@@ -56,7 +54,7 @@
             @forelse ($currentCountries as $country)
                 <span class="chip">{{ $country->flag_emoji }} {{ $country->name }}</span>
             @empty
-                <span class="gs-empty">No target countries set yet.</span>
+                <span class="gs-empty">{{ __('No target countries set yet.') }}</span>
             @endforelse
         </div>
     </section>
@@ -64,16 +62,15 @@
     <section class="card form-card fu d3 gs-card">
         <div class="gs-section-head gs-section-head-row">
             <div>
-                <h3 class="panel-title">Categories</h3>
+                <h3 class="panel-title">{{ __('Categories') }}</h3>
                 <p class="panel-copy">
-                    Categories your store currently sells in. This is read-only —
-                    request a change and an admin will review and apply it.
+                    {{ __('Categories your store currently sells in. This is read-only — request a change and an admin will review and apply it.') }}
                 </p>
             </div>
             @if ($pendingCategoryRequest)
-                <span class="page-badge">Pending review</span>
+                <span class="page-badge">{{ __('Pending review') }}</span>
             @else
-                <x-btn type="button" wire:click="openCategoryRequestModal">Request Change</x-btn>
+                <x-btn type="button" wire:click="openCategoryRequestModal">{{ __('Request Change') }}</x-btn>
             @endif
         </div>
 
@@ -81,7 +78,7 @@
             @forelse ($currentCategories as $category)
                 <span class="chip">{{ $category->name }}</span>
             @empty
-                <span class="gs-empty">No categories set yet.</span>
+                <span class="gs-empty">{{ __('No categories set yet.') }}</span>
             @endforelse
         </div>
     </section>
@@ -90,8 +87,8 @@
         <div class="gs-modal-backdrop" wire:click="closeCountryRequestModal">
             <div class="gs-modal-box" wire:click.stop>
                 <div class="gs-modal-head">
-                    <h3 class="panel-title">Request Target Countries Change</h3>
-                    <button type="button" class="modal-close" wire:click="closeCountryRequestModal" aria-label="Close">&times;</button>
+                    <h3 class="panel-title">{{ __('Request Target Countries Change') }}</h3>
+                    <button type="button" class="modal-close" wire:click="closeCountryRequestModal" aria-label="{{ __('Close') }}">{{ __('×') }}</button>
                 </div>
                 <div class="gs-modal-body">
                     @error('requestedCountryIds')<div class="field-error">{{ $message }}</div>@enderror
@@ -105,8 +102,8 @@
                     </div>
                 </div>
                 <div class="gs-modal-foot">
-                    <x-btn type="button" variant="secondary" wire:click="closeCountryRequestModal">Cancel</x-btn>
-                    <x-btn type="button" wire:click="submitCountryChangeRequest">Send Request</x-btn>
+                    <x-btn type="button" variant="secondary" wire:click="closeCountryRequestModal">{{ __('Cancel') }}</x-btn>
+                    <x-btn type="button" wire:click="submitCountryChangeRequest">{{ __('Send Request') }}</x-btn>
                 </div>
             </div>
         </div>
@@ -116,8 +113,8 @@
         <div class="gs-modal-backdrop" wire:click="closeCategoryRequestModal">
             <div class="gs-modal-box" wire:click.stop>
                 <div class="gs-modal-head">
-                    <h3 class="panel-title">Request Categories Change</h3>
-                    <button type="button" class="modal-close" wire:click="closeCategoryRequestModal" aria-label="Close">&times;</button>
+                    <h3 class="panel-title">{{ __('Request Categories Change') }}</h3>
+                    <button type="button" class="modal-close" wire:click="closeCategoryRequestModal" aria-label="{{ __('Close') }}">{{ __('×') }}</button>
                 </div>
                 <div class="gs-modal-body">
                     @error('requestedCategoryIds')<div class="field-error">{{ $message }}</div>@enderror
@@ -131,8 +128,8 @@
                     </div>
                 </div>
                 <div class="gs-modal-foot">
-                    <x-btn type="button" variant="secondary" wire:click="closeCategoryRequestModal">Cancel</x-btn>
-                    <x-btn type="button" wire:click="submitCategoryChangeRequest">Send Request</x-btn>
+                    <x-btn type="button" variant="secondary" wire:click="closeCategoryRequestModal">{{ __('Cancel') }}</x-btn>
+                    <x-btn type="button" wire:click="submitCategoryChangeRequest">{{ __('Send Request') }}</x-btn>
                 </div>
             </div>
         </div>

@@ -43,9 +43,9 @@ class ReturnPolicyPage extends ContentPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Return Policy',
-            'badge' => 'Store',
-            'description' => 'Return policy applied to your own products (not the central Neozena catalog).',
+            'title' => __('Return Policy'),
+            'badge' => __('Store'),
+            'description' => __('Return policy applied to your own products (not the central Neozena catalog).'),
         ];
     }
 
@@ -67,34 +67,34 @@ class ReturnPolicyPage extends ContentPage
             $this->putSetting(self::KEYS['video_required_reasons'], json_encode($this->toReasonList($validated['videoRequiredReasons'])));
         } catch (Throwable $exception) {
             report($exception);
-            $this->toast('Something went wrong while saving the return policy. Please try again.', 'error');
+            $this->toast(__('Something went wrong while saving the return policy. Please try again.'), 'error');
 
             return;
         }
 
-        $this->toast('Return policy saved successfully.');
+        $this->toast(__('Return policy saved successfully.'));
     }
 
     protected function pageData(): array
     {
         return array_merge(parent::pageData(), [
             'formAction' => 'save',
-            'submitLabel' => 'Save Policy',
+            'submitLabel' => __('Save Policy'),
             'fieldGroups' => [
                 [
-                    'title' => 'Own Products Return Policy',
-                    'description' => 'Return window, fees, and evidence requirements for products you sell directly.',
+                    'title' => __('Own Products Return Policy'),
+                    'description' => __('Return window, fees, and evidence requirements for products you sell directly.'),
                     'gridClass' => 'form-grid-2',
                     'fields' => [
-                        ['label' => 'Return Window (days)', 'model' => 'windowDays', 'type' => 'number'],
-                        ['label' => 'Return Fee', 'model' => 'fee', 'type' => 'number'],
-                        ['label' => 'Non-returnable Product IDs (comma-separated)', 'model' => 'nonReturnableIds', 'wrapperClass' => 'span-2'],
+                        ['label' => __('Return Window (days)'), 'model' => 'windowDays', 'type' => 'number'],
+                        ['label' => __('Return Fee'), 'model' => 'fee', 'type' => 'number'],
+                        ['label' => __('Non-returnable Product IDs (comma-separated)'), 'model' => 'nonReturnableIds', 'wrapperClass' => 'span-2'],
                         [
-                            'label' => 'Reasons Requiring Video (comma-separated: ' . implode(', ', array_map(fn ($r) => $r->value, ReturnReason::cases())) . ')',
+                            'label' => __('Reasons Requiring Video (comma-separated: :reasons)', ['reasons' => implode(', ', array_map(fn ($r) => $r->value, ReturnReason::cases()))]),
                             'model' => 'videoRequiredReasons',
                             'wrapperClass' => 'span-2',
                         ],
-                        ['label' => 'Accepted Conditions', 'model' => 'conditions', 'type' => 'textarea', 'wrapperClass' => 'span-2'],
+                        ['label' => __('Accepted Conditions'), 'model' => 'conditions', 'type' => 'textarea', 'wrapperClass' => 'span-2'],
                     ],
                 ],
             ],

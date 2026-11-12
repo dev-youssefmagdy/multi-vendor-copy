@@ -6,75 +6,75 @@
 <div class="details-grid">
     <section class="details-panel">
         <div class="details-header">
-            <h4 class="panel-title">Order Snapshot</h4>
-            <p class="panel-copy">High-level tenant order identity, customer data, and payment routing.</p>
+            <h4 class="panel-title">{{ __('Order Snapshot') }}</h4>
+            <p class="panel-copy">{{ __('High-level tenant order identity, customer data, and payment routing.') }}</p>
         </div>
         <div class="details-list">
-            <div class="details-kv"><span class="details-label">Order</span><span class="details-value">{{ $order['uuid'] ?? '-' }}</span></div>
-            <div class="details-kv"><span class="details-label">Status</span><span class="details-value">{{ $order['status'] ?? '-' }}</span></div>
+            <div class="details-kv"><span class="details-label">{{ __('Order') }}</span><span class="details-value">{{ $order['uuid'] ?? '-' }}</span></div>
+            <div class="details-kv"><span class="details-label">{{ __('Status') }}</span><span class="details-value">{{ $order['status'] ?? '-' }}</span></div>
             <div class="details-kv">
-                <span class="details-label">Paid</span>
+                <span class="details-label">{{ __('Paid') }}</span>
                 <span class="details-value">
-                    {{ !empty($order['paid']) ? 'Yes' : 'No' }}
+                    {{ !empty($order['paid']) ? __('Yes') : __('No') }}
                     @if(in_array($order['payment_state'] ?? null, ['refunded', 'partially_refunded'], true))
                         <span class="badge badge-{{ $order['payment_state_color'] ?? 'violet' }}" data-payment-state><span class="badge-dot"></span>{{ $order['payment_state_label'] }}</span>
                     @endif
                 </span>
             </div>
-            <div class="details-kv"><span class="details-label">Customer</span><span class="details-value">{{ $order['customer']['name'] ?? 'Guest' }}</span></div>
-            <div class="details-kv"><span class="details-label">Email</span><span class="details-value">{{ $order['customer']['email'] ?? '-' }}</span></div>
-            <div class="details-kv"><span class="details-label">Gateway</span><span class="details-value">{{ $order['payment_gateway'] ?? ($order['payment_method'] ?? '-') }}</span></div>
-            <div class="details-kv"><span class="details-label">Placed At</span><span class="details-value">{{ optional($order['created_at'] ?? null)->format('M d, Y H:i') ?? '-' }}</span></div>
+            <div class="details-kv"><span class="details-label">{{ __('Customer') }}</span><span class="details-value">{{ $order['customer']['name'] ?? __('Guest') }}</span></div>
+            <div class="details-kv"><span class="details-label">{{ __('Email') }}</span><span class="details-value">{{ $order['customer']['email'] ?? '-' }}</span></div>
+            <div class="details-kv"><span class="details-label">{{ __('Gateway') }}</span><span class="details-value">{{ $order['payment_gateway'] ?? ($order['payment_method'] ?? '-') }}</span></div>
+            <div class="details-kv"><span class="details-label">{{ __('Placed At') }}</span><span class="details-value">{{ optional($order['created_at'] ?? null)->format('M d, Y H:i') ?? '-' }}</span></div>
             @if(!empty($order['carrier']))
-                <div class="details-kv"><span class="details-label">Carrier</span><span class="details-value">{{ $order['carrier'] }}</span></div>
+                <div class="details-kv"><span class="details-label">{{ __('Carrier') }}</span><span class="details-value">{{ $order['carrier'] }}</span></div>
             @endif
         </div>
     </section>
 
     <section class="details-panel">
         <div class="details-header">
-            <h4 class="panel-title">Financial Breakdown</h4>
-            <p class="panel-copy">Totals follow the order formulas: items grand total + shipping - coupon = order grand total.</p>
+            <h4 class="panel-title">{{ __('Financial Breakdown') }}</h4>
+            <p class="panel-copy">{{ __('Totals follow the order formulas: items grand total + shipping - coupon = order grand total.') }}</p>
         </div>
         @php $money = fn ($key) => '$'.number_format((float) ($financials[$key] ?? 0), 2); @endphp
         <div class="details-list">
-            <div class="details-kv"><span class="details-label">Items Grand Total</span><span class="details-value">{{ $money('items_grand_total') }}</span></div>
-            <div class="details-kv"><span class="details-label">Shipping Charge</span><span class="details-value">+ {{ $money('shipping_charge') }}</span></div>
-            <div class="details-kv"><span class="details-label">Coupon Discount</span><span class="details-value">- {{ $money('coupon_discount') }}</span></div>
-            <div class="details-kv"><span class="details-label">Order Grand Total</span><span class="details-value"><strong>{{ $money('grand_total') }}</strong></span></div>
-            <div class="details-kv"><span class="details-label">Platform Profit</span><span class="details-value">{{ $money('platform_profit') }}</span></div>
-            <div class="details-kv"><span class="details-label">Vendor Profit</span><span class="details-value">{{ $money('vendor_profit') }}</span></div>
+            <div class="details-kv"><span class="details-label">{{ __('Items Grand Total') }}</span><span class="details-value">{{ $money('items_grand_total') }}</span></div>
+            <div class="details-kv"><span class="details-label">{{ __('Shipping Charge') }}</span><span class="details-value">+ {{ $money('shipping_charge') }}</span></div>
+            <div class="details-kv"><span class="details-label">{{ __('Coupon Discount') }}</span><span class="details-value">- {{ $money('coupon_discount') }}</span></div>
+            <div class="details-kv"><span class="details-label">{{ __('Order Grand Total') }}</span><span class="details-value"><strong>{{ $money('grand_total') }}</strong></span></div>
+            <div class="details-kv"><span class="details-label">{{ __('Platform Profit') }}</span><span class="details-value">{{ $money('platform_profit') }}</span></div>
+            <div class="details-kv"><span class="details-label">{{ __('Vendor Profit') }}</span><span class="details-value">{{ $money('vendor_profit') }}</span></div>
             @if(($financials['collected_by'] ?? 'vendor') === 'vendor')
-                <div class="details-kv"><span class="details-label">Settlements Paid to Platform</span><span class="details-value">{{ $money('vendor_settlements_paid') }}</span></div>
+                <div class="details-kv"><span class="details-label">{{ __('Settlements Paid to Platform') }}</span><span class="details-value">{{ $money('vendor_settlements_paid') }}</span></div>
                 <div class="details-kv">
-                    <span class="details-label">Vendor Owes Platform</span>
+                    <span class="details-label">{{ __('Vendor Owes Platform') }}</span>
                     <span class="details-value details-value-warning">{{ $money('vendor_own_platform') }}
                         @if((float) ($financials['vendor_own_platform'] ?? 0) > 0 && !empty($order['id']))
-                            <a href="{{ route('tenant.finance.vendor-purchase-settle', $order['id']) }}" class="btn btn-primary btn-sm">Pay platform</a>
+                            <a href="{{ route('tenant.finance.vendor-purchase-settle', $order['id']) }}" class="btn btn-primary btn-sm">{{ __('Pay platform') }}</a>
                         @endif
                     </span>
                 </div>
                 <div class="details-kv details-kv-full">
                     <span class="details-note">
                         @if((float) ($financials['vendor_own_platform'] ?? 0) > 0)
-                            You collected payment. Pay the platform its share.
+                            {{ __('You collected payment. Pay the platform its share.') }}
                         @else
-                            You collected payment. The platform share has been settled.
+                            {{ __('You collected payment. The platform share has been settled.') }}
                         @endif
                     </span>
                 </div>
             @else
-                <div class="details-kv"><span class="details-label">Payouts Received from Platform</span><span class="details-value">{{ $money('platform_payouts_paid') }}</span></div>
+                <div class="details-kv"><span class="details-label">{{ __('Payouts Received from Platform') }}</span><span class="details-value">{{ $money('platform_payouts_paid') }}</span></div>
                 <div class="details-kv">
-                    <span class="details-label">Platform Owes Vendor</span>
+                    <span class="details-label">{{ __('Platform Owes Vendor') }}</span>
                     <span class="details-value details-value-positive">{{ $money('platform_own_vendor') }}</span>
                 </div>
                 <div class="details-kv details-kv-full">
                     <span class="details-note">
                         @if((float) ($financials['platform_own_vendor'] ?? 0) > 0)
-                            The platform collected payment. Your profit will be paid out to you.
+                            {{ __('The platform collected payment. Your profit will be paid out to you.') }}
                         @else
-                            The platform collected payment. Your profit has been paid out.
+                            {{ __('The platform collected payment. Your profit has been paid out.') }}
                         @endif
                     </span>
                 </div>
@@ -84,10 +84,10 @@
 
     <section class="details-panel full">
         <div class="details-header">
-            <h4 class="panel-title">Line Items</h4>
-            <p class="panel-copy">Item-level cost, profit, pricing, shipping, tax, and totals for this order.</p>
+            <h4 class="panel-title">{{ __('Line Items') }}</h4>
+            <p class="panel-copy">{{ __('Item-level cost, profit, pricing, shipping, tax, and totals for this order.') }}</p>
         </div>
-        <x-tenant::table :headers="['Item', 'Qty', 'Cost', 'Profit', 'Price', 'Sub Total', 'Fixed Shipping', 'Discount', 'Tax', 'Shipping Fee', 'Weight', 'Grand Total']">
+        <x-tenant::table :headers="[__('Item'), __('Qty'), __('Cost'), __('Profit'), __('Price'), __('Sub Total'), __('Fixed Shipping'), __('Discount'), __('Tax'), __('Shipping Fee'), __('Weight'), __('Grand Total')]">
             @forelse(($order['items'] ?? []) as $item)
                 <tr>
                     <td>
@@ -111,7 +111,7 @@
             @empty
                 <tr>
                     <td colspan="12">
-                        <div class="json-empty">No line items were found for this tenant order.</div>
+                        <div class="json-empty">{{ __('No line items were found for this tenant order.') }}</div>
                     </td>
                 </tr>
             @endforelse
@@ -121,22 +121,22 @@
 
 <section class="details-panel full">
     <div class="details-header">
-        <h4 class="panel-title">Order Tracking</h4>
-        <p class="panel-copy">Current shipping status and delivery information for this order.</p>
+        <h4 class="panel-title">{{ __('Order Tracking') }}</h4>
+        <p class="panel-copy">{{ __('Current shipping status and delivery information for this order.') }}</p>
     </div>
     <div class="details-list">
-        <div class="details-kv"><span class="details-label">Order Status</span><span class="details-value">{{ $order['status'] ?? '-' }}</span></div>
-        <div class="details-kv"><span class="details-label">Shipping Status</span><span class="details-value">{{ $order['shipping_status'] ?? '-' }}</span></div>
+        <div class="details-kv"><span class="details-label">{{ __('Order Status') }}</span><span class="details-value">{{ $order['status'] ?? '-' }}</span></div>
+        <div class="details-kv"><span class="details-label">{{ __('Shipping Status') }}</span><span class="details-value">{{ $order['shipping_status'] ?? '-' }}</span></div>
         @if(!empty($order['carrier']))
-            <div class="details-kv"><span class="details-label">Carrier</span><span class="details-value">{{ $order['carrier'] }}</span></div>
+            <div class="details-kv"><span class="details-label">{{ __('Carrier') }}</span><span class="details-value">{{ $order['carrier'] }}</span></div>
         @endif
     </div>
 </section>
 
 <section class="details-panel full">
     <div class="details-header">
-        <h4 class="panel-title">Shipping Address</h4>
-        <p class="panel-copy">Expandable structured address payload captured at checkout.</p>
+        <h4 class="panel-title">{{ __('Shipping Address') }}</h4>
+        <p class="panel-copy">{{ __('Expandable structured address payload captured at checkout.') }}</p>
     </div>
     @php
         $shippingAddr = $order['shipping_address'] ?? [];
@@ -156,27 +156,27 @@
 @endphp
 <section class="details-panel full">
     <div class="details-header">
-        <h4 class="panel-title">Payment Details</h4>
-        <p class="panel-copy">Key payment information reported by the payment gateway.</p>
+        <h4 class="panel-title">{{ __('Payment Details') }}</h4>
+        <p class="panel-copy">{{ __('Key payment information reported by the payment gateway.') }}</p>
     </div>
     @if(!$payment['has_data'])
-        <div class="json-empty">No payment details were recorded for this order.</div>
+        <div class="json-empty">{{ __('No payment details were recorded for this order.') }}</div>
     @else
         <div class="details-list">
             <div class="details-kv">
-                <span class="details-label">Gateway</span>
+                <span class="details-label">{{ __('Gateway') }}</span>
                 <span class="details-value">{{ $payment['gateway_label'] }}</span>
             </div>
             @if($payment['status'])
                 <div class="details-kv">
-                    <span class="details-label">Gateway status</span>
+                    <span class="details-label">{{ __('Gateway status') }}</span>
                     <span class="pay-status pay-status-{{ $payment['status']['tone'] }}">{{ $payment['status']['label'] }}</span>
                 </div>
             @endif
             @foreach($payment['headline'] as $row)
                 @continue(strtolower($row['label'] ?? '') === 'card')
                 <div class="details-kv">
-                    <span class="details-label">{{ $row['label'] }}</span>
+                    <span class="details-label">{{ __($row['label']) }}</span>
                     @if(!empty($row['href']))
                         <a class="details-value" href="{{ $row['href'] }}" target="_blank" rel="noopener noreferrer">{{ $row['value'] }}</a>
                     @else
@@ -186,7 +186,7 @@
             @endforeach
             @if($payment['note'])
                 <div class="details-kv">
-                    <span class="details-label">Note</span>
+                    <span class="details-label">{{ __('Note') }}</span>
                     <span class="details-value">{{ $payment['note'] }}</span>
                 </div>
             @endif
@@ -196,10 +196,10 @@
             <details class="json-collapse">
                 <summary class="json-collapse-summary">
                     <div>
-                        <div class="details-inline-title">Full gateway response</div>
-                        <div class="details-inline-copy">Technical payload for support and reconciliation (sensitive values masked).</div>
+                        <div class="details-inline-title">{{ __('Full gateway response') }}</div>
+                        <div class="details-inline-copy">{{ __('Technical payload for support and reconciliation (sensitive values masked).') }}</div>
                     </div>
-                    <span class="json-collapse-badge">Expand</span>
+                    <span class="json-collapse-badge">{{ __('Expand') }}</span>
                 </summary>
                 <div class="json-collapse-body">
                     <x-tenant::json-tree :nodes="\App\Support\Tenant\JsonTreeBuilder::nodes($payment['raw'])" :open-depth="0" />
@@ -212,15 +212,15 @@
 @if(!empty($order['activities']))
     <section class="details-panel full">
         <div class="details-header">
-            <h4 class="panel-title">Activity</h4>
-            <p class="panel-copy">Recorded tenant order lifecycle events.</p>
+            <h4 class="panel-title">{{ __('Activity') }}</h4>
+            <p class="panel-copy">{{ __('Recorded tenant order lifecycle events.') }}</p>
         </div>
         <div class="details-list">
             @foreach($order['activities'] as $activity)
                 <div class="activity-row">
                     <div class="activity-row-title">{{ $activity['title'] ?? '-' }}</div>
                     @if(!empty($activity['description']))
-                        <div class="activity-row-copy">{{ $activity['description'] }}</div>
+                        <div class="activity-row-copy">{{ __($activity['description']) }}</div>
                     @endif
                     <div class="activity-row-date">{{ optional($activity['created_at'] ?? null)->format('M d, Y H:i') ?? '-' }}</div>
                 </div>

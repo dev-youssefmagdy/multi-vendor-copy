@@ -18,9 +18,9 @@ class ReturnAnalyticsPage extends ContentPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Return Analytics',
-            'badge' => 'Store',
-            'description' => 'Return-request trends, reasons, and processing time for your store.',
+            'title' => __('Return Analytics'),
+            'badge' => __('Store'),
+            'description' => __('Return-request trends, reasons, and processing time for your store.'),
         ];
     }
 
@@ -79,11 +79,11 @@ class ReturnAnalyticsPage extends ContentPage
 
         return array_merge(parent::pageData(), [
             'cards' => $this->presentMetricCards([
-                ['label' => 'Total Returns', 'value' => $total, 'format' => 'number', 'caption' => 'All-time return requests', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
-                ['label' => 'Last 30 Days', 'value' => $last30, 'format' => 'number', 'caption' => 'Returns submitted this month', 'dot' => 'dot-blue', 'glow' => 'card-glow-blue'],
-                ['label' => 'Approval Rate', 'value' => $approvalRate, 'format' => 'percent', 'caption' => 'Approved or refunded', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Rejection Rate', 'value' => $rejectionRate, 'format' => 'percent', 'caption' => 'Rejected requests', 'dot' => 'dot-red', 'glow' => 'card-glow-violet'],
-                ['label' => 'Avg Processing Time', 'value' => $avgProcessingHours, 'format' => 'number', 'suffix' => 'hrs', 'caption' => 'From submission to resolution', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Total Returns'), 'value' => $total, 'format' => 'number', 'caption' => __('All-time return requests'), 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
+                ['label' => __('Last 30 Days'), 'value' => $last30, 'format' => 'number', 'caption' => __('Returns submitted this month'), 'dot' => 'dot-blue', 'glow' => 'card-glow-blue'],
+                ['label' => __('Approval Rate'), 'value' => $approvalRate, 'format' => 'percent', 'caption' => __('Approved or refunded'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Rejection Rate'), 'value' => $rejectionRate, 'format' => 'percent', 'caption' => __('Rejected requests'), 'dot' => 'dot-red', 'glow' => 'card-glow-violet'],
+                ['label' => __('Avg Processing Time'), 'value' => $avgProcessingHours, 'format' => 'number', 'suffix' => 'hrs', 'caption' => __('From submission to resolution'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
             ]),
             'cardsGridClass' => 'g-stats4',
             'chartSections' => [
@@ -91,16 +91,16 @@ class ReturnAnalyticsPage extends ContentPage
                     'layoutClass' => 'g-r2',
                     'cards' => [
                         [
-                            'title' => 'Top 5 Return Reasons',
+                            'title' => __('Top 5 Return Reasons'),
                             'metrics' => $topReasons->map(fn ($row) => [
-                                'label' => $row->reason->label(),
+                                'label' => __($row->reason->label()),
                                 'value' => (int) $row->total,
                             ])->all(),
                         ],
                         [
-                            'title' => 'Top 5 Most Returned Products',
+                            'title' => __('Top 5 Most Returned Products'),
                             'metrics' => $topProductRows->map(fn ($row) => [
-                                'label' => $productNames[$row->product_id] ?? "Product #{$row->product_id}",
+                                'label' => $productNames[$row->product_id] ?? __('Product #:id', ['id' => $row->product_id]),
                                 'value' => (int) $row->total,
                             ])->all(),
                         ],
@@ -109,9 +109,9 @@ class ReturnAnalyticsPage extends ContentPage
             ],
             'tableSections' => [
                 [
-                    'title' => 'Monthly Trend (Last 6 Months)',
-                    'description' => 'Return requests submitted per month.',
-                    'headers' => ['Month', 'Return Requests'],
+                    'title' => __('Monthly Trend (Last 6 Months)'),
+                    'description' => __('Return requests submitted per month.'),
+                    'headers' => [__('Month'), __('Return Requests')],
                     'rows' => $monthlyRows,
                 ],
             ],

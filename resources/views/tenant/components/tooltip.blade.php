@@ -1,6 +1,6 @@
 @props([
     'text' => '',
-    'label' => 'More information',
+    'label' => __('More information'),
     'placement' => 'top',
 ])
 

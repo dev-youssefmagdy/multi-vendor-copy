@@ -1,6 +1,6 @@
 @props([
     'name' => null,
-    'label' => 'Click to upload or drag and drop',
+    'label' => __('Click to upload or drag and drop'),
     'sublabel' => 'PNG, JPG, PDF up to 10MB',
     'multiple' => true,
     'accept' => null,

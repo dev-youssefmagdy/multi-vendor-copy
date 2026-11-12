@@ -26,9 +26,9 @@ class ThemePartsPage extends TenantPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Theme Parts',
-            'badge' => 'Storefront',
-            'description' => 'Manage headers and footers for your storefront theme.',
+            'title' => __('Theme Parts'),
+            'badge' => __('Storefront'),
+            'description' => __('Manage headers and footers for your storefront theme.'),
         ];
     }
 
@@ -81,7 +81,7 @@ class ThemePartsPage extends TenantPage
             ->update(['is_default' => false]);
 
         $part->forceFill(['is_default' => true, 'is_active' => true])->save();
-        $this->toast('Set as default successfully.');
+        $this->toast(__('Set as default successfully.'));
     }
 
     public function toggleActive(int $partId): void
@@ -89,7 +89,7 @@ class ThemePartsPage extends TenantPage
         $part = ThemePart::findOrFail($partId);
         $part->is_active = !$part->is_active;
         $part->save();
-        $this->toast($part->is_active ? 'Part activated.' : 'Part deactivated.');
+        $this->toast($part->is_active ? __('Part activated.') : __('Part deactivated.'));
     }
 
     public function revertToCentral(int $partId): void
@@ -97,7 +97,7 @@ class ThemePartsPage extends TenantPage
         $part = ThemePart::findOrFail($partId);
 
         if (!$part->central_part_id) {
-            $this->toast('This part has no central template to reset from.', 'error');
+            $this->toast(__('This part has no central template to reset from.'), 'error');
             return;
         }
 
@@ -107,7 +107,7 @@ class ThemePartsPage extends TenantPage
         );
 
         if (!$central) {
-            $this->toast('Central template part no longer exists.', 'error');
+            $this->toast(__('Central template part no longer exists.'), 'error');
             return;
         }
 
@@ -129,15 +129,15 @@ class ThemePartsPage extends TenantPage
                 ->update(['is_default' => false]);
         }
 
-        $this->toast('Reset to central template content successfully.');
+        $this->toast(__('Reset to central template content successfully.'));
     }
 
     public function requestDelete(int $partId): void
     {
         $this->confirmAction('deletePart', [$partId], [
-            'title' => 'Delete Theme Part?',
-            'text' => 'This part will be permanently deleted.',
-            'confirmButtonText' => 'Delete',
+            'title' => __('Delete Theme Part?'),
+            'text' => __('This part will be permanently deleted.'),
+            'confirmButtonText' => __('Delete'),
             'icon' => 'warning',
         ]);
     }
@@ -145,6 +145,6 @@ class ThemePartsPage extends TenantPage
     public function deletePart(int $partId): void
     {
         ThemePart::findOrFail($partId)->delete();
-        $this->toast('Theme part deleted.');
+        $this->toast(__('Theme part deleted.'));
     }
 }

@@ -10,7 +10,7 @@ Variables: $vIdx (int), $variant (array), $variations (Collection)
 
     {{-- ── Column 1: drag handle, number, thumbnail ────────────────────── --}}
     <div class="vrow-lead">
-        <div class="vrow-handle" title="Drag to reorder">
+        <div class="vrow-handle" title="{{ __('Drag to reorder') }}">
             <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                 <circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/>
                 <circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/>
@@ -22,10 +22,10 @@ Variables: $vIdx (int), $variant (array), $variations (Collection)
         <div class="vrow-thumb-wrap" data-dropzone>
             @if (!empty($variant['thumbnail_url']))
                 <img id="vthumb-{{ $vIdx }}" src="{{ $variant['thumbnail_url'] }}" alt="" class="vrow-thumb">
-                <button type="button" class="vrow-img-remove-btn" onclick="removeVariantImage(this, {{ $vIdx }})" title="Remove image">&times;</button>
+                <button type="button" class="vrow-img-remove-btn" onclick="removeVariantImage(this, {{ $vIdx }})" title="{{ __('Remove image') }}">{{ __('×') }}</button>
             @else
                 <label class="vrow-thumb-placeholder">
-                    <span>IMG</span>
+                    <span>{{ __('IMG') }}</span>
                     <input type="file" name="variants[{{ $vIdx }}][image]" accept="image/*" class="dropzone-input sr-only">
                 </label>
             @endif
@@ -34,7 +34,7 @@ Variables: $vIdx (int), $variant (array), $variations (Collection)
 
     {{-- ── Column 2: variation pairs, stacked ───────────────────────────── --}}
     <div class="vrow-pairs-col">
-        <span class="vrow-pairs-label">Options</span>
+        <span class="vrow-pairs-label">{{ __('Options') }}</span>
 
         <div class="v-pairs">
             @foreach ($variant['pairs'] as $pIdx => $pair)
@@ -51,7 +51,7 @@ Variables: $vIdx (int), $variant (array), $variations (Collection)
                 @endphp
                 <div class="variant-pair-row">
                     <select class="field-control" name="variants[{{ $vIdx }}][pairs][{{ $pIdx }}][variation_id]" onchange="onVariationChange(this)">
-                        <option value="">Group…</option>
+                        <option value="">{{ __('Group…') }}</option>
                         @foreach ($variations as $variation)
                             @php
                                 $isCurrent  = (int) ($pair['variation_id'] ?? 0) === $variation->id;
@@ -67,7 +67,7 @@ Variables: $vIdx (int), $variant (array), $variations (Collection)
 
                     <div class="var-options">
                         <select class="field-control" name="variants[{{ $vIdx }}][pairs][{{ $pIdx }}][option_id]">
-                            <option value="">Option…</option>
+                            <option value="">{{ __('Option…') }}</option>
                             @if ($selectedVariation)
                                 @foreach ($selectedVariation->options as $option)
                                     <option value="{{ $option->id }}"
@@ -81,7 +81,7 @@ Variables: $vIdx (int), $variant (array), $variations (Collection)
 
                     @if ($pIdx > 0)
                         <button type="button" class="btn btn-secondary btn-sm btn-danger"
-                            onclick="removeOptionPair(this)" title="Remove this group">
+                            onclick="removeOptionPair(this)" title="{{ __('Remove this group') }}">
                             <svg width="10" height="10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                 <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
                             </svg>
@@ -98,7 +98,7 @@ Variables: $vIdx (int), $variant (array), $variations (Collection)
                 <svg width="10" height="10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                     <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
                 </svg>
-                Add another group
+                {{ __('Add another group') }}
             </button>
         @endif
     </div>
@@ -106,23 +106,23 @@ Variables: $vIdx (int), $variant (array), $variations (Collection)
     {{-- ── Column 3: name + price/stock/sku/weight/active ───────────────── --}}
     <div class="vrow-meta">
         <input type="text" name="variants[{{ $vIdx }}][title]" class="field-control vrow-meta-name"
-            value="{{ $variant['title'] ?? '' }}" placeholder="Variant name (auto-generated if blank)">
+            value="{{ $variant['title'] ?? '' }}" placeholder="{{ __('Variant name (auto-generated if blank)') }}">
 
-        <input type="number" step="0.01" min="0" name="variants[{{ $vIdx }}][price]" value="{{ $variant['price'] ?? '' }}" class="field-control" placeholder="Price">
-        <input type="number" min="0" step="1" name="variants[{{ $vIdx }}][stock]" value="{{ $variant['stock'] ?? 0 }}" class="field-control" placeholder="Stock">
-        <input type="text" name="variants[{{ $vIdx }}][sku]" value="{{ $variant['sku'] ?? '' }}" class="field-control" placeholder="SKU (auto)">
-        <input type="number" min="0" step="1" name="variants[{{ $vIdx }}][weight_grams]" value="{{ $variant['weight_grams'] ?? '' }}" class="field-control" placeholder="Weight (g)">
+        <input type="number" step="0.01" min="0" name="variants[{{ $vIdx }}][price]" value="{{ $variant['price'] ?? '' }}" class="field-control" placeholder="{{ __('Price') }}">
+        <input type="number" min="0" step="1" name="variants[{{ $vIdx }}][stock]" value="{{ $variant['stock'] ?? 0 }}" class="field-control" placeholder="{{ __('Stock') }}">
+        <input type="text" name="variants[{{ $vIdx }}][sku]" value="{{ $variant['sku'] ?? '' }}" class="field-control" placeholder="{{ __('SKU (auto)') }}">
+        <input type="number" min="0" step="1" name="variants[{{ $vIdx }}][weight_grams]" value="{{ $variant['weight_grams'] ?? '' }}" class="field-control" placeholder="{{ __('Weight (g)') }}">
 
         <label class="toggle-field vrow-meta-name">
             <input type="hidden" name="variants[{{ $vIdx }}][active]" value="0">
             <input type="checkbox" name="variants[{{ $vIdx }}][active]" value="1"
                 {{ ($variant['active'] ?? true) ? 'checked' : '' }}>
-            <span>Active</span>
+            <span>{{ __('Active') }}</span>
         </label>
     </div>
 
     {{-- ── Column 4: remove variant ──────────────────────────────────────── --}}
-    <button type="button" class="btn btn-secondary btn-sm btn-danger vrow-remove" onclick="removeVariant(this)" title="Remove variant">
+    <button type="button" class="btn btn-secondary btn-sm btn-danger vrow-remove" onclick="removeVariant(this)" title="{{ __('Remove variant') }}">
         <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
             <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/>
         </svg>

@@ -1,7 +1,7 @@
 @extends('tenant.layouts.app')
-@section('title', 'Help & Documentation')
+@section('title', __('Help & Documentation'))
 @section('content')
-    <x-tenant::page-header title="Help & Documentation" badge="Help" description="Guides for setting up and managing your store." />
+    <x-tenant::page-header :title="__('Help & Documentation')" :badge="__('Help')" :description="__('Guides for setting up and managing your store.')" />
 
     <div class="docs-layout">
         {{-- Sidebar nav --}}
@@ -26,7 +26,7 @@
             @if ($currentArticle)
                 @include($currentArticle['view'])
             @else
-                <p class="panel-copy">Article not found.</p>
+                <p class="panel-copy">{{ __('Article not found.') }}</p>
             @endif
         </article>
     </div>

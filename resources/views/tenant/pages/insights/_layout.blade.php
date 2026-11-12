@@ -19,7 +19,7 @@
 
     <div class="content-grid section-gap">
         <div class="card fu d1">
-            <h3 class="panel-title">Tenant Scope</h3>
+            <h3 class="panel-title">{{ __('Tenant Scope') }}</h3>
             <p class="panel-copy panel-copy-spaced">{{ $contentIntro }}</p>
             <div class="content-list">
                 @foreach($bullets ?? [] as $bullet)
@@ -32,10 +32,10 @@
         </div>
 
         <div class="card fu d2">
-            <h3 class="panel-title">Implementation Notes</h3>
+            <h3 class="panel-title">{{ __('Implementation Notes') }}</h3>
             <div class="content-note-stack">
-                <div class="content-note"><strong>Tenant only.</strong> This page works inside the current tenant database and vendor shell.</div>
-                <div class="content-note"><strong>Next step.</strong> Connect additional charts, alerts, and approval flows as needed.</div>
+                <div class="content-note"><strong>{{ __('Tenant only.') }}</strong> {{ __('This page works inside the current tenant database and vendor shell.') }}</div>
+                <div class="content-note"><strong>{{ __('Next step.') }}</strong> {{ __('Connect additional charts, alerts, and approval flows as needed.') }}</div>
             </div>
         </div>
     </div>
@@ -46,9 +46,9 @@
                 <section class="card {{ $chartCard['wrapperClass'] ?? '' }}">
                     <div class="panel-head">
                         <div>
-                            <h3 class="panel-title">{{ $chartCard['title'] }}</h3>
+                            <h3 class="panel-title">{{ __($chartCard['title']) }}</h3>
                             @if(!empty($chartCard['description']))
-                                <p class="panel-copy">{{ $chartCard['description'] }}</p>
+                                <p class="panel-copy">{{ __($chartCard['description']) }}</p>
                             @endif
                         </div>
                     </div>
@@ -63,7 +63,7 @@
                                 <div class="legend-row">
                                     <div class="legend-meta">
                                         <span class="dot {{ $legend['dot'] ?? 'dot-cyan' }}"></span>
-                                        <span class="text-t2">{{ $legend['label'] }}</span>
+                                        <span class="text-t2">{{ __($legend['label']) }}</span>
                                     </div>
                                     <span class="legend-value">{{ $legend['value'] }}</span>
                                 </div>
@@ -75,7 +75,7 @@
                         <div class="metric-list">
                             @foreach($chartCard['metrics'] as $metric)
                                 <div class="metric-row">
-                                    <span class="metric-label">{{ $metric['label'] }}</span>
+                                    <span class="metric-label">{{ __($metric['label']) }}</span>
                                     <span class="metric-value">{{ $metric['value'] }}</span>
                                 </div>
                             @endforeach

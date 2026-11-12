@@ -48,7 +48,7 @@
         <ul class="t-select-menu-list" id="{{ $fieldId }}-list" role="listbox" data-select-menu-list hidden>
             @foreach($normalized as $option)
                 <li role="option" tabindex="-1" data-value="{{ $option['value'] }}"
-                    aria-selected="{{ $current && (string) $option['value'] === (string) $current['value'] ? 'true' : 'false' }}">{{ $option['label'] }}</li>
+                    aria-selected="{{ $current && (string) $option['value'] === (string) $current['value'] ? 'true' : 'false' }}">{{ __($option['label']) }}</li>
             @endforeach
         </ul>
     </div>

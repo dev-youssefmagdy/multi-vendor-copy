@@ -10,12 +10,12 @@
         $chartPayload = $chartPayload ?? null;
         $cardsGridClass = $cardsGridClass ?? (count($cards) > 3 ? 'g-stats4' : 'g-stats3');
         $formAction = $formAction ?? null;
-        $submitLabel = $submitLabel ?? 'Save Changes';
+        $submitLabel = $submitLabel ?? __('Save Changes');
 
         if (!$tableSections && $tableHeaders && $tableRows) {
             $tableSections = [
                 [
-                    'title' => 'Tenant Data',
+                    'title' => __('Tenant Data'),
                     'description' => null,
                     'headers' => $tableHeaders,
                     'rows' => $tableRows,
@@ -43,7 +43,7 @@
             <div class="page-actions">
                 @foreach ($secondaryActions ?? [] as $secondaryAction)
                     <x-btn type="button" variant="secondary"
-                        wire:click="{{ $secondaryAction['method'] }}">{{ $secondaryAction['label'] }}</x-btn>
+                        wire:click="{{ $secondaryAction['method'] }}">{{ __($secondaryAction['label']) }}</x-btn>
                 @endforeach
                 @if ($formAction)
                     <x-btn type="submit" form="content-page-form">{{ $submitLabel }}</x-btn>
@@ -58,7 +58,7 @@
                 <div class="card {{ $card['glow'] ?? 'card-glow-cyan' }}">
                     <div class="stat-head">
                         <div>
-                            <div class="eyebrow">{{ $card['label'] }}</div>
+                            <div class="eyebrow">{{ __($card['label']) }}</div>
                             <div class="D stat-value">{{ $card['value'] }}</div>
                         </div>
                         <div class="mini-stat-dot {{ $card['dot'] ?? 'dot-cyan' }}"></div>
@@ -71,7 +71,7 @@
 
     <div class="content-grid section-gap">
         <div class="card fu d1">
-            <h3 class="panel-title">Tenant Scope</h3>
+            <h3 class="panel-title">{{ __('Tenant Scope') }}</h3>
             <p class="panel-copy panel-copy-spaced">{{ $contentIntro }}</p>
             <div class="content-list">
                 @foreach ($bullets as $bullet)
@@ -84,21 +84,17 @@
         </div>
 
         <div class="card fu d2">
-            <h3 class="panel-title">{{ $actions ? 'Actions' : 'Implementation Notes' }}</h3>
+            <h3 class="panel-title">{{ $actions ? __('Actions') : __('Implementation Notes') }}</h3>
             <div class="content-note-stack">
                 @if ($actions)
                     @foreach ($actions as $action)
                         <x-btn type="button"
                             variant="{{ ($action['variant'] ?? 'btn-secondary') === 'btn-primary' ? 'primary' : 'secondary' }}"
-                            wire:click="{{ $action['method'] }}">{{ $action['label'] }}</x-btn>
+                            wire:click="{{ $action['method'] }}">{{ __($action['label']) }}</x-btn>
                     @endforeach
                 @else
-                    <div class="content-note"><strong>Tenant only.</strong> This page works inside the current tenant
-                        database and
-                        vendor shell.</div>
-                    <div class="content-note"><strong>Next step.</strong> Connect additional charts, alerts, and approval
-                        flows as
-                        needed.</div>
+                    <div class="content-note"><strong>{{ __('Tenant only.') }}</strong> {{ __('This page works inside the current tenant database and vendor shell.') }}</div>
+                    <div class="content-note"><strong>{{ __('Next step.') }}</strong> {{ __('Connect additional charts, alerts, and approval flows as needed.') }}</div>
                 @endif
             </div>
         </div>
@@ -110,9 +106,9 @@
                 <section class="card {{ $chartCard['wrapperClass'] ?? '' }}">
                     <div class="panel-head">
                         <div>
-                            <h3 class="panel-title">{{ $chartCard['title'] }}</h3>
+                            <h3 class="panel-title">{{ __($chartCard['title']) }}</h3>
                             @if (!empty($chartCard['description']))
-                                <p class="panel-copy">{{ $chartCard['description'] }}</p>
+                                <p class="panel-copy">{{ __($chartCard['description']) }}</p>
                             @endif
                         </div>
                     </div>
@@ -128,7 +124,7 @@
                                 <div class="legend-row">
                                     <div class="legend-meta">
                                         <span class="dot {{ $legend['dot'] ?? 'dot-cyan' }}"></span>
-                                        <span class="text-t2">{{ $legend['label'] }}</span>
+                                        <span class="text-t2">{{ __($legend['label']) }}</span>
                                     </div>
                                     <span class="legend-value">{{ $legend['value'] }}</span>
                                 </div>
@@ -140,7 +136,7 @@
                         <div class="metric-list">
                             @foreach ($chartCard['metrics'] as $metric)
                                 <div class="metric-row">
-                                    <span class="metric-label">{{ $metric['label'] }}</span>
+                                    <span class="metric-label">{{ __($metric['label']) }}</span>
                                     <span class="metric-value">{{ $metric['value'] }}</span>
                                 </div>
                             @endforeach
@@ -158,14 +154,14 @@
                 <section class="card form-card">
                     <div class="panel-head mb-5">
                         <div>
-                            <h3 class="panel-title">{{ $group['title'] }}</h3>
+                            <h3 class="panel-title">{{ __($group['title']) }}</h3>
                             <p class="panel-copy">{{ $group['description'] ?? '' }}</p>
                         </div>
                     </div>
                     <div class="form-grid {{ $group['gridClass'] ?? '' }}">
                         @foreach ($group['fields'] as $field)
                             <div class="{{ $field['wrapperClass'] ?? '' }}">
-                                <label class="field-label">{{ $field['label'] }}</label>
+                                <label class="field-label">{{ __($field['label']) }}</label>
                                 @if (($field['type'] ?? 'text') === 'editor')
                                     <div wire:key="{{ $field['editorKey'] ?? $field['model'] }}">
                                         <x-editor model="{{ $field['model'] }}" :value="data_get($this, $field['model'])"
@@ -202,9 +198,9 @@
             <section class="card section-gap table-card-shell">
                 <div class="table-header-shell">
                     <div>
-                        <h3 class="panel-title">{{ $section['title'] }}</h3>
+                        <h3 class="panel-title">{{ __($section['title']) }}</h3>
                         @if (!empty($section['description']))
-                            <p class="panel-copy">{{ $section['description'] }}</p>
+                            <p class="panel-copy">{{ __($section['description']) }}</p>
                         @endif
                     </div>
                 </div>
@@ -219,9 +215,8 @@
                         <tr>
                             <td colspan="{{ count($section['headers']) }}">
                                 <div class="empty-state">
-                                    <div class="empty-state-title">No data available</div>
-                                    <p class="empty-state-copy">This tenant module does not have enough records to populate the
-                                        section yet.</p>
+                                    <div class="empty-state-title">{{ __('No data available') }}</div>
+                                    <p class="empty-state-copy">{{ __('This tenant module does not have enough records to populate the section yet.') }}</p>
                                 </div>
                             </td>
                         </tr>

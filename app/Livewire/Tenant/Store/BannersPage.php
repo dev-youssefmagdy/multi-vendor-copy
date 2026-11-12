@@ -38,9 +38,9 @@ class BannersPage extends TenantPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Banners',
-            'badge' => 'Storefront',
-            'description' => 'Homepage and promotional banners with multi-language content.',
+            'title' => __('Banners'),
+            'badge' => __('Storefront'),
+            'description' => __('Homepage and promotional banners with multi-language content.'),
         ];
     }
 
@@ -66,7 +66,7 @@ class BannersPage extends TenantPage
                 ->orderBy('serial_number')
                 ->get(),
             'country' => $country,
-            'activeThemeLabel' => $bannerDimensions['label'] ?? ($activeTheme->name ?? 'your theme'),
+            'activeThemeLabel' => $bannerDimensions['label'] ?? ($activeTheme->name ?? __('your theme')),
             'bannerWidth' => $bannerDimensions['width'] ?? null,
             'bannerHeight' => $bannerDimensions['height'] ?? null,
         ]);
@@ -131,21 +131,21 @@ class BannersPage extends TenantPage
 
         $this->bannerModalOpen = false;
         $this->resetBannerForm();
-        $this->toast('Banner saved successfully.');
+        $this->toast(__('Banner saved successfully.'));
     }
 
     public function confirmDeleteBanner(int $id): void
     {
         $this->confirmAction('deleteBanner', [$id], [
-            'title' => 'Delete banner?',
-            'confirmButtonText' => 'Delete banner',
+            'title' => __('Delete banner?'),
+            'confirmButtonText' => __('Delete banner'),
         ]);
     }
 
     public function deleteBanner(int $id): void
     {
         Banner::query()->findOrFail($id)->delete();
-        $this->toast('Banner deleted.');
+        $this->toast(__('Banner deleted.'));
     }
 
     public function updateBannerOrder(array $orderedIds): void
@@ -156,7 +156,7 @@ class BannersPage extends TenantPage
 
         CacheVersion::bump('Banner');
 
-        $this->toast('Banner order saved.');
+        $this->toast(__('Banner order saved.'));
     }
 
     public function closeBannerModal(): void

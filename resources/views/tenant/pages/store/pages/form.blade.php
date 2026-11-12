@@ -3,9 +3,9 @@
 @section('title', $pageTitle)
 
 @section('content')
-    <x-tenant::page-header :title="$pageTitle" badge="Storefront" :description="$pageDescription">
+    <x-tenant::page-header :title="$pageTitle" :badge="__('Storefront')" :description="$pageDescription">
         <x-slot:actions>
-            <a href="{{ route('tenant.store.pages') }}" class="btn btn-secondary">Back to Pages</a>
+            <a href="{{ route('tenant.store.pages') }}" class="btn btn-secondary">{{ __('Back to Pages') }}</a>
         </x-slot:actions>
     </x-tenant::page-header>
 
@@ -15,20 +15,20 @@
         :validate="$page ? route('tenant.store.pages.validate.update', $page) : route('tenant.store.pages.validate')"
         success="redirect"
     >
-        <x-tenant::card-collapse title="Page Settings" subtitle="Slug and visibility." :open="true">
+        <x-tenant::card-collapse :title="__('Page Settings')" :subtitle="__('Slug and visibility.')" :open="true">
             <div class="form-grid form-grid-2">
-                <x-tenant::input name="slug" label="Slug" :value="$page?->slug" slug-from="translations[{{ $activeLocale }}][title]" placeholder="auto-generated-from-title" />
-                <x-tenant::switch name="active" label="Page is active" :checked="$page?->active ?? true" />
+                <x-tenant::input name="slug" :label="__('Slug')" :value="$page?->slug" slug-from="translations[{{ $activeLocale }}][title]" placeholder="auto-generated-from-title" />
+                <x-tenant::switch name="active" :label="__('Page is active')" :checked="$page?->active ?? true" />
             </div>
         </x-tenant::card-collapse>
 
-        <x-tenant::card-collapse title="Translations" subtitle="Switch locale tabs to manage translated page titles and content." :open="true">
+        <x-tenant::card-collapse :title="__('Translations')" :subtitle="__('Switch locale tabs to manage translated page titles and content.')" :open="true">
             <x-tenant::locale-tabs :languages="$languages" :active="$activeLocale">
                 @foreach($languages as $language)
                     <x-tenant::locale-pane :code="$language->code" :active="$language->code === $activeLocale">
                         <div class="form-grid">
-                            <x-tenant::input name="translations.{{ $language->code }}.title" label="Title" :value="$translations[$language->code]['title'] ?? ''" />
-                            <x-tenant::editor name="translations.{{ $language->code }}.body" label="Content" :value="$translations[$language->code]['body'] ?? ''" :height="520" />
+                            <x-tenant::input name="translations.{{ $language->code }}.title" :label="__('Title')" :value="$translations[$language->code]['title'] ?? ''" />
+                            <x-tenant::editor name="translations.{{ $language->code }}.body" :label="__('Content')" :value="$translations[$language->code]['body'] ?? ''" :height="520" />
                         </div>
                     </x-tenant::locale-pane>
                 @endforeach
@@ -36,8 +36,8 @@
         </x-tenant::card-collapse>
 
         <div class="page-actions compact-actions justify-end">
-            <a href="{{ route('tenant.store.pages') }}" class="btn btn-secondary">Back to Pages</a>
-            <x-tenant::submit>Save Page</x-tenant::submit>
+            <a href="{{ route('tenant.store.pages') }}" class="btn btn-secondary">{{ __('Back to Pages') }}</a>
+            <x-tenant::submit>{{ __('Save Page') }}</x-tenant::submit>
         </div>
     </x-tenant::form>
 @endsection

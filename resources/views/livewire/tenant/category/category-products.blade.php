@@ -1,20 +1,20 @@
 <main id="mn">
     <div class="page-head fu d0">
         <div>
-            <div class="eyebrow">Storefront Catalog</div>
-            <h1 class="D page-title">Product Order — {{ $category->translationValue('name') ?? $category->slug }}</h1>
-            <p class="page-copy">Drag rows to reorder how products appear inside this category.</p>
+            <div class="eyebrow">{{ __('Storefront Catalog') }}</div>
+            <h1 class="D page-title">{{ __('Product Order — :slug', ['slug' => $category->translationValue('name') ?? $category->slug]) }}</h1>
+            <p class="page-copy">{{ __('Drag rows to reorder how products appear inside this category.') }}</p>
         </div>
         <div class="page-actions">
-            <a href="{{ route('tenant.categories.index') }}" class="btn btn-secondary">Back to Categories</a>
+            <a href="{{ route('tenant.categories.index') }}" class="btn btn-secondary">{{ __('Back to Categories') }}</a>
         </div>
     </div>
 
     <section class="card table-card-shell section-gap">
         <div class="table-header-shell">
             <div>
-                <h3 class="panel-title">Category Products</h3>
-                <p class="panel-copy">{{ $products->count() }} products assigned to this category.</p>
+                <h3 class="panel-title">{{ __('Category Products') }}</h3>
+                <p class="panel-copy">{{ __(':products products assigned to this category.', ['products' => $products->count()]) }}</p>
             </div>
         </div>
 
@@ -24,9 +24,9 @@
                     <thead>
                         <tr>
                             <th style="width:32px"></th>
-                            <th>Thumbnail</th>
-                            <th>Product</th>
-                            <th>SKU</th>
+                            <th>{{ __('Thumbnail') }}</th>
+                            <th>{{ __('Product') }}</th>
+                            <th>{{ __('SKU') }}</th>
                         </tr>
                     </thead>
                     <tbody id="category-products-sortable">
@@ -59,8 +59,8 @@
             </div>
         @else
             <div class="empty-state">
-                <h3 class="panel-title">No products assigned</h3>
-                <p class="panel-copy">Assign products to this category before ordering them.</p>
+                <h3 class="panel-title">{{ __('No products assigned') }}</h3>
+                <p class="panel-copy">{{ __('Assign products to this category before ordering them.') }}</p>
             </div>
         @endif
     </section>

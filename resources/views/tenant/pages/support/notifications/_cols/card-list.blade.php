@@ -4,7 +4,7 @@
         <div class="notification-card-body">
             <div class="notification-card-head">
                 <h3 class="notification-card-title">{{ $notification->title }}</h3>
-                <span class="notification-new-badge" data-notification-new>new</span>
+                <span class="notification-new-badge" data-notification-new>{{ __('new') }}</span>
             </div>
             <p class="notification-card-message">{{ $notification->message }}</p>
             @if ($notification->data && count($notification->data) > 0)
@@ -24,14 +24,13 @@
                 <a href="{{ route('tenant.notifications.open', $notification->id) }}" class="notification-mark-read-btn">{{ __('Open') }}</a>
             @endif
             <button type="button" data-mark-read="{{ route('tenant.notifications.mark-read', $notification->id) }}" class="notification-mark-read-btn">
-                Mark as read
+                {{ __('Mark as read') }}
             </button>
         </div>
     </div>
 @empty
     <div class="empty-state">
-        <div class="empty-state-title">No notifications yet</div>
-        <p class="empty-state-copy">You'll receive notifications here when the admin updates your requests or adds
-            products for you.</p>
+        <div class="empty-state-title">{{ __('No notifications yet') }}</div>
+        <p class="empty-state-copy">{{ __('You\'ll receive notifications here when the admin updates your requests or adds products for you.') }}</p>
     </div>
 @endforelse

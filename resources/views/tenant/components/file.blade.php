@@ -30,7 +30,7 @@
                 @if($removable)
                     <label class="t-file-remove">
                         <input type="checkbox" name="remove_{{ $htmlName }}" value="1">
-                        <span>Remove</span>
+                        <span>{{ __('Remove') }}</span>
                     </label>
                 @endif
             </div>

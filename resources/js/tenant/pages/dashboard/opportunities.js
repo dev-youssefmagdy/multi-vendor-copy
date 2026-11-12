@@ -5,6 +5,7 @@ import { openModal } from '../../core/modals.js';
 import { get, request } from '../../core/http.js';
 import { A11y, Autoplay, Keyboard, Mousewheel } from 'swiper/modules';
 import 'swiper/css';
+import { t } from '../../core/i18n.js';
 
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -42,7 +43,7 @@ function mountSlider(el) {
         keyboard: { enabled: true, onlyInViewport: true },
         mousewheel: { forceToAxis: true },
         autoplay: reducedMotion() ? false : { delay: 5000, disableOnInteraction: false, pauseOnMouseEnter: true },
-        a11y: { prevSlideMessage: 'Previous products', nextSlideMessage: 'Next products' },
+        a11y: { prevSlideMessage: t('Previous products'), nextSlideMessage: t('Next products') },
         // Clicking a card's buttons / video controls must not be swallowed as a drag.
         noSwipingSelector: 'button, a, video',
     });
@@ -64,7 +65,7 @@ function renderFlashSaleList(sales, card) {
     if (!body) return;
 
     if (!sales.length) {
-        body.innerHTML = `<p style="color:var(--t3);font-size:14px;">No active flash sales found. <a href="${card.dataset.attachUrl.replace('item/__SALE__/attach-product', '')}" style="color:var(--accent);">Create one →</a></p>`;
+        body.innerHTML = `<p style="color:var(--t3);font-size:14px;">${t('No active flash sales found.')} <a href="${card.dataset.attachUrl.replace('item/__SALE__/attach-product', '')}" style="color:var(--accent);">${t('Create one →')}</a></p>`;
         return;
     }
 
@@ -79,7 +80,7 @@ function renderFlashSaleList(sales, card) {
                 <button type="button" class="btn btn-sm ${sale.attached ? 'btn-danger' : 'btn-primary'}"
                     data-flash-sale-toggle="${sale.id}"
                     data-attached="${sale.attached ? '1' : '0'}">
-                    ${sale.attached ? 'Remove' : 'Add'}
+                    ${sale.attached ? t('Remove') : t('Add')}
                 </button>
             </li>`).join('')
     }</ul>`;
@@ -100,7 +101,7 @@ async function toggleFlashSale(btn, card) {
         const attached = json.data?.attached ?? false;
         btn.dataset.attached = attached ? '1' : '0';
         btn.className = `btn btn-sm ${attached ? 'btn-danger' : 'btn-primary'}`;
-        btn.textContent = attached ? 'Remove' : 'Add';
+        btn.textContent = attached ? t('Remove') : t('Add');
 
         // Update the card button state
         const anyAttached = [...document.querySelectorAll(`#opp-flash-sale-modal-body [data-flash-sale-toggle]`)]
@@ -118,7 +119,7 @@ function syncFlashSaleBtn(card, inFlashSale) {
     if (!btn) return;
     btn.classList.toggle('is-active', inFlashSale);
     const label = btn.querySelector('span');
-    if (label) label.textContent = inFlashSale ? 'In Flash Sale' : 'Add to Flash Sale';
+    if (label) label.textContent = inFlashSale ? t('In Flash Sale') : t('Add to Flash Sale');
     card.dataset.inFlashSale = inFlashSale ? '1' : '0';
 }
 
@@ -127,7 +128,7 @@ async function openFlashSaleModal(card) {
     const flashSalesUrl = card.dataset.flashSalesUrl;
 
     const body = document.getElementById('opp-flash-sale-modal-body');
-    if (body) body.innerHTML = '<p style="color:var(--t3);font-size:14px;">Loading flash sales…</p>';
+    if (body) body.innerHTML = `<p style="color:var(--t3);font-size:14px;">${t('Loading flash sales…')}</p>`;
 
     openModal('opp-flash-sale-modal');
 
@@ -135,7 +136,7 @@ async function openFlashSaleModal(card) {
         const json = await get(flashSalesUrl, { product_id: productId });
         renderFlashSaleList(json.data || [], card);
     } catch {
-        if (body) body.innerHTML = '<p style="color:var(--danger);font-size:14px;">Could not load flash sales.</p>';
+        if (body) body.innerHTML = `<p style="color:var(--danger);font-size:14px;">${t('Could not load flash sales.')}</p>`;
     }
 }
 
@@ -154,7 +155,7 @@ async function toggleTrending(card) {
         if (btn) {
             btn.classList.toggle('is-active', isFeatured);
             const label = btn.querySelector('span');
-            if (label) label.textContent = isFeatured ? 'Trending ✓' : 'Add to trending';
+            if (label) label.textContent = isFeatured ? t('Trending ✓') : t('Add to trending');
         }
     } catch {
         // handled by http interceptor

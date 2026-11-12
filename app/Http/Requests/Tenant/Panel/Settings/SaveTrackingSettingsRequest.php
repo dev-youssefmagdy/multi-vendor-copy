@@ -21,16 +21,16 @@ final class SaveTrackingSettingsRequest extends TenantFormRequest
     public function messages(): array
     {
         return [
-            'ga_measurement_id.regex' => 'The GA4 Measurement ID must look like G-XXXXXXXX.',
+            'ga_measurement_id.regex' => __('The GA4 Measurement ID must look like G-XXXXXXXX.'),
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'fb_pixel_id' => 'Facebook pixel ID',
-            'tiktok_pixel_id' => 'TikTok pixel ID',
-            'snapchat_pixel_id' => 'Snapchat pixel ID',
+            'fb_pixel_id' => __('Facebook pixel ID'),
+            'tiktok_pixel_id' => __('TikTok pixel ID'),
+            'snapchat_pixel_id' => __('Snapchat pixel ID'),
             'ga_measurement_id' => 'GA4 measurement ID',
         ];
     }

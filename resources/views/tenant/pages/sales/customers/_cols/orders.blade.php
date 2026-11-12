@@ -1,1 +1,1 @@
-<span title="{{ (int) $customer->paid_orders_count }} paid">{{ (int) $customer->orders_count }}</span>
+<span title="{{ __(':paidorderscount paid', ['paidorderscount' => (int) $customer->paid_orders_count]) }}">{{ (int) $customer->orders_count }}</span>

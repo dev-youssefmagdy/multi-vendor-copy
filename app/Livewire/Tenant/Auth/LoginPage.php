@@ -36,19 +36,19 @@ class LoginPage extends Component
         $admin = AdminUser::query()->with('role')->where('email', strtolower(trim((string) $validated['email'])))->first();
 
         if (!$tenant || !$admin || !Hash::check($validated['password'], (string) $admin->password)) {
-            $this->addError('email', 'The provided tenant admin credentials are invalid for this domain.');
+            $this->addError('email', __('The provided tenant admin credentials are invalid for this domain.'));
 
             return;
         }
 
         if (!in_array($tenant->status, [TenantStatus::Active, TenantStatus::Onboarding], true)) {
-            $this->addError('email', 'This tenant account is not allowed to access the vendor panel.');
+            $this->addError('email', __('This tenant account is not allowed to access the vendor panel.'));
 
             return;
         }
 
         if ($admin->status !== ActivationStatus::Active) {
-            $this->addError('email', 'This tenant admin account is inactive.');
+            $this->addError('email', __('This tenant admin account is inactive.'));
 
             return;
         }
@@ -66,11 +66,11 @@ class LoginPage extends Component
         $tenant = tenant();
 
         return view('livewire.auth.panel-login', [
-            'panelTitle' => ($tenant?->data['shop_name'] ?? $tenant?->name ?? 'Tenant') . ' Vendor Panel',
-            'panelSubtitle' => 'Sign in to manage products, orders, storefront settings, and vendor operations for this tenant.',
-            'submitLabel' => 'Login to Vendor Panel',
-            'brandLabel' => 'Tenant Workspace',
-            'contextNote' => 'Use a tenant admin email and password created inside this tenant workspace.',
+            'panelTitle' => __(':store Vendor Panel', ['store' => $tenant?->data['shop_name'] ?? $tenant?->name ?? __('Tenant')]),
+            'panelSubtitle' => __('Sign in to manage products, orders, storefront settings, and vendor operations for this tenant.'),
+            'submitLabel' => __('Login to Vendor Panel'),
+            'brandLabel' => __('Tenant Workspace'),
+            'contextNote' => __('Use a tenant admin email and password created inside this tenant workspace.'),
             'showSocialLogin' => false,
             'googleLoginUrl' => null,
             'appleLoginUrl' => null,

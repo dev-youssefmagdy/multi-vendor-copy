@@ -4,13 +4,13 @@
     $ids = $flashSale->products->isNotEmpty()
         ? $flashSale->products->pluck('id')
         : collect($flashSale->product)->filter()->pluck('id');
-    $labels = $ids->map(fn ($id) => $names[$id] ?? ('Product #' . $id))->values();
+    $labels = $ids->map(fn ($id) => $names[$id] ?? (__('Product #:id', ['id' => $id])))->values();
 @endphp
 
 @if($labels->isEmpty())
-    {{ 'No products linked' }}
+    {{ __('No products linked') }}
 @else
     <div class="entity-title">{{ $labels->first() }}</div>
     @php($extra = $labels->count() - 1)
-    <div class="entity-subtitle">{{ $extra > 0 ? '+' . $extra . ' more product' . ($extra > 1 ? 's' : '') : '1 product' }}</div>
+    <div class="entity-subtitle">{{ $extra > 0 ? trans_choice('+:count more product|+:count more products', $extra, ['count' => $extra]) : __('1 product') }}</div>
 @endif

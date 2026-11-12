@@ -1,4 +1,5 @@
 import { get } from '@tenant/core/http.js';
+import { t } from '../../core/i18n.js';
 
 const form = document.getElementById('product-form');
 const select = form?.querySelector('[data-central-product-select]');
@@ -27,7 +28,7 @@ async function loadSnapshot(centralProductId) {
         panels?.removeAttribute('hidden');
 
         if (currentPriceEl) {
-            currentPriceEl.textContent = `Central current price: $${Number(data.price).toFixed(2)}`;
+            currentPriceEl.textContent = t('Central current price: :price', { price: `$${Number(data.price).toFixed(2)}` });
             currentPriceEl.hidden = false;
         }
 

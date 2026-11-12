@@ -5,7 +5,7 @@
 <div style="position:relative;display:inline-flex;align-items:center" x-data="tenantBell({{ $unread }}, '{{ $tenantId }}')">
     <a href="{{ route('tenant.notifications.index') }}"
        class="nav-icon-btn"
-       title="Notifications"
+       title="{{ __('Notifications') }}"
        style="position:relative"
     >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">

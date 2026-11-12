@@ -18,7 +18,7 @@
             @if($banner->url)
                 <a href="{{ $banner->url }}" target="_blank" rel="noopener">{{ Str::limit($banner->url, 50) }}</a>
             @else
-                No link
+                {{ __('No link') }}
             @endif
         </div>
     </div>
@@ -34,11 +34,11 @@
             data-modal-open="banner-modal"
             data-modal-fill-url="{{ route('tenant.store.banners.show', $banner) }}"
             data-modal-action="{{ route('tenant.store.banners.update', $banner) }}"
-            data-modal-method="PUT">Edit</button>
+            data-modal-method="PUT">{{ __('Edit') }}</button>
         <button type="button" class="btn btn-danger btn-sm"
             data-action-url="{{ route('tenant.store.banners.destroy', $banner) }}"
             data-action-method="DELETE"
-            data-confirm="Delete banner?"
-            data-success="reload-page">Delete</button>
+            data-confirm="{{ __('Delete banner?') }}"
+            data-success="reload-page">{{ __('Delete') }}</button>
     </div>
 </div>

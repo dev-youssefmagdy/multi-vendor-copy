@@ -39,17 +39,17 @@ final class SaveFooterRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'footer_logo_mode'      => 'footer logo mode',
-            'footer_logo_text_ar'   => 'Arabic footer logo text',
-            'footer_logo_text_en'   => 'English footer logo text',
-            'footer_logo_color'     => 'footer text color',
-            'footer_logo_bg_color'  => 'footer background color',
-            'footer_logo_shape'     => 'footer logo shape',
-            'footer_logo_font_ar'   => 'Arabic footer font',
-            'footer_logo_font_en'   => 'English footer font',
-            'footer_logo_upload_ar' => 'Arabic footer logo image',
-            'footer_logo_upload_en' => 'English footer logo image',
-            'footer_logo_width'     => 'footer logo width',
+            'footer_logo_mode'      => __('footer logo mode'),
+            'footer_logo_text_ar'   => __('Arabic footer logo text'),
+            'footer_logo_text_en'   => __('English footer logo text'),
+            'footer_logo_color'     => __('footer text color'),
+            'footer_logo_bg_color'  => __('footer background color'),
+            'footer_logo_shape'     => __('footer logo shape'),
+            'footer_logo_font_ar'   => __('Arabic footer font'),
+            'footer_logo_font_en'   => __('English footer font'),
+            'footer_logo_upload_ar' => __('Arabic footer logo image'),
+            'footer_logo_upload_en' => __('English footer logo image'),
+            'footer_logo_width'     => __('footer logo width'),
         ];
     }
 }

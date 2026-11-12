@@ -21,7 +21,7 @@ class SortProducts extends Component
 
         CacheVersion::bump('Product');
 
-        $this->toast('Product order saved.');
+        $this->toast(__('Product order saved.'));
     }
 
     public function render()

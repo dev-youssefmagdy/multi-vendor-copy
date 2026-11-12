@@ -7,6 +7,7 @@
 import '../../../../css/tenant/pages/domains.css';
 import { post } from '../../core/http.js';
 import { toast } from '../../core/toast.js';
+import { t } from '../../core/i18n.js';
 
 document.addEventListener('click', (event) => {
     const opener = event.target.closest('[data-modal-open="edit-domain-modal"]');
@@ -26,7 +27,7 @@ function renderDnsPanel(panel, data) {
         ? '<svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" class="domains-dns-status-icon domains-dns-status-ok"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
         : '<svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" class="domains-dns-status-icon domains-dns-status-warn"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
 
-    const statusText = data.connected ? 'Domain is fully connected' : 'DNS not fully configured yet';
+    const statusText = data.connected ? t('Domain is fully connected') : t('DNS not fully configured yet');
     const statusClass = data.connected ? 'domains-dns-status-ok' : 'domains-dns-status-warn';
 
     const checksHtml = data.checks.length
@@ -44,11 +45,11 @@ function renderDnsPanel(panel, data) {
                 + `<span class="domains-dns-check-result">${check.ok ? 'OK' : 'MISSING'}</span>`
                 + '</div>';
         }).join('')
-        : '<p class="domains-dns-empty">No DNS records defined to check against.</p>';
+        : `<p class="domains-dns-empty">${t('No DNS records defined to check against.')}</p>`;
 
     const propagationNote = data.connected
         ? ''
-        : '<p class="domains-dns-note">DNS propagation can take up to 48 hours. Check again after updating your records.</p>';
+        : `<p class="domains-dns-note">${t('DNS propagation can take up to 48 hours. Check again after updating your records.')}</p>`;
 
     panel.innerHTML = `<div class="domains-dns-box ${statusClass}">`
         + `<div class="domains-dns-head">${statusIcon}<span class="text-strong ${statusClass}">${statusText}</span></div>`

@@ -32,16 +32,16 @@ trait LogoRules
     protected function logoAttributes(): array
     {
         return [
-            'logo_mode' => 'logo mode',
-            'logo_text_ar' => 'Arabic logo text',
-            'logo_text_en' => 'English logo text',
-            'logo_color' => 'text color',
-            'logo_bg_color' => 'background color',
+            'logo_mode' => __('logo mode'),
+            'logo_text_ar' => __('Arabic logo text'),
+            'logo_text_en' => __('English logo text'),
+            'logo_color' => __('text color'),
+            'logo_bg_color' => __('background color'),
             'logo_shape' => 'shape',
-            'logo_font_ar' => 'Arabic font',
-            'logo_font_en' => 'English font',
-            'logo_upload_ar' => 'Arabic logo image',
-            'logo_upload_en' => 'English logo image',
+            'logo_font_ar' => __('Arabic font'),
+            'logo_font_en' => __('English font'),
+            'logo_upload_ar' => __('Arabic logo image'),
+            'logo_upload_en' => __('English logo image'),
         ];
     }
 }

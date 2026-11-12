@@ -1,6 +1,7 @@
 import '../../../../css/tenant/pages/themes.css';
 import { get, put } from '../../core/http.js';
 import { openModal, closeModal } from '../../core/modals.js';
+import { t } from '../../core/i18n.js';
 
 function escapeHtml(value) {
     return String(value ?? '').replace(/[&<>"']/g, (ch) => ({
@@ -14,7 +15,7 @@ function escapeHtml(value) {
 
 function renderCountryRows(countries) {
     if (!countries.length) {
-        return '<p class="theme-country-empty">No countries are configured for this theme.</p>';
+        return `<p class="theme-country-empty">${t('No countries are configured for this theme.')}</p>`;
     }
 
     return countries.map((country) => `
@@ -100,7 +101,7 @@ let _cvActionUrl = '';
 
 function renderCvRows(countries, variants, storeVariant) {
     if (!countries.length) {
-        return '<p class="theme-country-empty">No countries are enabled for this theme. Enable some from the Countries button first.</p>';
+        return `<p class="theme-country-empty">${t('No countries are enabled for this theme. Enable some from the Countries button first.')}</p>`;
     }
 
     // The empty option means "follow the store's variant". When that variant is
@@ -108,8 +109,8 @@ function renderCvRows(countries, variants, storeVariant) {
     // variant stays selectable and the empty option names what it follows.
     const followsDefault = !storeVariant || storeVariant.is_default;
     const defaultOption = followsDefault
-        ? '<option value="">Default</option>'
-        : `<option value="">Same as store (${escapeHtml(storeVariant.name)})</option>`;
+        ? `<option value="">${t('Default')}</option>`
+        : `<option value="">${t('Same as store (:name)', { name: escapeHtml(storeVariant.name) })}</option>`;
     const variantOptions = variants
         .filter((v) => !(followsDefault && v.is_default))
         .map((v) => `<option value="${v.id}">${escapeHtml(v.name)}</option>`)

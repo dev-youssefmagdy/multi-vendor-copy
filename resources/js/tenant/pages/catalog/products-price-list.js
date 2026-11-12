@@ -9,6 +9,7 @@
 // The server remains the source of truth on Save (PUT price-list), and a
 // POST .../price-list/preview endpoint exists as an escape hatch if this
 // ever needs to diverge from the PHP implementation.
+import { t } from '../../core/i18n.js';
 export function computeFinalPrice(basePrice, profitType, profitValue, shipping) {
     const base = Number(basePrice) || 0;
     const value = Math.max(0, Number(profitValue) || 0);
@@ -35,7 +36,7 @@ function money(value) {
 }
 
 function countryLabel(labels, key) {
-    return labels[key] || `Country #${key}`;
+    return labels[key] || t('Country #:id', { id: key });
 }
 
 /**
@@ -53,7 +54,7 @@ export function renderPriceTable(tbody, { basePrice, profits, shippingByCountry,
         const yourPrice = computeFinalPrice(basePrice, row.type, row.value, shipping);
 
         tr.innerHTML = `
-            <td>${countryLabel(countryLabels, key)}${key === 'default' ? ' <span class="badge badge-amber price-list-fallback-badge">Fallback</span>' : ''}</td>
+            <td>${countryLabel(countryLabels, key)}${key === 'default' ? ` <span class="badge badge-amber price-list-fallback-badge">${t('Fallback')}</span>` : ''}</td>
             <td>${money(basePrice)}</td>
             <td>
                 <div class="price-list-profit-cell">

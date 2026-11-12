@@ -16,15 +16,15 @@ final class UiKitController extends PanelController
     public function __invoke(): \Illuminate\View\View
     {
         $stats = Metric::cards([
-            ['label' => 'Collected Sales', 'value' => 3000, 'format' => 'currency', 'caption' => 'Paid order value captured in this tenant', 'dot' => 'dot-cyan', 'trend' => 12],
-            ['label' => 'Orders', 'value' => 342, 'format' => 'number', 'caption' => 'Last 30 days', 'dot' => 'dot-violet', 'trend' => -12],
-            ['label' => 'Conversion', 'value' => 3.42, 'format' => 'percent', 'caption' => 'Visitors to orders', 'dot' => 'dot-green'],
+            ['label' => __('Collected Sales'), 'value' => 3000, 'format' => 'currency', 'caption' => __('Paid order value captured in this tenant'), 'dot' => 'dot-cyan', 'trend' => 12],
+            ['label' => __('Orders'), 'value' => 342, 'format' => 'number', 'caption' => __('Last 30 days'), 'dot' => 'dot-violet', 'trend' => -12],
+            ['label' => __('Conversion'), 'value' => 3.42, 'format' => 'percent', 'caption' => __('Visitors to orders'), 'dot' => 'dot-green'],
         ]);
 
         $columns = [
             TableColumn::index(),
-            TableColumn::make('name', 'Name'),
-            TableColumn::make('status', 'Status'),
+            TableColumn::make('name', __('Name')),
+            TableColumn::make('status', __('Status')),
             TableColumn::actions(),
         ];
 
@@ -32,8 +32,8 @@ final class UiKitController extends PanelController
             'stats' => $stats,
             'columns' => $columns,
             'languages' => [
-                ['code' => 'en', 'name' => 'English', 'is_default' => true, 'direction' => 'ltr'],
-                ['code' => 'ar', 'name' => 'Arabic', 'is_default' => false, 'direction' => 'rtl'],
+                ['code' => 'en', 'name' => __('English'), 'is_default' => true, 'direction' => 'ltr'],
+                ['code' => 'ar', 'name' => __('Arabic'), 'is_default' => false, 'direction' => 'rtl'],
             ],
         ]);
     }
@@ -48,7 +48,7 @@ final class UiKitController extends PanelController
 
         return DataTables::collection($rows)
             ->addIndexColumn()
-            ->addColumn('actions', fn () => '<button type="button" class="btn btn-secondary btn-sm">View</button>')
+            ->addColumn('actions', fn () => '<button type="button" class="btn btn-secondary btn-sm">' . e(__('View')) . '</button>')
             ->rawColumns(['actions'])
             ->toJson();
     }
@@ -60,6 +60,6 @@ final class UiKitController extends PanelController
 
     public function store(UiKitRequest $request): JsonResponse
     {
-        return $this->success('Demo form submitted successfully.');
+        return $this->success(__('Demo form submitted successfully.'));
     }
 }

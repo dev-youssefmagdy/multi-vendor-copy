@@ -91,7 +91,7 @@ class RequestDetail extends TenantPage
             abort(404);
         }
         if ($req === 'closed') {
-            $this->toast('This request is closed.', 'error');
+            $this->toast(__('This request is closed.'), 'error');
             return;
         }
 
@@ -110,7 +110,7 @@ class RequestDetail extends TenantPage
         $this->request    = $this->presentRequest($req);
         $this->reply      = '';
         $this->replyFiles = [];
-        $this->toast('Reply sent.');
+        $this->toast(__('Reply sent.'));
     }
 
     private function presentRequest(ProductRequest $r): array
@@ -125,7 +125,7 @@ class RequestDetail extends TenantPage
             // so they never resolved through asset('storage/...').
             'attachments'       => ProductRequestFiles::forTenant($r->attachments ?? [], true),
             'status'            => $r->status->value,
-            'status_label'      => $r->status->label(),
+            'status_label'      => __($r->status->label()),
             'status_badge'      => $r->status->badgeClass(),
             'status_step'       => $r->status->stepNumber(),
             'priority'          => $r->priority,
@@ -147,8 +147,8 @@ class RequestDetail extends TenantPage
     protected function pageMeta(): array
     {
         return [
-            'title'       => $this->request['title'] ?? 'Product Request',
-            'badge'       => 'Catalog',
+            'title'       => $this->request['title'] ?? __('Product Request'),
+            'badge'       => __('Catalog'),
             'description' => '',
         ];
     }

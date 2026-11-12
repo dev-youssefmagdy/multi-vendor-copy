@@ -78,8 +78,8 @@ final class ProductController extends PanelController
         }
         return view('tenant.pages.catalog.products.form', [
             'product' => $product,
-            'pageTitle' => $product ? 'Edit Product' : 'Add Product',
-            'pageDescription' => $product ? 'Update vendor sale pricing, visibility, synced variants, and translated storefront content.' : 'Create a tenant product mapped to central catalog resources and pricing.',
+            'pageTitle' => $product ? __('Edit Product') : __('Add Product'),
+            'pageDescription' => $product ? __('Update vendor sale pricing, visibility, synced variants, and translated storefront content.') : __('Create a tenant product mapped to central catalog resources and pricing.'),
             'languages' => $languages,
             'activeLocale' => $activeLocale,
             'translations' => $translations,
@@ -112,7 +112,7 @@ final class ProductController extends PanelController
         $snapshot = $this->repo->centralProductSnapshot($centralProduct);
 
         if (!$snapshot) {
-            return $this->failure('The selected central product could not be found.', 404);
+            return $this->failure(__('The selected central product could not be found.'), 404);
         }
 
         $product = $request->integer('product_id')
@@ -162,7 +162,7 @@ final class ProductController extends PanelController
             $snapshot = $this->repo->centralProductSnapshot((int) $validated['central_product_id']);
 
             if (!$snapshot) {
-                return $this->failure('The selected central product could not be found.', 422, ['central_product_id' => ['The selected central product could not be found.']]);
+                return $this->failure(__('The selected central product could not be found.'), 422, ['central_product_id' => [__('The selected central product could not be found.')]]);
             }
         }
 
@@ -208,8 +208,8 @@ final class ProductController extends PanelController
         CacheVersion::bumpMany(['ProductBadge', 'Product']);
 
         $message = $editRequestSubmitted
-            ? 'Product updated. Your changes to the product name/description have been submitted for admin review and will be applied once approved.'
-            : ($product ? 'Product updated successfully.' : 'Product created successfully.');
+            ? __('Product updated. Your changes to the product name/description have been submitted for admin review and will be applied once approved.')
+            : ($product ? __('Product updated successfully.') : __('Product created successfully.'));
 
         return $this->success($message, redirect: route('tenant.products.edit', $saved));
     }

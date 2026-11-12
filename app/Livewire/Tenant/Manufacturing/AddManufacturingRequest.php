@@ -27,9 +27,9 @@ class AddManufacturingRequest extends TenantPage
     protected function pageMeta(): array
     {
         return [
-            'pageTitle' => 'New Manufacturing Request',
-            'badge' => 'Manufacturing',
-            'pageDescription' => 'Submit a new manufacturing request. Our team will review it and update the status.',
+            'pageTitle' => __('New Manufacturing Request'),
+            'badge' => __('Manufacturing'),
+            'pageDescription' => __('Submit a new manufacturing request. Our team will review it and update the status.'),
         ];
     }
 
@@ -58,7 +58,7 @@ class AddManufacturingRequest extends TenantPage
     public function selectProduct(int $id): void
     {
         $this->linkedProductId = $id;
-        $this->linkedProductName = $this->productSearchResults[$id] ?? 'Product #' . $id;
+        $this->linkedProductName = $this->productSearchResults[$id] ?? __('Product #:id', ['id' => $id]);
         $this->productSearch = '';
         $this->productSearchPage = 1;
         $this->productSearchResults = [];
@@ -109,7 +109,7 @@ class AddManufacturingRequest extends TenantPage
             'status' => ManufacturingRequestStatus::Pending->value,
         ]);
 
-        session()->flash('status', 'Manufacturing request submitted successfully. We will update you when the status changes.');
+        session()->flash('status', __('Manufacturing request submitted successfully. We will update you when the status changes.'));
         $this->redirect(route('tenant.manufacturing.index'));
     }
 }

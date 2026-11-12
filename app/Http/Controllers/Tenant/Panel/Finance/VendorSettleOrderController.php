@@ -37,9 +37,9 @@ final class VendorSettleOrderController extends PanelController
         $presented = $this->presenter->present(collect($gateways));
 
         return view('tenant.pages.finance.vendor-settle.show', [
-            'title' => 'Pay Central',
-            'badge' => 'Finance',
-            'description' => 'Select a payment gateway and complete the settlement for this order.',
+            'title' => __('Pay Central'),
+            'badge' => __('Finance'),
+            'description' => __('Select a payment gateway and complete the settlement for this order.'),
             'order' => $order,
             'breakdown' => $breakdown,
             'presented' => $presented,
@@ -78,7 +78,7 @@ final class VendorSettleOrderController extends PanelController
 
         $this->stashInlineTokens($request, $validated['gateway']);
 
-        return $this->success('Redirecting to payment…', redirect: route('tenant.vendor-settlement.charge', [
+        return $this->success(__('Redirecting to payment…'), redirect: route('tenant.vendor-settlement.charge', [
             'gateway' => $validated['gateway'],
             'orderId' => $orderId,
         ]));

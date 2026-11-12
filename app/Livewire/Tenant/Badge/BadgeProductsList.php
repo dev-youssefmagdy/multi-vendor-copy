@@ -26,9 +26,9 @@ class BadgeProductsList extends Component
         $this->badgeId    = $badge->id;
         $this->badgeText  = $badge->text;
         $this->badgeTitle = match ($badge->text) {
-            'new-in'       => 'New In Products',
-            'best-selling' => 'Best Selling Products',
-            default        => ucwords(str_replace('-', ' ', $badge->text)) . ' Products',
+            'new-in'       => __('New In Products'),
+            'best-selling' => __('Best Selling Products'),
+            default        => __(':badge Products', ['badge' => __(ucwords(str_replace('-', ' ', $badge->text)))]),
         };
 
         // Pre-load currently assigned product IDs into the multiselect
@@ -38,7 +38,7 @@ class BadgeProductsList extends Component
     public function assignAllInCategory(): void
     {
         if (! $this->filterCategoryId) {
-            session()->flash('status', 'Please choose a category first.');
+            session()->flash('status', __('Please choose a category first.'));
             return;
         }
 
@@ -49,7 +49,7 @@ class BadgeProductsList extends Component
             ->all();
 
         if (! $productIds) {
-            session()->flash('status', 'No products found in that category.');
+            session()->flash('status', __('No products found in that category.'));
             return;
         }
 
@@ -65,7 +65,7 @@ class BadgeProductsList extends Component
             ->sync($this->selectedProducts);
         CacheVersion::bumpMany(['ProductBadge', 'Product']);
 
-        session()->flash('status', 'Badge assignment saved — ' . count($this->selectedProducts) . ' products assigned.');
+        session()->flash('status', __('Badge assignment saved — :count products assigned.', ['count' => count($this->selectedProducts)]));
     }
 
     #[Layout('layouts.tenant')]

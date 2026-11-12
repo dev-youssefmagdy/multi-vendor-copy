@@ -2,7 +2,7 @@
 
     {{-- ── Async product picker ───────────────────────────────────────────── --}}
     <div class="span-2">
-        <label class="field-label">Products *</label>
+        <label class="field-label">{{ __('Products *') }}</label>
 
         {{-- Selected chips --}}
         @if (!empty($productIds))
@@ -16,10 +16,10 @@
                                 style="width:22px;height:22px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid rgba(0,229,255,.3);"
                                 alt="">
                         @endif
-                        {{ $selectedProductLabels[$intId] ?? 'Product #' . $intId }}
+                        {{ $selectedProductLabels[$intId] ?? __('Product #:id', ['id' => $intId]) }}
                         <button type="button" wire:click="removeProduct({{ $intId }})"
                             style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:rgba(0,229,255,.18);color:var(--cyan);font-size:12px;line-height:1;border:none;cursor:pointer;flex-shrink:0;"
-                            aria-label="Remove">×</button>
+                            aria-label="{{ __('Remove') }}">{{ __('×') }}</button>
                     </span>
                 @endforeach
             </div>
@@ -27,7 +27,7 @@
 
         {{-- Search input --}}
         <input type="text" class="field-control" wire:model.live.debounce.300ms="productSearch"
-            placeholder="Search products by name or slug…" autocomplete="off">
+            placeholder="{{ __('Search products by name or slug…') }}" autocomplete="off">
 
         {{-- Results list --}}
         <div style="border:1px solid var(--border);border-radius:8px;margin-top:4px;max-height:220px;overflow-y:auto;position:relative;"
@@ -47,7 +47,7 @@
                 </button>
             @empty
                 <div style="padding:14px;text-align:center;font-size:12.5px;color:var(--t3);">
-                    No products found
+                    {{ __('No products found') }}
                 </div>
             @endforelse
 
@@ -55,8 +55,8 @@
                 <div style="padding:6px;">
                     <button type="button" class="btn btn-secondary btn-sm" style="width:100%;" wire:click="loadMoreProducts"
                         wire:loading.attr="disabled" wire:target="loadMoreProducts">
-                        <span wire:loading.remove wire:target="loadMoreProducts">Load more</span>
-                        <span wire:loading wire:target="loadMoreProducts">Loading…</span>
+                        <span wire:loading.remove wire:target="loadMoreProducts">{{ __('Load more') }}</span>
+                        <span wire:loading wire:target="loadMoreProducts">{{ __('Loading…') }}</span>
                     </button>
                 </div>
             @endif
@@ -69,42 +69,42 @@
 
     {{-- Discount --}}
     <div>
-        <label class="field-label">Discount Percentage</label>
+        <label class="field-label">{{ __('Discount Percentage') }}</label>
         <x-input type="number" wire:model.defer="discountPercentage" :error="$errors->has('discountPercentage')" />
         @error('discountPercentage')<div class="field-error">{{ $message }}</div>@enderror
     </div>
 
     {{-- Banner --}}
     <div>
-        <label class="field-label">Banner Image <span style="font-weight:400;color:var(--t3);">(optional)</span></label>
+        <label class="field-label">{{ __('Banner Image') }} <span style="font-weight:400;color:var(--t3);">{{ __('(optional)') }}</span></label>
         <x-input type="file" wire:model="bannerImage" :error="$errors->has('bannerImage')" />
         @error('bannerImage')<div class="field-error">{{ $message }}</div>@enderror
         @php $previewUrl = $bannerImage ? $bannerImage->temporaryUrl() : ($bannerImagePath ?? null); @endphp
         @if ($previewUrl)
             <img src="{{ $previewUrl }}"
                 style="margin-top:8px;width:100%;max-height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--border);"
-                alt="Banner preview">
+                alt="{{ __('Banner preview') }}">
         @endif
     </div>
 
     {{-- Start Date --}}
     <div>
-        <label class="field-label">Start Date *</label>
+        <label class="field-label">{{ __('Start Date *') }}</label>
         <x-input type="datetime-local" required wire:model.defer="startDate" :error="$errors->has('startDate')" />
         @error('startDate')<div class="field-error">{{ $message }}</div>@enderror
     </div>
 
     {{-- End Date --}}
     <div>
-        <label class="field-label">End Date *</label>
+        <label class="field-label">{{ __('End Date *') }}</label>
         <x-input type="datetime-local" required wire:model.defer="endDate" :error="$errors->has('endDate')" />
         @error('endDate')<div class="field-error">{{ $message }}</div>@enderror
     </div>
 
     {{-- Status --}}
     <div>
-        <label class="field-label">Status</label>
-        <x-checkbox wire:model.defer="active" label="Flash sale is active" />
+        <label class="field-label">{{ __('Status') }}</label>
+        <x-checkbox wire:model.defer="active" :label="__('Flash sale is active')" />
     </div>
 
 </div>

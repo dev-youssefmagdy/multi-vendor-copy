@@ -1,23 +1,23 @@
 @extends('tenant.layouts.app')
 
-@section('title', 'Appearance')
+@section('title', __('Appearance'))
 
 @section('content')
-    <x-tenant::page-header title="Appearance" badge="Storefront" description="Manage your storefront logo, banners, social links, and footer.">
+    <x-tenant::page-header :title="__('Appearance')" :badge="__('Storefront')" :description="__('Manage your storefront logo, banners, social links, and footer.')">
         <x-slot:actions>
             @if($previewUrl)
-                <a href="{{ $previewUrl }}" target="_blank" rel="noopener" class="btn btn-secondary">Preview</a>
+                <a href="{{ $previewUrl }}" target="_blank" rel="noopener" class="btn btn-secondary">{{ __('Preview') }}</a>
             @endif
         </x-slot:actions>
     </x-tenant::page-header>
 
     <x-tenant::tabs mode="hash" :active="$activeTab" :tabs="[
-        'general' => 'General',
-        'colors' => 'Colors & Fonts',
-        'social_links' => 'Social Links',
-        'top_header_links' => 'Top Header Links',
-        'promo_banner' => 'Promo Banner',
-        'footer' => 'Footer',
+        'general' => __('General'),
+        'colors' => __('Colors & Fonts'),
+        'social_links' => __('Social Links'),
+        'top_header_links' => __('Top Header Links'),
+        'promo_banner' => __('Promo Banner'),
+        'footer' => __('Footer'),
     ]">
         {{-- ─────────────────────────────── GENERAL ─────────────────────────────── --}}
         <x-tenant::tab-panel key="general" :active="$activeTab === 'general'">
@@ -30,10 +30,10 @@
                 <section class="card form-card">
                     <div class="panel-head mb-5">
                         <div>
-                            <h3 class="panel-title">Store Identity</h3>
-                            <p class="panel-copy">Set the display name and logo for the storefront.</p>
+                            <h3 class="panel-title">{{ __('Store Identity') }}</h3>
+                            <p class="panel-copy">{{ __('Set the display name and logo for the storefront.') }}</p>
                         </div>
-                        <button type="submit" class="btn btn-primary">Save General</button>
+                        <button type="submit" class="btn btn-primary">{{ __('Save General') }}</button>
                     </div>
 
                     <div class="form-grid form-grid-2">
@@ -71,16 +71,13 @@
 
             <div class="page-stack">
                 <div class="card form-card t-design-intro">
-                    <h3 class="panel-title">Colors &amp; fonts per theme edition</h3>
+                    <h3 class="panel-title">{{ __('Colors & fonts per theme edition') }}</h3>
                     <p class="panel-copy">
-                        Each storefront theme comes in several editions. Every edition has its own set of colors and its own fonts,
-                        so a change only affects the edition you edit. Under each color you can read what it changes in the store.
-                        The active edition shows your changes right after you save; other editions keep their settings for when you switch.
-                        Use <strong>Reset to Default</strong> to return an edition to the design it shipped with.
+                        {{ __('Each storefront theme comes in several editions. Every edition has its own set of colors and its own fonts, so a change only affects the edition you edit. Under each color you can read what it changes in the store. The active edition shows your changes right after you save; other editions keep their settings for when you switch. Use') }} <strong>{{ __('Reset to Default') }}</strong> {{ __('to return an edition to the design it shipped with.') }}
                     </p>
                     <div class="t-design-legend">
-                        <span><strong>Fonts</strong> — one for left-to-right languages (English&hellip;) and one for right-to-left languages (Arabic&hellip;); only the font of the language being viewed is loaded.</span>
-                        <span><strong>Colors</strong> — grouped by where they appear (brand, header, text, backgrounds, status, flash sale, footer&hellip;).</span>
+                        <span><strong>{{ __('Fonts') }}</strong> {{ __('— one for left-to-right languages (English…) and one for right-to-left languages (Arabic…); only the font of the language being viewed is loaded.') }}</span>
+                        <span><strong>{{ __('Colors') }}</strong> {{ __('— grouped by where they appear (brand, header, text, backgrounds, status, flash sale, footer…).') }}</span>
                     </div>
                 </div>
 
@@ -91,10 +88,10 @@
                                 <h3 class="panel-title">
                                     {{ $themeSection['name'] }}
                                     @if($themeSection['is_active'])
-                                        <span class="badge badge-cyan t-color-theme-badge">Active Theme</span>
+                                        <span class="badge badge-cyan t-color-theme-badge">{{ __('Active Theme') }}</span>
                                     @endif
                                 </h3>
-                                <p class="panel-copy">{{ count($themeSection['variants']) }} edition(s) &middot; each with its own colors and fonts.</p>
+                                <p class="panel-copy">{{ __(':variantsCount edition(s) · each with its own colors and fonts.', ['variantsCount' => count($themeSection['variants'])]) }}</p>
                             </div>
                         </summary>
 
@@ -112,16 +109,16 @@
                                                 <h4 class="panel-title t-color-variant-title">
                                                     {{ $section['name'] }}
                                                     @if($section['is_active'])
-                                                        <span class="badge badge-green t-color-theme-badge">Active Edition</span>
+                                                        <span class="badge badge-green t-color-theme-badge">{{ __('Active Edition') }}</span>
                                                     @endif
                                                 </h4>
-                                                <p class="panel-copy">{{ $section['description'] }}</p>
+                                                <p class="panel-copy">{{ __($section['description']) }}</p>
                                             </div>
                                             <div class="panel-actions">
                                                 <button type="button" class="btn btn-secondary t-reset-colors-btn"
                                                     data-reset-colors-url="{{ route('tenant.store.appearance.colors.reset', [$themeId, $variantId]) }}"
-                                                    data-reset-colors-form="{{ $formId }}">Reset to Default</button>
-                                                <button type="submit" class="btn btn-primary">Save Colors &amp; Fonts</button>
+                                                    data-reset-colors-form="{{ $formId }}">{{ __('Reset to Default') }}</button>
+                                                <button type="submit" class="btn btn-primary">{{ __('Save Colors & Fonts') }}</button>
                                             </div>
                                         </div>
 
@@ -129,11 +126,11 @@
                                         <div class="t-design-main">
                                         {{-- Fonts --}}
                                         <div class="t-design-block">
-                                            <h5 class="t-design-block-title">Fonts</h5>
-                                            <p class="t-design-block-copy">Applied to every text of the storefront for this edition (menus, product cards, buttons, headings). The store-name text logo keeps the font chosen under General.</p>
+                                            <h5 class="t-design-block-title">{{ __('Fonts') }}</h5>
+                                            <p class="t-design-block-copy">{{ __('Applied to every text of the storefront for this edition (menus, product cards, buttons, headings). The store-name text logo keeps the font chosen under General.') }}</p>
                                             <div class="form-grid form-grid-2">
-                                                @foreach(['ltr' => ['Left-to-right font', 'English, French and other Latin languages', $ltrFonts, 'The quick brown fox jumps over the lazy dog 0123456789'],
-                                                          'rtl' => ['Right-to-left font', 'Arabic and other right-to-left languages', $rtlFonts, 'نص تجريبي لمعاينة الخط المختار في المتجر ٠١٢٣٤٥٦٧٨٩']] as $dir => [$fontLabel, $fontHelp, $fontOptions, $sample])
+                                                @foreach(['ltr' => [__('Left-to-right font'), __('English, French and other Latin languages'), $ltrFonts, __('The quick brown fox jumps over the lazy dog 0123456789')],
+                                                          'rtl' => [__('Right-to-left font'), __('Arabic and other right-to-left languages'), $rtlFonts, 'نص تجريبي لمعاينة الخط المختار في المتجر ٠١٢٣٤٥٦٧٨٩']] as $dir => [$fontLabel, $fontHelp, $fontOptions, $sample])
                                                     @php
                                                         $current = $section['fonts']['values'][$dir];
                                                         $default = $section['fonts']['defaults'][$dir];
@@ -148,7 +145,7 @@
                                                                 </option>
                                                             @endforeach
                                                         </select>
-                                                        <p class="t-help">{{ $fontHelp }}. Default: {{ $fontOptions[$default][0] ?? $default }}.</p>
+                                                        <p class="t-help">{{ __(':fontHelp. Default: :default.', ['fontHelp' => $fontHelp, 'default' => $fontOptions[$default][0] ?? $default]) }}</p>
                                                         <div class="t-font-preview" data-font-preview dir="{{ $dir }}" style="font-family: {{ $fontOptions[$current][1] ?? 'inherit' }}">{{ $sample }}</div>
                                                     </div>
                                                 @endforeach
@@ -159,10 +156,10 @@
                                         <div class="t-design-block">
                                             <div class="t-design-block-head">
                                                 <div>
-                                                    <h5 class="t-design-block-title">Colors <span class="t-design-count">{{ count($section['defaults']) }}</span></h5>
-                                                    <p class="t-design-block-copy">Every color this edition uses. Pick a color or type a hex code; use the small reset link to restore a single color.</p>
+                                                    <h5 class="t-design-block-title">{{ __('Colors') }} <span class="t-design-count">{{ count($section['defaults']) }}</span></h5>
+                                                    <p class="t-design-block-copy">{{ __('Every color this edition uses. Pick a color or type a hex code; use the small reset link to restore a single color.') }}</p>
                                                 </div>
-                                                <input type="search" class="field-control t-design-search" placeholder="Search colors (e.g. header, footer, price)…" data-design-search autocomplete="off">
+                                                <input type="search" class="field-control t-design-search" placeholder="{{ __('Search colors (e.g. header, footer, price)…') }}" data-design-search autocomplete="off">
                                             </div>
 
                                             @foreach($section['groups'] as $groupName => $tokens)
@@ -172,7 +169,7 @@
                                                     <div class="form-grid form-grid-2">
                                                         @foreach($tokens as $property => $token)
                                                             @php
-                                                                $help = $token['description'] . ($token['areas'] ? ' Affects: ' . implode(', ', $token['areas']) . '.' : '');
+                                                                $help = $token['description'] . ($token['areas'] ? ' ' . __('Affects: :areas.', ['areas' => implode(', ', $token['areas'])]) : '');
                                                             @endphp
                                                             <div class="t-design-token" data-design-token data-token="{{ $property }}" data-search="{{ strtolower($token['label'].' '.$token['description'].' '.implode(' ', $token['areas']).' '.$property.' '.$groupName) }}">
                                                                 <x-tenant::color
@@ -183,14 +180,14 @@
                                                                 />
                                                                 <div class="t-design-token-meta">
                                                                     <code>{{ $property }}</code>
-                                                                    <button type="button" class="t-link-btn" data-default-color="{{ $token['default'] }}">Default {{ $token['default'] }}</button>
+                                                                    <button type="button" class="t-link-btn" data-default-color="{{ $token['default'] }}">{{ __('Default :default', ['default' => $token['default']]) }}</button>
                                                                 </div>
                                                             </div>
                                                         @endforeach
                                                     </div>
                                                 </details>
                                             @endforeach
-                                            <p class="t-design-empty" data-design-empty hidden>No colors match your search.</p>
+                                            <p class="t-design-empty" data-design-empty hidden>{{ __('No colors match your search.') }}</p>
                                         </div>
                                         </div>
                                         @include('tenant.pages.store.appearance._design-scene')
@@ -203,8 +200,8 @@
                 @empty
                     <div class="card form-card">
                         <div class="empty-state">
-                            <div class="empty-state-title">No customizable design yet</div>
-                            <p class="empty-state-copy">None of your storefront themes expose editions with color and font customization.</p>
+                            <div class="empty-state-title">{{ __('No customizable design yet') }}</div>
+                            <p class="empty-state-copy">{{ __('None of your storefront themes expose editions with color and font customization.') }}</p>
                         </div>
                     </div>
                 @endforelse
@@ -216,11 +213,11 @@
             <div class="card table-card-shell ds-table">
                 <div class="table-header-shell">
                     <div>
-                        <h3 class="panel-title">Social Links</h3>
-                        <p class="panel-copy">Social media profile links displayed in the storefront.</p>
+                        <h3 class="panel-title">{{ __('Social Links') }}</h3>
+                        <p class="panel-copy">{{ __('Social media profile links displayed in the storefront.') }}</p>
                     </div>
                     <div class="table-header-actions">
-                        <button type="button" class="btn btn-primary" data-modal-open="social-link-modal">Add Social Link</button>
+                        <button type="button" class="btn btn-primary" data-modal-open="social-link-modal">{{ __('Add Social Link') }}</button>
                     </div>
                 </div>
 
@@ -233,39 +230,39 @@
                         view('tenant.pages.store.appearance._cols.social-actions', ['link' => $link])->render(),
                     ])->values()->all()"
                     :columns="[
-                        ['title' => 'Icon'],
+                        ['title' => __('Icon')],
                         ['title' => 'URL'],
-                        ['title' => 'Order'],
-                        ['title' => 'Actions'],
+                        ['title' => __('Order')],
+                        ['title' => __('Actions')],
                     ]"
-                    empty-title="No social links yet"
-                    empty-copy="Add social media links to display in your storefront." />
+                    :empty-title="__('No social links yet')"
+                    :empty-copy="__('Add social media links to display in your storefront.')" />
             </div>
 
-            <x-tenant::modal id="social-link-modal" title="Add / Edit Social Link">
+            <x-tenant::modal id="social-link-modal" :title="__('Add / Edit Social Link')">
                 <x-tenant::form id="social-link-form"
                     :action="route('tenant.store.appearance.social.store')"
                     method="POST"
                     :validate="route('tenant.store.appearance.social.validate')"
                     success="close-modal reload-page">
                     <div class="form-grid form-grid-2">
-                        <x-tenant::select name="icon" label="Icon / Platform" required :options="[
-                            'facebook' => 'Facebook',
-                            'twitter' => 'Twitter / X',
-                            'instagram' => 'Instagram',
-                            'linkedin' => 'LinkedIn',
-                            'youtube' => 'YouTube',
-                            'whatsapp' => 'WhatsApp',
+                        <x-tenant::select name="icon" :label="__('Icon / Platform')" required :options="[
+                            'facebook' => __('Facebook'),
+                            'twitter' => __('Twitter / X'),
+                            'instagram' => __('Instagram'),
+                            'linkedin' => __('LinkedIn'),
+                            'youtube' => __('YouTube'),
+                            'whatsapp' => __('WhatsApp'),
                         ]" />
-                        <x-tenant::input type="number" min="0" name="serial_number" label="Order" required value="0" />
+                        <x-tenant::input type="number" min="0" name="serial_number" :label="__('Order')" required value="0" />
                         <div class="span-2">
-                            <x-tenant::input type="url" name="url" label="Profile URL" placeholder="https://..." required maxlength="500" />
+                            <x-tenant::input type="url" name="url" :label="__('Profile URL')" placeholder="https://..." required maxlength="500" />
                         </div>
                     </div>
 
                     <div class="page-actions compact-actions justify-end t-modal-actions">
-                        <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
-                        <button type="submit" class="btn btn-primary">Save Link</button>
+                        <button type="button" class="btn btn-secondary" data-modal-close>{{ __('Cancel') }}</button>
+                        <button type="submit" class="btn btn-primary">{{ __('Save Link') }}</button>
                     </div>
                 </x-tenant::form>
             </x-tenant::modal>
@@ -281,17 +278,17 @@
                 <section class="card form-card">
                     <div class="panel-head mb-5">
                         <div>
-                            <h3 class="panel-title">Top Header Links</h3>
-                            <p class="panel-copy">Customize the two links shown in the top utility bar of the storefront. Leave a URL blank to use the default.</p>
+                            <h3 class="panel-title">{{ __('Top Header Links') }}</h3>
+                            <p class="panel-copy">{{ __('Customize the two links shown in the top utility bar of the storefront. Leave a URL blank to use the default.') }}</p>
                         </div>
-                        <button type="submit" class="btn btn-primary">Save Links</button>
+                        <button type="submit" class="btn btn-primary">{{ __('Save Links') }}</button>
                     </div>
 
                     <div class="form-grid form-grid-2">
-                        <x-tenant::input name="top_header_link_1_text" label="Link 1 – Text" placeholder="Find a Store" maxlength="80" :value="$topHeaderLinks['top_header_link_1_text']" />
-                        <x-tenant::input type="url" name="top_header_link_1_url" label="Link 1 – URL" placeholder="https://" maxlength="500" :value="$topHeaderLinks['top_header_link_1_url']" />
-                        <x-tenant::input name="top_header_link_2_text" label="Link 2 – Text" placeholder="Shop" maxlength="80" :value="$topHeaderLinks['top_header_link_2_text']" />
-                        <x-tenant::input type="url" name="top_header_link_2_url" label="Link 2 – URL" placeholder="https://" maxlength="500" :value="$topHeaderLinks['top_header_link_2_url']" />
+                        <x-tenant::input name="top_header_link_1_text" :label="__('Link 1 – Text')" :placeholder="__('Find a Store')" maxlength="80" :value="$topHeaderLinks['top_header_link_1_text']" />
+                        <x-tenant::input type="url" name="top_header_link_1_url" :label="__('Link 1 – URL')" placeholder="https://" maxlength="500" :value="$topHeaderLinks['top_header_link_1_url']" />
+                        <x-tenant::input name="top_header_link_2_text" :label="__('Link 2 – Text')" :placeholder="__('Shop')" maxlength="80" :value="$topHeaderLinks['top_header_link_2_text']" />
+                        <x-tenant::input type="url" name="top_header_link_2_url" :label="__('Link 2 – URL')" placeholder="https://" maxlength="500" :value="$topHeaderLinks['top_header_link_2_url']" />
                     </div>
                 </section>
             </x-tenant::form>
@@ -308,35 +305,35 @@
                 <section class="card form-card">
                     <div class="panel-head mb-5">
                         <div>
-                            <h3 class="panel-title">Promotional Banner</h3>
-                            <p class="panel-copy">Configure the promotional banner shown on your homepage. Leave the image and title empty to hide it.</p>
+                            <h3 class="panel-title">{{ __('Promotional Banner') }}</h3>
+                            <p class="panel-copy">{{ __('Configure the promotional banner shown on your homepage. Leave the image and title empty to hide it.') }}</p>
                         </div>
-                        <button type="submit" class="btn btn-primary">Save Promo Banner</button>
+                        <button type="submit" class="btn btn-primary">{{ __('Save Promo Banner') }}</button>
                     </div>
 
                     <div class="form-grid form-grid-2">
-                        <x-tenant::input name="promo_banner_title" label="Title" placeholder="Summer Sale" maxlength="120" :value="$promoBanner['promo_banner_title']" />
-                        <x-tenant::input name="promo_banner_cta_text" label="Call-to-Action Text" placeholder="Shop Now" maxlength="40" :value="$promoBanner['promo_banner_cta_text']" />
+                        <x-tenant::input name="promo_banner_title" :label="__('Title')" :placeholder="__('Summer Sale')" maxlength="120" :value="$promoBanner['promo_banner_title']" />
+                        <x-tenant::input name="promo_banner_cta_text" :label="__('Call-to-Action Text')" :placeholder="__('Shop Now')" maxlength="40" :value="$promoBanner['promo_banner_cta_text']" />
                         <div class="span-2">
-                            <x-tenant::input name="promo_banner_subtitle" label="Subtitle" placeholder="Up to 50% off selected items" maxlength="255" :value="$promoBanner['promo_banner_subtitle']" />
+                            <x-tenant::input name="promo_banner_subtitle" :label="__('Subtitle')" :placeholder="__('Up to 50% off selected items')" maxlength="255" :value="$promoBanner['promo_banner_subtitle']" />
                         </div>
                         <div class="span-2">
-                            <x-tenant::input type="url" name="promo_banner_link" label="Link URL" placeholder="https://" maxlength="500" :value="$promoBanner['promo_banner_link']" />
+                            <x-tenant::input type="url" name="promo_banner_link" :label="__('Link URL')" placeholder="https://" maxlength="500" :value="$promoBanner['promo_banner_link']" />
                         </div>
                         <x-tenant::image-upload
                             name="promo_banner_image"
-                            label="Banner Image (Desktop)"
+                            :label="__('Banner Image (Desktop)')"
                             :current="$promoBanner['promo_banner_image_url'] ?: null"
                             :removable="true"
                             aspect="16/5"
-                            help="Recommended: 1280 × 400 px. Max 4 MB." />
+                            :help="__('Recommended: 1280 × 400 px. Max 4 MB.')" />
                         <x-tenant::image-upload
                             name="promo_banner_mobile_image"
-                            label="Banner Image (Mobile)"
+                            :label="__('Banner Image (Mobile)')"
                             :current="$promoBanner['promo_banner_mobile_image_url'] ?: null"
                             :removable="true"
                             aspect="4/3"
-                            help="Recommended: 800 × 600 px. Max 4 MB." />
+                            :help="__('Recommended: 800 × 600 px. Max 4 MB.')" />
                     </div>
                 </section>
             </x-tenant::form>
@@ -353,10 +350,10 @@
                 <section class="card form-card">
                     <div class="panel-head mb-5">
                         <div>
-                            <h3 class="panel-title">Store Identity – Footer</h3>
-                            <p class="panel-copy">Set the logo displayed in the storefront footer. Supports text and image modes, just like the header logo.</p>
+                            <h3 class="panel-title">{{ __('Store Identity – Footer') }}</h3>
+                            <p class="panel-copy">{{ __('Set the logo displayed in the storefront footer. Supports text and image modes, just like the header logo.') }}</p>
                         </div>
-                        <button type="submit" class="btn btn-primary">Save Footer</button>
+                        <button type="submit" class="btn btn-primary">{{ __('Save Footer') }}</button>
                     </div>
 
                     <div class="form-grid form-grid-2">
@@ -380,8 +377,8 @@
                 <section class="card form-card">
                     <div class="panel-head mb-5">
                         <div>
-                            <h3 class="panel-title">Footer Settings</h3>
-                            <p class="panel-copy">Manage the text and copyright notice displayed in the storefront footer. Provide a translation for each enabled language.</p>
+                            <h3 class="panel-title">{{ __('Footer Settings') }}</h3>
+                            <p class="panel-copy">{{ __('Manage the text and copyright notice displayed in the storefront footer. Provide a translation for each enabled language.') }}</p>
                         </div>
                     </div>
 
@@ -389,8 +386,8 @@
                         @foreach($languages as $language)
                             <x-tenant::locale-pane :code="$language->code" :active="$language->code === $activeLocale">
                                 <div class="form-grid">
-                                    <x-tenant::textarea :name="'translations.'.$language->code.'.footer_text'" label="Footer Text" rows="4" :value="$footerTranslations[$language->code]['footer_text'] ?? ''" maxlength="1000" />
-                                    <x-tenant::input :name="'translations.'.$language->code.'.footer_copyright'" label="Copyright" placeholder="© {{ date('Y') }} Your Store. All rights reserved." :value="$footerTranslations[$language->code]['footer_copyright'] ?? ''" maxlength="255" />
+                                    <x-tenant::textarea :name="'translations.'.$language->code.'.footer_text'" :label="__('Footer Text')" rows="4" :value="$footerTranslations[$language->code]['footer_text'] ?? ''" maxlength="1000" />
+                                    <x-tenant::input :name="'translations.'.$language->code.'.footer_copyright'" :label="__('Copyright')" placeholder="© {{ date('Y') }} Your Store. All rights reserved." :value="$footerTranslations[$language->code]['footer_copyright'] ?? ''" maxlength="255" />
                                 </div>
                             </x-tenant::locale-pane>
                         @endforeach

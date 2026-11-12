@@ -32,16 +32,16 @@ final class TicketController extends PanelController
 
         return view('tenant.pages.support.tickets.index', [
             'stats' => Metric::cards([
-                ['label' => 'Total Tickets', 'value' => $stats['total'], 'format' => 'number', 'caption' => 'All tickets you have raised', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
-                ['label' => 'Open', 'value' => $stats['open'], 'format' => 'number', 'caption' => 'Awaiting resolution', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
-                ['label' => 'Unread Replies', 'value' => $stats['unread'], 'format' => 'number', 'caption' => 'Tickets with a new admin reply', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Total Tickets'), 'value' => $stats['total'], 'format' => 'number', 'caption' => __('All tickets you have raised'), 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
+                ['label' => __('Open'), 'value' => $stats['open'], 'format' => 'number', 'caption' => __('Awaiting resolution'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Unread Replies'), 'value' => $stats['unread'], 'format' => 'number', 'caption' => __('Tickets with a new admin reply'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
             ]),
             'columns' => [
-                TableColumn::make('subject', 'Subject')->orderable(false),
-                TableColumn::make('category', 'Category')->orderable(false),
-                TableColumn::make('priority', 'Priority')->orderable(false),
-                TableColumn::make('status', 'Status')->orderable(false),
-                TableColumn::make('last_reply_at', 'Last Reply'),
+                TableColumn::make('subject', __('Subject'))->orderable(false),
+                TableColumn::make('category', __('Category'))->orderable(false),
+                TableColumn::make('priority', __('Priority'))->orderable(false),
+                TableColumn::make('status', __('Status'))->orderable(false),
+                TableColumn::make('last_reply_at', __('Last Reply')),
                 TableColumn::actions(),
             ],
         ]);
@@ -57,12 +57,12 @@ final class TicketController extends PanelController
         return tenancy()->central(function () use ($filters, $categoryOptions, $priorityOptions, $statusOptions) {
             return DataTables::eloquent($this->repo->querySupportTickets($filters))
                 ->addIndexColumn()
-                ->editColumn('subject', fn (SupportTicket $t) => '<div class="entity-title">'.e($t->subject).($t->tenant_has_unread ? ' <span class="badge badge-amber">New</span>' : '').'</div>')
-                ->editColumn('category', fn (SupportTicket $t) => '<span class="badge badge-cyan">'.e($categoryOptions[$t->category] ?? ucfirst($t->category)).'</span>')
-                ->editColumn('priority', fn (SupportTicket $t) => '<span class="badge badge-cyan">'.e($priorityOptions[$t->priority] ?? ucfirst($t->priority)).'</span>')
-                ->editColumn('status', fn (SupportTicket $t) => '<span class="badge '.match ($t->status) { 'resolved', 'closed' => 'badge-green', 'in_progress' => 'badge-amber', default => 'badge-cyan' }.'">'.e($statusOptions[$t->status] ?? ucfirst($t->status)).'</span>')
+                ->editColumn('subject', fn (SupportTicket $t) => '<div class="entity-title">'.e($t->subject).($t->tenant_has_unread ? ' <span class="badge badge-amber">' . e(__('New')) . '</span>' : '').'</div>')
+                ->editColumn('category', fn (SupportTicket $t) => '<span class="badge badge-cyan">'.e($categoryOptions[$t->category] ?? __(ucfirst($t->category))).'</span>')
+                ->editColumn('priority', fn (SupportTicket $t) => '<span class="badge badge-cyan">'.e($priorityOptions[$t->priority] ?? __(ucfirst($t->priority))).'</span>')
+                ->editColumn('status', fn (SupportTicket $t) => '<span class="badge '.match ($t->status) { 'resolved', 'closed' => 'badge-green', 'in_progress' => 'badge-amber', default => 'badge-cyan' }.'">'.e($statusOptions[$t->status] ?? __(ucfirst($t->status))).'</span>')
                 ->editColumn('last_reply_at', fn (SupportTicket $t) => $t->last_reply_at ? e($t->last_reply_at->format('M d, Y H:i')) : '—')
-                ->addColumn('actions', fn (SupportTicket $t) => '<a href="'.route('tenant.support.show', $t->id).'" class="btn btn-secondary btn-sm">View</a>')
+                ->addColumn('actions', fn (SupportTicket $t) => '<a href="'.route('tenant.support.show', $t->id).'" class="btn btn-secondary btn-sm">' . e(__('View')) . '</a>')
                 ->setRowClass(fn (SupportTicket $t) => $t->tenant_has_unread ? 'row-unread' : '')
                 ->rawColumns(['subject', 'category', 'priority', 'status', 'actions'])
                 ->toJson();
@@ -95,7 +95,7 @@ final class TicketController extends PanelController
         );
 
         return $this->success(
-            'Support ticket created successfully.',
+            __('Support ticket created successfully.'),
             redirect: route('tenant.support.show', $ticket->id),
         );
     }
@@ -149,12 +149,12 @@ final class TicketController extends PanelController
         abort_if($result === null, 404);
 
         if ($result === 'closed') {
-            return $this->failure('This ticket is closed and can no longer receive replies.');
+            return $this->failure(__('This ticket is closed and can no longer receive replies.'));
         }
 
         $message = $result->messages->last();
 
-        return $this->success('Reply sent.', [
+        return $this->success(__('Reply sent.'), [
             'message' => $this->presentMessage($message),
         ]);
     }

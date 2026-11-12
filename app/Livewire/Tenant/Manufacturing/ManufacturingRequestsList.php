@@ -21,14 +21,14 @@ class ManufacturingRequestsList extends ListPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Manufacturing Requests',
-            'badge' => 'My Requests',
-            'description' => 'Track your manufacturing requests and monitor their status updates from the admin team.',
+            'title' => __('Manufacturing Requests'),
+            'badge' => __('My Requests'),
+            'description' => __('Track your manufacturing requests and monitor their status updates from the admin team.'),
             'actionMethod' => 'redirectToCreate',
-            'actionLabel' => 'New Request',
-            'filtersDescription' => 'Filter your requests by product name or status.',
-            'tableTitle' => 'Your Requests',
-            'headers' => ['Product', 'Qty', 'Status', 'Admin Notes', 'Submitted', 'Actions'],
+            'actionLabel' => __('New Request'),
+            'filtersDescription' => __('Filter your requests by product name or status.'),
+            'tableTitle' => __('Your Requests'),
+            'headers' => [__('Product'), __('Qty'), __('Status'), __('Admin Notes'), __('Submitted'), __('Actions')],
         ];
     }
 
@@ -54,29 +54,29 @@ class ManufacturingRequestsList extends ListPage
             'stats' => $stats,
             'statusOptions' => ManufacturingRequestStatus::cases(),
             'filterFields' => [
-                ['label' => 'Search', 'model' => 'search', 'placeholder' => 'Search by product name...'],
-                ['label' => 'Status', 'model' => 'statusFilter', 'type' => 'select', 'options' => ['' => 'All Statuses'] + collect(ManufacturingRequestStatus::cases())->mapWithKeys(fn($s) => [$s->value => $s->label()])->all()],
+                ['label' => __('Search'), 'model' => 'search', 'placeholder' => __('Search by product name...')],
+                ['label' => __('Status'), 'model' => 'statusFilter', 'type' => 'select', 'options' => ['' => __('All Statuses')] + collect(ManufacturingRequestStatus::cases())->mapWithKeys(fn($s) => [$s->value => __($s->label())])->all()],
             ],
             'statisticsGridClass' => 'g-stats3',
             'statistics' => [
-                ['label' => 'Total Requests', 'value' => $stats['total'], 'caption' => 'All your manufacturing requests.', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
-                ['label' => 'Pending', 'value' => $stats['pending'], 'caption' => 'Awaiting admin review.', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
-                ['label' => 'Completed', 'value' => $stats['completed'], 'caption' => 'Successfully fulfilled.', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Total Requests'), 'value' => $stats['total'], 'caption' => __('All your manufacturing requests.'), 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
+                ['label' => __('Pending'), 'value' => $stats['pending'], 'caption' => __('Awaiting admin review.'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Completed'), 'value' => $stats['completed'], 'caption' => __('Successfully fulfilled.'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
             ],
             'rows' => collect($records->items())->map(fn(ManufacturingRequest $req) => [
                 '<div class="entity-title">' . e($req->product_name) . '</div>'
                 . ($req->description ? '<div class="entity-subtitle" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' . e($req->description) . '</div>' : ''),
                 e($req->quantity),
-                '<span class="badge ' . e($req->status->badgeClass()) . '">' . e($req->status->label()) . '</span>',
+                '<span class="badge ' . e($req->status->badgeClass()) . '">' . e(__($req->status->label())) . '</span>',
                 $req->admin_notes ? '<div class="entity-subtitle" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' . e($req->admin_notes) . '</div>' : '<span class="entity-subtitle">—</span>',
                 e($req->created_at?->format('M d, Y')),
                 ($req->status === ManufacturingRequestStatus::Pending
-                    ? '<a href="' . route('tenant.manufacturing.show', $req->id) . '" class="btn btn-secondary btn-sm" title="View full details"><svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="margin-right:4px;vertical-align:-1px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg> View</a>'
-                    . ' <button type="button" class="btn btn-danger btn-sm" wire:click="cancelRequest(' . $req->id . ')" wire:confirm="Cancel this request?">Cancel</button>'
-                    : '<a href="' . route('tenant.manufacturing.show', $req->id) . '" class="btn btn-secondary btn-sm" title="View full details"><svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="margin-right:4px;vertical-align:-1px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg> View</a>'),
+                    ? '<a href="' . route('tenant.manufacturing.show', $req->id) . '" class="btn btn-secondary btn-sm" title="' . e(__('View full details')) . '"><svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="margin-right:4px;vertical-align:-1px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg> ' . e(__('View')) . '</a>'
+                    . ' <button type="button" class="btn btn-danger btn-sm" wire:click="cancelRequest(' . $req->id . ')" wire:confirm="Cancel this request?">' . e(__('Cancel')) . '</button>'
+                    : '<a href="' . route('tenant.manufacturing.show', $req->id) . '" class="btn btn-secondary btn-sm" title="' . e(__('View full details')) . '"><svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="margin-right:4px;vertical-align:-1px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg> ' . e(__('View')) . '</a>'),
             ])->all(),
-            'emptyTitle' => 'No manufacturing requests',
-            'emptyCopy' => 'Submit your first manufacturing request using the button above.',
+            'emptyTitle' => __('No manufacturing requests'),
+            'emptyCopy' => __('Submit your first manufacturing request using the button above.'),
             'tableDescription' => $records->total() . ' requests found.',
         ]);
     }
@@ -100,7 +100,7 @@ class ManufacturingRequestsList extends ListPage
             ->firstOrFail();
 
         $request->update(['status' => ManufacturingRequestStatus::Cancelled->value]);
-        $this->toast('Request cancelled.');
+        $this->toast(__('Request cancelled.'));
     }
 
     public function updatedSearch(): void
@@ -125,7 +125,7 @@ class ManufacturingRequestsList extends ListPage
 
     protected function exportHeaders(): array
     {
-        return ['ID', 'Product Name', 'Quantity', 'Description', 'Status', 'Admin Notes', 'Submitted At'];
+        return ['ID', __('Product Name'), __('Quantity'), __('Description'), __('Status'), __('Admin Notes'), __('Submitted At')];
     }
 
     protected function exportRows(): array
@@ -142,7 +142,7 @@ class ManufacturingRequestsList extends ListPage
                 $req->product_name,
                 $req->quantity,
                 $req->description ?? '',
-                $req->status->label(),
+                __($req->status->label()),
                 $req->admin_notes ?? '',
                 $req->created_at?->format('Y-m-d H:i') ?? '',
             ])->all();

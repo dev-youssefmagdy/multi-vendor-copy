@@ -40,9 +40,9 @@ class TranslationsPage extends TenantPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Translations',
-            'badge' => 'Settings',
-            'description' => 'Manage static UI-string translations for your storefront. Manual edits always take priority over defaults.',
+            'title' => __('Translations'),
+            'badge' => __('Settings'),
+            'description' => __('Manage static UI-string translations for your storefront. Manual edits always take priority over defaults.'),
         ];
     }
 
@@ -71,7 +71,7 @@ class TranslationsPage extends TenantPage
     {
         try {
             $service->saveOverride((string) $this->selectedLanguageId, $key, $value);
-            $this->toast('Translation saved successfully.');
+            $this->toast(__('Translation saved successfully.'));
         } catch (RuntimeException $e) {
             $this->toast($e->getMessage(), 'error');
         }
@@ -98,7 +98,7 @@ class TranslationsPage extends TenantPage
         try {
             $service->translateKeyWithAi($language, $key, $ai);
             $limitService->incrementCounter(tenant(), 'ai_calls_count');
-            $this->toast('Key translated with AI successfully.');
+            $this->toast(__('Key translated with AI successfully.'));
         } catch (RuntimeException $e) {
             $this->toast($e->getMessage(), 'error');
         }
@@ -111,7 +111,7 @@ class TranslationsPage extends TenantPage
         }
 
         if ($this->selectedKeys === []) {
-            $this->toast('Select at least one key to translate.', 'error');
+            $this->toast(__('Select at least one key to translate.'), 'error');
             return;
         }
 
@@ -130,7 +130,7 @@ class TranslationsPage extends TenantPage
         $count = $service->translateKeysWithAi($language, $this->selectedKeys, $ai);
         $limitService->incrementCounter(tenant(), 'ai_calls_count');
         $this->selectedKeys = [];
-        $this->toast("{$count} key(s) translated with AI successfully.");
+        $this->toast(__(':count key(s) translated with AI successfully.', ['count' => $count]));
     }
 
     public function translateStore(): void
@@ -159,7 +159,7 @@ class TranslationsPage extends TenantPage
         TranslateStoreJob::dispatch(tenant()->getTenantKey(), $language->id, triggeredBy: auth('tenant')->id());
         $limitService->incrementCounter(tenant(), 'ai_calls_count');
 
-        $this->toast('Store translation queued. This may take a while.');
+        $this->toast(__('Store translation queued. This may take a while.'));
     }
 
     protected function aiTranslationAllowed(): bool

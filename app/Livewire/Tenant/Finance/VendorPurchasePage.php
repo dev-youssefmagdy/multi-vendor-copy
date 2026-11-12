@@ -39,13 +39,13 @@ class VendorPurchasePage extends ListPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Vendor Purchases',
-            'badge' => 'Finance',
+            'title' => __('Vendor Purchases'),
+            'badge' => __('Finance'),
             // Hide the default "Add New" action button for this page.
             'actionLabel' => '',
-            'description' => 'Review what you owe central for product costs and shipping on each order, then settle via a payment gateway.',
-            'tableTitle' => 'Purchase Ledger',
-            'headers' => ['Order', 'Customer', 'Paid Via', 'Product Cost', 'Shipping', 'Gateway Fee', 'Total Due', 'Settlement', 'Actions'],
+            'description' => __('Review what you owe central for product costs and shipping on each order, then settle via a payment gateway.'),
+            'tableTitle' => __('Purchase Ledger'),
+            'headers' => [__('Order'), __('Customer'), __('Paid Via'), __('Product Cost'), __('Shipping'), __('Gateway Fee'), __('Total Due'), __('Settlement'), __('Actions')],
         ];
     }
 
@@ -65,32 +65,32 @@ class VendorPurchasePage extends ListPage
             $totalDue = number_format($order->vendor_total_due, 2);
             $settled = $order->vendor_settled;
 
-            $paymentMethod = e(ucwords(str_replace('_', ' ', $order->payment_method ?? 'cod')));
+            $paymentMethod = e(__(ucwords(str_replace('_', ' ', $order->payment_method ?? 'cod'))));
             $paidViaCell = '<div class="entity-title">' . $paymentMethod . '</div>';
 
             $feePreset = $order->vendor_gateway_id !== null;
             $gwFeeDisplay = $feePreset
                 ? '$' . number_format((float) $order->vendor_gateway_fee, 2)
-                . '<div class="entity-subtitle">Pre-calculated</div>'
-                : '<span class="entity-subtitle">&mdash;</span><div class="entity-subtitle">Set on settle</div>';
+                . '<div class="entity-subtitle">' . e(__('Pre-calculated')) . '</div>'
+                : '<span class="entity-subtitle">&mdash;</span><div class="entity-subtitle">' . e(__('Set on settle')) . '</div>';
 
             $settlementCell = $settled
-                ? '<span class="badge badge-green">Settled</span>'
+                ? '<span class="badge badge-green">' . e(__('Settled')) . '</span>'
                 . '<div class="entity-subtitle">' . e(optional($order->vendor_settled_at)->format('M d, Y')) . '</div>'
                 . ($order->vendor_settlement_ref
                     ? '<div class="entity-subtitle" style="font-family:monospace;font-size:11px;">'
                     . e(str()->limit($order->vendor_settlement_ref, 24)) . '</div>'
                     : '')
-                : '<span class="badge badge-amber">Pending</span>';
+                : '<span class="badge badge-amber">' . e(__('Pending')) . '</span>';
 
             $actionBtn = $settled
                 ? ''
-                : '<a href="' . route('tenant.finance.vendor-purchase-settle', $order->id) . '" class="btn btn-primary btn-sm">Pay Central</a>';
+                : '<a href="' . route('tenant.finance.vendor-purchase-settle', $order->id) . '" class="btn btn-primary btn-sm">' . e(__('Pay Central')) . '</a>';
 
             return [
                 '<div class="entity-title">' . e($order->uuid) . '</div>'
                 . '<div class="entity-subtitle">' . e($order->items_count) . ' items · ' . e($order->created_at?->format('M d, Y')) . '</div>',
-                '<div class="entity-title">' . e($order->customer?->full_name ?? 'Guest') . '</div>'
+                '<div class="entity-title">' . e($order->customer?->full_name ?? __('Guest')) . '</div>'
                 . '<div class="entity-subtitle">' . e($order->customer?->email ?? '') . '</div>',
                 $paidViaCell,
                 '$' . $productCost,
@@ -105,23 +105,23 @@ class VendorPurchasePage extends ListPage
         return array_merge(parent::pageData(), [
             'records' => $records,
             'filterFields' => [
-                ['label' => 'Search', 'model' => 'search', 'placeholder' => 'Order UUID or customer'],
+                ['label' => __('Search'), 'model' => 'search', 'placeholder' => __('Order UUID or customer')],
                 [
-                    'label' => 'Settlement',
+                    'label' => __('Settlement'),
                     'model' => 'settledFilter',
                     'type' => 'select',
                     'options' => [
-                        '' => 'All',
-                        'unsettled' => 'Unsettled',
-                        'settled' => 'Settled',
+                        '' => __('All'),
+                        'unsettled' => __('Unsettled'),
+                        'settled' => __('Settled'),
                     ]
                 ],
             ],
             'statistics' => $this->presentMetricCards([
-                ['label' => 'Orders', 'value' => $stats['total'], 'format' => 'number', 'caption' => 'Orders with a product cost owed to central.', 'dot' => 'dot-cyan'],
-                ['label' => 'Unsettled', 'value' => $stats['unsettled_count'], 'format' => 'number', 'caption' => 'Orders not yet paid to central.', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
-                ['label' => 'Amount Owed', 'value' => $stats['total_owed'], 'format' => 'currency', 'caption' => 'Total product + shipping cost still outstanding.', 'dot' => 'dot-red'],
-                ['label' => 'Total Settled', 'value' => $stats['total_settled'], 'format' => 'currency', 'caption' => 'Total paid to central including gateway fees.', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Orders'), 'value' => $stats['total'], 'format' => 'number', 'caption' => __('Orders with a product cost owed to central.'), 'dot' => 'dot-cyan'],
+                ['label' => __('Unsettled'), 'value' => $stats['unsettled_count'], 'format' => 'number', 'caption' => __('Orders not yet paid to central.'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Amount Owed'), 'value' => $stats['total_owed'], 'format' => 'currency', 'caption' => __('Total product + shipping cost still outstanding.'), 'dot' => 'dot-red'],
+                ['label' => __('Total Settled'), 'value' => $stats['total_settled'], 'format' => 'currency', 'caption' => __('Total paid to central including gateway fees.'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
             ]),
             'rows' => $rows,
             'tableDescription' => $records->total() . ' purchase records matched the current filters.',
@@ -153,7 +153,7 @@ class VendorPurchasePage extends ListPage
 
     protected function exportHeaders(): array
     {
-        return ['Order UUID', 'Customer', 'Customer Email', 'Items', 'Payment Method', 'Product Cost', 'Shipping', 'Total Due', 'Settled', 'Settled At', 'Settlement Ref', 'Placed At'];
+        return [__('Order UUID'), __('Customer'), __('Customer Email'), __('Items'), __('Payment Method'), __('Product Cost'), __('Shipping'), __('Total Due'), __('Settled'), __('Settled At'), __('Settlement Ref'), __('Placed At')];
     }
 
     protected function exportRows(): array
@@ -162,14 +162,14 @@ class VendorPurchasePage extends ListPage
         return $repository->exportVendorPurchases(['search' => $this->search, 'settled' => $this->settledFilter])
             ->map(fn(Order $order) => [
                 $order->uuid,
-                $order->customer?->full_name ?? 'Guest',
+                $order->customer?->full_name ?? __('Guest'),
                 $order->customer?->email ?? '',
                 $order->items_count,
-                ucwords(str_replace('_', ' ', $order->payment_method ?? 'cod')),
+                __(ucwords(str_replace('_', ' ', $order->payment_method ?? 'cod'))),
                 number_format((float) $order->vendor_cost, 2),
                 number_format((float) $order->shipping_charge, 2),
                 number_format((float) $order->vendor_total_due, 2),
-                $order->vendor_settled ? 'Yes' : 'No',
+                $order->vendor_settled ? __('Yes') : __('No'),
                 $order->vendor_settled_at?->format('Y-m-d') ?? '',
                 $order->vendor_settlement_ref ?? '',
                 $order->created_at?->format('Y-m-d H:i') ?? '',

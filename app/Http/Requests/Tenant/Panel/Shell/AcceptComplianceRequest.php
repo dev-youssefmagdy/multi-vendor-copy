@@ -18,7 +18,7 @@ final class AcceptComplianceRequest extends TenantFormRequest
     public function messages(): array
     {
         return [
-            'accept.accepted' => 'Please confirm you have read and accept the compliance documents.',
+            'accept.accepted' => __('Please confirm you have read and accept the compliance documents.'),
         ];
     }
 }

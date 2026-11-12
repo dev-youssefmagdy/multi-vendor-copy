@@ -13,7 +13,7 @@
             <p class="page-copy">{{ $description }}</p>
         </div>
         <div class="page-actions">
-            <a class="btn btn-secondary" href="{{ route('tenant.support.index') }}">← Tickets</a>
+            <a class="btn btn-secondary" href="{{ route('tenant.support.index') }}">{{ __('← Tickets') }}</a>
         </div>
     </div>
 
@@ -21,10 +21,9 @@
         <div class="card fu d1">
             <div class="panel-head mb-5">
                 <div>
-                    <h3 class="panel-title">Conversation</h3>
+                    <h3 class="panel-title">{{ __('Conversation') }}</h3>
                     <p class="panel-copy">
-                        {{ $categoryOptions[$ticket['category'] ?? ''] ?? '' }} ·
-                        {{ $priorityOptions[$ticket['priority'] ?? ''] ?? '' }} priority
+                        {{ __(':category · :priority priority', ['category' => $categoryOptions[$ticket['category'] ?? ''] ?? '', 'priority' => $priorityOptions[$ticket['priority'] ?? ''] ?? '']) }}
                     </p>
                 </div>
             </div>
@@ -32,13 +31,13 @@
             <div class="content-note-stack" id="support-thread">
                 @forelse ($ticket['messages'] ?? [] as $message)
                     <div class="content-note">
-                        <strong>{{ $message['sender_name'] }} ({{ $message['sender_type'] === 'admin' ? 'Admin' : 'You' }})</strong>
+                        <strong>{{ $message['sender_name'] }} ({{ $message['sender_type'] === 'admin' ? __('Admin') : __('You') }})</strong>
                         <span style="opacity:.6;font-size:12px;margin-left:6px">{{ $message['created_at'] }}</span>
                         <p class="panel-copy panel-copy-spaced">{{ $message['body'] }}</p>
                     </div>
                 @empty
                     <div class="empty-state">
-                        <div class="empty-state-title">No messages yet</div>
+                        <div class="empty-state-title">{{ __('No messages yet') }}</div>
                     </div>
                 @endforelse
             </div>
@@ -46,21 +45,21 @@
 
         @if (!($ticket['is_closed'] ?? false))
             <div class="card fu d2">
-                <h3 class="panel-title">Reply</h3>
+                <h3 class="panel-title">{{ __('Reply') }}</h3>
                 <form wire:submit="sendReply" class="page-stack">
-                    <x-textarea rows="4" wire:model.defer="reply" :error="$errors->has('reply')" placeholder="Type your reply…" />
+                    <x-textarea rows="4" wire:model.defer="reply" :error="$errors->has('reply')" :placeholder="__('Type your reply…')" />
                     @error('reply')<div class="field-error">{{ $message }}</div>@enderror
                     <div class="page-actions compact-actions justify-end">
                         <x-btn type="submit" wire:loading.attr="disabled" wire:target="sendReply">
-                            <span wire:loading.remove wire:target="sendReply">Send Reply</span>
-                            <span wire:loading wire:target="sendReply">Sending…</span>
+                            <span wire:loading.remove wire:target="sendReply">{{ __('Send Reply') }}</span>
+                            <span wire:loading wire:target="sendReply">{{ __('Sending…') }}</span>
                         </x-btn>
                     </div>
                 </form>
             </div>
         @else
             <div class="card fu d2">
-                <p class="panel-copy">This ticket is {{ strtolower($statusOptions[$ticket['status']] ?? '') }} and can no longer receive replies.</p>
+                <p class="panel-copy">{{ __('This ticket is :status and can no longer receive replies.', ['status' => strtolower($statusOptions[$ticket['status']] ?? '')]) }}</p>
             </div>
         @endif
     </div>

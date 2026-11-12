@@ -15,12 +15,12 @@ $posts – array<locale, array<platform, caption>>
     @php
         $platforms = ['instagram', 'facebook', 'twitter', 'linkedin', 'tiktok', 'generic'];
         $platformLabels = [
-            'instagram' => 'Instagram',
-            'facebook' => 'Facebook',
-            'twitter' => 'Twitter / X',
+            'instagram' => __('Instagram'),
+            'facebook' => __('Facebook'),
+            'twitter' => __('Twitter / X'),
             'linkedin' => 'LinkedIn',
             'tiktok' => 'TikTok',
-            'generic' => 'Generic',
+            'generic' => __('Generic'),
         ];
         $platformIcons = [
             'instagram' => '📷',
@@ -75,13 +75,13 @@ $posts – array<locale, array<platform, caption>>
 
         {{-- ── Language selector ────────────────────────────────────────────── --}}
         <div style="margin-bottom:16px;">
-            <p style="margin-bottom:8px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--t2,#9ca3af);">🌐 Language</p>
+            <p style="margin-bottom:8px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--t2,#9ca3af);">{{ __('🌐 Language') }}</p>
             <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
                 <div style="position:relative;flex-shrink:0;">
                     <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none;">🌐</span>
                     <select wire:model.live="socialSelectedLanguage"
                         style="min-width:230px;padding:9px 36px 9px 34px;border-radius:10px;border:1.5px solid rgba(99,102,241,.35);background:rgba(99,102,241,.08);color:#e5e7eb;font-size:13px;font-weight:500;appearance:none;-webkit-appearance:none;cursor:pointer;outline:none;transition:border-color .2s,background .2s;">
-                        <option value="all" style="background:#1e1e2e;color:#e5e7eb;">All enabled languages</option>
+                        <option value="all" style="background:#1e1e2e;color:#e5e7eb;">{{ __('All enabled languages') }}</option>
                         @foreach ($enabledLanguages as $langCode => $langName)
                             <option value="{{ $langCode }}" style="background:#1e1e2e;color:#e5e7eb;">{{ $langName }} ({{ strtoupper($langCode) }})</option>
                         @endforeach
@@ -90,9 +90,9 @@ $posts – array<locale, array<platform, caption>>
                 </div>
                 <span style="font-size:11px;color:var(--t2,#9ca3af);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:5px 10px;line-height:1.4;">
                     @if ($selectedLanguage === 'all')
-                        Runs for <strong style="color:#a5b4fc;">every enabled</strong> language
+                        {{ __('Runs for') }} <strong style="color:#a5b4fc;">{{ __('every enabled') }}</strong> {{ __('language') }}
                     @else
-                        Runs only for <strong style="color:#a5b4fc;">{{ $enabledLanguages[$selectedLanguage] ?? strtoupper($selectedLanguage) }}</strong>
+                        {{ __('Runs only for') }} <strong style="color:#a5b4fc;">{{ $enabledLanguages[$selectedLanguage] ?? strtoupper($selectedLanguage) }}</strong>
                     @endif
                 </span>
             </div>
@@ -100,22 +100,22 @@ $posts – array<locale, array<platform, caption>>
 
         {{-- ── Image generation option ─────────────────────────────────────── --}}
         <div style="margin-bottom:16px;">
-            <p style="margin-bottom:8px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--t2,#9ca3af);">🖼 Image Option</p>
+            <p style="margin-bottom:8px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--t2,#9ca3af);">{{ __('🖼 Image Option') }}</p>
             <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
                 <div style="position:relative;flex-shrink:0;">
                     <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none;">{{ $includeImage ? '🖼' : '📝' }}</span>
                     <select wire:model.live="socialIncludeImage"
                         style="min-width:230px;padding:9px 36px 9px 34px;border-radius:10px;border:1.5px solid rgba({{ $includeImage ? '168,85,247' : '99,102,241' }},.35);background:rgba({{ $includeImage ? '168,85,247' : '99,102,241' }},.08);color:#e5e7eb;font-size:13px;font-weight:500;appearance:none;-webkit-appearance:none;cursor:pointer;outline:none;transition:border-color .2s,background .2s;">
-                        <option value="on" style="background:#1e1e2e;color:#e5e7eb;">Generate captions with image</option>
-                        <option value="off" style="background:#1e1e2e;color:#e5e7eb;">Generate captions only (no image)</option>
+                        <option value="on" style="background:#1e1e2e;color:#e5e7eb;">{{ __('Generate captions with image') }}</option>
+                        <option value="off" style="background:#1e1e2e;color:#e5e7eb;">{{ __('Generate captions only (no image)') }}</option>
                     </select>
                     <span style="position:absolute;right:11px;top:50%;transform:translateY(-50%);pointer-events:none;color:{{ $includeImage ? '#d8b4fe' : '#a5b4fc' }};font-size:10px;">▼</span>
                 </div>
                 <span style="font-size:11px;color:var(--t2,#9ca3af);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:5px 10px;line-height:1.4;">
                     @if ($includeImage)
-                        AI will generate a <strong style="color:#d8b4fe;">product image</strong> with captions
+                        {{ __('AI will generate a') }} <strong style="color:#d8b4fe;">{{ __('product image') }}</strong> {{ __('with captions') }}
                     @else
-                        <strong style="color:#a5b4fc;">Text only</strong> — image generation disabled
+                        <strong style="color:#a5b4fc;">{{ __('Text only') }}</strong> {{ __('— image generation disabled') }}
                     @endif
                 </span>
             </div>
@@ -123,12 +123,12 @@ $posts – array<locale, array<platform, caption>>
 
         {{-- ── Platform selector ────────────────────────────────────────────── --}}
         <div style="margin-bottom:16px;">
-            <p class="entity-subtitle" style="margin-bottom:8px;font-size:12px;">Select platform to generate for:</p>
+            <p class="entity-subtitle" style="margin-bottom:8px;font-size:12px;">{{ __('Select platform to generate for:') }}</p>
             <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
                 {{-- "All platforms" option --}}
                 <button type="button" wire:click="$set('socialSelectedPlatform', 'all')"
                     style="padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;border:1.5px solid {{ $selectedPlatform === 'all' ? '#6366f1' : 'var(--border)' }};background:{{ $selectedPlatform === 'all' ? 'rgba(99,102,241,.18)' : 'rgba(255,255,255,.04)' }};color:{{ $selectedPlatform === 'all' ? '#a5b4fc' : 'var(--t2)' }};cursor:pointer;transition:all .15s;">
-                    🌐 All
+                    {{ __('🌐 All') }}
                 </button>
                 @foreach ($platforms as $p)
                     <button type="button" wire:click="$set('socialSelectedPlatform', '{{ $p }}')"
@@ -145,14 +145,13 @@ $posts – array<locale, array<platform, caption>>
             <p class="entity-subtitle" style="flex:1;min-width:0;font-size:12px;">
                 @if ($hasPosts)
                     @if ($selectedPlatform === 'all')
-                        AI captions exist for all platforms. Regenerate to refresh, or pick a specific platform above.
+                        {{ __('AI captions exist for all platforms. Regenerate to refresh, or pick a specific platform above.') }}
                     @else
                         @php $langHas = collect($langs)->filter(fn($l) => !empty($posts[$l][$selectedPlatform]))->count(); @endphp
-                        {{ $langHas > 0 ? 'Existing caption found — regenerate to refresh.' : 'No caption yet for ' . $platformLabels[$selectedPlatform] . '. Click Generate.' }}
+                        {{ $langHas > 0 ? __('Existing caption found — regenerate to refresh.') : __('No caption yet for :platform. Click Generate.', ['platform' => $platformLabels[$selectedPlatform]]) }}
                     @endif
                 @else
-                    Click <strong>Generate</strong> to create AI captions
-                    {{ $selectedPlatform !== 'all' ? 'for ' . $platformLabels[$selectedPlatform] : 'for all platforms' }}.
+                    {{ __('Click') }} <strong>{{ __('Generate') }}</strong> {{ __('to create AI captions :target.', ['target' => $selectedPlatform !== 'all' ? __('for :platform', ['platform' => $platformLabels[$selectedPlatform]]) : __('for all platforms')]) }}
                 @endif
             </p>
             <button type="button" class="btn btn-primary btn-sm" wire:click="generateSocialPosts"
@@ -160,14 +159,14 @@ $posts – array<locale, array<platform, caption>>
                 style="white-space:nowrap;flex-shrink:0;">
                 <span wire:loading.remove wire:target="generateSocialPosts">
                     @if ($selectedPlatform !== 'all')
-                        ✦ Generate for {{ $platformLabels[$selectedPlatform] ?? $selectedPlatform }}
+                        {{ __('✦ Generate for :selectedPlatform', ['selectedPlatform' => $platformLabels[$selectedPlatform] ?? $selectedPlatform]) }}
                     @elseif ($hasPosts)
-                        ↺ Regenerate All
+                        {{ __('↺ Regenerate All') }}
                     @else
-                        ✦ Generate All Platforms
+                        {{ __('✦ Generate All Platforms') }}
                     @endif
                 </span>
-                <span wire:loading wire:target="generateSocialPosts">Generating…</span>
+                <span wire:loading wire:target="generateSocialPosts">{{ __('Generating…') }}</span>
             </button>
         </div>
 
@@ -179,15 +178,9 @@ $posts – array<locale, array<platform, caption>>
                 </div>
                 <p class="entity-subtitle" style="margin-top:12px;">
                     @if ($selectedPlatform !== 'all')
-                        Generating {{ $platformLabels[$selectedPlatform] ?? $selectedPlatform }} post
-                        {{ $selectedLanguage !== 'all' ? 'for ' . ($enabledLanguages[$selectedLanguage] ?? strtoupper($selectedLanguage)) : 'for all enabled languages' }}
-                        {{ $includeImage ? 'with image' : 'without image' }}
-                        — usually 10–20 s…
+                        {{ __('Generating :platform post :language :image — usually 10–20 s…', ['platform' => $platformLabels[$selectedPlatform] ?? $selectedPlatform, 'language' => $selectedLanguage !== 'all' ? __('for :language', ['language' => $enabledLanguages[$selectedLanguage] ?? strtoupper($selectedLanguage)]) : __('for all enabled languages'), 'image' => $includeImage ? __('with image') : __('without image')]) }}
                     @else
-                        Generating posts for all platforms ×
-                        {{ $selectedLanguage === 'all' ? 'all enabled languages' : ($enabledLanguages[$selectedLanguage] ?? strtoupper($selectedLanguage)) }}
-                        {{ $includeImage ? 'with image' : 'without image' }}
-                        — may take 30–60 s…
+                        {{ __('Generating posts for all platforms × :language :image — may take 30–60 s…', ['language' => $selectedLanguage === 'all' ? __('all enabled languages') : ($enabledLanguages[$selectedLanguage] ?? strtoupper($selectedLanguage)), 'image' => $includeImage ? __('with image') : __('without image')]) }}
                     @endif
                 </p>
             </div>
@@ -211,8 +204,8 @@ $posts – array<locale, array<platform, caption>>
             @php $activePosts = $posts[$activeLang] ?? []; @endphp
 
             @if (empty($activePosts))
-                <p class="entity-subtitle" style="text-align:center;padding:24px 0;">No posts for
-                    <strong>{{ strtoupper($activeLang) }}</strong> yet.
+                <p class="entity-subtitle" style="text-align:center;padding:24px 0;">{{ __('No posts for') }}
+                    <strong>{{ strtoupper($activeLang) }}</strong> {{ __('yet.') }}
                 </p>
             @else
                 <div style="display:flex;flex-direction:column;gap:12px;">
@@ -240,21 +233,21 @@ $posts – array<locale, array<platform, caption>>
                                         <button type="button"
                                             style="padding:3px 10px;font-size:11px;border-radius:6px;border:1px solid var(--border);background:rgba(255,255,255,.06);color:var(--t2);cursor:pointer;"
                                             @click="navigator.clipboard.writeText(caption); copied=true; setTimeout(()=>copied=false,2000)"
-                                            :title="copied ? 'Copied!' : 'Copy caption'">
-                                            <span x-show="!copied">📋 Copy</span>
-                                            <span x-show="copied">✓ Copied!</span>
+                                            :title="copied ? @js(__('Copied!')) : @js(__('Copy caption'))">
+                                            <span x-show="!copied">{{ __('📋 Copy') }}</span>
+                                            <span x-show="copied">{{ __('✓ Copied!') }}</span>
                                         </button>
                                         @if ($shareHref)
                                             <a href="{{ $shareHref }}" target="_blank" rel="noopener noreferrer"
                                                 style="padding:3px 10px;font-size:11px;border-radius:6px;background:{{ $pColor }};color:#fff;text-decoration:none;font-weight:600;">
-                                                ↗ Share
+                                                {{ __('↗ Share') }}
                                             </a>
                                         @endif
                                         {{-- Per-platform regenerate --}}
                                         <button type="button"
                                             style="padding:3px 10px;font-size:11px;border-radius:6px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--t2);cursor:pointer;"
                                             wire:click="$set('socialSelectedPlatform', '{{ $platform }}')"
-                                            title="Set to {{ $platformLabels[$platform] }} and regenerate">
+                                            title="{{ __('Set to :platform and regenerate', ['platform' => $platformLabels[$platform]]) }}">
                                             ↺
                                         </button>
                                     </div>
@@ -269,8 +262,7 @@ $posts – array<locale, array<platform, caption>>
                             <div
                                 style="padding:20px;background:rgba(255,255,255,.02);border:1px dashed var(--border);border-radius:10px;text-align:center;">
                                 <span style="font-size:28px;">{{ $platformIcons[$platform] }}</span>
-                                <p class="entity-subtitle" style="margin-top:8px;">No caption for {{ $platformLabels[$platform] }} yet.
-                                    Click <strong>Generate</strong> above.</p>
+                                <p class="entity-subtitle" style="margin-top:8px;">{{ __('No caption for :platform yet. Click', ['platform' => $platformLabels[$platform]]) }} <strong>{{ __('Generate') }}</strong> {{ __('above.') }}</p>
                             </div>
                         @endif
                     @endforeach
@@ -281,13 +273,13 @@ $posts – array<locale, array<platform, caption>>
             @if ($imageB64)
                 <div style="border-top:1px solid var(--border);padding-top:16px;margin-top:20px;">
                     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-                        <span style="font-weight:700;font-size:13px;">✦ AI-Generated Product Image</span>
+                        <span style="font-weight:700;font-size:13px;">{{ __('✦ AI-Generated Product Image') }}</span>
                         <a href="data:image/png;base64,{{ $imageB64 }}" download="social-product-image.png"
                             style="padding:3px 12px;font-size:11px;border-radius:6px;border:1px solid var(--border);background:rgba(255,255,255,.06);color:var(--t2);text-decoration:none;">
-                            ⬇ Download PNG
+                            {{ __('⬇ Download PNG') }}
                         </a>
                     </div>
-                    <img src="data:image/png;base64,{{ $imageB64 }}" alt="AI-generated product image"
+                    <img src="data:image/png;base64,{{ $imageB64 }}" alt="{{ __('AI-generated product image') }}"
                         style="width:100%;max-width:380px;border-radius:10px;border:1px solid var(--border);display:block;" />
                 </div>
             @endif
@@ -300,11 +292,11 @@ $posts – array<locale, array<platform, caption>>
                 </div>
                 <p class="entity-subtitle">
                     @if ($selectedPlatform !== 'all')
-                        No {{ $platformLabels[$selectedPlatform] ?? $selectedPlatform }} post yet.
+                        {{ __('No :selectedPlatform post yet.', ['selectedPlatform' => $platformLabels[$selectedPlatform] ?? $selectedPlatform]) }}
                     @else
-                        No posts generated yet.
+                        {{ __('No posts generated yet.') }}
                     @endif
-                    Click <strong>Generate</strong> above to get started.
+                    {{ __('Click') }} <strong>{{ __('Generate') }}</strong> {{ __('above to get started.') }}
                 </p>
             </div>
         @endif

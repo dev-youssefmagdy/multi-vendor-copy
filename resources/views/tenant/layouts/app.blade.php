@@ -16,6 +16,7 @@
             if (localStorage.getItem('tenant-sb-collapsed') === '1') document.documentElement.classList.add('sb-rail');
         } catch (e) {}
     </script>
+    @include('tenant.layouts.partials.js-i18n')
     @vite(['resources/css/tenant/app.css', 'resources/js/tenant/app.js'])
     @stack('tenant-vite')
 </head>

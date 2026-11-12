@@ -15,7 +15,7 @@
 @endphp
 
 @php
-    $kpis = collect(['Orders', 'Average Order', 'Outstanding', 'Customers'])
+    $kpis = collect([__('Orders'), __('Average Order'), __('Outstanding'), __('Customers')])
         ->map(fn ($label) => collect($cards)->firstWhere('label', $label))
         ->filter()
         ->values();
@@ -42,21 +42,21 @@
 <section class="db-section fu d1">
     <div class="db-section-head">
         <div class="db-welcome-copy">
-            <h2 class="db-welcome-title">Your store's performance</h2>
-            <p class="db-welcome-sub">The numbers that really matter to you, in a clear size and without clutter.</p>
+            <h2 class="db-welcome-title">{{ __('Your store\'s performance') }}</h2>
+            <p class="db-welcome-sub">{{ __('The numbers that really matter to you, in a clear size and without clutter.') }}</p>
         </div>
 
         {{-- Period filter --}}
         @php
-            $periodLabels = [1 => '1 Month', 3 => '3 Months', 6 => '6 Months', 12 => '12 Months'];
+            $periodLabels = [1 => __('1 Month'), 3 => __('3 Months'), 6 => __('6 Months'), 12 => __('12 Months')];
             $activePeriod = $periodMonths ?? 12;
         @endphp
         <div class="db-period-wrap" style="position:relative">
             <button type="button" class="db-period" id="dbPeriodBtn" aria-haspopup="listbox" aria-expanded="false">
-                {{ $periodLabels[$activePeriod] ?? '12 Months' }}
+                {{ $periodLabels[$activePeriod] ?? __('12 Months') }}
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 9l-6 6-6-6"/></svg>
             </button>
-            <ul id="dbPeriodMenu" role="listbox" aria-label="Select period"
+            <ul id="dbPeriodMenu" role="listbox" aria-label="{{ __('Select period') }}"
                 style="display:none;position:absolute;right:0;top:calc(100% + 6px);min-width:140px;z-index:50;border-radius:10px;overflow:hidden;border:1px solid var(--color-stroke, #2a2a2a);background:var(--color-surface, #1a1a1a);box-shadow:0 8px 24px rgba(0,0,0,.35)">
                 @foreach($periodLabels as $months => $label)
                     <li role="option" aria-selected="{{ $activePeriod === $months ? 'true' : 'false' }}"
@@ -93,11 +93,11 @@
         @foreach($kpis as $kpi)
             <div class="t-kpi db-kpi">
                 <div class="t-kpi-head">
-                    <span class="t-kpi-label">{{ $kpi['label'] }}</span>
+                    <span class="t-kpi-label">{{ __($kpi['label']) }}</span>
                     <span class="t-trend {{ $trendClass }}">{!! $trendUp !!} {{ $trendLabel }}</span>
                 </div>
                 <div class="t-kpi-value">{{ $kpi['value'] }}</div>
-                <p class="t-kpi-caption">{{ $kpi['caption'] }}</p>
+                <p class="t-kpi-caption">{{ __($kpi['caption']) }}</p>
             </div>
         @endforeach
     </div>
@@ -107,49 +107,49 @@
         <div class="db-chart-card db-chart-line">
             <div class="db-chart-head">
                 <div>
-                    <h3 class="db-chart-title">Gross vs Collected</h3>
-                    <p class="db-chart-sub">Monthly gross order value compared with paid collections.</p>
+                    <h3 class="db-chart-title">{{ __('Gross vs Collected') }}</h3>
+                    <p class="db-chart-sub">{{ __('Monthly gross order value compared with paid collections.') }}</p>
                 </div>
                 <div class="db-legend-inline">
-                    <span><i style="background:#3B82F6"></i>Gross sales</span>
-                    <span><i style="background:#10B981"></i>Collected</span>
+                    <span><i style="background:#3B82F6"></i>{{ __('Gross sales') }}</span>
+                    <span><i style="background:#10B981"></i>{{ __('Collected') }}</span>
                 </div>
             </div>
             {{-- On mobile the plot is wider than the card and scrolls sideways --}}
             <div class="db-chart-scroll">
                 <div class="db-chart-canvas">
-                    <canvas id="dbGrossChart" aria-label="Gross vs collected sales by month" role="img"></canvas>
+                    <canvas id="dbGrossChart" aria-label="{{ __('Gross vs collected sales by month') }}" role="img"></canvas>
                 </div>
             </div>
         </div>
 
         <div class="db-chart-card db-status">
             <div>
-                <h3 class="db-status-title">Status Mix</h3>
-                <p class="db-chart-sub">Live order pipeline distribution across tenant statuses.</p>
+                <h3 class="db-status-title">{{ __('Status Mix') }}</h3>
+                <p class="db-chart-sub">{{ __('Live order pipeline distribution across tenant statuses.') }}</p>
             </div>
 
             <div class="db-status-body">
                 <div class="db-donut">
-                    <canvas id="dbStatusChart" width="151" height="151" aria-label="Order status mix" role="img"
+                    <canvas id="dbStatusChart" width="151" height="151" aria-label="{{ __('Order status mix') }}" role="img"
                         data-values='@json($statusMix->pluck('count'))'
                         data-labels='@json($statusMix->pluck('label'))'
                         data-colors='@json($statusMix->pluck('color'))'></canvas>
                     <div class="db-donut-center">
                         <span class="db-donut-total">{{ number_format($statusTotal) }}</span>
-                        <span class="db-donut-caption">ORDERS</span>
+                        <span class="db-donut-caption">{{ __('ORDERS') }}</span>
                     </div>
                 </div>
 
                 <ul class="db-status-list">
                     @forelse($statusMix as $row)
                         <li>
-                            <span class="db-status-name"><i style="background:{{ $row['color'] }}"></i>{{ $row['label'] }}</span>
+                            <span class="db-status-name"><i style="background:{{ $row['color'] }}"></i>{{ __($row['label']) }}</span>
                             <span class="db-status-count">{{ number_format($row['count']) }}</span>
                             <span class="db-status-pct">{{ $row['percent'] }}%</span>
                         </li>
                     @empty
-                        <li class="db-status-empty">No orders yet.</li>
+                        <li class="db-status-empty">{{ __('No orders yet.') }}</li>
                     @endforelse
                 </ul>
             </div>

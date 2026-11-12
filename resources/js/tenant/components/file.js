@@ -1,3 +1,5 @@
+import { t } from '../core/i18n.js';
+
 function readImageDimensions(file) {
     return new Promise((resolve) => {
         if (!file.type || !file.type.startsWith('image/')) {
@@ -29,7 +31,7 @@ export async function checkImageDimensionWarning(file, expectedWidth, expectedHe
     if (dims.width === expectedWidth && dims.height === expectedHeight) {
         return null;
     }
-    return `Image should be ${expectedWidth}×${expectedHeight}. Your image is ${dims.width}×${dims.height}.`;
+    return t('Image should be :expectedWidth×:expectedHeight. Your image is :width×:height.', { expectedWidth, expectedHeight, width: dims.width, height: dims.height });
 }
 
 export function init(el) {

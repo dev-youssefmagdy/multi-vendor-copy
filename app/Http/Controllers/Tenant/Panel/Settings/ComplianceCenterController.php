@@ -114,10 +114,10 @@ final class ComplianceCenterController extends PanelController
         $this->service->updateCompliance($updates);
 
         if ($request->input('from') === 'onboarding') {
-            return $this->success('Compliance information updated successfully.', [], route('tenant.onboarding', ['tab' => 'setup']));
+            return $this->success(__('Compliance information updated successfully.'), [], route('tenant.onboarding', ['tab' => 'setup']));
         }
 
-        return $this->success('Compliance information updated successfully.', [], route('tenant.settings.compliance', ['section' => $section]));
+        return $this->success(__('Compliance information updated successfully.'), [], route('tenant.settings.compliance', ['section' => $section]));
     }
 
     public function validateUpdate(UpdateComplianceRequest $request): JsonResponse
@@ -219,10 +219,10 @@ final class ComplianceCenterController extends PanelController
     private function policyPages(): array
     {
         $keywords = [
-            'return' => 'Return Policy',
-            'privacy' => 'Privacy Policy',
-            'terms' => 'Terms of Service',
-            'shipping' => 'Shipping Policy',
+            'return' => __('Return Policy'),
+            'privacy' => __('Privacy Policy'),
+            'terms' => __('Terms of Service'),
+            'shipping' => __('Shipping Policy'),
         ];
 
         $pages = Page::query()->get(['id', 'slug']);

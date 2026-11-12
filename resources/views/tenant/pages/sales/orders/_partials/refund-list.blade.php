@@ -37,7 +37,7 @@
                 <td>
                     <div class="details-inline-title">{{ $refund['method_label'] ?? '—' }}</div>
                     @if(filled($refund['gateway'] ?? null))
-                        <div class="details-inline-copy">{{ str((string) $refund['gateway'])->replace(['_', '-'], ' ')->headline() }}@if(filled($refund['gateway_refund_id'] ?? null)) · {{ $refund['gateway_refund_id'] }}@endif</div>
+                        <div class="details-inline-copy">{{ __((string) str((string) $refund['gateway'])->replace(['_', '-'], ' ')->headline()) }}@if(filled($refund['gateway_refund_id'] ?? null)) · {{ $refund['gateway_refund_id'] }}@endif</div>
                     @endif
                     @if(filled($refund['manual_reference'] ?? null))
                         <div class="details-inline-copy">{{ __('Reference') }}: {{ $refund['manual_reference'] }}</div>

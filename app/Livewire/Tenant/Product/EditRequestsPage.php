@@ -17,9 +17,9 @@ class EditRequestsPage extends TenantPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Product Edit Requests',
-            'badge' => 'Catalog',
-            'description' => 'Track the status of your product name and description change requests.',
+            'title' => __('Product Edit Requests'),
+            'badge' => __('Catalog'),
+            'description' => __('Track the status of your product name and description change requests.'),
         ];
     }
 

@@ -18,11 +18,11 @@ class CurrenciesPage extends ListPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Currencies',
-            'badge' => 'Settings',
-            'description' => 'Control active currencies and the tenant storefront default currency.',
-            'tableTitle' => 'Tenant Currencies',
-            'headers' => ['Currency', 'Rate', 'Status', 'Actions'],
+            'title' => __('Currencies'),
+            'badge' => __('Settings'),
+            'description' => __('Control active currencies and the tenant storefront default currency.'),
+            'tableTitle' => __('Tenant Currencies'),
+            'headers' => [__('Currency'), __('Rate'), __('Status'), __('Actions')],
         ];
     }
 
@@ -50,24 +50,24 @@ class CurrenciesPage extends ListPage
         return array_merge(parent::pageData(), [
             'actionLabel' => null,
             'filterFields' => [
-                ['label' => 'Search', 'model' => 'search', 'placeholder' => 'Code or name…'],
-                ['label' => 'Status', 'model' => 'statusFilter', 'type' => 'select', 'options' => [
-                    ''         => 'All',
-                    'default'  => 'Default',
-                    'active'   => 'Active',
-                    'inactive' => 'Inactive',
+                ['label' => __('Search'), 'model' => 'search', 'placeholder' => __('Code or name…')],
+                ['label' => __('Status'), 'model' => 'statusFilter', 'type' => 'select', 'options' => [
+                    ''         => __('All'),
+                    'default'  => __('Default'),
+                    'active'   => __('Active'),
+                    'inactive' => __('Inactive'),
                 ]],
             ],
             'rows' => $currencies->map(fn(Currency $currency) => [
                 e($currency->code . ' - ' . $currency->name),
                 e($currency->symbol ?: '$') . ' ' . e(number_format((float) $currency->conversion_rate, 6)),
-                '<span class="badge ' . ($currency->is_default ? 'badge-green' : ($currency->is_active ? 'badge-cyan' : 'badge-amber')) . '">' . e($currency->is_default ? 'Default' : ($currency->is_active ? 'Active' : 'Inactive')) . '</span>',
-                '<div class="flex gap-2"><button type="button" class="btn btn-secondary btn-sm" wire:click="toggleActive(' . $currency->id . ')">' . ($currency->is_active ? 'Disable' : 'Enable') . '</button></div>',
+                '<span class="badge ' . ($currency->is_default ? 'badge-green' : ($currency->is_active ? 'badge-cyan' : 'badge-amber')) . '">' . e($currency->is_default ? __('Default') : ($currency->is_active ? __('Active') : __('Inactive'))) . '</span>',
+                '<div class="flex gap-2"><button type="button" class="btn btn-secondary btn-sm" wire:click="toggleActive(' . $currency->id . ')">' . ($currency->is_active ? __('Disable') : __('Enable')) . '</button></div>',
             ])->all(),
             'statistics' => [
-                ['label' => 'Currencies', 'value' => number_format($currencies->count()), 'caption' => 'Currencies synced into this tenant', 'dot' => 'dot-cyan'],
-                ['label' => 'Active', 'value' => number_format($currencies->where('is_active', true)->count()), 'caption' => 'Currencies available on storefront', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Default', 'value' => e(optional($currencies->firstWhere('is_default', true))->code ?? '-'), 'caption' => 'Current storefront settlement currency', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Currencies'), 'value' => number_format($currencies->count()), 'caption' => __('Currencies synced into this tenant'), 'dot' => 'dot-cyan'],
+                ['label' => __('Active'), 'value' => number_format($currencies->where('is_active', true)->count()), 'caption' => __('Currencies available on storefront'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Default'), 'value' => e(optional($currencies->firstWhere('is_default', true))->code ?? '-'), 'caption' => __('Current storefront settlement currency'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
             ],
         ]);
     }
@@ -76,13 +76,13 @@ class CurrenciesPage extends ListPage
     {
         $currency = Currency::query()->findOrFail($currencyId);
         $currency->update(['is_active' => !$currency->is_active]);
-        $this->toast('Currency state updated successfully.');
+        $this->toast(__('Currency state updated successfully.'));
     }
 
     public function makeDefault(int $currencyId, TenantPanelService $service): void
     {
         $service->markDefaultCurrency(Currency::query()->findOrFail($currencyId));
-        $this->toast('Default currency updated successfully.');
+        $this->toast(__('Default currency updated successfully.'));
     }
 
     public function updatedSearch(): void {}

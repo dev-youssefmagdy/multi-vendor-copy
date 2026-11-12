@@ -6,6 +6,7 @@ import '@tenant-css/pages/dashboard.css';
 import '@tenant-css/pages/orders.css';
 import { get } from '../../core/http.js';
 import { debounce } from '../../core/dom.js';
+import { t } from '../../core/i18n.js';
 
 const form = document.getElementById('manufacturing-create-form');
 const picker = form?.querySelector('[data-rq-picker]');
@@ -28,7 +29,7 @@ if (form && picker) {
 
     const render = (results) => {
         if (!results.length) {
-            message('No products found.');
+            message(t('No products found.'));
             return;
         }
         list.innerHTML = '';
@@ -55,7 +56,7 @@ if (form && picker) {
             }
         } catch {
             if (current === requestId) {
-                message("Couldn't load products.");
+                message(t("Couldn't load products."));
             }
         }
     };

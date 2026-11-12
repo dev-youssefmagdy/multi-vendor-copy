@@ -1,5 +1,6 @@
 import { toast } from '../core/toast.js';
 import { loadStripe, loadAcceptJs, load2Pay } from './payment-sdk-loader.js';
+import { t } from '../core/i18n.js';
 
 function panelsFor(root) {
     return Array.from(root.querySelectorAll('[data-payment-inline-panel]'));
@@ -145,7 +146,7 @@ export function initPaymentModal(root) {
 
     async function tokeniseStripe(panel) {
         if (!stripe || !stripeCard) {
-            toast.error('Stripe.js is still loading. Please try again in a moment.');
+            toast.error(t('Stripe.js is still loading. Please try again in a moment.'));
             return false;
         }
 
@@ -162,7 +163,7 @@ export function initPaymentModal(root) {
     async function tokeniseAuthorizeNet(panel) {
         const Accept = window.Accept;
         if (typeof Accept === 'undefined') {
-            toast.error('Accept.js is still loading. Please try again.');
+            toast.error(t('Accept.js is still loading. Please try again.'));
             return false;
         }
 
@@ -185,7 +186,7 @@ export function initPaymentModal(root) {
         return new Promise((resolve) => {
             Accept.dispatchData(secureData, (response) => {
                 if (response.messages.resultCode === 'Error') {
-                    showError(root, `sp-card-errors-${formId}`, response.messages.message?.[0]?.text ?? 'Card error');
+                    showError(root, `sp-card-errors-${formId}`, response.messages.message?.[0]?.text ?? t('Card error'));
                     resolve(false);
                     return;
                 }
@@ -218,7 +219,7 @@ export function initPaymentModal(root) {
                 expYear: `20${(year ?? '').trim()}`,
             }, (data) => {
                 if (data.errorCode > 0) {
-                    showError(root, `sp-card-errors-${formId}`, data.errorMsg ?? 'Card error');
+                    showError(root, `sp-card-errors-${formId}`, data.errorMsg ?? t('Card error'));
                     resolve(false);
                     return;
                 }

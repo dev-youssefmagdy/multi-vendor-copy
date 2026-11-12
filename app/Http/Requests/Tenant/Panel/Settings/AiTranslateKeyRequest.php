@@ -18,7 +18,7 @@ final class AiTranslateKeyRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'key' => 'translation key',
+            'key' => __('translation key'),
         ];
     }
 }

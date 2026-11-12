@@ -4,6 +4,7 @@
 
 import { get, post } from '../core/http.js';
 import { openModal } from '../core/modals.js';
+import { t } from '../core/i18n.js';
 
 const PLATFORMS = ['instagram', 'facebook', 'twitter', 'linkedin', 'tiktok', 'generic'];
 const PLATFORM_LABELS = {
@@ -12,7 +13,7 @@ const PLATFORM_LABELS = {
     twitter: 'Twitter / X',
     linkedin: 'LinkedIn',
     tiktok: 'TikTok',
-    generic: 'Generic',
+    generic: t('Generic'),
 };
 
 const socialState = { productId: null, selectedLanguage: 'all', selectedPlatform: 'all', includeImage: true };
@@ -66,7 +67,7 @@ function renderSocialPosts(root, posts, activeLang) {
                     <span class="badge badge-cyan">${active.toUpperCase()}</span>
                 </div>
                 <div class="social-post-actions">
-                    <button type="button" class="btn btn-secondary btn-sm" data-copy-caption>Copy</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-copy-caption>${t('Copy')}</button>
                 </div>
             </div>
             <p class="social-post-text"></p>
@@ -86,7 +87,7 @@ function renderSocialPlatforms(root) {
     const allBtn = document.createElement('button');
     allBtn.type = 'button';
     allBtn.className = `social-platform-btn ${socialState.selectedPlatform === 'all' ? 'is-active' : ''}`;
-    allBtn.textContent = 'All';
+    allBtn.textContent = t('All');
     allBtn.addEventListener('click', () => {
         socialState.selectedPlatform = 'all';
         renderSocialPlatforms(root);
@@ -126,7 +127,7 @@ export async function openSocialModal(productId) {
     socialState.selectedPlatform = data.selectedPlatform || 'all';
 
     const langSelect = root.querySelector('[data-social-language]');
-    langSelect.innerHTML = '<option value="all">All enabled languages</option>';
+    langSelect.innerHTML = `<option value="all">${t('All enabled languages')}</option>`;
     Object.entries(data.enabledLanguages || {}).forEach(([code, name]) => {
         const opt = document.createElement('option');
         opt.value = code;
@@ -177,7 +178,7 @@ export async function generateSocialPosts() {
             root.querySelector('[data-social-image-el]').src = `data:image/png;base64,${response.data.image_b64}`;
         }
     } catch (e) {
-        errorEl.textContent = e.message || 'Generation failed.';
+        errorEl.textContent = e.message || t('Generation failed.');
         errorEl.hidden = false;
     } finally {
         loading.hidden = true;

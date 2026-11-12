@@ -14,7 +14,7 @@
     @unless ($aiTranslationEnabled)
         <div class="card section-gap fu d1" style="border-color:var(--warning,#f59e0b);">
             <p class="panel-copy" style="margin:0;">
-                <strong>AI Translation is a paid add-on.</strong> Upgrade your plan to unlock "Translate with AI" and "Translate Store". You can still edit translations manually below.
+                <strong>{{ __('AI Translation is a paid add-on.') }}</strong> {{ __('Upgrade your plan to unlock "Translate with AI" and "Translate Store". You can still edit translations manually below.') }}
             </p>
         </div>
     @endunless
@@ -24,7 +24,7 @@
         <div class="table-header-shell" style="flex-wrap:wrap;gap:12px;">
             <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
                 <div class="form-field" style="min-width:220px;">
-                    <label class="field-label">Language</label>
+                    <label class="field-label">{{ __('Language') }}</label>
                     <select class="field-control" wire:model.live="selectedLanguageId">
                         @foreach ($languages as $language)
                             <option value="{{ $language->id }}">{{ $language->name }} ({{ strtoupper($language->code) }})</option>
@@ -32,19 +32,19 @@
                     </select>
                 </div>
                 <div class="form-field" style="min-width:220px;">
-                    <label class="field-label">Search</label>
-                    <input type="text" class="field-control" wire:model.live.debounce.400ms="search" placeholder="Search keys or values...">
+                    <label class="field-label">{{ __('Search') }}</label>
+                    <input type="text" class="field-control" wire:model.live.debounce.400ms="search" placeholder="{{ __('Search keys or values...') }}">
                 </div>
                 <label style="display:flex;align-items:center;gap:8px;margin-top:22px;cursor:pointer;">
                     <input type="checkbox" wire:model.live="showOnlyMissing">
-                    <span class="panel-copy" style="margin:0;">Show only missing</span>
+                    <span class="panel-copy" style="margin:0;">{{ __('Show only missing') }}</span>
                 </label>
             </div>
 
             <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
                 <button type="button" class="btn btn-primary" wire:click="translateStore"
                         @disabled(!$aiTranslationEnabled || $polling)>
-                    <i class="fas fa-language"></i> Translate Store
+                    <i class="fas fa-language"></i> {{ __('Translate Store') }}
                 </button>
 
                 @if ($selectedLanguage && $selectedLanguage->translation_status)
@@ -54,13 +54,13 @@
                                 <div style="height:100%;width:{{ $selectedLanguage->translation_progress }}%;background:var(--primary,#FF4B2B);transition:width .3s;"></div>
                             </div>
                             <p class="panel-copy" style="margin:4px 0 0;font-size:12px;">
-                                {{ ucfirst($selectedLanguage->translation_status) }} — {{ $selectedLanguage->translation_progress }}%
+                                {{ __(ucfirst($selectedLanguage->translation_status)) }} — {{ $selectedLanguage->translation_progress }}%
                             </p>
                         @elseif ($selectedLanguage->translation_status === 'completed')
                             @php $summary = json_decode((string) $selectedLanguage->translation_summary, true); @endphp
-                            <span class="badge badge-green">Completed — {{ $summary['items_translated'] ?? 0 }} items translated</span>
+                            <span class="badge badge-green">{{ __('Completed — :itemstranslated items translated', ['itemstranslated' => $summary['items_translated'] ?? 0]) }}</span>
                         @elseif ($selectedLanguage->translation_status === 'failed')
-                            <span class="badge badge-red">Translation failed</span>
+                            <span class="badge badge-red">{{ __('Translation failed') }}</span>
                         @endif
                     </div>
                 @endif
@@ -71,9 +71,9 @@
     {{-- ── Selected-keys AI translate bar ───────────────────────────────── --}}
     @if (count($selectedKeys ?? []) > 0)
         <div class="card section-gap fu d3" style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
-            <span class="panel-copy" style="margin:0;">{{ count($selectedKeys) }} key(s) selected</span>
+            <span class="panel-copy" style="margin:0;">{{ __(':selectedKeysCount key(s) selected', ['selectedKeysCount' => count($selectedKeys)]) }}</span>
             <button type="button" class="btn btn-secondary" wire:click="translateSelectedWithAi" @disabled(!$aiTranslationEnabled)>
-                <i class="fas fa-robot"></i> Translate Selected with AI
+                <i class="fas fa-robot"></i> {{ __('Translate Selected with AI') }}
             </button>
         </div>
     @endif
@@ -82,13 +82,13 @@
     <section class="card table-card-shell section-gap fu d4">
         <div class="table-header-shell">
             <div>
-                <h3 class="panel-title">Translation Keys</h3>
-                <p class="panel-copy">Manual edits always take priority over the default text. Locked keys are managed by the marketplace admin.</p>
+                <h3 class="panel-title">{{ __('Translation Keys') }}</h3>
+                <p class="panel-copy">{{ __('Manual edits always take priority over the default text. Locked keys are managed by the marketplace admin.') }}</p>
             </div>
         </div>
 
         @if (count($rows) > 0)
-            <x-table :headers="['', 'Key', 'Default', 'Current Value', 'Actions']">
+            <x-table :headers="['', __('Key'), __('Default'), __('Current Value'), __('Actions')]">
                 @foreach ($rows as $row)
                     <tr wire:key="tr-{{ $row['key'] }}">
                         <td>
@@ -97,7 +97,7 @@
                         <td>
                             <div class="entity-title" style="font-family:monospace;font-size:12px;">{{ $row['key'] }}</div>
                             @if ($row['locked'])
-                                <span class="badge badge-secondary" style="font-size:10px;">Locked</span>
+                                <span class="badge badge-secondary" style="font-size:10px;">{{ __('Locked') }}</span>
                             @endif
                         </td>
                         <td>
@@ -113,12 +113,12 @@
                                 <button type="button" class="btn btn-sm btn-secondary"
                                         onclick="this.closest('tr').querySelector('form').requestSubmit()"
                                         @disabled($row['locked'])>
-                                    Save
+                                    {{ __('Save') }}
                                 </button>
                                 <button type="button" class="btn btn-sm btn-primary"
                                         wire:click="translateKeyWithAi('{{ $row['key'] }}')"
                                         @disabled(!$aiTranslationEnabled || $row['locked'])>
-                                    <i class="fas fa-robot"></i> AI
+                                    <i class="fas fa-robot"></i> {{ __('AI') }}
                                 </button>
                             </div>
                         </td>
@@ -127,15 +127,15 @@
             </x-table>
 
             <div class="table-footer-shell">
-                <span class="panel-copy">Showing {{ count($rows) }} of {{ $total }} keys</span>
+                <span class="panel-copy">{{ __('Showing :rowsCount of :total keys', ['rowsCount' => count($rows), 'total' => $total]) }}</span>
                 <div style="display:flex;gap:6px;">
-                    <button type="button" class="btn btn-sm btn-secondary" wire:click="setPage({{ max(1, $page - 1) }})" @disabled($page <= 1)>Prev</button>
-                    <span class="panel-copy">Page {{ $page }} / {{ $lastPage }}</span>
-                    <button type="button" class="btn btn-sm btn-secondary" wire:click="setPage({{ min($lastPage, $page + 1) }})" @disabled($page >= $lastPage)>Next</button>
+                    <button type="button" class="btn btn-sm btn-secondary" wire:click="setPage({{ max(1, $page - 1) }})" @disabled($page <= 1)>{{ __('Prev') }}</button>
+                    <span class="panel-copy">{{ __('Page :page / :lastPage', ['page' => $page, 'lastPage' => $lastPage]) }}</span>
+                    <button type="button" class="btn btn-sm btn-secondary" wire:click="setPage({{ min($lastPage, $page + 1) }})" @disabled($page >= $lastPage)>{{ __('Next') }}</button>
                 </div>
             </div>
         @else
-            <p class="panel-copy" style="padding:24px;">No translation keys match your filters.</p>
+            <p class="panel-copy" style="padding:24px;">{{ __('No translation keys match your filters.') }}</p>
         @endif
     </section>
 </main>

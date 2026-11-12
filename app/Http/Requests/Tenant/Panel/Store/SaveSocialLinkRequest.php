@@ -23,7 +23,7 @@ final class SaveSocialLinkRequest extends TenantFormRequest
         return [
             'icon' => 'icon',
             'url' => 'profile URL',
-            'serial_number' => 'display order',
+            'serial_number' => __('display order'),
         ];
     }
 }

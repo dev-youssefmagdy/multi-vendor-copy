@@ -8,6 +8,6 @@
     <x-tenant::page-header :title="$title" />
 
     <x-tenant::card>
-        <x-tenant::empty-state title="Coming soon" copy="This section is not available yet." />
+        <x-tenant::empty-state :title="__('Coming soon')" :copy="__('This section is not available yet.')" />
     </x-tenant::card>
 @endsection

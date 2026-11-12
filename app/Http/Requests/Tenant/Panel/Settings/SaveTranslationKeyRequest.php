@@ -19,8 +19,8 @@ final class SaveTranslationKeyRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'key' => 'translation key',
-            'value' => 'translation value',
+            'key' => __('translation key'),
+            'value' => __('translation value'),
         ];
     }
 }

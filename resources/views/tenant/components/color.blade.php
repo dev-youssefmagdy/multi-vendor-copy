@@ -28,7 +28,7 @@
         @if($allowTransparent)
             <label class="toggle-field t-color-transparent">
                 <input type="checkbox" data-color-transparent @if($resolved === 'transparent') checked @endif>
-                <span>Transparent</span>
+                <span>{{ __('Transparent') }}</span>
             </label>
         @endif
         @if($swatches)

@@ -1,6 +1,7 @@
 import '@tenant-css/pages/badges.css';
 import { post } from '@tenant/core/http.js';
 import { confirm } from '@tenant/core/confirm.js';
+import { t } from '../../core/i18n.js';
 
 function jq() {
     return window.jQuery;
@@ -29,11 +30,11 @@ if (categorySelect && assignBtn) {
     assignBtn.addEventListener('click', async () => {
         if (!categorySelect.value) return;
 
-        const ok = await confirm({ text: 'Merge ALL products in the selected category into the current selection?' });
+        const ok = await confirm({ text: t('Merge ALL products in the selected category into the current selection?') });
         if (!ok) return;
 
         assignBtn.disabled = true;
-        assignBtn.textContent = 'Merging…';
+        assignBtn.textContent = t('Merging…');
 
         try {
             const data = await post(assignBtn.dataset.assignUrl, { category_id: parseInt(categorySelect.value, 10) }, { toast: false });
@@ -55,12 +56,12 @@ if (categorySelect && assignBtn) {
             }
         } catch (error) {
             if (assignMsg) {
-                assignMsg.textContent = error.message || 'Error';
+                assignMsg.textContent = error.message || t('Error');
                 assignMsg.hidden = false;
             }
         } finally {
             assignBtn.disabled = false;
-            assignBtn.textContent = 'Merge all in category';
+            assignBtn.textContent = t('Merge all in category');
         }
     });
 }
@@ -70,7 +71,7 @@ saveBtn?.addEventListener('click', async () => {
     const countryId = saveBtn.dataset.countryId || null;
 
     saveBtn.disabled = true;
-    saveBtn.textContent = 'Saving…';
+    saveBtn.textContent = t('Saving…');
 
     try {
         await post(saveBtn.dataset.actionUrl, { product_ids: productIds, country_id: countryId });
@@ -78,6 +79,6 @@ saveBtn?.addEventListener('click', async () => {
         // toast already shown globally
     } finally {
         saveBtn.disabled = false;
-        saveBtn.textContent = 'Save assignment';
+        saveBtn.textContent = t('Save assignment');
     }
 });

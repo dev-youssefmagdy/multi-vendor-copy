@@ -72,13 +72,13 @@ final class ThemesController extends PanelController
                 : (bool) $theme->is_active;
 
             if ($isUniversal) {
-                $actionLabel = $isActive ? 'Active' : ($canActivate ? 'Set Active' : ucfirst((string) $bladeStatus));
+                $actionLabel = $isActive ? __('Active') : ($canActivate ? __('Set Active') : __(ucfirst((string) $bladeStatus)));
                 $actionMethod = ($isActive || !$canActivate) ? null : 'activateVariant';
                 $actionClass = $isActive
                     ? 'theme-pill-btn is-disabled'
                     : ($canActivate ? 'theme-pill-btn is-primary' : 'theme-pill-btn is-disabled');
             } else {
-                $actionLabel = $isActive ? 'Deactivate' : 'Activate';
+                $actionLabel = $isActive ? __('Deactivate') : __('Activate');
                 $actionMethod = $isActive ? 'deactivateTheme' : 'activateTheme';
                 $actionClass = $isActive
                     ? 'theme-pill-btn is-danger'
@@ -102,16 +102,16 @@ final class ThemesController extends PanelController
                 'theme_slug' => $theme->slug,
                 'is_active' => $isActive,
                 'is_universal' => $isUniversal,
-                'scope_label' => $isUniversal ? 'Universal' : 'Country-specific',
+                'scope_label' => $isUniversal ? __('Universal') : __('Country-specific'),
                 'action_label' => $actionLabel,
                 'action_method' => $actionMethod,
                 'action_class' => $actionClass,
                 'preview_path' => $previewUrl,
-                'preview_label' => 'Preview',
+                'preview_label' => __('Preview'),
                 'storefront_url' => $storefrontUrl,
                 'initials' => Str::upper(Str::substr((string) $variant->name, 0, 2)),
                 'countries_label' => $isUniversal
-                    ? 'All countries'
+                    ? __('All countries')
                     : sprintf('%d of %d countries', $enabledCount, $totalCount),
                 'has_countries' => $totalCount > 0,
                 'blade_status' => $bladeStatus,
@@ -121,15 +121,15 @@ final class ThemesController extends PanelController
         })->filter()->values()->all();
 
         $activeVariantName = $allVariants->firstWhere('id', $activeVariantId)?->name
-            ?? ($activeUniversalTheme?->name ?? 'No theme active');
+            ?? ($activeUniversalTheme?->name ?? __('No theme active'));
 
         return view('tenant.pages.store.themes.index', [
             'activeThemeName' => $activeVariantName,
             'variantCards' => $variantCards,
             'stats' => Metric::cards([
-                ['label' => 'Variants', 'value' => count($variantCards), 'format' => 'number', 'caption' => 'Available home page layouts', 'dot' => 'dot-cyan'],
-                ['label' => 'Active', 'value' => collect($variantCards)->where('is_active', true)->count(), 'format' => 'number', 'caption' => 'Currently live variant', 'dot' => 'dot-green'],
-                ['label' => 'Themes', 'value' => $themes->count(), 'format' => 'number', 'caption' => 'Base themes available', 'dot' => 'dot-amber'],
+                ['label' => __('Variants'), 'value' => count($variantCards), 'format' => 'number', 'caption' => __('Available home page layouts'), 'dot' => 'dot-cyan'],
+                ['label' => __('Active'), 'value' => collect($variantCards)->where('is_active', true)->count(), 'format' => 'number', 'caption' => __('Currently live variant'), 'dot' => 'dot-green'],
+                ['label' => __('Themes'), 'value' => $themes->count(), 'format' => 'number', 'caption' => __('Base themes available'), 'dot' => 'dot-amber'],
             ]),
         ]);
     }
@@ -170,7 +170,7 @@ final class ThemesController extends PanelController
     {
         $this->service->activateTheme($theme);
 
-        return $this->success('Theme activated successfully.');
+        return $this->success(__('Theme activated successfully.'));
     }
 
     public function activateVariant(Theme $theme, int $variant): JsonResponse
@@ -190,7 +190,7 @@ final class ThemesController extends PanelController
                 ['home_variant_id' => $variant]
             );
 
-            return $this->success('Blade theme variant activated successfully.');
+            return $this->success(__('Blade theme variant activated successfully.'));
         }
 
         $this->service->activateTheme($theme);
@@ -200,7 +200,7 @@ final class ThemesController extends PanelController
             ['home_variant_id' => $variant]
         );
 
-        return $this->success('Variant activated successfully.');
+        return $this->success(__('Variant activated successfully.'));
     }
 
     public function deactivate(Theme $theme): JsonResponse
@@ -211,7 +211,7 @@ final class ThemesController extends PanelController
             return $this->failure($e->getMessage(), 422);
         }
 
-        return $this->success('Theme deactivated.');
+        return $this->success(__('Theme deactivated.'));
     }
 
     public function countries(Theme $theme): JsonResponse
@@ -262,7 +262,7 @@ final class ThemesController extends PanelController
         CacheVersion::bump('Theme');
         CacheVersion::bumpMany(['TenantHomeVariant', 'TenantThemeColor']);
 
-        return $this->success('Theme countries updated successfully.');
+        return $this->success(__('Theme countries updated successfully.'));
     }
 
     public function countryVariants(Theme $theme): JsonResponse
@@ -356,6 +356,6 @@ final class ThemesController extends PanelController
             );
         }
 
-        return $this->success('Country variant overrides saved.');
+        return $this->success(__('Country variant overrides saved.'));
     }
 }

@@ -46,21 +46,21 @@ final class ManufacturingController extends PanelController
         ];
 
         return view('tenant.pages.requests.manufacturing.index', [
-            'title' => 'Manufacturing Requests',
-            'badge' => 'My Requests',
-            'description' => 'Track your manufacturing requests and monitor their status updates from the admin team.',
+            'title' => __('Manufacturing Requests'),
+            'badge' => __('My Requests'),
+            'description' => __('Track your manufacturing requests and monitor their status updates from the admin team.'),
             'stats' => Metric::cards([
-                ['label' => 'Total Requests', 'value' => $stats['total'], 'format' => 'number', 'caption' => 'All your manufacturing requests.', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
-                ['label' => 'Pending', 'value' => $stats['pending'], 'format' => 'number', 'caption' => 'Awaiting admin review.', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
-                ['label' => 'Completed', 'value' => $stats['completed'], 'format' => 'number', 'caption' => 'Successfully fulfilled.', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Total Requests'), 'value' => $stats['total'], 'format' => 'number', 'caption' => __('All your manufacturing requests.'), 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
+                ['label' => __('Pending'), 'value' => $stats['pending'], 'format' => 'number', 'caption' => __('Awaiting admin review.'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Completed'), 'value' => $stats['completed'], 'format' => 'number', 'caption' => __('Successfully fulfilled.'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
             ]),
-            'statusOptions' => collect(ManufacturingRequestStatus::cases())->mapWithKeys(fn (ManufacturingRequestStatus $s) => [$s->value => $s->label()])->all(),
+            'statusOptions' => collect(ManufacturingRequestStatus::cases())->mapWithKeys(fn (ManufacturingRequestStatus $s) => [$s->value => __($s->label())])->all(),
             'columns' => [
-                TableColumn::make('product', 'Product')->orderable(false),
-                TableColumn::make('quantity', 'Qty')->name('quantity'),
-                TableColumn::make('status', 'Status')->orderable(false),
-                TableColumn::make('admin_notes', 'Admin Notes')->orderable(false)->searchable(false),
-                TableColumn::make('submitted', 'Submitted')->name('created_at'),
+                TableColumn::make('product', __('Product'))->orderable(false),
+                TableColumn::make('quantity', __('Qty'))->name('quantity'),
+                TableColumn::make('status', __('Status'))->orderable(false),
+                TableColumn::make('admin_notes', __('Admin Notes'))->orderable(false)->searchable(false),
+                TableColumn::make('submitted', __('Submitted'))->name('created_at'),
                 TableColumn::actions(),
             ],
         ]);
@@ -75,7 +75,7 @@ final class ManufacturingController extends PanelController
         return DataTables::eloquent($query)
             ->editColumn('product', fn (ManufacturingRequest $req) => view('tenant.pages.requests.manufacturing._cols.product', ['req' => $req])->render())
             ->editColumn('quantity', fn (ManufacturingRequest $req) => number_format($req->quantity))
-            ->editColumn('status', fn (ManufacturingRequest $req) => '<span class="' . e($req->status->badgeClass()) . '">' . e($req->status->label()) . '</span>')
+            ->editColumn('status', fn (ManufacturingRequest $req) => '<span class="' . e($req->status->badgeClass()) . '">' . e(__($req->status->label())) . '</span>')
             ->editColumn('admin_notes', fn (ManufacturingRequest $req) => $req->admin_notes ? '<div class="entity-subtitle" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' . e($req->admin_notes) . '</div>' : '<span class="entity-subtitle">—</span>')
             ->editColumn('submitted', fn (ManufacturingRequest $req) => $req->created_at?->format('M d, Y'))
             ->addColumn('actions', fn (ManufacturingRequest $req) => view('tenant.pages.requests.manufacturing._cols.actions', ['req' => $req])->render())
@@ -87,7 +87,7 @@ final class ManufacturingController extends PanelController
     {
         $filters = $this->filters($request, ['search', 'status']);
 
-        $headers = ['ID', 'Product Name', 'Quantity', 'Description', 'Status', 'Admin Notes', 'Submitted At'];
+        $headers = ['ID', __('Product Name'), __('Quantity'), __('Description'), __('Status'), __('Admin Notes'), __('Submitted At')];
 
         $rows = $this->repo->queryManufacturingRequests($filters)
             ->get()
@@ -96,7 +96,7 @@ final class ManufacturingController extends PanelController
                 $req->product_name,
                 $req->quantity,
                 $req->description ?? '',
-                $req->status->label(),
+                __($req->status->label()),
                 $req->admin_notes ?? '',
                 $req->created_at?->format('Y-m-d H:i') ?? '',
             ]);
@@ -107,9 +107,9 @@ final class ManufacturingController extends PanelController
     public function create(): View
     {
         return view('tenant.pages.requests.manufacturing.create', [
-            'pageTitle' => 'New Manufacturing Request',
-            'badge' => 'Manufacturing',
-            'pageDescription' => 'Submit a new manufacturing request. Our team will review it and update the status.',
+            'pageTitle' => __('New Manufacturing Request'),
+            'badge' => __('Manufacturing'),
+            'pageDescription' => __('Submit a new manufacturing request. Our team will review it and update the status.'),
         ]);
     }
 
@@ -142,7 +142,7 @@ final class ManufacturingController extends PanelController
         );
 
         return $this->success(
-            'Manufacturing request submitted successfully. We will update you when the status changes.',
+            __('Manufacturing request submitted successfully. We will update you when the status changes.'),
             redirect: route('tenant.manufacturing.index'),
         );
     }
@@ -172,9 +172,9 @@ final class ManufacturingController extends PanelController
         $presented = $this->presenter->present(collect($gateways));
 
         return view('tenant.pages.requests.manufacturing.show', [
-            'pageTitle' => 'Request #' . $request->id . ' — ' . $request->product_name,
-            'badge' => 'Manufacturing',
-            'pageDescription' => 'View details, pay outstanding invoices, and communicate with the admin team.',
+            'pageTitle' => __('Request #:id — :product', ['id' => $request->id, 'product' => $request->product_name]),
+            'badge' => __('Manufacturing'),
+            'pageDescription' => __('View details, pay outstanding invoices, and communicate with the admin team.'),
             'request' => $request,
             'messages' => $request->messages()->oldest()->get()->map(fn ($msg) => [
                 'id' => $msg->id,
@@ -197,7 +197,7 @@ final class ManufacturingController extends PanelController
 
         $request->update(['status' => ManufacturingRequestStatus::Cancelled->value]);
 
-        return $this->success('Request cancelled.');
+        return $this->success(__('Request cancelled.'));
     }
 
     public function sendMessage(SendManufacturingMessageRequest $request, int $id): JsonResponse
@@ -205,11 +205,11 @@ final class ManufacturingController extends PanelController
         $manufacturingRequest = $this->getRequest($id);
 
         $tenantUser = auth('tenant')->user();
-        $senderName = $tenantUser?->name ?? tenant('name') ?? 'Vendor';
+        $senderName = $tenantUser?->name ?? tenant('name') ?? __('Vendor');
 
         $message = $this->service->sendMessage($manufacturingRequest, $senderName, $request->validated()['message']);
 
-        return $this->success('Message sent.', ['message' => $message]);
+        return $this->success(__('Message sent.'), ['message' => $message]);
     }
 
     public function validateMessage(SendManufacturingMessageRequest $request): JsonResponse
@@ -223,7 +223,7 @@ final class ManufacturingController extends PanelController
 
         $this->stashInlineTokens($request, $validated['gateway']);
 
-        return $this->success('Redirecting to payment…', redirect: route('tenant.manufacturing-payment.charge', [
+        return $this->success(__('Redirecting to payment…'), redirect: route('tenant.manufacturing-payment.charge', [
             'gateway' => $validated['gateway'],
             'paymentRequestId' => $validated['payment_request_id'],
         ]));

@@ -39,7 +39,7 @@ final class ProductModalsController extends PanelController
                 (bool) ($validated['include_image'] ?? true),
             );
         } catch (\Throwable $e) {
-            return $this->failure('Generation failed: ' . $e->getMessage());
+            return $this->failure(__('Generation failed: :error', ['error' => $e->getMessage()]));
         }
 
         return $this->success($result['message'], [
@@ -65,10 +65,10 @@ final class ProductModalsController extends PanelController
                 $validated['variant_id'] ?? null,
             );
         } catch (\Throwable $e) {
-            return $this->failure('Fetch failed: ' . $e->getMessage());
+            return $this->failure(__('Fetch failed: :error', ['error' => $e->getMessage()]));
         }
 
-        return $this->success('Price data fetched and saved successfully.', ['priceData' => $priceData]);
+        return $this->success(__('Price data fetched and saved successfully.'), ['priceData' => $priceData]);
     }
 
     public function share(Product $product): JsonResponse
@@ -95,7 +95,7 @@ final class ProductModalsController extends PanelController
             $state['shippingByCountry'],
         );
 
-        return $this->success('Prices updated successfully.', $result);
+        return $this->success(__('Prices updated successfully.'), $result);
     }
 
     public function priceListPreview(Request $request, Product $product): JsonResponse

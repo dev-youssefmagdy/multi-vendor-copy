@@ -1,5 +1,5 @@
 <header id="nav">
-    <button type="button" class="ham" data-action="handle-ham" aria-label="Toggle sidebar">
+    <button type="button" class="ham" data-action="handle-ham" aria-label="{{ __('Toggle sidebar') }}">
         <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
             <path d="M3.25 4.25h12.5M3.25 12h17.5M3.25 19.75h17.5"/>
         </svg>
@@ -7,7 +7,7 @@
 
     {{-- Logo — mobile only (the sidebar carries it on larger screens). --}}
     <a href="{{ route('tenant.dashboard') }}" class="hd-logo" aria-label="{{ __('Dashboard') }}">
-        <img src="{{ asset('tenant-panel/logo.svg') }}" alt="NOGRGR" width="153" height="40" class="hd-logo-dark">
+        <img src="{{ asset('tenant-panel/logo.svg') }}" alt="{{ __('NOGRGR') }}" width="153" height="40" class="hd-logo-dark">
         {{-- Mobile logo (light wordmark) for dark backgrounds: dashboard hero, dark theme --}}
         <img src="{{ asset('tenant-panel/mobile-logo.svg') }}" alt="" width="153" height="40" class="hd-logo-light" aria-hidden="true">
     </a>
@@ -61,9 +61,9 @@
 
         <div class="hd-profile" data-tenant-dropdown data-align="end">
             <button type="button" class="hd-profile-trigger" data-dropdown-trigger aria-haspopup="true" aria-expanded="false">
-                <x-tenant::avatar :name="$shell['tenantName'] ?? 'Tenant Owner'" :seed="$shell['tenantId']" size="34" />
+                <x-tenant::avatar :name="$shell['tenantName'] ?? __('Tenant Owner')" :seed="$shell['tenantId']" size="34" />
                 <span class="hd-profile-meta xs-hide">
-                    <span class="hd-profile-name">{{ $shell['tenantName'] ?? 'Tenant Owner' }}</span>
+                    <span class="hd-profile-name">{{ $shell['tenantName'] ?? __('Tenant Owner') }}</span>
                     <span class="hd-profile-role">{{ __('Vendor Workspace') }}</span>
                 </span>
                 <svg class="hd-profile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 9l-6 6-6-6"/></svg>
@@ -71,17 +71,17 @@
 
             <div class="t-dropdown-menu hd-profile-menu" data-dropdown-menu role="menu" hidden>
                 <div class="hd-menu-user">
-                    <span class="hd-menu-user-name">{{ $shell['user']?->name ?? 'Tenant Admin' }}</span>
+                    <span class="hd-menu-user-name">{{ $shell['user']?->name ?? __('Tenant Admin') }}</span>
                     <span class="hd-menu-user-role">{{ $shell['role'] }}</span>
                 </div>
 
                 @if($shell['plan']['name'])
-                    <a href="{{ route('tenant.finance.wallet') }}" role="menuitem" class="t-dropdown-item hd-menu-plan {{ $shell['plan']['expired'] ? 'is-expired' : '' }}" title="{{ $shell['plan']['expired'] ? 'Subscription expired' : 'View subscriptions' }}">
+                    <a href="{{ route('tenant.finance.wallet') }}" role="menuitem" class="t-dropdown-item hd-menu-plan {{ $shell['plan']['expired'] ? 'is-expired' : '' }}" title="{{ $shell['plan']['expired'] ? __('Subscription expired') : __('View subscriptions') }}">
                         <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                         <span>
                             {{ $shell['plan']['name'] }}
                             @if($shell['plan']['expiry'])
-                                <small>{{ $shell['plan']['expired'] ? 'Expired ' : 'Exp ' }}{{ $shell['plan']['expiry']->format('M d, Y') }}</small>
+                                <small>{{ $shell['plan']['expired'] ? __('Expired') : __('Exp') }} {{ $shell['plan']['expiry']->format('M d, Y') }}</small>
                             @endif
                         </span>
                     </a>

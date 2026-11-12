@@ -12,9 +12,9 @@ class BannersIndexPage extends TenantPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Banners',
-            'badge' => 'Storefront',
-            'description' => 'Manage homepage banners per country, or set default banners shown everywhere.',
+            'title' => __('Banners'),
+            'badge' => __('Storefront'),
+            'description' => __('Manage homepage banners per country, or set default banners shown everywhere.'),
         ];
     }
 

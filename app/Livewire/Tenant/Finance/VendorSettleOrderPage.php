@@ -49,9 +49,9 @@ class VendorSettleOrderPage extends TenantPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Pay Central',
-            'badge' => 'Finance',
-            'description' => 'Select a payment gateway and complete the settlement for this order.',
+            'title' => __('Pay Central'),
+            'badge' => __('Finance'),
+            'description' => __('Select a payment gateway and complete the settlement for this order.'),
         ];
     }
 

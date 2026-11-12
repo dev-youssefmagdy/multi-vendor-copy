@@ -27,16 +27,16 @@ final class EditRequestsController extends PanelController
 
         return view('tenant.pages.catalog.edit-requests.index', [
             'stats' => Metric::cards([
-                ['label' => 'Pending', 'value' => $counts['pending'], 'format' => 'number', 'dot' => 'dot-amber'],
-                ['label' => 'Approved', 'value' => $counts['approved'], 'format' => 'number', 'dot' => 'dot-green'],
-                ['label' => 'Rejected', 'value' => $counts['rejected'], 'format' => 'number', 'dot' => 'dot-red'],
+                ['label' => __('Pending'), 'value' => $counts['pending'], 'format' => 'number', 'dot' => 'dot-amber'],
+                ['label' => __('Approved'), 'value' => $counts['approved'], 'format' => 'number', 'dot' => 'dot-green'],
+                ['label' => __('Rejected'), 'value' => $counts['rejected'], 'format' => 'number', 'dot' => 'dot-red'],
             ]),
             'columns' => [
                 TableColumn::index(),
-                TableColumn::make('product', 'Product')->orderable(false),
-                TableColumn::make('changes', 'Requested Changes')->orderable(false),
-                TableColumn::make('status', 'Status')->orderable(false),
-                TableColumn::make('created_at', 'Requested At'),
+                TableColumn::make('product', __('Product'))->orderable(false),
+                TableColumn::make('changes', __('Requested Changes'))->orderable(false),
+                TableColumn::make('status', __('Status'))->orderable(false),
+                TableColumn::make('created_at', __('Requested At')),
                 TableColumn::actions(),
             ],
         ]);
@@ -54,12 +54,12 @@ final class EditRequestsController extends PanelController
 
         return DataTables::collection($requests)
             ->addIndexColumn()
-            ->editColumn('product', fn (ProductEditRequest $r) => e($r->product_slug ?: 'Product #'.$r->product_id))
+            ->editColumn('product', fn (ProductEditRequest $r) => e($r->product_slug ?: __('Product #:id', ['id' => $r->product_id])))
             ->editColumn('changes', fn (ProductEditRequest $r) => view('tenant.pages.catalog.edit-requests._cols.changes', ['request' => $r])->render())
             ->editColumn('status', fn (ProductEditRequest $r) => view('tenant.pages.catalog.edit-requests._cols.status', ['request' => $r])->render())
             ->editColumn('created_at', fn (ProductEditRequest $r) => $r->created_at?->diffForHumans())
             ->addColumn('actions', fn (ProductEditRequest $r) => $r->status->value === 'rejected'
-                ? '<a href="'.route('tenant.products.edit', $r->product_id).'" class="btn btn-secondary btn-sm">Edit Again</a>'
+                ? '<a href="'.route('tenant.products.edit', $r->product_id).'" class="btn btn-secondary btn-sm">' . e(__('Edit Again')) . '</a>'
                 : '')
             ->rawColumns(['changes', 'status', 'actions'])
             ->toJson();

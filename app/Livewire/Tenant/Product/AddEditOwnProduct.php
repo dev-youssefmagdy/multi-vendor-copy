@@ -225,7 +225,7 @@ class AddEditOwnProduct extends Component
         foreach ($variantsPayload as $i => $v) {
             $sig = implode(':', collect($v['option_ids'])->sort()->all());
             if (in_array($sig, $seen, true)) {
-                $this->addError("variants.{$i}", 'Duplicate variant combination — each variant must be unique.');
+                $this->addError("variants.{$i}", __('Duplicate variant combination — each variant must be unique.'));
                 return null;
             }
             $seen[] = $sig;
@@ -261,7 +261,7 @@ class AddEditOwnProduct extends Component
             $product->images()->create(['path' => $path, 'order_number' => 0]);
         }
 
-        session()->flash('status', $this->productId ? 'Product updated successfully.' : 'Product created successfully.');
+        session()->flash('status', $this->productId ? __('Product updated successfully.') : __('Product created successfully.'));
 
         return redirect()->route('tenant.own-products.edit', $product);
     }
@@ -317,10 +317,10 @@ class AddEditOwnProduct extends Component
         $repository = app(TenantPanelRepository::class);
 
         return view('livewire.tenant.product.add-edit-own-product', [
-            'pageTitle' => $this->productId ? 'Edit Own Product' : 'Add Own Product',
+            'pageTitle' => $this->productId ? __('Edit Own Product') : __('Add Own Product'),
             'pageDescription' => $this->productId
-                ? 'Update this product — it will not be shipped from central inventory.'
-                : 'Add a product directly to your catalog. These products are not shipped from our side.',
+                ? __('Update this product — it will not be shipped from central inventory.')
+                : __('Add a product directly to your catalog. These products are not shipped from our side.'),
             'languages' => $repository->activeLanguages(),
             'categories' => $repository->categoryOptions(),
             'variations' => $repository->variationGroups(),

@@ -4,6 +4,7 @@ import { confirm } from '@tenant/core/confirm.js';
 import { toast } from '@tenant/core/toast.js';
 import { setBusy } from '@tenant/core/dom.js';
 import '@tenant/modules/logo-builder.js';
+import { t } from '../../core/i18n.js';
 
 // ── Colors & Fonts tab ────────────────────────────────────────────────────────
 
@@ -186,7 +187,7 @@ document.querySelectorAll('[data-design-search]').forEach((input) => {
 // instead of a full page reload, so the admin can review the defaults and still hit Save explicitly.
 document.querySelectorAll('[data-reset-colors-url]').forEach((btn) => {
     btn.addEventListener('click', async () => {
-        const ok = await confirm({ text: "Reset this edition's colors and fonts to the theme's default?" });
+        const ok = await confirm({ text: t("Reset this edition's colors and fonts to the theme's default?") });
         if (!ok) {
             return;
         }

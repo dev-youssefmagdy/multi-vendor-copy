@@ -19,7 +19,7 @@
     </div>
     @unless($autosave)
         <div class="t-sortable-list-actions">
-            <button type="button" class="btn btn-primary btn-sm" data-sortable-save hidden>Save order</button>
+            <button type="button" class="btn btn-primary btn-sm" data-sortable-save hidden>{{ __('Save order') }}</button>
         </div>
     @endunless
 </div>

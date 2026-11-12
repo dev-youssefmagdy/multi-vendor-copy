@@ -49,9 +49,9 @@ class ReturnDetailPage extends TenantPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Return #' . $this->returnId,
-            'badge' => 'Return Management',
-            'description' => 'Review this customer return request, respond, and take action.',
+            'title' => __('Return #:id', ['id' => $this->returnId]),
+            'badge' => __('Return Management'),
+            'description' => __('Review this customer return request, respond, and take action.'),
         ];
     }
 
@@ -76,7 +76,7 @@ class ReturnDetailPage extends TenantPage
 
         app(ReturnRequestService::class)->approve($record);
         $this->refresh();
-        $this->toast('Return request approved.');
+        $this->toast(__('Return request approved.'));
     }
 
     public function reject(): void
@@ -90,7 +90,7 @@ class ReturnDetailPage extends TenantPage
         $this->showRejectModal = false;
         $this->rejectReason = '';
         $this->refresh();
-        $this->toast('Return request rejected.');
+        $this->toast(__('Return request rejected.'));
     }
 
     public function requestMoreInfo(): void
@@ -104,7 +104,7 @@ class ReturnDetailPage extends TenantPage
         $this->showInfoModal = false;
         $this->infoMessage = '';
         $this->refresh();
-        $this->toast('Requested more information from the customer.');
+        $this->toast(__('Requested more information from the customer.'));
     }
 
     public function markItemReceived(): void
@@ -114,7 +114,7 @@ class ReturnDetailPage extends TenantPage
 
         app(ReturnRequestService::class)->markItemReceived($record);
         $this->refresh();
-        $this->toast('Item marked as received.');
+        $this->toast(__('Item marked as received.'));
     }
 
     public function markRefunded(): void
@@ -129,7 +129,7 @@ class ReturnDetailPage extends TenantPage
         $this->showRefundModal = false;
         $this->refundAmount = '';
         $this->refresh();
-        $this->toast('Return marked as refunded.');
+        $this->toast(__('Return marked as refunded.'));
     }
 
     public function addNote(): void
@@ -144,7 +144,7 @@ class ReturnDetailPage extends TenantPage
         app(ReturnRequestService::class)->addNote($record, $this->noteText, ReturnRequestNote::AUTHOR_TENANT, $admin?->id, false);
         $this->noteText = '';
         $this->refresh();
-        $this->toast('Note added.');
+        $this->toast(__('Note added.'));
     }
 
     private function guardTenant(ReturnRequest $record): void
@@ -165,9 +165,9 @@ class ReturnDetailPage extends TenantPage
             'id' => $record->id,
             'order_number' => $record->order_number,
             'status' => $record->status,
-            'status_label' => $record->status->label(),
+            'status_label' => __($record->status->label()),
             'status_color' => $record->status->color(),
-            'reason' => $record->reason->label(),
+            'reason' => __($record->reason->label()),
             'description' => $record->description,
             'refund_amount' => $record->refund_amount,
             'created_at' => $record->created_at?->format('M d, Y H:i'),

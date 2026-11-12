@@ -23,9 +23,9 @@ class DocsPage extends TenantPage
     protected function pageMeta(): array
     {
         return [
-            'title'       => 'Help & Documentation',
-            'badge'       => 'Help',
-            'description' => 'Guides and documentation for managing your store.',
+            'title'       => __('Help & Documentation'),
+            'badge'       => __('Help'),
+            'description' => __('Guides and documentation for managing your store.'),
         ];
     }
 
@@ -44,45 +44,45 @@ class DocsPage extends TenantPage
     {
         return [
             'getting-started' => [
-                'title'    => 'Getting Started',
+                'title'    => __('Getting Started'),
                 'icon'     => 'rocket',
-                'category' => 'Basics',
+                'category' => __('Basics'),
                 'view'     => 'livewire.tenant.help.articles.getting-started',
             ],
             'themes' => [
-                'title'    => 'Themes & Appearance',
+                'title'    => __('Themes & Appearance'),
                 'icon'     => 'palette',
-                'category' => 'Storefront',
+                'category' => __('Storefront'),
                 'view'     => 'livewire.tenant.help.articles.themes',
             ],
             'page-builder' => [
-                'title'    => 'Page Builder',
+                'title'    => __('Page Builder'),
                 'icon'     => 'grid',
-                'category' => 'Storefront',
+                'category' => __('Storefront'),
                 'view'     => 'livewire.tenant.help.articles.page-builder',
             ],
             'tracking-pixels' => [
-                'title'    => 'Pixel & Analytics Setup',
+                'title'    => __('Pixel & Analytics Setup'),
                 'icon'     => 'chart',
-                'category' => 'Marketing',
+                'category' => __('Marketing'),
                 'view'     => 'livewire.tenant.help.articles.tracking-pixels',
             ],
             'compliance' => [
-                'title'    => 'Compliance & Verification',
+                'title'    => __('Compliance & Verification'),
                 'icon'     => 'shield',
-                'category' => 'Account',
+                'category' => __('Account'),
                 'view'     => 'livewire.tenant.help.articles.compliance',
             ],
             'variable-reference' => [
-                'title'    => 'Theme Variable Reference',
+                'title'    => __('Theme Variable Reference'),
                 'icon'     => 'code',
-                'category' => 'Storefront',
+                'category' => __('Storefront'),
                 'view'     => 'livewire.tenant.help.articles.variable-reference',
             ],
             'api-reference' => [
-                'title'    => 'Storefront API',
+                'title'    => __('Storefront API'),
                 'icon'     => 'code',
-                'category' => 'Storefront',
+                'category' => __('Storefront'),
                 'view'     => 'livewire.tenant.help.articles.api-reference',
             ],
         ];

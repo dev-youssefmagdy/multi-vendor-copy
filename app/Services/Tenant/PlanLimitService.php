@@ -75,7 +75,7 @@ class PlanLimitService
 
     public function aiTranslationErrorMessage(): string
     {
-        return 'AI Translation is a paid add-on. Upgrade your plan to enable it.';
+        return __('AI Translation is a paid add-on. Upgrade your plan to enable it.');
     }
 
     /**

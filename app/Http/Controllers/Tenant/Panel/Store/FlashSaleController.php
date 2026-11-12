@@ -38,20 +38,20 @@ final class FlashSaleController extends PanelController
             'countryOptions' => CountryScope::options($countries),
             'defaultBanner' => asset('elora/assets/images/flash-sales-banner.png'),
             'stats' => Metric::cards([
-                ['label' => 'Flash Sales', 'value' => $stats['total'], 'format' => 'number', 'caption' => 'Discount campaigns configured', 'dot' => 'dot-cyan'],
-                ['label' => 'Active', 'value' => $stats['active'], 'format' => 'number', 'caption' => 'Currently running campaigns', 'dot' => 'dot-green'],
-                ['label' => 'Avg Discount', 'value' => $stats['avg_discount'], 'format' => 'percent', 'caption' => 'Average configured discount', 'dot' => 'dot-amber'],
-                ['label' => 'Products', 'value' => $stats['products'], 'format' => 'number', 'caption' => 'Unique products enrolled in flash sales', 'dot' => 'dot-violet'],
+                ['label' => __('Flash Sales'), 'value' => $stats['total'], 'format' => 'number', 'caption' => __('Discount campaigns configured'), 'dot' => 'dot-cyan'],
+                ['label' => __('Active'), 'value' => $stats['active'], 'format' => 'number', 'caption' => __('Currently running campaigns'), 'dot' => 'dot-green'],
+                ['label' => __('Avg Discount'), 'value' => $stats['avg_discount'], 'format' => 'percent', 'caption' => __('Average configured discount'), 'dot' => 'dot-amber'],
+                ['label' => __('Products'), 'value' => $stats['products'], 'format' => 'number', 'caption' => __('Unique products enrolled in flash sales'), 'dot' => 'dot-violet'],
             ]),
             'columns' => [
                 TableColumn::index(),
-                TableColumn::make('product', 'Product')->orderable(false),
-                TableColumn::make('banner', 'Banner')->orderable(false),
-                TableColumn::make('discount', 'Discount')->orderable(false),
-                TableColumn::make('countries', 'Countries')->orderable(false),
-                TableColumn::make('window', 'Window')->orderable(false),
-                TableColumn::make('source', 'Source')->orderable(false),
-                TableColumn::make('status', 'Status')->orderable(false),
+                TableColumn::make('product', __('Product'))->orderable(false),
+                TableColumn::make('banner', __('Banner'))->orderable(false),
+                TableColumn::make('discount', __('Discount'))->orderable(false),
+                TableColumn::make('countries', __('Countries'))->orderable(false),
+                TableColumn::make('window', __('Window'))->orderable(false),
+                TableColumn::make('source', __('Source'))->orderable(false),
+                TableColumn::make('status', __('Status'))->orderable(false),
                 TableColumn::actions(),
             ],
         ]);
@@ -118,11 +118,11 @@ final class FlashSaleController extends PanelController
             ->addColumn('countries', fn (FlashSale $flashSale) => CountryScope::badges($flashSale->countryIds(), $countriesById))
             ->editColumn('window', fn (FlashSale $flashSale) => e(optional($flashSale->start_date)->format('M d, Y') ?: '-').' - '.e(optional($flashSale->end_date)->format('M d, Y') ?: '-'))
             ->editColumn('source', fn (FlashSale $flashSale) => $flashSale->central_flash_sale_id
-                ? '<span class="badge badge-cyan">Platform</span>'
-                : '<span class="badge badge-indigo">Store</span>')
-            ->editColumn('status', fn (FlashSale $flashSale) => '<span class="badge '.($flashSale->active ? 'badge-green' : 'badge-amber').'">'.e($flashSale->active ? 'Active' : 'Inactive').'</span>')
+                ? '<span class="badge badge-cyan">' . e(__('Platform')) . '</span>'
+                : '<span class="badge badge-indigo">' . e(__('Store')) . '</span>')
+            ->editColumn('status', fn (FlashSale $flashSale) => '<span class="badge '.($flashSale->active ? 'badge-green' : 'badge-amber').'">'.e($flashSale->active ? __('Active') : __('Inactive')).'</span>')
             ->addColumn('actions', fn (FlashSale $flashSale) => $flashSale->central_flash_sale_id
-                ? '<span style="font-size:11.5px;color:var(--t3);">Managed by platform</span>'
+                ? '<span style="font-size:11.5px;color:var(--t3);">' . e(__('Managed by platform')) . '</span>'
                 : view('tenant.pages.store.flash-sales._cols.actions', ['flashSale' => $flashSale])->render())
             ->rawColumns(['product', 'banner', 'countries', 'source', 'status', 'actions'])
             ->toJson();
@@ -185,7 +185,7 @@ final class FlashSaleController extends PanelController
 
         $maxPercentage = (float) (tenant('profit_percentage') ?? 0);
         if ((float) $validated['discount_percentage'] >= $maxPercentage) {
-            $message = "Discount percentage must be less than the store's profit percentage ({$maxPercentage}%).";
+            $message = __("Discount percentage must be less than the store's profit percentage (:max%).", ['max' => $maxPercentage]);
 
             return $this->failure($message, 422, ['discount_percentage' => [$message]]);
         }
@@ -214,7 +214,7 @@ final class FlashSaleController extends PanelController
             $savedFlashSale->forceFill(['banner_image' => asset('elora/assets/images/flash-sales-banner.png')])->save();
         }
 
-        return $this->success($flashSale ? 'Flash sale updated successfully.' : 'Flash sale created successfully.');
+        return $this->success($flashSale ? __('Flash sale updated successfully.') : __('Flash sale created successfully.'));
     }
 
     public function validateStore(SaveFlashSaleRequest $request): JsonResponse
@@ -231,7 +231,7 @@ final class FlashSaleController extends PanelController
     {
         $this->service->deleteModel($flashSale);
 
-        return $this->success('Flash sale deleted successfully.');
+        return $this->success(__('Flash sale deleted successfully.'));
     }
 
     public function availableForProduct(Request $request): JsonResponse
@@ -266,7 +266,7 @@ final class FlashSaleController extends PanelController
         $productId = (int) $request->input('product_id');
 
         if (!$productId) {
-            return $this->failure('Product ID is required.', 422);
+            return $this->failure(__('Product ID is required.'), 422);
         }
 
         $already = DB::table('flash_sale_product')
@@ -281,7 +281,7 @@ final class FlashSaleController extends PanelController
                 ->delete();
             CacheVersion::bumpMany(['FlashSale', 'Product']);
 
-            return $this->success('Product removed from flash sale.', ['attached' => false]);
+            return $this->success(__('Product removed from flash sale.'), ['attached' => false]);
         }
 
         DB::table('flash_sale_product')->insert([
@@ -292,6 +292,6 @@ final class FlashSaleController extends PanelController
         ]);
         CacheVersion::bumpMany(['FlashSale', 'Product']);
 
-        return $this->success('Product added to flash sale.', ['attached' => true]);
+        return $this->success(__('Product added to flash sale.'), ['attached' => true]);
     }
 }

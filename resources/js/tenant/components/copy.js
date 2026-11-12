@@ -1,5 +1,6 @@
 import { toast } from '../core/toast.js';
 import { copyText } from '../core/clipboard.js';
+import { t } from '../core/i18n.js';
 
 // Copy button (x-tenant::copy). The value is read at click time so scripts can
 // set data-copy-value after render (e.g. the product Share modal). On success the
@@ -17,7 +18,7 @@ export function init(el) {
         const value = el.dataset.copyValue || '';
 
         if (!value) {
-            toast.error('Nothing to copy.');
+            toast.error(t('Nothing to copy.'));
             return;
         }
 
@@ -26,7 +27,7 @@ export function init(el) {
                 if (!el.dataset.originalLabel) {
                     el.dataset.originalLabel = labelEl.textContent;
                 }
-                labelEl.textContent = el.dataset.copiedLabel || 'Copied';
+                labelEl.textContent = el.dataset.copiedLabel || t('Copied');
                 el.classList.add('is-copied');
                 clearTimeout(resetTimer);
                 resetTimer = setTimeout(() => {
@@ -34,9 +35,9 @@ export function init(el) {
                     el.classList.remove('is-copied');
                 }, 2000);
             }
-            toast.success(el.dataset.copiedLabel || 'Copied');
+            toast.success(el.dataset.copiedLabel || t('Copied'));
         } else {
-            toast.error('Could not copy to clipboard.');
+            toast.error(t('Could not copy to clipboard.'));
         }
     });
 }

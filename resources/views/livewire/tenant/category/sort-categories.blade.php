@@ -1,20 +1,20 @@
 <main id="mn">
     <div class="page-head fu d0">
         <div>
-            <div class="eyebrow">Storefront Catalog</div>
-            <h1 class="D page-title">Category Order</h1>
-            <p class="page-copy">Drag rows to reorder how categories appear in the storefront navigation.</p>
+            <div class="eyebrow">{{ __('Storefront Catalog') }}</div>
+            <h1 class="D page-title">{{ __('Category Order') }}</h1>
+            <p class="page-copy">{{ __('Drag rows to reorder how categories appear in the storefront navigation.') }}</p>
         </div>
         <div class="page-actions">
-            <a href="{{ route('tenant.categories.index') }}" class="btn btn-secondary">Back to Categories</a>
+            <a href="{{ route('tenant.categories.index') }}" class="btn btn-secondary">{{ __('Back to Categories') }}</a>
         </div>
     </div>
 
     <section class="card table-card-shell section-gap">
         <div class="table-header-shell">
             <div>
-                <h3 class="panel-title">Active Categories</h3>
-                <p class="panel-copy">{{ $categories->count() }} active categories.</p>
+                <h3 class="panel-title">{{ __('Active Categories') }}</h3>
+                <p class="panel-copy">{{ __(':categories active categories.', ['categories' => $categories->count()]) }}</p>
             </div>
         </div>
 
@@ -24,8 +24,8 @@
                     <thead>
                         <tr>
                             <th style="width:32px"></th>
-                            <th>Category</th>
-                            <th>Parent</th>
+                            <th>{{ __('Category') }}</th>
+                            <th>{{ __('Parent') }}</th>
                         </tr>
                     </thead>
                     <tbody id="categories-sortable">
@@ -38,10 +38,10 @@
                                     </svg>
                                 </td>
                                 <td>
-                                    <div class="entity-title">{{ $category->translationValue('name') ?? $category->slug ?? 'Category #' . $category->id }}</div>
+                                    <div class="entity-title">{{ $category->translationValue('name') ?? $category->slug ?? __('Category #:id', ['id' => $category->id]) }}</div>
                                     <div class="entity-subtitle">/{{ $category->slug }}</div>
                                 </td>
-                                <td>{{ $category->parent?->translationValue('name') ?? 'Root' }}</td>
+                                <td>{{ $category->parent?->translationValue('name') ?? __('Root') }}</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -49,8 +49,8 @@
             </div>
         @else
             <div class="empty-state">
-                <h3 class="panel-title">No active categories</h3>
-                <p class="panel-copy">Activate categories before ordering them.</p>
+                <h3 class="panel-title">{{ __('No active categories') }}</h3>
+                <p class="panel-copy">{{ __('Activate categories before ordering them.') }}</p>
             </div>
         @endif
     </section>

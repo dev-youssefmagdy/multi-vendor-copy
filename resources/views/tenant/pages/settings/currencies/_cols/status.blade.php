@@ -1,7 +1,7 @@
 @props(['currency'])
 
 @if($currency->is_default)
-    <span class="badge badge-green">Default</span>
+    <span class="badge badge-green">{{ __('Default') }}</span>
 @else
     <x-tenant::switch
         :checked="(bool) $currency->is_active"

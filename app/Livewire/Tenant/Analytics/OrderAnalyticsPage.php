@@ -12,10 +12,10 @@ class OrderAnalyticsPage extends ContentPage
         $overview = app(TenantPanelRepository::class)->orderAnalyticsOverview();
 
         return [
-            'title' => 'Order Analytics',
-            'badge' => 'Insights',
-            'description' => 'Analyze tenant order value, monthly collection performance, and queue mix directly from the tenant order tables.',
-            'contentIntro' => 'Gross value, collected value, order counts, and customer momentum are all aggregated from tenant orders and related customers.',
+            'title' => __('Order Analytics'),
+            'badge' => __('Insights'),
+            'description' => __('Analyze tenant order value, monthly collection performance, and queue mix directly from the tenant order tables.'),
+            'contentIntro' => __('Gross value, collected value, order counts, and customer momentum are all aggregated from tenant orders and related customers.'),
             'cardsGridClass' => 'g-stats4',
             'cards' => $this->presentMetricCards($overview['cards']),
             'chartPayload' => $overview['chart_payload'],
@@ -23,23 +23,23 @@ class OrderAnalyticsPage extends ContentPage
                 [
                     'layoutClass' => 'g-r2',
                     'cards' => [
-                        ['title' => 'Gross vs Collected', 'description' => 'Monthly gross order value compared with paid collections.', 'canvas' => 'revenueChart'],
-                        ['title' => 'Status Mix', 'description' => 'Live order pipeline distribution across tenant statuses.', 'canvas' => 'donutChart', 'legend' => collect($overview['status_rows'])->map(fn(array $row, int $index) => ['label' => $row['label'], 'value' => number_format($row['count']), 'dot' => ['dot-cyan', 'dot-violet', 'dot-green', 'dot-amber'][$index % 4]])->all()],
+                        ['title' => __('Gross vs Collected'), 'description' => __('Monthly gross order value compared with paid collections.'), 'canvas' => 'revenueChart'],
+                        ['title' => __('Status Mix'), 'description' => __('Live order pipeline distribution across tenant statuses.'), 'canvas' => 'donutChart', 'legend' => collect($overview['status_rows'])->map(fn(array $row, int $index) => ['label' => $row['label'], 'value' => number_format($row['count']), 'dot' => ['dot-cyan', 'dot-violet', 'dot-green', 'dot-amber'][$index % 4]])->all()],
                     ],
                 ],
                 [
                     'layoutClass' => 'g-r2',
                     'cards' => [
-                        ['title' => 'Order Volume', 'description' => 'Orders and paid orders by month.', 'canvas' => 'barChart'],
-                        ['title' => 'Customer Momentum', 'description' => 'New customer creation versus repeat buying activity.', 'canvas' => 'lineChart'],
+                        ['title' => __('Order Volume'), 'description' => __('Orders and paid orders by month.'), 'canvas' => 'barChart'],
+                        ['title' => __('Customer Momentum'), 'description' => __('New customer creation versus repeat buying activity.'), 'canvas' => 'lineChart'],
                     ],
                 ],
             ],
             'tableSections' => [
                 [
-                    'title' => 'Monthly Performance',
-                    'description' => 'Monthly order, payment, and average order performance for the tenant.',
-                    'headers' => ['Month', 'Orders', 'Paid', 'Gross', 'Collected', 'Average Order'],
+                    'title' => __('Monthly Performance'),
+                    'description' => __('Monthly order, payment, and average order performance for the tenant.'),
+                    'headers' => [__('Month'), __('Orders'), __('Paid'), __('Gross'), __('Collected'), __('Average Order')],
                     'rows' => collect($overview['monthly_rows'])->map(fn(array $row) => [
                         e($row['label']),
                         e((string) $row['orders']),
@@ -50,16 +50,16 @@ class OrderAnalyticsPage extends ContentPage
                     ])->all(),
                 ],
                 [
-                    'title' => 'Status Breakdown',
-                    'description' => 'Current order queue mix across statuses.',
-                    'headers' => ['Status', 'Orders'],
+                    'title' => __('Status Breakdown'),
+                    'description' => __('Current order queue mix across statuses.'),
+                    'headers' => [__('Status'), __('Orders')],
                     'rows' => collect($overview['status_rows'])->map(fn(array $row) => [e($row['label']), e((string) $row['count'])])->all(),
                 ],
             ],
             'bullets' => [
-                'Gross sales include unpaid orders; collected values include paid orders only.',
-                'Queue mix updates from the same order status values used in the tenant order list.',
-                'Monthly customer momentum is included so order growth can be read alongside buyer growth.',
+                __('Gross sales include unpaid orders; collected values include paid orders only.'),
+                __('Queue mix updates from the same order status values used in the tenant order list.'),
+                __('Monthly customer momentum is included so order growth can be read alongside buyer growth.'),
             ],
         ];
     }

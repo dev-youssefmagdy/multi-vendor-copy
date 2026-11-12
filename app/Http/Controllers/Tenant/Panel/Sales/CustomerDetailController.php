@@ -43,10 +43,10 @@ final class CustomerDetailController extends PanelController
             'customer' => $customer,
             'customerId' => $customerId,
             'stats' => Metric::cards([
-                ['label' => 'Total Orders', 'value' => $detail['orderCount'], 'format' => 'number', 'caption' => $detail['paidCount'] . ' paid', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
-                ['label' => 'Total Spent', 'value' => $detail['totalSpent'], 'format' => 'currency', 'caption' => '$' . number_format((float) $detail['paidSpent'], 2) . ' collected', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Avg Order', 'value' => $detail['avgOrder'], 'format' => 'currency', 'caption' => 'Avg per order placed', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
-                ['label' => 'Last Order', 'value' => $detail['lastOrderAt'] ? $detail['lastOrderAt']->format('M d, Y') : 'Never', 'caption' => $customer->active ? 'Active' : 'Inactive', 'dot' => $customer->active ? 'dot-green' : 'dot-amber'],
+                ['label' => __('Total Orders'), 'value' => $detail['orderCount'], 'format' => 'number', 'caption' => $detail['paidCount'] . ' paid', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
+                ['label' => __('Total Spent'), 'value' => $detail['totalSpent'], 'format' => 'currency', 'caption' => '$' . number_format((float) $detail['paidSpent'], 2) . ' collected', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Avg Order'), 'value' => $detail['avgOrder'], 'format' => 'currency', 'caption' => __('Avg per order placed'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Last Order'), 'value' => $detail['lastOrderAt'] ? $detail['lastOrderAt']->format('M d, Y') : __('Never'), 'caption' => $customer->active ? __('Active') : __('Inactive'), 'dot' => $customer->active ? 'dot-green' : 'dot-amber'],
             ]),
             'phone' => str_contains($rawPhone, 'object') ? '' : $rawPhone,
             'countries' => Country::with('translations.language')->orderBy('name')
@@ -57,11 +57,11 @@ final class CustomerDetailController extends PanelController
             'activeTab' => $request->query('tab', 'profile'),
             'paymentsColumns' => [
                 TableColumn::index(),
-                TableColumn::make('uuid', 'Order')->orderable(false),
-                TableColumn::make('gateway', 'Gateway')->orderable(false),
-                TableColumn::make('grand_total', 'Amount')->orderable(false),
-                TableColumn::make('paid', 'Status')->orderable(false),
-                TableColumn::make('created_at', 'Date'),
+                TableColumn::make('uuid', __('Order'))->orderable(false),
+                TableColumn::make('gateway', __('Gateway'))->orderable(false),
+                TableColumn::make('grand_total', __('Amount'))->orderable(false),
+                TableColumn::make('paid', __('Status'))->orderable(false),
+                TableColumn::make('created_at', __('Date')),
             ],
         ]);
     }
@@ -87,7 +87,7 @@ final class CustomerDetailController extends PanelController
 
         $customer->update($payload);
 
-        return $this->success('Customer profile updated.');
+        return $this->success(__('Customer profile updated.'));
     }
 
     public function validateProfile(UpdateCustomerProfileRequest $request, int $customerId): JsonResponse
@@ -100,7 +100,7 @@ final class CustomerDetailController extends PanelController
         $customer = Customer::query()->findOrFail($customerId);
         $customer->update(['active' => !$customer->active]);
 
-        return $this->success('Customer status updated successfully.');
+        return $this->success(__('Customer status updated successfully.'));
     }
 
     public function paymentsData(Request $request, int $customerId): JsonResponse
@@ -169,7 +169,7 @@ final class CustomerDetailController extends PanelController
             'is_default' => $validated['is_default'] ?? false,
         ]);
 
-        return $this->success('Address added.');
+        return $this->success(__('Address added.'));
     }
 
     public function updateAddress(SaveCustomerAddressRequest $request, int $customerId, int $addressId): JsonResponse
@@ -196,7 +196,7 @@ final class CustomerDetailController extends PanelController
             'is_default' => $validated['is_default'] ?? false,
         ]);
 
-        return $this->success('Address updated.');
+        return $this->success(__('Address updated.'));
     }
 
     public function validateAddress(SaveCustomerAddressRequest $request, int $customerId): JsonResponse
@@ -211,7 +211,7 @@ final class CustomerDetailController extends PanelController
             ->findOrFail($addressId)
             ->delete();
 
-        return $this->success('Address deleted.');
+        return $this->success(__('Address deleted.'));
     }
 
     public function citiesByCountry(Request $request, ?int $countryId = null): JsonResponse

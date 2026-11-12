@@ -23,12 +23,12 @@ class PayoutsReceivedPage extends ListPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Payouts Received',
-            'badge' => 'Finance',
+            'title' => __('Payouts Received'),
+            'badge' => __('Finance'),
             'actionLabel' => '',
-            'description' => 'Review the payouts you have received from central for your net order share.',
-            'tableTitle' => 'Payout Records',
-            'headers' => ['Invoice', 'Method', 'Amount', 'Status', 'Paid At'],
+            'description' => __('Review the payouts you have received from central for your net order share.'),
+            'tableTitle' => __('Payout Records'),
+            'headers' => [__('Invoice'), __('Method'), __('Amount'), __('Status'), __('Paid At')],
         ];
     }
 
@@ -75,9 +75,9 @@ class PayoutsReceivedPage extends ListPage
 
             return [
                 '<div class="entity-title" style="font-family:monospace;font-size:12px;">' . e($p->invoice_number) . '</div>',
-                '<div class="entity-title">' . e(ucwords(str_replace('_', ' ', $p->method ?? '—'))) . '</div>',
+                '<div class="entity-title">' . e(__(ucwords(str_replace('_', ' ', $p->method ?? '—')))) . '</div>',
                 '<strong>$' . number_format((float) $p->amount, 2) . '</strong>',
-                '<span class="status-pill ' . $statusClass . '">' . e(ucwords($p->status)) . '</span>',
+                '<span class="status-pill ' . $statusClass . '">' . e(__(ucwords($p->status))) . '</span>',
                 '<div class="entity-title">' . e($p->paid_at?->format('M d, Y')) . '</div>'
                 . '<div class="entity-subtitle">' . e($p->paid_at?->format('H:i')) . '</div>',
             ];
@@ -86,18 +86,18 @@ class PayoutsReceivedPage extends ListPage
         return array_merge(parent::pageData(), [
             'records' => $records,
             'filterFields' => [
-                ['label' => 'Search', 'model' => 'search', 'placeholder' => 'Invoice, transaction…'],
+                ['label' => __('Search'), 'model' => 'search', 'placeholder' => __('Invoice, transaction…')],
                 [
-                    'label' => 'Status',
+                    'label' => __('Status'),
                     'model' => 'statusFilter',
                     'type' => 'select',
-                    'options' => ['' => 'All Statuses'] + array_map(fn($s) => ucwords($s), $statuses),
+                    'options' => ['' => __('All Statuses')] + array_map(fn($s) => __(ucwords($s)), $statuses),
                 ],
             ],
             'statistics' => $this->presentMetricCards([
-                ['label' => 'Total Payouts', 'value' => $totalCount, 'format' => 'number', 'caption' => 'Payouts received from central.', 'dot' => 'dot-cyan'],
-                ['label' => 'Total Received', 'value' => $totalReceived, 'format' => 'currency', 'caption' => 'Cumulative amount received from central.', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'This Month', 'value' => $thisMonth, 'format' => 'currency', 'caption' => 'Payouts received this calendar month.', 'dot' => 'dot-cyan'],
+                ['label' => __('Total Payouts'), 'value' => $totalCount, 'format' => 'number', 'caption' => __('Payouts received from central.'), 'dot' => 'dot-cyan'],
+                ['label' => __('Total Received'), 'value' => $totalReceived, 'format' => 'currency', 'caption' => __('Cumulative amount received from central.'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('This Month'), 'value' => $thisMonth, 'format' => 'currency', 'caption' => __('Payouts received this calendar month.'), 'dot' => 'dot-cyan'],
             ]),
             'rows' => $rows,
             'tableDescription' => $records->total() . ' payout records matched the current filters.',

@@ -1,6 +1,6 @@
 @if($shell['compliance']['required'])
-    <x-tenant::modal id="tenant-compliance-modal" title="Review & Accept Compliance Documents" size="lg" static :closable="false" auto-open>
-        <p class="panel-copy" style="margin-bottom:14px;">Before accessing your vendor panel, please read and accept the following documents.</p>
+    <x-tenant::modal id="tenant-compliance-modal" :title="__('Review & Accept Compliance Documents')" size="lg" static :closable="false" auto-open>
+        <p class="panel-copy" style="margin-bottom:14px;">{{ __('Before accessing your vendor panel, please read and accept the following documents.') }}</p>
 
         @if($shell['compliance']['pages']->isNotEmpty())
             <div class="ob-compliance-pages">
@@ -18,11 +18,11 @@
         <x-tenant::form action="{{ route('tenant.compliance.accept') }}" method="POST"
             validate="{{ route('tenant.compliance.accept.validate') }}" success="redirect reload-page">
             <x-tenant::checkbox name="accept" required>
-                I have read and agree to all the compliance documents listed above.
+                {{ __('I have read and agree to all the compliance documents listed above.') }}
             </x-tenant::checkbox>
 
             <div class="page-actions compact-actions justify-end">
-                <x-tenant::submit>Accept &amp; Continue</x-tenant::submit>
+                <x-tenant::submit>{{ __('Accept & Continue') }}</x-tenant::submit>
             </div>
         </x-tenant::form>
     </x-tenant::modal>

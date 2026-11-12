@@ -21,7 +21,7 @@ final class StoreBrandRequestRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'title' => 'brand title',
+            'title' => __('brand title'),
             'description' => 'description',
             'files' => 'attachments',
             'files.*' => 'attachment',

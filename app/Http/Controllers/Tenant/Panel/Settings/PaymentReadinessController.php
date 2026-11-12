@@ -19,7 +19,7 @@ final class PaymentReadinessController extends PanelController
         return view('tenant.pages.settings.payment-readiness.index', [
             'report' => $report,
             'percent' => $percent,
-            'scoreLabel' => $percent >= 80 ? 'Ready' : ($percent >= 50 ? 'Partial' : 'Not Ready'),
+            'scoreLabel' => $percent >= 80 ? __('Ready') : ($percent >= 50 ? __('Partial') : __('Not Ready')),
         ]);
     }
 }

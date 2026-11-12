@@ -77,7 +77,7 @@ final class SaveProductRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'central_product_id' => 'central product',
+            'central_product_id' => __('central product'),
             'category_ids' => 'categories',
             'badge_ids' => 'badges',
         ];

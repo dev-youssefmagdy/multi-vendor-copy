@@ -25,7 +25,7 @@ final class PurchaseLanguageRequest extends TenantFormRequest
     {
         return [
             'language_id' => 'language',
-            'gateway' => 'payment gateway',
+            'gateway' => __('payment gateway'),
         ];
     }
 }

@@ -72,11 +72,11 @@ final class GeneralSettingsController extends PanelController
         return view('tenant.pages.settings.general.index', [
             'groups' => [
                 [
-                    'title' => 'Pricing',
-                    'description' => 'Store-wide defaults used across the vendor control panel.',
+                    'title' => __('Pricing'),
+                    'description' => __('Store-wide defaults used across the vendor control panel.'),
                     'gridClass' => 'form-grid-2',
                     'fields' => [
-                        ['label' => 'Profit Percentage', 'model' => 'profit_percentage', 'type' => 'number'],
+                        ['label' => __('Profit Percentage'), 'model' => 'profit_percentage', 'type' => 'number'],
                     ],
                 ],
             ],
@@ -105,7 +105,7 @@ final class GeneralSettingsController extends PanelController
 
         ApplyTenantProfitPercentageJob::dispatch($tenant->id);
 
-        return $this->success('General settings updated. Prices are being recalculated for all products and variants.');
+        return $this->success(__('General settings updated. Prices are being recalculated for all products and variants.'));
     }
 
     public function validateUpdate(SaveGeneralSettingsRequest $request): JsonResponse
@@ -153,7 +153,7 @@ final class GeneralSettingsController extends PanelController
             ['tenant_id' => $tenantId, 'type' => TenantChangeRequestType::Countries->value],
         );
 
-        return $this->success('Request sent to admin for review.');
+        return $this->success(__('Request sent to admin for review.'));
     }
 
     public function validateCountryRequest(SubmitCountryChangeRequest $request): JsonResponse
@@ -194,7 +194,7 @@ final class GeneralSettingsController extends PanelController
             ['tenant_id' => $tenantId, 'type' => TenantChangeRequestType::Categories->value],
         );
 
-        return $this->success('Request sent to admin for review.');
+        return $this->success(__('Request sent to admin for review.'));
     }
 
     public function validateCategoryRequest(SubmitCategoryChangeRequest $request): JsonResponse

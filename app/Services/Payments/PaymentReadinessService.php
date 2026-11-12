@@ -84,58 +84,58 @@ class PaymentReadinessService
         $checks = [
             [
                 'id' => 'has_gateway',
-                'label' => 'At least one payment gateway is active',
+                'label' => __('At least one payment gateway is active'),
                 'passed' => $activeCount > 0,
                 'detail' => $activeCount > 0
                     ? "{$activeCount} gateway(s) active"
-                    : 'Go to Payment Gateways → activate a gateway',
+                    : __('Go to Payment Gateways → activate a gateway'),
             ],
             [
                 'id' => 'connection',
-                'label' => 'Gateway credentials verified',
+                'label' => __('Gateway credentials verified'),
                 'passed' => $connectedCount > 0,
                 'detail' => $connectedCount > 0
                     ? "{$connectedCount}/{$activeCount} gateway(s) connected"
-                    : 'Use the Recheck button to verify credentials',
+                    : __('Use the Recheck button to verify credentials'),
             ],
             [
                 'id' => 'card',
-                'label' => 'Accepts card payments (Visa / Mastercard)',
+                'label' => __('Accepts card payments (Visa / Mastercard)'),
                 'passed' => $hasCard,
-                'detail' => $hasCard ? 'Card payments supported' : 'Add a gateway that supports card payments',
+                'detail' => $hasCard ? __('Card payments supported') : __('Add a gateway that supports card payments'),
             ],
             [
                 'id' => 'apple_pay',
-                'label' => 'Supports Apple Pay',
+                'label' => __('Supports Apple Pay'),
                 'passed' => $hasApplePay,
                 'detail' => $hasApplePay
-                    ? 'Apple Pay available'
-                    : 'Stripe, Moyasar, Tap, HyperPay, or Checkout.com support Apple Pay',
+                    ? __('Apple Pay available')
+                    : __('Stripe, Moyasar, Tap, HyperPay, or Checkout.com support Apple Pay'),
             ],
             [
                 'id' => 'google_pay',
-                'label' => 'Supports Google Pay',
+                'label' => __('Supports Google Pay'),
                 'passed' => $hasGooglePay,
                 'detail' => $hasGooglePay
-                    ? 'Google Pay available'
-                    : 'Stripe, Mollie, Adyen, or Checkout.com support Google Pay',
+                    ? __('Google Pay available')
+                    : __('Stripe, Mollie, Adyen, or Checkout.com support Google Pay'),
             ],
             [
                 'id' => 'international',
-                'label' => 'Supports international customer payments',
+                'label' => __('Supports international customer payments'),
                 'passed' => $isInternational,
                 'detail' => $isInternational
-                    ? 'Customers from ' . count($allCustomerCountries) . ' countries can pay'
-                    : 'Consider adding Stripe, PayPal, or Adyen for global reach',
+                    ? __('Customers from :count countries can pay', ['count' => count($allCustomerCountries)])
+                    : __('Consider adding Stripe, PayPal, or Adyen for global reach'),
             ],
             [
                 'id' => 'target_coverage',
-                'label' => 'All target countries are covered',
+                'label' => __('All target countries are covered'),
                 'passed' => !empty($targetCountries) && empty($uncoveredCountries),
                 'detail' => empty($targetCountries)
-                    ? 'Set your target countries in Store → Countries'
+                    ? __('Set your target countries in Store → Countries')
                     : (empty($uncoveredCountries)
-                        ? 'All ' . count($targetCountries) . ' target countries covered'
+                        ? __('All :count target countries covered', ['count' => count($targetCountries)])
                         : count($uncoveredCountries) . ' uncovered: ' . implode(', ', array_slice($uncoveredCountries, 0, 5))),
             ],
         ];

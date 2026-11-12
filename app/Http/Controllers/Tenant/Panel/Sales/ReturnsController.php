@@ -25,25 +25,25 @@ final class ReturnsController extends PanelController
 
         $statusOptions = [];
         foreach (ReturnStatus::cases() as $case) {
-            $statusOptions[$case->value] = $case->label();
+            $statusOptions[$case->value] = __($case->label());
         }
 
         return view('tenant.pages.sales.returns.index', [
             'stats' => Metric::cards([
-                ['label' => 'Total Returns', 'value' => $stats['total'], 'format' => 'number', 'caption' => 'All return requests', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
-                ['label' => 'Pending Review', 'value' => $stats['pending'], 'format' => 'number', 'caption' => 'Awaiting your decision', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
-                ['label' => 'Approved', 'value' => $stats['approved'], 'format' => 'number', 'caption' => 'Returns accepted', 'dot' => 'dot-blue', 'glow' => 'card-glow-blue'],
-                ['label' => 'Refunded', 'value' => $stats['refunded'], 'format' => 'number', 'caption' => 'Amount returned', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Total Returns'), 'value' => $stats['total'], 'format' => 'number', 'caption' => __('All return requests'), 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
+                ['label' => __('Pending Review'), 'value' => $stats['pending'], 'format' => 'number', 'caption' => __('Awaiting your decision'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Approved'), 'value' => $stats['approved'], 'format' => 'number', 'caption' => __('Returns accepted'), 'dot' => 'dot-blue', 'glow' => 'card-glow-blue'],
+                ['label' => __('Refunded'), 'value' => $stats['refunded'], 'format' => 'number', 'caption' => __('Amount returned'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
             ]),
             'statusOptions' => $statusOptions,
             'columns' => [
-                TableColumn::make('order_number', 'Order')->orderable(false),
+                TableColumn::make('order_number', __('Order'))->orderable(false),
                 TableColumn::make('type', __('Type'))->orderable(false)->searchable(false),
                 TableColumn::make('quantity', __('Qty'))->orderable(false)->searchable(false),
-                TableColumn::make('status', 'Status')->orderable(false),
-                TableColumn::make('reason', 'Reason')->orderable(false),
-                TableColumn::make('refund', 'Refund')->orderable(false),
-                TableColumn::make('date', 'Date')->orderable(false),
+                TableColumn::make('status', __('Status'))->orderable(false),
+                TableColumn::make('reason', __('Reason'))->orderable(false),
+                TableColumn::make('refund', __('Refund'))->orderable(false),
+                TableColumn::make('date', __('Date'))->orderable(false),
                 TableColumn::actions(),
             ],
         ]);
@@ -58,9 +58,9 @@ final class ReturnsController extends PanelController
         return DataTables::eloquent($query)
             ->editColumn('order_number', fn (ReturnRequest $r) => view('tenant.pages.sales.returns._cols.order', ['record' => $r])->render())
             ->editColumn('status', fn (ReturnRequest $r) => view('tenant.pages.sales.returns._cols.status', ['record' => $r])->render())
-            ->editColumn('type', fn (ReturnRequest $r) => '<div class="entity-subtitle">'.e($r->type?->label() ?? '—').'</div>')
+            ->editColumn('type', fn (ReturnRequest $r) => '<div class="entity-subtitle">'.e(__($r->type?->label()) ?? '—').'</div>')
             ->editColumn('quantity', fn (ReturnRequest $r) => '<div class="entity-subtitle">'.(int) ($r->quantity ?: 1).'</div>')
-            ->editColumn('reason', fn (ReturnRequest $r) => '<div class="entity-subtitle">'.e($r->reason->label()).'</div>')
+            ->editColumn('reason', fn (ReturnRequest $r) => '<div class="entity-subtitle">'.e(__($r->reason->label())).'</div>')
             ->editColumn('refund', fn (ReturnRequest $r) => $r->refund_amount
                 ? '<div class="entity-title">$'.number_format((float) $r->refund_amount, 2).'</div>'
                 : '<span class="entity-subtitle">—</span>')

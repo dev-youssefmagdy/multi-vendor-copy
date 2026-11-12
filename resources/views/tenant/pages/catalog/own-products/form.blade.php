@@ -15,8 +15,8 @@
     <div class="op-page">
     <x-tenant::page-header :title="$pageTitle" :description="$pageDescription">
         <x-slot:actions>
-            <a href="{{ route('tenant.own-products.index') }}" class="btn btn-secondary op-back">{!! $arrowLeft !!} Back to products</a>
-            <button type="submit" form="own-product-form" class="btn btn-primary op-save">Save product</button>
+            <a href="{{ route('tenant.own-products.index') }}" class="btn btn-secondary op-back">{!! $arrowLeft !!} {{ __('Back to products') }}</a>
+            <button type="submit" form="own-product-form" class="btn btn-primary op-save">{{ __('Save product') }}</button>
         </x-slot:actions>
     </x-tenant::page-header>
 
@@ -29,32 +29,32 @@
         id="own-product-form"
     >
         {{-- ── Basics ─────────────────────────────────────────────────────── --}}
-        <x-tenant::card title="Basics" subtitle="Identifiers, publication state, and catalog flags." class="op-card">
+        <x-tenant::card :title="__('Basics')" :subtitle="__('Identifiers, publication state, and catalog flags.')" class="op-card">
             <div class="op-stack">
                 <div class="form-grid op-grid-4">
-                    <x-tenant::input name="sku" label="SKU" placeholder="PRD 001" required :value="$productData['sku'] ?? ''" />
-                    <x-tenant::input name="slug" label="Slug" placeholder="Auto-generated" :value="$productData['slug'] ?? ''" />
-                    <x-tenant::input type="number" name="weight_grams" label="Weight (grams)" min="0" placeholder="0" :value="$productData['weight_grams'] ?? ''" />
-                    <x-tenant::select2 name="category_ids" multiple label="Category" placeholder="Select categories" :options="$categoryOptions" :value="$categoryIds" />
+                    <x-tenant::input name="sku" label="SKU" :placeholder="__('PRD 001')" required :value="$productData['sku'] ?? ''" />
+                    <x-tenant::input name="slug" :label="__('Slug')" :placeholder="__('Auto-generated')" :value="$productData['slug'] ?? ''" />
+                    <x-tenant::input type="number" name="weight_grams" :label="__('Weight (grams)')" min="0" placeholder="0" :value="$productData['weight_grams'] ?? ''" />
+                    <x-tenant::select2 name="category_ids" multiple :label="__('Category')" :placeholder="__('Select categories')" :options="$categoryOptions" :value="$categoryIds" />
                 </div>
 
                 <div class="op-countries" data-op-countries>
                     <div class="op-countries-head">
-                        <span class="op-countries-title">Sold in countries</span>
-                        <span class="op-countries-hint">Pick from your targeted countries. Leave all unticked to make it available everywhere.</span>
+                        <span class="op-countries-title">{{ __('Sold in countries') }}</span>
+                        <span class="op-countries-hint">{{ __('Pick from your targeted countries. Leave all unticked to make it available everywhere.') }}</span>
                     </div>
                     @if(empty($countryOptions))
-                        <div class="op-country-none">No targeted countries yet. Add countries to your store first, then choose where this product is sold.</div>
+                        <div class="op-country-none">{{ __('No targeted countries yet. Add countries to your store first, then choose where this product is sold.') }}</div>
                     @else
                     <label class="op-search">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="8.75"/><path d="M17.5 17.5l4.25 4.25"/></svg>
-                        <input type="search" placeholder="Search" aria-label="Search countries" data-op-country-search>
+                        <input type="search" placeholder="{{ __('Search') }}" aria-label="{{ __('Search countries') }}" data-op-country-search>
                     </label>
                     <ul class="op-country-list" role="list">
                         <li class="op-country-all-item">
                             <label class="ds-check op-country op-country-all">
                                 <input type="checkbox" data-op-country-all @checked(count($countryOptions) && count(array_diff(array_keys($countryOptions), $selectedCountries)) === 0)>
-                                <span>Select all countries</span>
+                                <span>{{ __('Select all countries') }}</span>
                             </label>
                         </li>
                         @foreach($countryOptions as $code => $country)
@@ -66,7 +66,7 @@
                                 </label>
                             </li>
                         @endforeach
-                        <li class="op-country-empty" data-op-country-empty hidden>No countries match your search.</li>
+                        <li class="op-country-empty" data-op-country-empty hidden>{{ __('No countries match your search.') }}</li>
                     </ul>
                     @endif
                 </div>
@@ -78,48 +78,48 @@
                                 <div class="form-grid op-grid-3">
                                     <x-tenant::input
                                         name="translations.{{ $language->code }}.name"
-                                        label="Product name"
+                                        :label="__('Product name')"
                                         :required="(bool) $language->is_default"
                                         :value="$translations[$language->code]['name'] ?? ''"
-                                        placeholder="Localized product name"
+                                        :placeholder="__('Localized product name')"
                                     />
-                                    <x-tenant::input name="translations.{{ $language->code }}.label" label="Label" placeholder="Short display label (used in UI, breadcrumbs, listings)" :value="$translations[$language->code]['label'] ?? ''" />
-                                    <x-tenant::input name="translations.{{ $language->code }}.summary" label="Summary" placeholder="Short merchandising summary" :value="$translations[$language->code]['summary'] ?? ''" />
+                                    <x-tenant::input name="translations.{{ $language->code }}.label" :label="__('Label')" :placeholder="__('Short display label (used in UI, breadcrumbs, listings)')" :value="$translations[$language->code]['label'] ?? ''" />
+                                    <x-tenant::input name="translations.{{ $language->code }}.summary" :label="__('Summary')" :placeholder="__('Short merchandising summary')" :value="$translations[$language->code]['summary'] ?? ''" />
                                     <div class="op-span-all">
-                                        <x-tenant::editor name="translations.{{ $language->code }}.description" label="Description" height="220" toolbar="basic" placeholder="Describe your product" :value="$translations[$language->code]['description'] ?? ''" />
+                                        <x-tenant::editor name="translations.{{ $language->code }}.description" :label="__('Description')" height="220" toolbar="basic" :placeholder="__('Describe your product')" :value="$translations[$language->code]['description'] ?? ''" />
                                     </div>
                                     <div class="op-span-all form-grid form-grid-2">
-                                        <x-tenant::input name="translations.{{ $language->code }}.meta_keywords" label="Meta Keywords" placeholder="keyword1, keyword2, keyword3" :value="$translations[$language->code]['meta_keywords'] ?? ''" />
-                                        <x-tenant::input name="translations.{{ $language->code }}.meta_description" label="Meta Description" placeholder="SEO-friendly page description (≤ 160 chars)" :value="$translations[$language->code]['meta_description'] ?? ''" />
+                                        <x-tenant::input name="translations.{{ $language->code }}.meta_keywords" :label="__('Meta Keywords')" :placeholder="__('keyword1, keyword2, keyword3')" :value="$translations[$language->code]['meta_keywords'] ?? ''" />
+                                        <x-tenant::input name="translations.{{ $language->code }}.meta_description" :label="__('Meta Description')" :placeholder="__('SEO-friendly page description (≤ 160 chars)')" :value="$translations[$language->code]['meta_description'] ?? ''" />
                                     </div>
                                 </div>
                             </x-tenant::locale-pane>
                         @endforeach
                     </x-tenant::locale-tabs>
                 @else
-                    <div class="notice-muted">Create at least one active language before managing translated product content.</div>
+                    <div class="notice-muted">{{ __('Create at least one active language before managing translated product content.') }}</div>
                 @endif
 
                 <div class="op-flags">
-                    <x-tenant::checkbox name="active" label="Product is Active" :checked="$productData['active'] ?? true" wrapper-class="ds-check" />
-                    <x-tenant::checkbox name="featured" label="Featured" :checked="$productData['featured'] ?? false" wrapper-class="ds-check" />
-                    <x-tenant::checkbox name="manage_stock" label="Manage Stock" :checked="$productData['manage_stock'] ?? true" wrapper-class="ds-check" data-manage-stock-toggle />
-                    <x-tenant::checkbox name="is_taxable" label="Taxable" :checked="$productData['is_taxable'] ?? true" wrapper-class="ds-check" />
+                    <x-tenant::checkbox name="active" :label="__('Product is Active')" :checked="$productData['active'] ?? true" wrapper-class="ds-check" />
+                    <x-tenant::checkbox name="featured" :label="__('Featured')" :checked="$productData['featured'] ?? false" wrapper-class="ds-check" />
+                    <x-tenant::checkbox name="manage_stock" :label="__('Manage Stock')" :checked="$productData['manage_stock'] ?? true" wrapper-class="ds-check" data-manage-stock-toggle />
+                    <x-tenant::checkbox name="is_taxable" :label="__('Taxable')" :checked="$productData['is_taxable'] ?? true" wrapper-class="ds-check" />
                 </div>
             </div>
         </x-tenant::card>
 
         {{-- ── Pricing ────────────────────────────────────────────────────── --}}
-        <x-tenant::card title="Pricing" subtitle="Base pricing, promotional pricing, and stock thresholds." class="op-card">
+        <x-tenant::card :title="__('Pricing')" :subtitle="__('Base pricing, promotional pricing, and stock thresholds.')" class="op-card">
             <div class="form-grid op-grid-3 op-numbers">
-                <x-tenant::input type="number" name="base_price" label="Base Price" required min="0" step="0.01" placeholder="0" :value="$productData['base_price'] ?? '0.00'" />
-                <x-tenant::input type="number" name="sale_price" label="Sale price" min="0" step="0.01" placeholder="0" :value="$productData['sale_price'] ?? ''" />
-                <x-tenant::input type="number" name="cost_price" label="Cost price" min="0" step="0.01" placeholder="0" :value="$productData['cost_price'] ?? ''" />
+                <x-tenant::input type="number" name="base_price" :label="__('Base Price')" required min="0" step="0.01" placeholder="0" :value="$productData['base_price'] ?? '0.00'" />
+                <x-tenant::input type="number" name="sale_price" :label="__('Sale price')" min="0" step="0.01" placeholder="0" :value="$productData['sale_price'] ?? ''" />
+                <x-tenant::input type="number" name="cost_price" :label="__('Cost price')" min="0" step="0.01" placeholder="0" :value="$productData['cost_price'] ?? ''" />
                 <div data-stock-fields>
-                    <x-tenant::input type="number" name="stock" label="Stock" min="0" :value="$productData['stock'] ?? 0" />
+                    <x-tenant::input type="number" name="stock" :label="__('Stock')" min="0" :value="$productData['stock'] ?? 0" />
                 </div>
                 <div data-stock-fields>
-                    <x-tenant::input type="number" name="min_stock" label="Minimum Stock" min="0" :value="$productData['min_stock'] ?? 0" />
+                    <x-tenant::input type="number" name="min_stock" :label="__('Minimum Stock')" min="0" :value="$productData['min_stock'] ?? 0" />
                 </div>
             </div>
         </x-tenant::card>
@@ -128,8 +128,8 @@
         <div class="card ds-card op-card op-media">
             <section class="op-media-col">
                 <div class="op-media-head">
-                    <h3 class="panel-title">Primary Image</h3>
-                    <p class="panel-copy">Main product image shown on listings and the product page.</p>
+                    <h3 class="panel-title">{{ __('Primary Image') }}</h3>
+                    <p class="panel-copy">{{ __('Main product image shown on listings and the product page.') }}</p>
                 </div>
 
                 {{-- Same fields as x-tenant::image-upload (primary_image + remove_primary_image); preview via [data-image-upload]. --}}
@@ -138,14 +138,14 @@
                         data-expect-w="{{ config('image_dimensions.product.width') }}" data-expect-h="{{ config('image_dimensions.product.height') }}">
                         <label class="t-dropzone-drop op-drop">
                             <span class="op-drop-icon">{!! $uploadIcon !!}</span>
-                            <span class="op-drop-title">Click to upload or drag and drop</span>
-                            <span class="op-drop-sub">PNG, JPG or WEBP (max. 4MB)</span>
+                            <span class="op-drop-title">{{ __('Click to upload or drag and drop') }}</span>
+                            <span class="op-drop-sub">{{ __('PNG, JPG or WEBP (max. 4MB)') }}</span>
                             <input type="file" name="primary_image" id="f-primary_image" accept="image/*" class="t-dropzone-input">
                         </label>
                         <div class="op-thumbs">
                             <div class="op-thumb">
                                 <img src="{{ $existingImage }}" alt="" class="t-image-upload-preview" @unless($existingImage) hidden @endunless>
-                                <label class="op-thumb-remove" aria-label="Remove image">
+                                <label class="op-thumb-remove" aria-label="{{ __('Remove image') }}">
                                     <input type="checkbox" name="remove_primary_image" value="1" data-op-primary-remove>
                                 </label>
                             </div>
@@ -158,8 +158,8 @@
 
             <section class="op-media-col">
                 <div class="op-media-head">
-                    <h3 class="panel-title">Media Gallery</h3>
-                    <p class="panel-copy">Additional images and videos shown in the product slider. JPG, PNG, GIF, WEBP, MP4, WEBM, MOV.</p>
+                    <h3 class="panel-title">{{ __('Media Gallery') }}</h3>
+                    <p class="panel-copy">{{ __('Additional images and videos shown in the product slider. JPG, PNG, GIF, WEBP, MP4, WEBM, MOV.') }}</p>
                 </div>
 
                 <x-tenant::dropzone
@@ -169,8 +169,8 @@
                     remove-name="remove_gallery_ids"
                     order-name="gallery_order"
                     accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/quicktime"
-                    label="Click to upload or drag and drop"
-                    sublabel="JPG, PNG, GIF, WEBP, MP4, WEBM or MOV (max. 50MB)"
+                    :label="__('Click to upload or drag and drop')"
+                    :sublabel="__('JPG, PNG, GIF, WEBP, MP4, WEBM or MOV (max. 50MB)')"
                     wrapper-class="op-gallery"
                     :expected-width="config('image_dimensions.product.width')"
                     :expected-height="config('image_dimensions.product.height')"
@@ -184,27 +184,24 @@
             </section>
         </div>
 
-        <x-tenant::card-collapse title="Badges" subtitle="Assign badges such as Featured or Recommended — used to highlight this product on the storefront.">
+        <x-tenant::card-collapse :title="__('Badges')" :subtitle="__('Assign badges such as Featured or Recommended — used to highlight this product on the storefront.')">
             @if($badges->isEmpty())
-                <div class="notice-muted">No badges available yet.</div>
+                <div class="notice-muted">{{ __('No badges available yet.') }}</div>
             @else
                 <x-tenant::select2
                     name="badge_ids"
                     multiple
-                    label="Badges"
-                    placeholder="Search and select badges"
-                    :options="$badges->map(fn ($badge) => ['value' => $badge->id, 'label' => ucfirst(str_replace('-', ' ', $badge->text))])->all()"
+                    :label="__('Badges')"
+                    :placeholder="__('Search and select badges')"
+                    :options="$badges->map(fn ($badge) => ['value' => $badge->id, 'label' => __(ucfirst(str_replace('-', ' ', $badge->text)))])->all()"
                     :value="$selectedBadgeIds"
                 />
             @endif
         </x-tenant::card-collapse>
 
-        <x-tenant::card-collapse title="Product Variants" subtitle="Optional: build product variants. Each variant is a combination of variation options (e.g. Size: Small + Color: Red) with its own price, stock and image.">
+        <x-tenant::card-collapse :title="__('Product Variants')" :subtitle="__('Optional: build product variants. Each variant is a combination of variation options (e.g. Size: Small + Color: Red) with its own price, stock and image.')">
             <div class="notice-muted" style="margin-bottom:16px">
-                <strong>How it works:</strong> Click <em>Add Variant</em>, pick one option per variation group
-                (Size, Color, …), and set this variant's own price, stock and image.
-                Use <em>+ Add another group</em> to combine multiple groups per variant.
-                When variants exist, per-variant stock replaces the product-level stock field.
+                <strong>{{ __('How it works:') }}</strong> {{ __('Click') }} <em>{{ __('Add Variant') }}</em>{{ __(', pick one option per variation group (Size, Color, …), and set this variant\'s own price, stock and image. Use') }} <em>{{ __('+ Add another group') }}</em> {{ __('to combine multiple groups per variant. When variants exist, per-variant stock replaces the product-level stock field.') }}
             </div>
 
             <script id="variations-data" type="application/json">@json($variationsJson)</script>
@@ -226,28 +223,28 @@
                     <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
                     </svg>
-                    Add Variant
+                    {{ __('Add Variant') }}
                 </button>
             </div>
         </x-tenant::card-collapse>
 
-        <x-tenant::card-collapse title="Return Policy Override" subtitle="Override the store-wide return policy for this product." :open="(bool) ($productData['return_policy_override'] ?? false)">
-            <x-tenant::switch name="return_policy_override" label="Override return policy for this product" :checked="$productData['return_policy_override'] ?? false" data-return-policy-toggle />
+        <x-tenant::card-collapse :title="__('Return Policy Override')" :subtitle="__('Override the store-wide return policy for this product.')" :open="(bool) ($productData['return_policy_override'] ?? false)">
+            <x-tenant::switch name="return_policy_override" :label="__('Override return policy for this product')" :checked="$productData['return_policy_override'] ?? false" data-return-policy-toggle />
 
             <div class="form-grid form-grid-2" data-return-policy-fields @unless($productData['return_policy_override'] ?? false) hidden @endunless>
-                <x-tenant::switch name="is_returnable" label="This product is returnable" :checked="$productData['is_returnable'] ?? true" />
-                <x-tenant::input type="number" name="return_window_days" label="Return Window (days)" min="1" max="365" :value="$productData['return_window_days'] ?? ''" />
-                <x-tenant::input type="number" name="return_fee" label="Return Fee" min="0" step="0.01" :value="$productData['return_fee'] ?? ''" />
-                <x-tenant::switch name="return_video_required" label="Require unboxing video for returns" :checked="$productData['return_video_required'] ?? false" />
+                <x-tenant::switch name="is_returnable" :label="__('This product is returnable')" :checked="$productData['is_returnable'] ?? true" />
+                <x-tenant::input type="number" name="return_window_days" :label="__('Return Window (days)')" min="1" max="365" :value="$productData['return_window_days'] ?? ''" />
+                <x-tenant::input type="number" name="return_fee" :label="__('Return Fee')" min="0" step="0.01" :value="$productData['return_fee'] ?? ''" />
+                <x-tenant::switch name="return_video_required" :label="__('Require unboxing video for returns')" :checked="$productData['return_video_required'] ?? false" />
                 <div class="span-2">
-                    <x-tenant::textarea name="return_conditions" label="Return Conditions" rows="4" :value="$productData['return_conditions'] ?? ''" />
+                    <x-tenant::textarea name="return_conditions" :label="__('Return Conditions')" rows="4" :value="$productData['return_conditions'] ?? ''" />
                 </div>
             </div>
         </x-tenant::card-collapse>
 
         <div class="page-actions compact-actions justify-end">
-            <a href="{{ route('tenant.own-products.index') }}" class="btn btn-secondary">Back to products</a>
-            <x-tenant::submit>Save product</x-tenant::submit>
+            <a href="{{ route('tenant.own-products.index') }}" class="btn btn-secondary">{{ __('Back to products') }}</a>
+            <x-tenant::submit>{{ __('Save product') }}</x-tenant::submit>
         </div>
     </x-tenant::form>
     </div>

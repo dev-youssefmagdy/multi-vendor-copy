@@ -145,7 +145,7 @@ final class PageBuilderController extends PanelController
             );
         }
 
-        return $this->success('Section order saved.');
+        return $this->success(__('Section order saved.'));
     }
 
     public function toggleVisibility(Request $request, string $section): JsonResponse
@@ -181,7 +181,7 @@ final class PageBuilderController extends PanelController
             'is_visible' => $request->has('visible') ? $request->boolean('visible') : !$row->is_visible,
         ]);
 
-        return $this->success('Section visibility updated.');
+        return $this->success(__('Section visibility updated.'));
     }
 
     private function resolveThemeId(Request $request, Collection $themes): ?int

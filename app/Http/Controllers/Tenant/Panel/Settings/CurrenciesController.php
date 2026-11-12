@@ -35,15 +35,15 @@ final class CurrenciesController extends PanelController
 
         return view('tenant.pages.settings.currencies.index', [
             'stats' => Metric::cards([
-                ['label' => 'Currencies', 'value' => $currencies->count(), 'format' => 'number', 'caption' => 'Currencies synced into this tenant', 'dot' => 'dot-cyan'],
-                ['label' => 'Active', 'value' => $currencies->where('is_active', true)->count(), 'format' => 'number', 'caption' => 'Currencies available on storefront', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Default', 'value' => optional($currencies->firstWhere('is_default', true))->code ?? '-', 'caption' => 'Current storefront settlement currency', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Currencies'), 'value' => $currencies->count(), 'format' => 'number', 'caption' => __('Currencies synced into this tenant'), 'dot' => 'dot-cyan'],
+                ['label' => __('Active'), 'value' => $currencies->where('is_active', true)->count(), 'format' => 'number', 'caption' => __('Currencies available on storefront'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Default'), 'value' => optional($currencies->firstWhere('is_default', true))->code ?? '-', 'caption' => __('Current storefront settlement currency'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
             ]),
             'columns' => [
                 TableColumn::index(),
-                TableColumn::make('currency', 'Currency')->orderable(false),
-                TableColumn::make('rate', 'Rate')->orderable(false),
-                TableColumn::make('status', 'Status')->orderable(false)->searchable(false),
+                TableColumn::make('currency', __('Currency'))->orderable(false),
+                TableColumn::make('rate', __('Rate'))->orderable(false),
+                TableColumn::make('status', __('Status'))->orderable(false)->searchable(false),
                 TableColumn::actions(),
             ],
         ]);
@@ -68,13 +68,13 @@ final class CurrenciesController extends PanelController
     {
         $currency->update(['is_active' => $request->boolean('active')]);
 
-        return $this->success('Currency state updated successfully.');
+        return $this->success(__('Currency state updated successfully.'));
     }
 
     public function makeDefault(Currency $currency): JsonResponse
     {
         $this->service->markDefaultCurrency($currency);
 
-        return $this->success('Default currency updated successfully.');
+        return $this->success(__('Default currency updated successfully.'));
     }
 }

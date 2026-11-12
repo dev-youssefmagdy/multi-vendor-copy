@@ -25,7 +25,7 @@ final class StoreManufacturingRequestRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'reference_url' => 'product link',
+            'reference_url' => __('product link'),
             'images.*' => 'image',
         ];
     }

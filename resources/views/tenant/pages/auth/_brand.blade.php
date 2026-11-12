@@ -1,5 +1,5 @@
 @php
-    $logoAlt = tenant()?->data['shop_name'] ?? tenant()?->name ?? 'Logo';
+    $logoAlt = tenant()?->data['shop_name'] ?? tenant()?->name ?? __('Logo');
 @endphp
 
 <section class="ta-brand" aria-label="{{ $logoAlt }}">

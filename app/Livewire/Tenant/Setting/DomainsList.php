@@ -30,9 +30,9 @@ class DomainsList extends ListPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Domains',
-            'badge' => 'Store',
-            'description' => 'Manage your store domains and DNS connection status.',
+            'title' => __('Domains'),
+            'badge' => __('Store'),
+            'description' => __('Manage your store domains and DNS connection status.'),
         ];
     }
 

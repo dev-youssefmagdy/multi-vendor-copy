@@ -52,10 +52,10 @@ final class PageFormController extends PanelController
 
         return view('tenant.pages.store.pages.form', [
             'page' => $page,
-            'pageTitle' => $page ? 'Edit Page' : 'Add Page',
+            'pageTitle' => $page ? __('Edit Page') : __('Add Page'),
             'pageDescription' => $page
-                ? 'Update storefront page settings and translated content.'
-                : 'Create a new storefront page with translated content for tenant languages.',
+                ? __('Update storefront page settings and translated content.')
+                : __('Create a new storefront page with translated content for tenant languages.'),
             'languages' => $languages,
             'activeLocale' => $defaultLocale,
             'translations' => $translations,
@@ -84,7 +84,7 @@ final class PageFormController extends PanelController
         ], $page);
 
         return $this->success(
-            $page ? 'Page updated successfully.' : 'Page created successfully.',
+            $page ? __('Page updated successfully.') : __('Page created successfully.'),
             redirect: route('tenant.store.pages.edit', $saved),
         );
     }

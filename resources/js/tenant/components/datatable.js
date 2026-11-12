@@ -5,6 +5,7 @@ import { initComponents } from '../core/registry.js';
 import { request } from '../core/http.js';
 import { confirm } from '../core/confirm.js';
 import { labelTableCells } from './ds-table.js';
+import { t } from '../core/i18n.js';
 
 function initialFiltersFromQuery() {
     const params = new URLSearchParams(location.search);
@@ -22,11 +23,11 @@ function initialFiltersFromQuery() {
 
 function buildLanguage(config) {
     const base = {
-        processing: 'Loading…',
+        processing: t('Loading…'),
         emptyTable: `<div class="empty-state"><div class="empty-state-title">${config.emptyTitle}</div><p class="empty-state-copy">${config.emptyCopy}</p></div>`,
         zeroRecords: `<div class="empty-state"><div class="empty-state-title">${config.emptyTitle}</div><p class="empty-state-copy">${config.emptyCopy}</p></div>`,
-        info: 'Showing _START_ to _END_ of _TOTAL_ records',
-        infoEmpty: 'Showing 0 to 0 of 0 records',
+        info: t('Showing _START_ to _END_ of _TOTAL_ records'),
+        infoEmpty: t('Showing 0 to 0 of 0 records'),
         infoFiltered: '',
         lengthMenu: '_MENU_ per page',
         paginate: { previous: '‹', next: '›' },
@@ -175,7 +176,7 @@ export async function init(el) {
     });
 
     $el.on('error.dt', () => {
-        toast.error("Couldn't load the table. Please retry.");
+        toast.error(t("Couldn't load the table. Please retry."));
     });
 
     on('tenant:table:reload', ({ selector, resetPaging }) => {

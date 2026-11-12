@@ -5,7 +5,7 @@
     'method' => 'POST',
     'validate' => null,
     'presented' => ['gateways' => [], 'selected' => null, 'active_inline' => null, 'sdk' => []],
-    'submitLabel' => 'Pay now',
+    'submitLabel' => __('Pay now'),
     'selected' => null,
     'inline' => false,
 ])

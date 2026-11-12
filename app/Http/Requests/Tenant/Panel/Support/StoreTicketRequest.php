@@ -30,13 +30,13 @@ final class StoreTicketRequest extends TenantFormRequest
     public function messages(): array
     {
         return [
-            'subject.required' => 'Please enter a subject for your ticket.',
-            'subject.max' => 'The subject may not be longer than :max characters.',
-            'category.required' => 'Please choose a category.',
-            'category.in' => 'Please choose a valid category.',
-            'body.required' => 'Please describe your issue.',
-            'body.min' => 'Your message must be at least :min characters so the team can help.',
-            'body.max' => 'Your message may not be longer than :max characters.',
+            'subject.required' => __('Please enter a subject for your ticket.'),
+            'subject.max' => __('The subject may not be longer than :max characters.'),
+            'category.required' => __('Please choose a category.'),
+            'category.in' => __('Please choose a valid category.'),
+            'body.required' => __('Please describe your issue.'),
+            'body.min' => __('Your message must be at least :min characters so the team can help.'),
+            'body.max' => __('Your message may not be longer than :max characters.'),
         ];
     }
 }

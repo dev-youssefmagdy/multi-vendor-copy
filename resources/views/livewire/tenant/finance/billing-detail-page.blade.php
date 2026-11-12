@@ -10,7 +10,7 @@
             <p class="page-copy">{{ $description }}</p>
         </div>
         <div class="page-actions">
-            <a class="btn btn-secondary" href="{{ route('tenant.finance.billing') }}">← Billing</a>
+            <a class="btn btn-secondary" href="{{ route('tenant.finance.billing') }}">{{ __('← Billing') }}</a>
         </div>
     </div>
 

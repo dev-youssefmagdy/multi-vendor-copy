@@ -6,6 +6,7 @@ import Swiper from 'swiper';
 import 'swiper/css';
 import { on } from '@tenant/core/events.js';
 import { toast } from '@tenant/core/toast.js';
+import { t } from '../../core/i18n.js';
 
 const FONT = 'Outfit, ui-sans-serif, system-ui, sans-serif';
 
@@ -188,7 +189,7 @@ function donutChart(data) {
     charts.push(new Chart(canvas, {
         type: 'doughnut',
         data: {
-            labels: hasData ? data.donutLabels || [] : ['No data'],
+            labels: hasData ? data.donutLabels || [] : [t('No data')],
             datasets: [{
                 data: hasData ? values : [1],
                 backgroundColor: hasData ? JSON.parse(canvas.dataset.colors || '[]') : [isDark() ? '#2a2a2d' : '#F3F4F6'],
@@ -244,12 +245,12 @@ async function downloadReport(page, button) {
     button.classList.add('is-loading');
     try {
         const lines = [];
-        const heading = page.querySelector('.an-module-head h2')?.textContent.trim() || 'Analytics';
+        const heading = page.querySelector('.an-module-head h2')?.textContent.trim() || t('Analytics');
         lines.push(csvCell(heading), '');
 
         const kpis = [...page.querySelectorAll('.an-kpi')];
         if (kpis.length) {
-            lines.push('Metric,Value');
+            lines.push([t('Metric'), t('Value')].map(csvCell).join(','));
             kpis.forEach((kpi) => lines.push([kpi.querySelector('[data-kpi-label]')?.textContent, kpi.querySelector('[data-kpi-value]')?.textContent].map(csvCell).join(',')));
             lines.push('');
         }
@@ -283,7 +284,7 @@ async function downloadReport(page, button) {
         link.remove();
         setTimeout(() => URL.revokeObjectURL(link.href), 1000);
     } catch {
-        toast.error('Could not build the report. Please try again.');
+        toast.error(t('Could not build the report. Please try again.'));
     } finally {
         button.classList.remove('is-loading');
     }

@@ -18,7 +18,7 @@ final class SaveGeneralSettingsRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'profit_percentage' => 'profit percentage',
+            'profit_percentage' => __('profit percentage'),
         ];
     }
 }

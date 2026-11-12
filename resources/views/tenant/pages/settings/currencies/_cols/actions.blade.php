@@ -5,7 +5,7 @@
         <x-tenant::dropdown-item
             data-action-url="{{ route('tenant.settings.currencies.default', $currency) }}"
             data-action-method="POST"
-            data-confirm="Make {{ $currency->code }} the default currency?"
-            data-success="reload-table:#currencies-table">Make default</x-tenant::dropdown-item>
+            :data-confirm="__('Make :code the default currency?', ['code' => $currency->code])"
+            data-success="reload-table:#currencies-table">{{ __('Make default') }}</x-tenant::dropdown-item>
     </x-tenant::dropdown>
 @endunless

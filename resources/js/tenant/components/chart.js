@@ -1,4 +1,5 @@
 import { on } from '../core/events.js';
+import { t } from '../core/i18n.js';
 
 const instances = new WeakMap();
 
@@ -55,7 +56,7 @@ function buildLineDatasets(definitions, context, defaultFill = false) {
         gradient.addColorStop(1, `${color}00`);
 
         return {
-            label: definition.label || `Series ${index + 1}`,
+            label: definition.label || t('Series :number', { number: index + 1 }),
             data: definition.data || [],
             borderColor: color,
             backgroundColor: (definition.fill ?? defaultFill) ? gradient : 'transparent',
@@ -75,7 +76,7 @@ function buildBarDatasets(definitions) {
     return (definitions || []).map((definition, index) => {
         const color = chartColor(definition.color, index);
         return {
-            label: definition.label || `Series ${index + 1}`,
+            label: definition.label || t('Series :number', { number: index + 1 }),
             data: definition.data || [],
             backgroundColor(context) {
                 const gradient = context.chart.ctx.createLinearGradient(0, 0, 0, 180);
@@ -94,7 +95,7 @@ function buildRadarDatasets(definitions) {
     return (definitions || []).map((definition, index) => {
         const color = chartColor(definition.color, index);
         return {
-            label: definition.label || `Series ${index + 1}`,
+            label: definition.label || t('Series :number', { number: index + 1 }),
             data: definition.data || [],
             borderColor: color,
             backgroundColor: `${color}${definition.alpha || '1a'}`,

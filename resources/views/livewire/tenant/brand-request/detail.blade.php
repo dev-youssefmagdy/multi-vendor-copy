@@ -3,12 +3,12 @@
         <div>
             <div class="page-title-row">
                 <h1 class="D page-title">{{ $request->title }}</h1>
-                <span class="{{ $request->status->badgeClass() }}">{{ $request->status->label() }}</span>
+                <span class="{{ $request->status->badgeClass() }}">{{ __($request->status->label()) }}</span>
             </div>
-            <p class="page-copy">Brand Request #{{ $request->id }} &middot; Submitted {{ $request->created_at->format('M d, Y H:i') }}</p>
+            <p class="page-copy">{{ __('Brand Request #:id · Submitted :createdat', ['id' => $request->id, 'createdat' => $request->created_at->format('M d, Y H:i')]) }}</p>
         </div>
         <div class="page-actions">
-            <a href="{{ route('tenant.brand-requests.index') }}" class="btn btn-secondary">← Back to Requests</a>
+            <a href="{{ route('tenant.brand-requests.index') }}" class="btn btn-secondary">{{ __('← Back to Requests') }}</a>
         </div>
     </div>
 
@@ -24,28 +24,28 @@
 
     {{-- ── Request Details ──────────────────────────────────────────────── --}}
     <div class="card fu d1 section-gap" style="padding:24px;">
-        <h3 class="panel-title" style="margin-bottom:16px;">Request Details</h3>
+        <h3 class="panel-title" style="margin-bottom:16px;">{{ __('Request Details') }}</h3>
         <dl style="display:grid;grid-template-columns:130px 1fr;gap:10px 16px;font-size:13px;">
-            <dt class="entity-subtitle">Status</dt>
-            <dd><span class="{{ $request->status->badgeClass() }}">{{ $request->status->label() }}</span></dd>
+            <dt class="entity-subtitle">{{ __('Status') }}</dt>
+            <dd><span class="{{ $request->status->badgeClass() }}">{{ __($request->status->label()) }}</span></dd>
 
-            <dt class="entity-subtitle">Submitted</dt>
+            <dt class="entity-subtitle">{{ __('Submitted') }}</dt>
             <dd class="entity-subtitle">{{ $request->created_at->format('M d, Y H:i') }}</dd>
 
             @if ($request->description)
-                <dt class="entity-subtitle" style="padding-top:4px;">Description</dt>
+                <dt class="entity-subtitle" style="padding-top:4px;">{{ __('Description') }}</dt>
                 <dd class="entity-subtitle" style="white-space:pre-wrap;">{{ $request->description }}</dd>
             @endif
 
             @if ($request->admin_notes)
-                <dt class="entity-subtitle" style="padding-top:4px;">Admin Notes</dt>
+                <dt class="entity-subtitle" style="padding-top:4px;">{{ __('Admin Notes') }}</dt>
                 <dd class="entity-subtitle" style="white-space:pre-wrap;background:var(--elevated);padding:8px 12px;border-radius:6px;">{{ $request->admin_notes }}</dd>
             @endif
         </dl>
 
         @if (!empty($request->attachments))
             <div style="margin-top:16px;">
-                <p class="field-label" style="margin-bottom:8px;">Attachments</p>
+                <p class="field-label" style="margin-bottom:8px;">{{ __('Attachments') }}</p>
                 <div style="display:flex;flex-wrap:wrap;gap:6px;">
                     @foreach ($request->attachments as $path)
                         <a href="{{ asset('storage/' . $path) }}" target="_blank" class="badge badge-secondary">&#128206; {{ basename($path) }}</a>
@@ -59,13 +59,13 @@
     <section class="card fu d2 table-card-shell section-gap">
         <div class="table-header-shell">
             <div>
-                <h3 class="panel-title">Payment Requests</h3>
-                <p class="panel-copy">Review and pay outstanding invoices issued by the admin team.</p>
+                <h3 class="panel-title">{{ __('Payment Requests') }}</h3>
+                <p class="panel-copy">{{ __('Review and pay outstanding invoices issued by the admin team.') }}</p>
             </div>
         </div>
 
         @if ($paymentRequests->isNotEmpty())
-        <x-table :headers="['#', 'Label', 'Amount', 'Status', 'Notes', 'Action']">
+        <x-table :headers="['#', __('Label'), __('Amount'), __('Status'), __('Notes'), __('Action')]">
             @foreach ($paymentRequests as $pr)
             <tr wire:key="pr-{{ $pr->id }}">
                 <td><span class="entity-subtitle">#{{ $pr->id }}</span></td>
@@ -73,10 +73,10 @@
                 <td>
                     <div class="entity-title">{{ $pr->currency }} {{ number_format((float)$pr->amount, 2) }}</div>
                     @if ($pr->paid_at)
-                        <div class="entity-subtitle">Paid {{ $pr->paid_at->format('M d, Y') }} via {{ strtoupper($pr->gateway_code ?? '') }}</div>
+                        <div class="entity-subtitle">{{ __('Paid :paidat via :gatewaycode', ['paidat' => $pr->paid_at->format('M d, Y'), 'gatewaycode' => strtoupper($pr->gateway_code ?? '')]) }}</div>
                     @endif
                 </td>
-                <td><span class="{{ $pr->status->badgeClass() }}">{{ $pr->status->label() }}</span></td>
+                <td><span class="{{ $pr->status->badgeClass() }}">{{ __($pr->status->label()) }}</span></td>
                 <td>
                     <span class="entity-subtitle">{{ $pr->notes ?: '—' }}</span>
                 </td>
@@ -84,7 +84,7 @@
                     @if ($pr->status->value === 'pending')
                         <button type="button" class="btn btn-primary btn-sm"
                             wire:click="openPaymentModal({{ $pr->id }})">
-                            Pay Now
+                            {{ __('Pay Now') }}
                         </button>
                     @else
                         <span class="entity-subtitle">—</span>
@@ -95,8 +95,8 @@
         </x-table>
         @else
         <div class="empty-state">
-            <div class="empty-state-title">No payment requests</div>
-            <p class="empty-state-copy">The admin hasn't issued any payment requests yet.</p>
+            <div class="empty-state-title">{{ __('No payment requests') }}</div>
+            <p class="empty-state-copy">{{ __('The admin hasn\'t issued any payment requests yet.') }}</p>
         </div>
         @endif
     </section>
@@ -105,8 +105,8 @@
     <section class="card fu d3 section-gap" style="padding:0;overflow:hidden;">
         <div class="table-header-shell" style="padding:16px 20px;">
             <div>
-                <h3 class="panel-title">Messages</h3>
-                <p class="panel-copy">Communicate with the admin team about this request.</p>
+                <h3 class="panel-title">{{ __('Messages') }}</h3>
+                <p class="panel-copy">{{ __('Communicate with the admin team about this request.') }}</p>
             </div>
         </div>
 
@@ -129,8 +129,8 @@
                 </div>
             @empty
                 <div class="empty-state" style="padding:24px 0;">
-                    <div class="empty-state-title">No messages yet</div>
-                    <p class="empty-state-copy">Start a conversation with the admin team.</p>
+                    <div class="empty-state-title">{{ __('No messages yet') }}</div>
+                    <p class="empty-state-copy">{{ __('Start a conversation with the admin team.') }}</p>
                 </div>
             @endforelse
         </div>
@@ -139,18 +139,18 @@
             <div style="display:flex;gap:10px;align-items:flex-end;">
                 <div style="flex:1;">
                     <x-textarea wire:model.defer="chatMessage" rows="2"
-                        placeholder="Type a message to the admin…"
+                        :placeholder="__('Type a message to the admin…')"
                         style="resize:none;"
                         x-on:keydown.ctrl.enter="$wire.sendMessage()" />
                     @error('chatMessage') <p class="field-error">{{ $message }}</p> @enderror
                 </div>
                 <x-btn type="button" wire:click="sendMessage" wire:loading.attr="disabled" wire:target="sendMessage"
                        style="align-self:flex-end;">
-                    <span wire:loading.remove wire:target="sendMessage">Send</span>
+                    <span wire:loading.remove wire:target="sendMessage">{{ __('Send') }}</span>
                     <span wire:loading wire:target="sendMessage">…</span>
                 </x-btn>
             </div>
-            <p class="entity-subtitle" style="margin-top:6px;">Ctrl+Enter to send</p>
+            <p class="entity-subtitle" style="margin-top:6px;">{{ __('Ctrl+Enter to send') }}</p>
         </div>
     </section>
 
@@ -167,7 +167,7 @@
                     <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;">
                         <div>
                             <div class="entity-title">{{ $payingPaymentRequest->label }}</div>
-                            <div class="entity-subtitle">Brand Request #{{ $request->id }} · {{ $request->title }}</div>
+                            <div class="entity-subtitle">{{ __('Brand Request #:id · :title', ['id' => $request->id, 'title' => $request->title]) }}</div>
                         </div>
                         <div style="font-size:18px;font-weight:700;color:var(--accent);white-space:nowrap;">
                             {{ $payingPaymentRequest->currency }} {{ number_format((float)$payingPaymentRequest->amount, 2) }}
@@ -177,7 +177,7 @@
 
                 {{-- Gateway selection --}}
                 <div>
-                    <label class="field-label">Payment Gateway</label>
+                    <label class="field-label">{{ __('Payment Gateway') }}</label>
                     @if ($gateways->isNotEmpty())
                         <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
                             @foreach ($gateways as $gateway)
@@ -210,8 +210,8 @@
                         @enderror
                     @else
                         <div class="empty-state" style="padding:16px 0;">
-                            <div class="empty-state-title">No payment gateways configured</div>
-                            <p class="empty-state-copy">Please contact the platform administrator.</p>
+                            <div class="empty-state-title">{{ __('No payment gateways configured') }}</div>
+                            <p class="empty-state-copy">{{ __('Please contact the platform administrator.') }}</p>
                         </div>
                     @endif
                 </div>
@@ -236,12 +236,12 @@
                             <svg style="width:12px;height:12px;color:var(--green);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                             </svg>
-                            Secure card details
+                            {{ __('Secure card details') }}
                         </div>
 
                         @if ($activeInlineGateway['code'] === 'stripe')
                             <div>
-                                <label class="field-label">Card</label>
+                                <label class="field-label">{{ __('Card') }}</label>
                                 <div id="br-stripe-card-element"
                                      style="border:1.5px solid var(--border);border-radius:8px;padding:11px 14px;background:var(--input-bg,var(--card));min-height:42px;">
                                 </div>
@@ -251,18 +251,18 @@
                         @else
                             <div class="form-grid form-grid-1" style="gap:10px;">
                                 <div>
-                                    <label class="field-label">Card number</label>
+                                    <label class="field-label">{{ __('Card number') }}</label>
                                     <x-input type="text" id="br-card-number" inputmode="numeric" autocomplete="cc-number"
                                              placeholder="1234  5678  9012  3456" />
                                 </div>
                                 <div class="form-grid form-grid-2" style="gap:10px;">
                                     <div>
-                                        <label class="field-label">Expiry</label>
+                                        <label class="field-label">{{ __('Expiry') }}</label>
                                         <x-input type="text" id="br-card-expiry" inputmode="numeric" autocomplete="cc-exp"
-                                                 placeholder="MM / YY" maxlength="7" />
+                                                 :placeholder="__('MM / YY')" maxlength="7" />
                                     </div>
                                     <div>
-                                        <label class="field-label">CVC</label>
+                                        <label class="field-label">{{ __('CVC') }}</label>
                                         <x-input type="text" id="br-card-cvc" inputmode="numeric" autocomplete="cc-csc"
                                                  placeholder="•••" maxlength="4" />
                                     </div>
@@ -281,14 +281,14 @@
 
                 {{-- Actions --}}
                 <div class="page-actions compact-actions justify-end">
-                    <x-btn type="button" variant="secondary" wire:click="closePaymentModal">Cancel</x-btn>
+                    <x-btn type="button" variant="secondary" wire:click="closePaymentModal">{{ __('Cancel') }}</x-btn>
                     @if ($gateways->isNotEmpty())
                         <x-btn type="button" id="br-pay-btn"
                                wire:loading.attr="disabled"
                                wire:loading.class="opacity-60 cursor-not-allowed"
                                wire:target="initiatePayment">
-                            <span wire:loading.remove wire:target="initiatePayment">Proceed to Payment</span>
-                            <span wire:loading wire:target="initiatePayment">Processing…</span>
+                            <span wire:loading.remove wire:target="initiatePayment">{{ __('Proceed to Payment') }}</span>
+                            <span wire:loading wire:target="initiatePayment">{{ __('Processing…') }}</span>
                         </x-btn>
                     @endif
                 </div>
@@ -401,7 +401,7 @@
 
             if (gateway === 'stripe') {
                 if (!_brStripe || !_brStripeCard) {
-                    alert('Stripe is still initialising. Please wait a moment.');
+                    alert(@js(__('Stripe is still initialising. Please wait a moment.')));
                     button.disabled = false;
                     return;
                 }
@@ -419,7 +419,7 @@
 
             if (gateway === 'authorize_net') {
                 if (typeof Accept === 'undefined') {
-                    alert('Authorize.Net Accept.js is still loading. Please try again.');
+                    alert(@js(__('Authorize.Net Accept.js is still loading. Please try again.')));
                     button.disabled = false;
                     return;
                 }
@@ -440,7 +440,7 @@
                 Accept.dispatchData(secureData, async (response) => {
                     if (response.messages.resultCode === 'Error') {
                         const errEl = document.getElementById('br-card-errors');
-                        if (errEl) { errEl.textContent = response.messages.message?.[0]?.text ?? 'Card error'; errEl.style.display = ''; }
+                        if (errEl) { errEl.textContent = response.messages.message?.[0]?.text ?? @js(__('Card error')); errEl.style.display = ''; }
                         button.disabled = false;
                         return;
                     }
@@ -453,7 +453,7 @@
 
             if (gateway === '2checkout') {
                 if (typeof TCO === 'undefined') {
-                    alert('2Pay.js is still loading. Please try again.');
+                    alert(@js(__('2Pay.js is still loading. Please try again.')));
                     button.disabled = false;
                     return;
                 }
@@ -469,7 +469,7 @@
                 }, async (data) => {
                     if (data.errorCode > 0) {
                         const errEl = document.getElementById('br-card-errors');
-                        if (errEl) { errEl.textContent = data.errorMsg ?? 'Card error'; errEl.style.display = ''; }
+                        if (errEl) { errEl.textContent = data.errorMsg ?? @js(__('Card error')); errEl.style.display = ''; }
                         button.disabled = false;
                         return;
                     }

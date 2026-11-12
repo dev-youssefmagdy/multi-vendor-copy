@@ -11,10 +11,10 @@
         'url' => route('tenant.brand-requests.data'),
         'tableColumns' => $columns,
         'order' => [[2, 'desc']],
-        'statusOptions' => collect($statusOptions)->mapWithKeys(fn ($s) => [$s->value => $s->label()])->all(),
+        'statusOptions' => collect($statusOptions)->mapWithKeys(fn ($s) => [$s->value => __($s->label())])->all(),
         'createUrl' => route('tenant.brand-requests.create'),
-        'emptyTitle' => 'No brand requests yet',
-        'emptyCopy' => "Submit a request when you'd like to carry a new brand in your store.",
+        'emptyTitle' => __('No brand requests yet'),
+        'emptyCopy' => __('Submit a request when you\'d like to carry a new brand in your store.'),
     ])
 @endsection
 

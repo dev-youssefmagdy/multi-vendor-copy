@@ -12,9 +12,9 @@ class FlashSalesIndexPage extends TenantPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Flash Sales',
-            'badge' => 'Storefront',
-            'description' => 'Manage limited-time discount campaigns per country, or set default campaigns shown everywhere.',
+            'title' => __('Flash Sales'),
+            'badge' => __('Storefront'),
+            'description' => __('Manage limited-time discount campaigns per country, or set default campaigns shown everywhere.'),
         ];
     }
 

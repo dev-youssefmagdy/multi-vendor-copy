@@ -19,7 +19,7 @@ final class SubmitCountryChangeRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'requested_country_ids' => 'target countries',
+            'requested_country_ids' => __('target countries'),
         ];
     }
 }

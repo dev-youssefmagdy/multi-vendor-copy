@@ -40,7 +40,7 @@
         </div>
         <span class="text-sm font-semibold px-4 py-1.5 rounded-full"
             style="background:{{ $__badge['bg'] }};color:{{ $__badge['text'] }};border:1px solid {{ $__badge['border'] }}">
-            {{ $record['status_label'] }}
+            {{ __($record['status_label']) }}
         </span>
     </div>
 
@@ -79,7 +79,7 @@
                                 style="color:{{ $__state === ReturnTimeline::UPCOMING ? '#9CA3AF' : ($__state === ReturnTimeline::STOPPED ? '#DC2626' : $__ui['text']) }}">
                                 {{ $__step['label'] }}
                                 @if ($__state === ReturnTimeline::CURRENT)
-                                    <span class="text-xs font-normal" style="color:{{ $__ui['muted'] }}">· {{ $record['status_label'] }}</span>
+                                    <span class="text-xs font-normal" style="color:{{ $__ui['muted'] }}">· {{ __($record['status_label']) }}</span>
                                 @endif
                             </p>
                             @if ($__step['date'])
@@ -125,7 +125,7 @@
             @if ($__isExchange && ! empty($record['replacement_label']))
                 <div>
                     <dt class="text-xs" style="color:{{ $__ui['muted'] }}">{{ __('Replacement') }}</dt>
-                    <dd class="font-medium">{{ $record['replacement_label'] }} × {{ $record['replacement_quantity'] ?? $record['quantity'] ?? 1 }}</dd>
+                    <dd class="font-medium">{{ __(':replacementlabel × :quantity', ['replacementlabel' => $record['replacement_label'], 'quantity' => $record['replacement_quantity'] ?? $record['quantity'] ?? 1]) }}</dd>
                 </div>
             @endif
             <div>
@@ -136,7 +136,7 @@
         @if ($record['description'])
             <div class="text-sm mt-4 break-words">
                 <p class="text-xs mb-0.5" style="color:{{ $__ui['muted'] }}">{{ __('Description') }}</p>
-                {{ $record['description'] }}
+                {{ __($record['description']) }}
             </div>
         @endif
         @if (! empty($record['customer_note']))

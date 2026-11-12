@@ -64,7 +64,7 @@ final class ReturnController extends PanelController
             'returnRecord' => $this->hydrate($record, $order),
             'order' => $orderData,
             'orderId' => $orderId,
-            'inspectionResults' => collect(InspectionResult::cases())->mapWithKeys(fn (InspectionResult $result) => [$result->value => $result->label()])->all(),
+            'inspectionResults' => collect(InspectionResult::cases())->mapWithKeys(fn (InspectionResult $result) => [$result->value => __($result->label())])->all(),
             'restockDefault' => app(OrderPolicyService::class)->restockReturnedItems(),
         ]);
     }
@@ -218,7 +218,7 @@ final class ReturnController extends PanelController
         // RefundException render themselves as a 422 with a user-safe message).
         $refund = $this->service->markRefunded($record, (float) $request->validated()['refund_amount'], $this->actor());
 
-        return $this->success($refund->isCompleted() ? 'Return refunded.' : 'Refund issued: '.$refund->status->label().'.', ['returnRecord' => $this->hydrate($record->fresh(['media', 'notes']))]);
+        return $this->success($refund->isCompleted() ? __('Return refunded.') : __('Refund issued: :status.', ['status' => __($refund->status->label())]), ['returnRecord' => $this->hydrate($record->fresh(['media', 'notes']))]);
     }
 
     public function validateNote(AddReturnNoteRequest $request, int $id): JsonResponse
@@ -234,7 +234,7 @@ final class ReturnController extends PanelController
 
         $this->service->addNote($record, $request->validated()['note_text'], ReturnRequestNote::AUTHOR_TENANT, $admin?->id, false);
 
-        return $this->success('Note added.', ['returnRecord' => $this->hydrate($record->fresh(['media', 'notes']))]);
+        return $this->success(__('Note added.'), ['returnRecord' => $this->hydrate($record->fresh(['media', 'notes']))]);
     }
 
     private function actor(): RefundActor
@@ -279,15 +279,15 @@ final class ReturnController extends PanelController
             'id' => $record->id,
             'order_number' => $record->order_number,
             'status' => $record->status,
-            'status_label' => $record->status->label(),
+            'status_label' => __($record->status->label()),
             'status_color' => $record->status->color(),
             'type' => $record->type?->value,
-            'type_label' => $record->type?->label(),
+            'type_label' => __($record->type?->label()),
             'is_exchange' => $record->isExchange(),
             'quantity' => (int) ($record->quantity ?: 1),
             'item' => $item ? $this->itemLabel($item) : null,
-            'return_method' => $record->return_method?->label(),
-            'reason' => $record->reason->label(),
+            'return_method' => __($record->return_method?->label()),
+            'reason' => __($record->reason->label()),
             'description' => $record->description,
             'customer_note' => $record->customer_note,
             'refund_amount' => $record->refund_amount,
@@ -359,7 +359,7 @@ final class ReturnController extends PanelController
             ? AdminUser::query()->whereKey((int) $record->reviewed_by_id)->value('name')
             : null;
 
-        return $name ? sprintf('%s (%s)', $name, $record->reviewed_by_type->label()) : $record->reviewed_by_type->label();
+        return $name ? sprintf('%s (%s)', $name, __($record->reviewed_by_type->label())) : __($record->reviewed_by_type->label());
     }
 
     /** @return array<string, mixed>|null */

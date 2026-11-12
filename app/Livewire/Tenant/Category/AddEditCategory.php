@@ -66,7 +66,7 @@ class AddEditCategory extends Component
         try {
             $validated = $this->validate($this->rules());
         } catch (ValidationException $e) {
-            $this->dispatch('admin-toast', message: 'Please fill in all required category details before saving.', type: 'error');
+            $this->dispatch('admin-toast', message: __('Please fill in all required category details before saving.'), type: 'error');
 
             throw $e;
         }
@@ -75,8 +75,8 @@ class AddEditCategory extends Component
             $snapshot = app(TenantPanelRepository::class)->centralCategorySnapshot((int) $validated['centralCategoryId']);
 
             if (!$snapshot) {
-                $this->addError('centralCategoryId', 'The linked central category could not be found.');
-                $this->dispatch('admin-toast', message: 'The linked central category could not be found.', type: 'error');
+                $this->addError('centralCategoryId', __('The linked central category could not be found.'));
+                $this->dispatch('admin-toast', message: __('The linked central category could not be found.'), type: 'error');
 
                 return null;
             }
@@ -112,7 +112,7 @@ class AddEditCategory extends Component
             $mediaService->purgeThumb($category);
         }
 
-        session()->flash('status', $this->categoryId ? 'Category updated successfully.' : 'Category created successfully.');
+        session()->flash('status', $this->categoryId ? __('Category updated successfully.') : __('Category created successfully.'));
 
         return redirect()->route('tenant.categories.edit', $category);
     }
@@ -150,8 +150,8 @@ class AddEditCategory extends Component
         $centralCategory = $repository->centralCategorySnapshot($this->centralCategoryId);
 
         return view('livewire.tenant.category.add-edit-category', [
-            'pageTitle' => $this->categoryId ? 'Edit Category' : 'Add Category',
-            'pageDescription' => $this->categoryId ? 'Update storefront category hierarchy and translations.' : 'Create a tenant category from the selected catalog scope.',
+            'pageTitle' => $this->categoryId ? __('Edit Category') : __('Add Category'),
+            'pageDescription' => $this->categoryId ? __('Update storefront category hierarchy and translations.') : __('Create a tenant category from the selected catalog scope.'),
             'languages' => $repository->activeLanguages(),
             'parents' => $repository->categoryOptions(),
             'centralCategory' => $centralCategory,

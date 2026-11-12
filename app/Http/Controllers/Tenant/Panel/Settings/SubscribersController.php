@@ -36,14 +36,14 @@ final class SubscribersController extends PanelController
 
         return view('tenant.pages.settings.subscribers.index', [
             'stats' => Metric::cards([
-                ['label' => 'Subscribers', 'value' => $stats['total'], 'format' => 'number', 'caption' => 'All storefront subscribers', 'dot' => 'dot-cyan'],
-                ['label' => 'This Month', 'value' => $stats['new_this_month'], 'format' => 'number', 'caption' => 'New subscriber growth this month', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'This Week', 'value' => $stats['new_this_week'], 'format' => 'number', 'caption' => 'Recent weekly signups', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Subscribers'), 'value' => $stats['total'], 'format' => 'number', 'caption' => __('All storefront subscribers'), 'dot' => 'dot-cyan'],
+                ['label' => __('This Month'), 'value' => $stats['new_this_month'], 'format' => 'number', 'caption' => __('New subscriber growth this month'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('This Week'), 'value' => $stats['new_this_week'], 'format' => 'number', 'caption' => __('Recent weekly signups'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
             ]),
             'columns' => [
                 TableColumn::index(),
-                TableColumn::make('email', 'Email'),
-                TableColumn::make('created_at', 'Subscribed At'),
+                TableColumn::make('email', __('Email')),
+                TableColumn::make('created_at', __('Subscribed At')),
                 TableColumn::actions(),
             ],
         ]);
@@ -73,7 +73,7 @@ final class SubscribersController extends PanelController
 
         return $this->streamCsv(
             'subscribers-'.now()->format('Y-m-d').'.csv',
-            ['Email', 'Subscribed At'],
+            [__('Email'), __('Subscribed At')],
             $rows,
         );
     }
@@ -82,6 +82,6 @@ final class SubscribersController extends PanelController
     {
         $this->service->deleteSubscriber($subscriber);
 
-        return $this->success('Subscriber deleted successfully.');
+        return $this->success(__('Subscriber deleted successfully.'));
     }
 }

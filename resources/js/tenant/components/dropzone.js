@@ -1,4 +1,5 @@
 import { checkImageDimensionWarning } from './file.js';
+import { t } from '../core/i18n.js';
 
 function fileIconFor(type) {
     if (type.startsWith('video/')) return 'video';
@@ -41,7 +42,7 @@ function render(el) {
                 <div class="dropzone-file-meta">
                     <span class="dropzone-file-name">${existing.dataset.existingName || ''}</span>
                 </div>
-                <button type="button" class="dropzone-file-remove" aria-label="Remove">
+                <button type="button" class="dropzone-file-remove" aria-label="${t('Remove')}">
                     <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
                     </svg>
@@ -78,7 +79,7 @@ function render(el) {
                     <span class="dropzone-file-name">${file.name}</span>
                     <span class="dropzone-file-size">${Math.max(1, Math.round(file.size / 1024))} KB</span>
                 </div>
-                <button type="button" class="dropzone-file-remove" aria-label="Remove ${file.name}">
+                <button type="button" class="dropzone-file-remove" aria-label="${t('Remove :name', { name: file.name })}">
                     <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
                     </svg>

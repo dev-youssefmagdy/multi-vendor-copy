@@ -18,7 +18,7 @@ final class SendTestEmailRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'email' => 'test email address',
+            'email' => __('test email address'),
         ];
     }
 }

@@ -2,18 +2,17 @@
     <div class="page-head fu d0">
         <div>
             <div class="page-title-row">
-                <h1 class="D page-title">Notifications</h1>
-                <span class="page-badge">Inbox</span>
+                <h1 class="D page-title">{{ __('Notifications') }}</h1>
+                <span class="page-badge">{{ __('Inbox') }}</span>
                 @if ($unreadCount > 0)
-                    <span class="badge badge-amber">{{ $unreadCount }} unread</span>
+                    <span class="badge badge-amber">{{ __(':unreadCount unread', ['unreadCount' => $unreadCount]) }}</span>
                 @endif
             </div>
-            <p class="page-copy">View all notifications from the admin team including order updates and product
-                assignments.</p>
+            <p class="page-copy">{{ __('View all notifications from the admin team including order updates and product assignments.') }}</p>
         </div>
         @if ($unreadCount > 0)
             <div class="page-actions">
-                <x-btn type="button" variant="secondary" wire:click="markAllRead">Mark All as Read</x-btn>
+                <x-btn type="button" variant="secondary" wire:click="markAllRead">{{ __('Mark All as Read') }}</x-btn>
             </div>
         @endif
     </div>
@@ -25,8 +24,8 @@
     <div class="card fu d2 table-card-shell section-gap">
         <div class="table-header-shell">
             <div>
-                <h3 class="panel-title">All Notifications</h3>
-                <p class="panel-copy">{{ $notifications->total() }} total notifications.</p>
+                <h3 class="panel-title">{{ __('All Notifications') }}</h3>
+                <p class="panel-copy">{{ __(':total total notifications.', ['total' => $notifications->total()]) }}</p>
             </div>
         </div>
 
@@ -38,7 +37,7 @@
                     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
                         <div class="entity-title">{{ $notification->title }}</div>
                         @if (!$notification->is_read)
-                            <span class="badge badge-amber" style="font-size:10px">New</span>
+                            <span class="badge badge-amber" style="font-size:10px">{{ __('New') }}</span>
                         @endif
                         <span class="entity-subtitle"
                             style="margin-left:auto">{{ $notification->created_at->diffForHumans() }}</span>
@@ -57,15 +56,14 @@
                 @if (!$notification->is_read)
                     <button type="button" wire:click="markRead({{ $notification->id }})" class="btn btn-secondary btn-sm"
                         style="flex-shrink:0;margin-top:2px">
-                        Mark Read
+                        {{ __('Mark Read') }}
                     </button>
                 @endif
             </div>
         @empty
             <div class="empty-state">
-                <div class="empty-state-title">No notifications yet</div>
-                <p class="empty-state-copy">You'll receive notifications here when the admin updates your requests or adds
-                    products for you.</p>
+                <div class="empty-state-title">{{ __('No notifications yet') }}</div>
+                <p class="empty-state-copy">{{ __('You\'ll receive notifications here when the admin updates your requests or adds products for you.') }}</p>
             </div>
         @endforelse
 

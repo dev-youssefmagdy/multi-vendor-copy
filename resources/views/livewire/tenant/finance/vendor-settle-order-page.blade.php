@@ -14,7 +14,7 @@
                 <svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                 </svg>
-                Back to Purchases
+                {{ __('Back to Purchases') }}
             </a>
         </div>
     </div>
@@ -26,27 +26,27 @@
 
             {{-- Order summary --}}
             <section class="card section-gap">
-                <div class="locale-badge" style="margin-bottom:10px;">Order Summary</div>
+                <div class="locale-badge" style="margin-bottom:10px;">{{ __('Order Summary') }}</div>
                 <div class="form-grid form-grid-2" style="gap:8px 16px;">
                     <div>
-                        <div class="entity-subtitle">Order UUID</div>
+                        <div class="entity-subtitle">{{ __('Order UUID') }}</div>
                         <div class="entity-title" style="font-family:monospace;font-size:12px;word-break:break-all;">
                             {{ $order->uuid }}
                         </div>
                     </div>
                     <div>
-                        <div class="entity-subtitle">Order Date</div>
+                        <div class="entity-subtitle">{{ __('Order Date') }}</div>
                         <div class="entity-title">{{ $order->created_at?->format('M d, Y') }}</div>
                     </div>
                     <div>
-                        <div class="entity-subtitle">Customer</div>
-                        <div class="entity-title">{{ $order->customer?->full_name ?? 'Guest' }}</div>
+                        <div class="entity-subtitle">{{ __('Customer') }}</div>
+                        <div class="entity-title">{{ $order->customer?->full_name ?? __('Guest') }}</div>
                         @if ($order->customer?->email)
                             <div class="entity-subtitle">{{ $order->customer->email }}</div>
                         @endif
                     </div>
                     <div>
-                        <div class="entity-subtitle">Items</div>
+                        <div class="entity-subtitle">{{ __('Items') }}</div>
                         <div class="entity-title">{{ $order->items_count }}</div>
                     </div>
                 </div>
@@ -54,31 +54,31 @@
 
             {{-- Cost breakdown --}}
             <section class="card section-gap">
-                <div class="locale-badge" style="margin-bottom:10px;">Settlement Breakdown</div>
+                <div class="locale-badge" style="margin-bottom:10px;">{{ __('Settlement Breakdown') }}</div>
                 <div class="vso-breakdown">
                     <div class="vso-row">
-                        <span class="vso-label">Product Cost</span>
+                        <span class="vso-label">{{ __('Product Cost') }}</span>
                         <span class="vso-value">${{ number_format((float) data_get($breakdown, 'product_cost', 0), 2) }}</span>
                     </div>
                     <div class="vso-row">
-                        <span class="vso-label">Shipping Cost</span>
+                        <span class="vso-label">{{ __('Shipping Cost') }}</span>
                         <span class="vso-value">${{ number_format((float) data_get($breakdown, 'shipping_cost', 0), 2) }}</span>
                     </div>
                     <div class="vso-row vso-subtotal">
-                        <span class="vso-label">Subtotal</span>
+                        <span class="vso-label">{{ __('Subtotal') }}</span>
                         <span class="vso-value">${{ number_format((float) data_get($breakdown, 'subtotal', 0), 2) }}</span>
                     </div>
                     <div class="vso-row {{ data_get($breakdown, 'gateway_fee', 0) > 0 ? 'vso-fee' : 'vso-fee vso-fee-zero' }}">
                         <span class="vso-label">
-                            Gateway Fee
+                            {{ __('Gateway Fee') }}
                             @if (!$selectedGateway)
-                                <span style="font-size:11px;font-weight:400;color:var(--t3);margin-left:4px;">(select a gateway)</span>
+                                <span style="font-size:11px;font-weight:400;color:var(--t3);margin-left:4px;">{{ __('(select a gateway)') }}</span>
                             @endif
                         </span>
                         <span class="vso-value">+${{ number_format((float) data_get($breakdown, 'gateway_fee', 0), 2) }}</span>
                     </div>
                     <div class="vso-row vso-total">
-                        <span class="vso-label">Total to Pay</span>
+                        <span class="vso-label">{{ __('Total to Pay') }}</span>
                         <span class="vso-value">${{ number_format((float) data_get($breakdown, 'total', 0), 2) }}</span>
                     </div>
                 </div>
@@ -90,7 +90,7 @@
         <div class="page-stack">
 
             <section class="card section-gap">
-                <div class="locale-badge" style="margin-bottom:10px;">Payment Gateway</div>
+                <div class="locale-badge" style="margin-bottom:10px;">{{ __('Payment Gateway') }}</div>
 
                 @if (!empty($gateways))
                     <div style="display:flex;flex-direction:column;gap:8px;">
@@ -132,8 +132,8 @@
                     @enderror
                 @else
                     <div class="empty-state" style="padding:16px 0;">
-                        <div class="empty-state-title">No payment gateways configured</div>
-                        <p class="empty-state-copy">Please contact the platform administrator to enable payment gateways.</p>
+                        <div class="empty-state-title">{{ __('No payment gateways configured') }}</div>
+                        <p class="empty-state-copy">{{ __('Please contact the platform administrator to enable payment gateways.') }}</p>
                     </div>
                 @endif
             </section>
@@ -158,12 +158,12 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                             </svg>
-                            Secure card details
+                            {{ __('Secure card details') }}
                         </div>
 
                         @if ($activeInlineGateway['code'] === 'stripe')
                             <div>
-                                <label class="field-label">Card</label>
+                                <label class="field-label">{{ __('Card') }}</label>
                                 <div id="vso-stripe-card-element"
                                      style="border:1.5px solid var(--border);border-radius:8px;padding:11px 14px;background:var(--input-bg,var(--card));min-height:42px;">
                                 </div>
@@ -173,18 +173,18 @@
                         @else
                             <div class="page-stack" style="gap:10px;">
                                 <div>
-                                    <label class="field-label">Card number</label>
+                                    <label class="field-label">{{ __('Card number') }}</label>
                                     <x-input type="text" id="vso-card-number" inputmode="numeric" autocomplete="cc-number"
                                              placeholder="1234  5678  9012  3456" />
                                 </div>
                                 <div class="form-grid form-grid-2" style="gap:10px;">
                                     <div>
-                                        <label class="field-label">Expiry</label>
+                                        <label class="field-label">{{ __('Expiry') }}</label>
                                         <x-input type="text" id="vso-card-expiry" inputmode="numeric" autocomplete="cc-exp"
-                                                 placeholder="MM / YY" maxlength="7" />
+                                                 :placeholder="__('MM / YY')" maxlength="7" />
                                     </div>
                                     <div>
-                                        <label class="field-label">CVC</label>
+                                        <label class="field-label">{{ __('CVC') }}</label>
                                         <x-input type="text" id="vso-card-cvc" inputmode="numeric" autocomplete="cc-csc"
                                                  placeholder="•••" maxlength="4" />
                                     </div>
@@ -205,13 +205,13 @@
             {{-- Pay button --}}
             @if (!empty($gateways))
                 <div class="page-actions compact-actions justify-end" style="margin-top:0;">
-                    <a href="{{ route('tenant.finance.vendor-purchases') }}" class="btn btn-secondary">Cancel</a>
+                    <a href="{{ route('tenant.finance.vendor-purchases') }}" class="btn btn-secondary">{{ __('Cancel') }}</a>
                     <x-btn type="button" id="vso-pay-btn"
                            wire:loading.attr="disabled"
                            wire:loading.class="opacity-60 cursor-not-allowed"
                            wire:target="initiateGatewayPayment">
-                        <span wire:loading.remove wire:target="initiateGatewayPayment">Proceed to Payment</span>
-                        <span wire:loading wire:target="initiateGatewayPayment">Processing…</span>
+                        <span wire:loading.remove wire:target="initiateGatewayPayment">{{ __('Proceed to Payment') }}</span>
+                        <span wire:loading wire:target="initiateGatewayPayment">{{ __('Processing…') }}</span>
                     </x-btn>
                 </div>
             @endif
@@ -332,7 +332,7 @@
             // ── Stripe ────────────────────────────────────────────────────
             if (gateway === 'stripe') {
                 if (!_vsoStripe || !_vsoStripeCard) {
-                    alert('Stripe.js is still loading. Please try again in a moment.');
+                    alert(@js(__('Stripe.js is still loading. Please try again in a moment.')));
                     button.disabled = false;
                     return;
                 }
@@ -351,7 +351,7 @@
             // ── Authorize.Net Accept.js ───────────────────────────────────
             if (gateway === 'authorize_net') {
                 if (typeof Accept === 'undefined') {
-                    alert('Accept.js is still loading. Please try again.');
+                    alert(@js(__('Accept.js is still loading. Please try again.')));
                     button.disabled = false;
                     return;
                 }
@@ -372,7 +372,7 @@
                 Accept.dispatchData(secureData, async (response) => {
                     if (response.messages.resultCode === 'Error') {
                         const errEl = document.getElementById('vso-card-errors');
-                        if (errEl) { errEl.textContent = response.messages.message?.[0]?.text ?? 'Card error'; errEl.style.display = ''; }
+                        if (errEl) { errEl.textContent = response.messages.message?.[0]?.text ?? @js(__('Card error')); errEl.style.display = ''; }
                         button.disabled = false;
                         return;
                     }
@@ -386,7 +386,7 @@
             // ── 2Checkout 2Pay.js ─────────────────────────────────────────
             if (gateway === '2checkout') {
                 if (typeof TCO === 'undefined') {
-                    alert('2Pay.js is still loading. Please try again.');
+                    alert(@js(__('2Pay.js is still loading. Please try again.')));
                     button.disabled = false;
                     return;
                 }
@@ -402,7 +402,7 @@
                 }, async (data) => {
                     if (data.errorCode > 0) {
                         const errEl = document.getElementById('vso-card-errors');
-                        if (errEl) { errEl.textContent = data.errorMsg ?? 'Card error'; errEl.style.display = ''; }
+                        if (errEl) { errEl.textContent = data.errorMsg ?? @js(__('Card error')); errEl.style.display = ''; }
                         button.disabled = false;
                         return;
                     }

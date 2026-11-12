@@ -29,7 +29,7 @@ final class PasswordResetController extends PanelController
         ]);
 
         // Same answer whether or not the account exists, so emails cannot be enumerated.
-        return $this->success('If an account exists for this email, a reset link has been sent.');
+        return $this->success(__('If an account exists for this email, a reset link has been sent.'));
     }
 
     public function showReset(Request $request, string $token): View
@@ -57,10 +57,10 @@ final class PasswordResetController extends PanelController
 
         if ($status !== Password::PASSWORD_RESET) {
             throw ValidationException::withMessages([
-                'email' => 'This reset link is invalid or has expired. Please request a new one.',
+                'email' => __('This reset link is invalid or has expired. Please request a new one.'),
             ]);
         }
 
-        return $this->success('Your password has been reset. You can sign in now.', redirect: route('tenant.login'));
+        return $this->success(__('Your password has been reset. You can sign in now.'), redirect: route('tenant.login'));
     }
 }

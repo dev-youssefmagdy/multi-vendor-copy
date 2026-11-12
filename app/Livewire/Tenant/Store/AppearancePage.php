@@ -135,7 +135,7 @@ class AppearancePage extends TenantPage
         $this->validate($rules);
 
         $service->saveThemeColors($themeId, $variantId, null, $section['values']);
-        $this->toast('Storefront colors saved successfully.');
+        $this->toast(__('Storefront colors saved successfully.'));
     }
 
     public function resetColors(int $themeId, int $variantId, TenantPanelService $service): void
@@ -147,7 +147,7 @@ class AppearancePage extends TenantPage
         $service->resetThemeColors($themeId, $variantId, null);
         $this->colorThemes[$themeId]['variants'][$variantId]['values']
             = $this->colorThemes[$themeId]['variants'][$variantId]['defaults'];
-        $this->toast('Storefront colors reset to the default.');
+        $this->toast(__('Storefront colors reset to the default.'));
     }
 
     // ── Social Links ──────────────────────────────────────────────────────────
@@ -252,9 +252,9 @@ class AppearancePage extends TenantPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Appearance',
-            'badge' => 'Storefront',
-            'description' => 'Manage your storefront logo, banners, social links, and footer.',
+            'title' => __('Appearance'),
+            'badge' => __('Storefront'),
+            'description' => __('Manage your storefront logo, banners, social links, and footer.'),
         ];
     }
 
@@ -270,7 +270,7 @@ class AppearancePage extends TenantPage
             'socialLinks' => $repo->socialLinks(),
             'colorThemes' => $repo->themes(),
             'previewUrl' => $this->previewUrl($storefrontRepo),
-            'activeThemeLabel' => $bannerDimensions['label'] ?? ($activeTheme->name ?? 'your theme'),
+            'activeThemeLabel' => $bannerDimensions['label'] ?? ($activeTheme->name ?? __('your theme')),
             'bannerWidth' => $bannerDimensions['width'] ?? null,
             'bannerHeight' => $bannerDimensions['height'] ?? null,
         ]);
@@ -352,7 +352,7 @@ class AppearancePage extends TenantPage
 
         $this->logoUploadAr = null;
         $this->logoUploadEn = null;
-        $this->toast('General settings saved successfully.');
+        $this->toast(__('General settings saved successfully.'));
     }
 
     // ── Social Links ──────────────────────────────────────────────────────────
@@ -388,21 +388,21 @@ class AppearancePage extends TenantPage
 
         $this->socialModalOpen = false;
         $this->resetSocialForm();
-        $this->toast('Social link saved successfully.');
+        $this->toast(__('Social link saved successfully.'));
     }
 
     public function confirmDeleteSocial(int $id): void
     {
         $this->confirmAction('deleteSocialLink', [$id], [
-            'title' => 'Delete social link?',
-            'confirmButtonText' => 'Delete link',
+            'title' => __('Delete social link?'),
+            'confirmButtonText' => __('Delete link'),
         ]);
     }
 
     public function deleteSocialLink(int $id): void
     {
         SocialLink::query()->findOrFail($id)->delete();
-        $this->toast('Social link deleted.');
+        $this->toast(__('Social link deleted.'));
     }
 
     public function closeSocialModal(): void
@@ -442,7 +442,7 @@ class AppearancePage extends TenantPage
             'souqify_featured_promo_image_url' => $this->souqifyFeaturedPromoImageUrl,
         ]);
 
-        $this->toast('Promotional banner updated.');
+        $this->toast(__('Promotional banner updated.'));
     }
 
     // ── Footer ────────────────────────────────────────────────────────────────
@@ -467,6 +467,6 @@ class AppearancePage extends TenantPage
         $this->footerText = $this->footerTranslations[$defaultLocale]['footer_text'] ?? '';
         $this->footerCopyright = $this->footerTranslations[$defaultLocale]['footer_copyright'] ?? '';
 
-        $this->toast('Footer settings saved successfully.');
+        $this->toast(__('Footer settings saved successfully.'));
     }
 }

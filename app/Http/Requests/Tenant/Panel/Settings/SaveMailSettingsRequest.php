@@ -73,8 +73,8 @@ final class SaveMailSettingsRequest extends TenantFormRequest
             'mail_username' => 'username',
             'mail_password' => 'password',
             'mail_encryption' => 'encryption',
-            'mail_from_address' => 'from address',
-            'mail_from_name' => 'from name',
+            'mail_from_address' => __('from address'),
+            'mail_from_name' => __('from name'),
         ];
     }
 }

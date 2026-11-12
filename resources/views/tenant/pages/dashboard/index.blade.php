@@ -1,6 +1,6 @@
 @extends('tenant.layouts.app')
 
-@section('title', 'Dashboard')
+@section('title', __('Dashboard'))
 
 @section('content')
     <script id="dashboard-chart-data" type="application/json">@json($chartPayload)</script>

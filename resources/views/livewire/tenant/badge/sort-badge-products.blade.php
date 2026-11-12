@@ -1,20 +1,20 @@
 <main id="mn">
     <div class="page-head fu d0">
         <div>
-            <div class="eyebrow">Tenant Catalog</div>
-            <h1 class="D page-title">Sort — {{ ucwords(str_replace('-', ' ', $badge->text)) }}</h1>
-            <p class="page-copy">Drag rows to reorder how these products appear for this badge on the storefront.</p>
+            <div class="eyebrow">{{ __('Tenant Catalog') }}</div>
+            <h1 class="D page-title">{{ __('Sort — :text', ['text' => __(ucwords(str_replace('-', ' ', $badge->text)))]) }}</h1>
+            <p class="page-copy">{{ __('Drag rows to reorder how these products appear for this badge on the storefront.') }}</p>
         </div>
         <div class="page-actions">
-            <a href="{{ route('tenant.badges.show', $badge) }}" class="btn btn-secondary">Back to Assignment</a>
+            <a href="{{ route('tenant.badges.show', $badge) }}" class="btn btn-secondary">{{ __('Back to Assignment') }}</a>
         </div>
     </div>
 
     <section class="card table-card-shell section-gap">
         <div class="table-header-shell">
             <div>
-                <h3 class="panel-title">Assigned Products</h3>
-                <p class="panel-copy">{{ $products->count() }} products assigned to this badge.</p>
+                <h3 class="panel-title">{{ __('Assigned Products') }}</h3>
+                <p class="panel-copy">{{ __(':products products assigned to this badge.', ['products' => $products->count()]) }}</p>
             </div>
         </div>
 
@@ -24,7 +24,7 @@
                     <thead>
                         <tr>
                             <th style="width:32px"></th>
-                            <th>Product</th>
+                            <th>{{ __('Product') }}</th>
                         </tr>
                     </thead>
                     <tbody id="badge-products-sortable">
@@ -37,7 +37,7 @@
                                     </svg>
                                 </td>
                                 <td>
-                                    <div class="entity-title">{{ $product->translationValue('name') ?? $product->slug ?? 'Product #' . $product->id }}</div>
+                                    <div class="entity-title">{{ $product->translationValue('name') ?? $product->slug ?? __('Product #:id', ['id' => $product->id]) }}</div>
                                     <div class="entity-subtitle">/{{ $product->slug }}</div>
                                 </td>
                             </tr>
@@ -47,8 +47,8 @@
             </div>
         @else
             <div class="empty-state">
-                <h3 class="panel-title">No products assigned</h3>
-                <p class="panel-copy">Assign products to this badge before ordering them.</p>
+                <h3 class="panel-title">{{ __('No products assigned') }}</h3>
+                <p class="panel-copy">{{ __('Assign products to this badge before ordering them.') }}</p>
             </div>
         @endif
     </section>

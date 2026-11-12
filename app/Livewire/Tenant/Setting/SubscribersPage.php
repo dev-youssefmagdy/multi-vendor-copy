@@ -19,12 +19,12 @@ class SubscribersPage extends ListPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Subscribers',
-            'badge' => 'Settings',
-            'description' => 'Review and manage storefront newsletter subscribers for this tenant.',
-            'tableTitle' => 'Subscriber List',
+            'title' => __('Subscribers'),
+            'badge' => __('Settings'),
+            'description' => __('Review and manage storefront newsletter subscribers for this tenant.'),
+            'tableTitle' => __('Subscriber List'),
             'actionLabel' => null,
-            'headers' => ['Email', 'Subscribed At', 'Actions'],
+            'headers' => [__('Email'), __('Subscribed At'), __('Actions')],
         ];
     }
 
@@ -37,27 +37,27 @@ class SubscribersPage extends ListPage
         return array_merge(parent::pageData(), [
             'records' => $records,
             'statistics' => [
-                ['label' => 'Subscribers', 'value' => number_format($stats['total']), 'caption' => 'All storefront subscribers', 'dot' => 'dot-cyan'],
-                ['label' => 'This Month', 'value' => number_format($stats['new_this_month']), 'caption' => 'New subscriber growth this month', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'This Week', 'value' => number_format($stats['new_this_week']), 'caption' => 'Recent weekly signups', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Subscribers'), 'value' => number_format($stats['total']), 'caption' => __('All storefront subscribers'), 'dot' => 'dot-cyan'],
+                ['label' => __('This Month'), 'value' => number_format($stats['new_this_month']), 'caption' => __('New subscriber growth this month'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('This Week'), 'value' => number_format($stats['new_this_week']), 'caption' => __('Recent weekly signups'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
             ],
             'rows' => collect($records->items())->map(fn(Subscriber $subscriber) => [
                 e($subscriber->email),
                 e($subscriber->created_at?->format('M d, Y H:i')),
-                '<button type="button" class="btn btn-secondary btn-sm" wire:click="confirmDelete(' . $subscriber->id . ')">Delete</button>',
+                '<button type="button" class="btn btn-secondary btn-sm" wire:click="confirmDelete(' . $subscriber->id . ')">' . e(__('Delete')) . '</button>',
             ])->all(),
         ]);
     }
 
     public function confirmDelete(int $subscriberId): void
     {
-        $this->confirmAction('deleteSubscriber', [$subscriberId], ['title' => 'Delete subscriber?', 'confirmButtonText' => 'Delete subscriber']);
+        $this->confirmAction('deleteSubscriber', [$subscriberId], ['title' => __('Delete subscriber?'), 'confirmButtonText' => __('Delete subscriber')]);
     }
 
     public function deleteSubscriber(int $subscriberId, TenantPanelService $service): void
     {
         $service->deleteSubscriber(Subscriber::query()->findOrFail($subscriberId));
-        $this->toast('Subscriber deleted successfully.');
+        $this->toast(__('Subscriber deleted successfully.'));
     }
 
     public function clearFilters(): void
@@ -71,7 +71,7 @@ class SubscribersPage extends ListPage
 
     protected function exportHeaders(): array
     {
-        return ['Email', 'Subscribed At'];
+        return [__('Email'), __('Subscribed At')];
     }
 
     protected function exportRows(): array

@@ -1,23 +1,23 @@
 <main id="mn">
     <div class="page-head fu d0">
         <div>
-            <div class="eyebrow">Tenant Catalog</div>
-            <h1 class="D page-title">Product Order</h1>
-            <p class="page-copy">Drag rows to reorder how products appear in the storefront listing.</p>
+            <div class="eyebrow">{{ __('Tenant Catalog') }}</div>
+            <h1 class="D page-title">{{ __('Product Order') }}</h1>
+            <p class="page-copy">{{ __('Drag rows to reorder how products appear in the storefront listing.') }}</p>
         </div>
         <div class="page-actions">
-            <a href="{{ route('tenant.products.index') }}" class="btn btn-secondary">Back to Products</a>
+            <a href="{{ route('tenant.products.index') }}" class="btn btn-secondary">{{ __('Back to Products') }}</a>
         </div>
     </div>
 
     <section class="card table-card-shell section-gap">
         <div class="table-header-shell">
             <div>
-                <h3 class="panel-title">All Products</h3>
-                <p class="panel-copy">{{ $products->count() }} products.</p>
+                <h3 class="panel-title">{{ __('All Products') }}</h3>
+                <p class="panel-copy">{{ __(':products products.', ['products' => $products->count()]) }}</p>
             </div>
             <div>
-                <input type="text" wire:model.live.debounce.400ms="search" class="form-input" placeholder="Search by name or slug">
+                <input type="text" wire:model.live.debounce.400ms="search" class="form-input" placeholder="{{ __('Search by name or slug') }}">
             </div>
         </div>
 
@@ -27,7 +27,7 @@
                     <thead>
                         <tr>
                             <th style="width:32px"></th>
-                            <th>Product</th>
+                            <th>{{ __('Product') }}</th>
                         </tr>
                     </thead>
                     <tbody id="products-sortable" wire:key="products-sortable-{{ $products->count() }}">
@@ -40,7 +40,7 @@
                                     </svg>
                                 </td>
                                 <td>
-                                    <div class="entity-title">{{ $product->translationValue('name') ?? $product->slug ?? 'Product #' . $product->id }}</div>
+                                    <div class="entity-title">{{ $product->translationValue('name') ?? $product->slug ?? __('Product #:id', ['id' => $product->id]) }}</div>
                                     <div class="entity-subtitle">/{{ $product->slug }}</div>
                                 </td>
                             </tr>
@@ -50,8 +50,8 @@
             </div>
         @else
             <div class="empty-state">
-                <h3 class="panel-title">No products</h3>
-                <p class="panel-copy">Add products before ordering them.</p>
+                <h3 class="panel-title">{{ __('No products') }}</h3>
+                <p class="panel-copy">{{ __('Add products before ordering them.') }}</p>
             </div>
         @endif
     </section>

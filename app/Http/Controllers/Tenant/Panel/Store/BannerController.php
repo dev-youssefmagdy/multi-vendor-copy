@@ -49,7 +49,7 @@ final class BannerController extends PanelController
             'countryOptions' => CountryScope::options($countries),
             'countryFilter' => $countryFilter,
             'languages' => $this->repo->activeLanguages(),
-            'activeThemeLabel' => $bannerDimensions['label'] ?? ($activeTheme->name ?? 'your theme'),
+            'activeThemeLabel' => $bannerDimensions['label'] ?? ($activeTheme->name ?? __('your theme')),
             'bannerWidth' => $bannerDimensions['width'] ?? null,
             'bannerHeight' => $bannerDimensions['height'] ?? null,
         ]);
@@ -120,7 +120,7 @@ final class BannerController extends PanelController
             'translations' => $validated['translations'] ?? [],
         ], $banner);
 
-        return $this->success('Banner saved successfully.');
+        return $this->success(__('Banner saved successfully.'));
     }
 
     public function validateStore(SaveBannerRequest $request): JsonResponse
@@ -137,7 +137,7 @@ final class BannerController extends PanelController
     {
         $banner->delete();
 
-        return $this->success('Banner deleted.');
+        return $this->success(__('Banner deleted.'));
     }
 
     public function updateOrder(Request $request): JsonResponse
@@ -159,6 +159,6 @@ final class BannerController extends PanelController
 
         CacheVersion::bump('Banner');
 
-        return $this->success('Banner order saved.');
+        return $this->success(__('Banner order saved.'));
     }
 }

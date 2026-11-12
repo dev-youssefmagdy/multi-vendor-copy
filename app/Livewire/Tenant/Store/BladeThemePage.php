@@ -32,9 +32,9 @@ class BladeThemePage extends TenantPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Blade Theme',
-            'badge' => 'Storefront',
-            'description' => 'Upload your own Blade storefront theme. Every upload is reviewed by our team before it can go live.',
+            'title' => __('Blade Theme'),
+            'badge' => __('Storefront'),
+            'description' => __('Upload your own Blade storefront theme. Every upload is reviewed by our team before it can go live.'),
         ];
     }
 
@@ -62,18 +62,18 @@ class BladeThemePage extends TenantPage
             return;
         } catch (Throwable $e) {
             Log::error('Blade theme upload failed', ['error' => $e->getMessage()]);
-            $this->addError('themeZip', 'The theme could not be processed. Please check the ZIP contents and try again.');
+            $this->addError('themeZip', __('The theme could not be processed. Please check the ZIP contents and try again.'));
             return;
         }
 
         $this->themeZip = null;
-        $this->toast('Theme uploaded and queued for admin review.');
+        $this->toast(__('Theme uploaded and queued for admin review.'));
     }
 
     public function deactivate(BladeThemeService $service): void
     {
         $service->deactivate((string) tenant()->getTenantKey());
-        $this->toast('Blade theme deactivated. Your storefront now uses the system theme again.');
+        $this->toast(__('Blade theme deactivated. Your storefront now uses the system theme again.'));
     }
 
     public function delete(int $themeId): void
@@ -94,6 +94,6 @@ class BladeThemePage extends TenantPage
             $theme->delete();
         });
 
-        $this->toast('Theme deleted.');
+        $this->toast(__('Theme deleted.'));
     }
 }

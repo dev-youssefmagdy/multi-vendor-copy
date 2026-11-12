@@ -22,7 +22,7 @@ final class PurchaseAiTranslationRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'gateway' => 'payment gateway',
+            'gateway' => __('payment gateway'),
         ];
     }
 }

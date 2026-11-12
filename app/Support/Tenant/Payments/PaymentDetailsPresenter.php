@@ -243,17 +243,17 @@ final class PaymentDetailsPresenter
         $reference = $details['transaction_id'] ?? $this->scalar($get('reference'));
 
         $headline = array_values(array_filter([
-            $this->row('Transaction ID', $this->scalar($reference), mono: true),
-            $this->row('Amount', $amount),
-            $this->row('Payment method', $this->headline($this->scalar($get('method')))),
-            $this->row('Card', $card),
-            $this->row('Paid at', $this->formatDate($get('paid_at'))),
-            $this->row('Payer', $this->scalar($get('payer_name'))),
-            $this->row('Payer email', $this->scalar($get('payer_email'))),
+            $this->row(__('Transaction ID'), $this->scalar($reference), mono: true),
+            $this->row(__('Amount'), $amount),
+            $this->row(__('Payment method'), $this->headline($this->scalar($get('method')))),
+            $this->row(__('Card'), $card),
+            $this->row(__('Paid at'), $this->formatDate($get('paid_at'))),
+            $this->row(__('Payer'), $this->scalar($get('payer_name'))),
+            $this->row(__('Payer email'), $this->scalar($get('payer_email'))),
             $refunded && $refunded !== $this->formatAmount(0, $currency, $gateway)
-                ? $this->row('Refunded', $refunded) : null,
-            $this->row('Gateway message', $status && $status['tone'] === 'success' ? null : $failure),
-            $receipt && str_starts_with($receipt, 'http') ? $this->row('Receipt', 'View receipt', href: $receipt) : null,
+                ? $this->row(__('Refunded'), $refunded) : null,
+            $this->row(__('Gateway message'), $status && $status['tone'] === 'success' ? null : $failure),
+            $receipt && str_starts_with($receipt, 'http') ? $this->row(__('Receipt'), __('View receipt'), href: $receipt) : null,
         ]));
 
         return [
@@ -307,7 +307,7 @@ final class PaymentDetailsPresenter
             return null;
         }
         if (is_bool($value)) {
-            return $value ? 'Yes' : 'No';
+            return $value ? __('Yes') : __('No');
         }
         $value = trim((string) $value);
 
@@ -376,7 +376,7 @@ final class PaymentDetailsPresenter
             return null;
         }
 
-        $label = is_bool($value) ? ($value ? 'Paid' : 'Failed') : (string) $value;
+        $label = is_bool($value) ? ($value ? __('Paid') : __('Failed')) : (string) $value;
         $key = strtolower($label);
 
         $tone = match (true) {

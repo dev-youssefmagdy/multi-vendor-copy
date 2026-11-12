@@ -34,15 +34,15 @@ final class ProductRequestController extends PanelController
 
         return view('tenant.pages.requests.product-requests.index', [
             'stats' => Metric::cards([
-                ['label' => 'Total Requests', 'value' => $stats['total'], 'format' => 'number', 'caption' => "All product requests you've submitted.", 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
-                ['label' => 'Open', 'value' => $stats['open'], 'format' => 'number', 'caption' => 'Requests currently in progress.', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Unread Replies', 'value' => $stats['unread'], 'format' => 'number', 'caption' => 'Awaiting your review.', 'dot' => 'dot-amber', 'glow' => $stats['unread'] ? 'card-glow-amber' : null],
+                ['label' => __('Total Requests'), 'value' => $stats['total'], 'format' => 'number', 'caption' => __("All product requests you've submitted."), 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
+                ['label' => __('Open'), 'value' => $stats['open'], 'format' => 'number', 'caption' => __('Requests currently in progress.'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Unread Replies'), 'value' => $stats['unread'], 'format' => 'number', 'caption' => __('Awaiting your review.'), 'dot' => 'dot-amber', 'glow' => $stats['unread'] ? 'card-glow-amber' : null],
             ]),
             'statusOptions' => ProductRequestStatus::options(),
             'columns' => [
-                TableColumn::make('request', 'Request')->orderable(false),
-                TableColumn::make('status', 'Status')->orderable(false),
-                TableColumn::make('last_reply_at', 'Last Update'),
+                TableColumn::make('request', __('Request'))->orderable(false),
+                TableColumn::make('status', __('Status'))->orderable(false),
+                TableColumn::make('last_reply_at', __('Last Update')),
                 TableColumn::actions(),
             ],
         ]);
@@ -57,7 +57,7 @@ final class ProductRequestController extends PanelController
             return DataTables::eloquent($this->repo->queryProductRequests($filters, $tenantId))
                 ->addIndexColumn()
                 ->editColumn('request', fn (ProductRequest $r) => view('tenant.pages.requests.product-requests._cols.request', ['request' => $r])->render())
-                ->editColumn('status', fn (ProductRequest $r) => '<span class="'.$r->status->badgeClass().'">'.e($r->status->label()).'</span>')
+                ->editColumn('status', fn (ProductRequest $r) => '<span class="'.$r->status->badgeClass().'">'.e(__($r->status->label())).'</span>')
                 ->editColumn('last_reply_at', fn (ProductRequest $r) => $r->last_reply_at?->diffForHumans() ?? '—')
                 ->addColumn('actions', fn (ProductRequest $r) => view('tenant.pages.requests.product-requests._cols.actions', ['request' => $r])->render())
                 ->rawColumns(['request', 'status', 'actions'])
@@ -90,7 +90,7 @@ final class ProductRequestController extends PanelController
         );
 
         return $this->success(
-            'Product request submitted successfully.',
+            __('Product request submitted successfully.'),
             redirect: route('tenant.product-requests.show', $productRequest->id),
         );
     }
@@ -139,12 +139,12 @@ final class ProductRequestController extends PanelController
         abort_if($result === null, 404);
 
         if ($result === 'closed') {
-            return $this->failure('This request is closed.');
+            return $this->failure(__('This request is closed.'));
         }
 
         $message = $result->messages->last();
 
-        return $this->success('Reply sent.', [
+        return $this->success(__('Reply sent.'), [
             'message' => $this->presentMessage($message),
         ]);
     }
@@ -163,7 +163,7 @@ final class ProductRequestController extends PanelController
             'product_url' => $r->product_url,
             'attachments' => $r->attachments ?? [],
             'status' => $r->status->value,
-            'status_label' => $r->status->label(),
+            'status_label' => __($r->status->label()),
             'status_badge' => $r->status->badgeClass(),
             'status_step' => $r->status->stepNumber(),
             'priority' => $r->priority,

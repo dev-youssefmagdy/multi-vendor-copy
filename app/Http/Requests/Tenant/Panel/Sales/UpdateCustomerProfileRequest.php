@@ -33,10 +33,10 @@ final class UpdateCustomerProfileRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'full_name' => 'full name',
+            'full_name' => __('full name'),
             'country_id' => 'country',
             'city_id' => 'city',
-            'password_confirmation' => 'password confirmation',
+            'password_confirmation' => __('password confirmation'),
         ];
     }
 }

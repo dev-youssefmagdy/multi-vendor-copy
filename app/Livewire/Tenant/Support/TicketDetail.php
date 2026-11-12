@@ -77,7 +77,7 @@ class TicketDetail extends TenantPage
         }
 
         if ($result === 'closed') {
-            $this->toast('This ticket is closed and can no longer receive replies.', 'error');
+            $this->toast(__('This ticket is closed and can no longer receive replies.'), 'error');
             return;
         }
 
@@ -99,7 +99,7 @@ class TicketDetail extends TenantPage
 
         $this->ticket = $this->presentTicket($result);
         $this->reply = '';
-        $this->toast('Reply sent.');
+        $this->toast(__('Reply sent.'));
     }
 
     public function refreshTicket(): void
@@ -142,9 +142,9 @@ class TicketDetail extends TenantPage
     protected function pageMeta(): array
     {
         return [
-            'title' => $this->ticket['subject'] ?? 'Ticket Details',
-            'badge' => 'Help Desk',
-            'description' => 'Conversation history with the marketplace admin team.',
+            'title' => $this->ticket['subject'] ?? __('Ticket Details'),
+            'badge' => __('Help Desk'),
+            'description' => __('Conversation history with the marketplace admin team.'),
         ];
     }
 

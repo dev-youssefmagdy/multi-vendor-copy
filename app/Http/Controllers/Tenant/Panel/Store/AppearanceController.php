@@ -35,9 +35,9 @@ final class AppearanceController extends PanelController
         $bannerDimensions = config('image_dimensions.themes.' . ($activeTheme->slug ?? ''));
 
         return view('tenant.pages.store.appearance.index', [
-            'title' => 'Appearance',
-            'badge' => 'Storefront',
-            'description' => 'Manage your storefront logo, banners, social links, and footer.',
+            'title' => __('Appearance'),
+            'badge' => __('Storefront'),
+            'description' => __('Manage your storefront logo, banners, social links, and footer.'),
             'previewUrl' => $this->repo->appearancePreviewUrl(),
             'activeTab' => $request->query('tab', 'general'),
             'logoFonts' => StorefrontRepository::LOGO_FONTS,
@@ -166,7 +166,7 @@ final class AppearanceController extends PanelController
             'logo_path_en' => $logoPathEn ?? ($current['logo_path_en'] ?? ''),
         ]);
 
-        return $this->success('General settings saved successfully.');
+        return $this->success(__('General settings saved successfully.'));
     }
 
     public function validateGeneral(SaveGeneralAppearanceRequest $request): JsonResponse
@@ -180,7 +180,7 @@ final class AppearanceController extends PanelController
     {
         $defaults = $this->repo->themeVariantColorDefaults($theme, $variant);
         if (empty($defaults)) {
-            return $this->failure('That theme variant has no customizable colors.', 404);
+            return $this->failure(__('That theme variant has no customizable colors.'), 404);
         }
 
         $values = array_merge($defaults, $request->validated('values', []));
@@ -197,7 +197,7 @@ final class AppearanceController extends PanelController
 
         $this->service->saveThemeColors($theme, $variant, null, $changedColors, $changedFonts);
 
-        return $this->success('Storefront design saved successfully.');
+        return $this->success(__('Storefront design saved successfully.'));
     }
 
     public function validateColors(SaveColorsRequest $request, int $theme, int $variant): JsonResponse
@@ -209,12 +209,12 @@ final class AppearanceController extends PanelController
     {
         $defaults = $this->repo->themeVariantColorDefaults($theme, $variant);
         if (empty($defaults)) {
-            return $this->failure('That theme variant has no customizable colors.', 404);
+            return $this->failure(__('That theme variant has no customizable colors.'), 404);
         }
 
         $this->service->resetThemeColors($theme, $variant, null);
 
-        return $this->success('Storefront colors and fonts reset to the default.', [
+        return $this->success(__('Storefront colors and fonts reset to the default.'), [
             'defaults' => $defaults,
             'fonts' => $this->repo->themeVariantFontDefaults($theme, $variant),
         ]);
@@ -250,7 +250,7 @@ final class AppearanceController extends PanelController
             'promo_banner_mobile_image_url' => $mobileImageUrl,
         ]);
 
-        return $this->success('Promotional banner updated.');
+        return $this->success(__('Promotional banner updated.'));
     }
 
     public function validatePromoBanner(SavePromoBannerRequest $request): JsonResponse
@@ -264,7 +264,7 @@ final class AppearanceController extends PanelController
     {
         $this->service->saveTopHeaderLinks($request->validated());
 
-        return $this->success('Top header links saved successfully.');
+        return $this->success(__('Top header links saved successfully.'));
     }
 
     public function validateTopHeaderLinks(SaveTopHeaderLinksRequest $request): JsonResponse
@@ -306,7 +306,7 @@ final class AppearanceController extends PanelController
 
         $this->service->saveFooterTranslations($request->validated('translations', []));
 
-        return $this->success('Footer settings saved successfully.');
+        return $this->success(__('Footer settings saved successfully.'));
     }
 
     public function validateFooter(SaveFooterRequest $request): JsonResponse

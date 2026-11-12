@@ -72,7 +72,7 @@
                     @if(!empty($option['image'])) data-image="{{ $option['image'] }}" @endif
                     @if($multiple ? in_array((string) $option['value'], array_map('strval', $selectedValues), true) : (string) $option['value'] === (string) $selectedValues) selected @endif
                     @if($option['disabled'] ?? false) disabled @endif
-                >{{ $option['label'] }}</option>
+                >{{ __($option['label']) }}</option>
             @endforeach
         @endif
     </select>

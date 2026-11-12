@@ -1,0 +1,142 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Support\Tenant;
+
+/**
+ * Strings the vendor-panel JavaScript (resources/js/tenant) reads through
+ * t('...') from resources/js/tenant/core/i18n.js. Only these keys are inlined
+ * into the page (tenant/layouts/partials/js-i18n.blade.php) instead of the
+ * whole lang/<locale>.json. Add a key here whenever new JS calls t('...').
+ */
+final class PanelJsTranslations
+{
+    public const KEYS = [
+        '...',
+        'Accept.js is still loading. Please try again.',
+        'Ad video',
+        'Add',
+        'Add to Flash Sale',
+        'Add to trending',
+        'All',
+        'All enabled languages',
+        'Analytics',
+        'Are you sure?',
+        'Article not found.',
+        'Average',
+        'Buy AI Translation (:price)',
+        'Cancel',
+        'Caption sourced from AI-generated social posts.',
+        'Card error',
+        'Central current price: :price',
+        'Clear',
+        'Click Fetch to discover current market prices for this product from the web.',
+        'Collected',
+        'Completed — :count items translated',
+        'Confirm',
+        'Copied',
+        'Copy',
+        'Cost Price',
+        'cost: :price',
+        'Could not access the camera. Please allow camera permission or use Upload Image instead.',
+        'Could not build the report. Please try again.',
+        'Could not capture the photo. Please try again.',
+        'Could not copy the invite link.',
+        'Could not copy to clipboard.',
+        'Could not load flash sales.',
+        'Couldn\'t load products.',
+        'Couldn\'t load the table. Please retry.',
+        'Country',
+        'Country #:id',
+        'Create one →',
+        'Default',
+        'DNS not fully configured yet',
+        'DNS propagation can take up to 48 hours. Check again after updating your records.',
+        'Domain is fully connected',
+        'Done',
+        'Error',
+        'Failed to load :url',
+        'Fallback',
+        'Fetch failed.',
+        'Finish',
+        'Fixed Cost',
+        'Generation failed.',
+        'Generic',
+        'Gross sales',
+        'Image search failed. Please try again.',
+        'Image should be :expectedWidth×:expectedHeight. Your image is :width×:height.',
+        'In Flash Sale',
+        'Invite link copied',
+        'Join me as a merchant on NO GRGR',
+        'Loading flash sales…',
+        'Loading…',
+        'Main product image',
+        'Max',
+        'Median',
+        'Merge all in category',
+        'Merge ALL products in the selected category into the current selection?',
+        'Merging…',
+        'Metric',
+        'Min',
+        'Next',
+        'Next products',
+        'No active flash sales found.',
+        'No countries are configured for this theme.',
+        'No countries are enabled for this theme. Enable some from the Countries button first.',
+        'No data',
+        'No DNS records defined to check against.',
+        'No orders',
+        'No products found.',
+        'No results found',
+        'Nothing to copy.',
+        'One-time payment · :language',
+        'Please choose a theme ZIP to upload.',
+        'Please enter :minimum or more characters',
+        'Please fix the highlighted fields.',
+        'Previous products',
+        'Profit',
+        'Query used: :query',
+        'Remove',
+        'Remove :name',
+        'Reset this edition\'s colors and fonts to the theme\'s default?',
+        'Run AI Translation',
+        'Same as store (:name)',
+        'Save assignment',
+        'Saving…',
+        'Searching…',
+        'Select option value',
+        'Series :number',
+        'Setup :pct% complete — :remaining step remaining',
+        'Setup :pct% complete — :remaining steps remaining',
+        'Showing 0 to 0 of 0 records',
+        'Showing _START_ to _END_ of _TOTAL_ records',
+        'Something went wrong. Please try again.',
+        'Step :current of :total',
+        'Store Name',
+        'Stripe.js is still loading. Please try again in a moment.',
+        'The requested record no longer exists.',
+        'This action cannot be undone.',
+        'Timed out loading :url',
+        'Too many requests. Please wait a moment.',
+        'Translating…',
+        'Trending ✓',
+        'Using default product details (no AI post generated yet).',
+        'Value',
+        'Visual match — :count results',
+        'You do not have permission to perform this action.',
+        'Your Price',
+        'Your session expired. Reloading…',
+    ];
+
+    /** @return array<string, string> */
+    public static function forCurrentLocale(): array
+    {
+        $out = [];
+        foreach (self::KEYS as $key) {
+            $out[$key] = __($key);
+        }
+
+        return $out;
+    }
+}

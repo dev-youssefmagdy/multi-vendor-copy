@@ -28,21 +28,21 @@ final class VendorPurchaseController extends PanelController
 
         return view('tenant.pages.finance.vendor-purchases.index', [
             'stats' => Metric::cards([
-                ['label' => 'Orders', 'value' => $stats['total'], 'format' => 'number', 'caption' => 'Vendor-collected orders with a platform share.', 'dot' => 'dot-cyan'],
-                ['label' => 'Unsettled', 'value' => $stats['unsettled_count'], 'format' => 'number', 'caption' => 'Orders with a platform share still unpaid.', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
-                ['label' => 'Amount Owed', 'value' => $stats['total_owed'], 'format' => 'currency', 'caption' => 'Total platform profit still owed to the platform.', 'dot' => 'dot-red'],
-                ['label' => 'Total Settled', 'value' => $stats['total_settled'], 'format' => 'currency', 'caption' => 'Total paid to the platform.', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Orders'), 'value' => $stats['total'], 'format' => 'number', 'caption' => __('Vendor-collected orders with a platform share.'), 'dot' => 'dot-cyan'],
+                ['label' => __('Unsettled'), 'value' => $stats['unsettled_count'], 'format' => 'number', 'caption' => __('Orders with a platform share still unpaid.'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Amount Owed'), 'value' => $stats['total_owed'], 'format' => 'currency', 'caption' => __('Total platform profit still owed to the platform.'), 'dot' => 'dot-red'],
+                ['label' => __('Total Settled'), 'value' => $stats['total_settled'], 'format' => 'currency', 'caption' => __('Total paid to the platform.'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
             ]),
             'columns' => [
                 TableColumn::index(),
-                TableColumn::make('uuid', 'Order'),
-                TableColumn::make('customer', 'Customer')->orderable(false),
-                TableColumn::make('paid_via', 'Paid Via')->orderable(false)->searchable(false),
-                TableColumn::make('platform_profit', 'Platform Profit')->name('platform_profit'),
-                TableColumn::make('paid', 'Paid')->orderable(false)->searchable(false),
-                TableColumn::make('remaining', 'Remaining')->orderable(false)->searchable(false),
-                TableColumn::make('gateway_fee', 'Gateway Fee')->orderable(false)->searchable(false),
-                TableColumn::make('settlement', 'Settlement')->orderable(false)->searchable(false),
+                TableColumn::make('uuid', __('Order')),
+                TableColumn::make('customer', __('Customer'))->orderable(false),
+                TableColumn::make('paid_via', __('Paid Via'))->orderable(false)->searchable(false),
+                TableColumn::make('platform_profit', __('Platform Profit'))->name('platform_profit'),
+                TableColumn::make('paid', __('Paid'))->orderable(false)->searchable(false),
+                TableColumn::make('remaining', __('Remaining'))->orderable(false)->searchable(false),
+                TableColumn::make('gateway_fee', __('Gateway Fee'))->orderable(false)->searchable(false),
+                TableColumn::make('settlement', __('Settlement'))->orderable(false)->searchable(false),
                 TableColumn::actions(),
             ],
         ]);
@@ -71,18 +71,18 @@ final class VendorPurchaseController extends PanelController
     {
         $filters = $this->filters($request, ['search', 'settled']);
 
-        $headers = ['Order UUID', 'Customer', 'Customer Email', 'Items', 'Payment Method', 'Platform Profit', 'Paid', 'Remaining', 'Settled', 'Placed At'];
+        $headers = [__('Order UUID'), __('Customer'), __('Customer Email'), __('Items'), __('Payment Method'), __('Platform Profit'), __('Paid'), __('Remaining'), __('Settled'), __('Placed At')];
 
         $rows = $this->repo->exportVendorPurchases($filters)->map(fn (Order $order) => [
             $order->uuid,
-            $order->customer?->full_name ?? 'Guest',
+            $order->customer?->full_name ?? __('Guest'),
             $order->customer?->email ?? '',
             $order->items_count,
-            ucwords(str_replace('_', ' ', $order->payment_method ?? 'cod')),
+            __(ucwords(str_replace('_', ' ', $order->payment_method ?? 'cod'))),
             number_format(OrderProfitCalculator::platformProfitForOrder($order), 2),
             number_format($order->vendor_settlements_paid, 2),
             number_format(OrderProfitCalculator::vendorOwnPlatformForOrder($order), 2),
-            OrderProfitCalculator::vendorOwnPlatformForOrder($order) > 0 ? 'No' : 'Yes',
+            OrderProfitCalculator::vendorOwnPlatformForOrder($order) > 0 ? __('No') : __('Yes'),
             $order->created_at?->format('Y-m-d H:i') ?? '',
         ]);
 

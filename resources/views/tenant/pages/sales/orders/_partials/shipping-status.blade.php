@@ -5,12 +5,12 @@
     @if(!empty($order['can_update_shipping']) && empty($order['is_terminal']))
         <section class="details-panel">
             <div class="details-header">
-                <h4 class="panel-title">Shipping Status</h4>
-                <p class="panel-copy">Update the delivery status for this order. Available only for your own products orders.</p>
+                <h4 class="panel-title">{{ __('Shipping Status') }}</h4>
+                <p class="panel-copy">{{ __('Update the delivery status for this order. Available only for your own products orders.') }}</p>
             </div>
             <div class="details-list">
                 <div class="details-kv">
-                    <span class="details-label">Current Status</span>
+                    <span class="details-label">{{ __('Current Status') }}</span>
                     <span class="details-value" data-shipping-status-current>{{ $order['shipping_status'] ?? '-' }}</span>
                 </div>
             </div>
@@ -25,14 +25,14 @@
                     <div style="flex:1;">
                         <x-tenant::select
                             name="shipping_status"
-                            label="New Status"
+                            :label="__('New Status')"
                             :value="$order['shipping_status_value'] ?? ''"
-                            :options="collect($shippingStatuses ?? [])->mapWithKeys(fn ($status) => [$status->value => $status->label()])->all()"
-                            placeholder="— select status —"
+                            :options="collect($shippingStatuses ?? [])->mapWithKeys(fn ($status) => [$status->value => __($status->label())])->all()"
+                            :placeholder="__('— select status —')"
                         />
                     </div>
                     <div>
-                        <button type="submit" class="btn btn-primary">Update</button>
+                        <button type="submit" class="btn btn-primary">{{ __('Update') }}</button>
                     </div>
                 </div>
             </x-tenant::form>

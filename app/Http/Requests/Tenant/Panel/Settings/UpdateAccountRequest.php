@@ -24,9 +24,9 @@ final class UpdateAccountRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'adminName' => 'admin name',
-            'adminEmail' => 'admin email',
-            'shopName' => 'shop name',
+            'adminName' => __('admin name'),
+            'adminEmail' => __('admin email'),
+            'shopName' => __('shop name'),
         ];
     }
 }

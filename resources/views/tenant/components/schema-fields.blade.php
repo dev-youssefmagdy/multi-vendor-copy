@@ -17,9 +17,9 @@
         @if (!empty($group['title']))
             <div class="panel-head mb-5">
                 <div>
-                    <h3 class="panel-title">{{ $group['title'] }}</h3>
+                    <h3 class="panel-title">{{ __($group['title']) }}</h3>
                     @if (!empty($group['description']))
-                        <p class="panel-copy">{{ $group['description'] }}</p>
+                        <p class="panel-copy">{{ __($group['description']) }}</p>
                     @endif
                 </div>
             </div>

@@ -2,10 +2,10 @@
     <div class="page-head fu d0">
         <div>
             <div class="page-title-row">
-                <h1 class="D page-title">Help & Documentation</h1>
-                <span class="page-badge">Help</span>
+                <h1 class="D page-title">{{ __('Help & Documentation') }}</h1>
+                <span class="page-badge">{{ __('Help') }}</span>
             </div>
-            <p class="page-copy">Guides for setting up and managing your store.</p>
+            <p class="page-copy">{{ __('Guides for setting up and managing your store.') }}</p>
         </div>
     </div>
 
@@ -32,7 +32,7 @@
             @if ($currentArticle)
                 @include($currentArticle['view'])
             @else
-                <p class="panel-copy">Article not found.</p>
+                <p class="panel-copy">{{ __('Article not found.') }}</p>
             @endif
         </article>
     </div>

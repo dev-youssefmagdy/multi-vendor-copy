@@ -1,6 +1,6 @@
 @extends('tenant.layouts.app')
 
-@section('title', 'Mobile App')
+@section('title', __('Mobile App'))
 
 @php
     $isMaintenance = (bool) ($s['maintenance'] ?? false);
@@ -21,12 +21,12 @@
 @endphp
 
 @section('content')
-    <x-tenant::page-header title="Mobile App" badge="Storefront" description="Configure your store's mobile app: branding, links, navigation and release controls.">
+    <x-tenant::page-header :title="__('Mobile App')" :badge="__('Storefront')" :description="__('Configure your store\'s mobile app: branding, links, navigation and release controls.')">
         <x-slot:actions>
             <span class="badge {{ $isMaintenance ? 'badge-amber' : 'badge-green' }}" id="ma-status-badge" data-live="Live" data-maint="Maintenance">
-                <span class="badge-dot"></span>{{ $isMaintenance ? 'Maintenance' : 'Live' }}
+                <span class="badge-dot"></span>{{ $isMaintenance ? __('Maintenance') : __('Live') }}
             </span>
-            <button type="submit" form="mobile-app-form" class="btn btn-primary">Save</button>
+            <button type="submit" form="mobile-app-form" class="btn btn-primary">{{ __('Save') }}</button>
         </x-slot:actions>
     </x-tenant::page-header>
 
@@ -38,50 +38,50 @@
                 {{-- Branding --}}
                 <section class="card form-card">
                     <div class="panel-head mb-5"><div>
-                        <h3 class="panel-title">Branding</h3>
-                        <p class="panel-copy">Name, logo, splash screen and the two colours that theme your app.</p>
+                        <h3 class="panel-title">{{ __('Branding') }}</h3>
+                        <p class="panel-copy">{{ __('Name, logo, splash screen and the two colours that theme your app.') }}</p>
                     </div></div>
                     <div class="form-grid form-grid-2">
-                        <x-tenant::input name="app_name" label="App name" :value="$s['app_name'] ?? ''" maxlength="60" counter help="Shown under the app icon and in the app header." />
+                        <x-tenant::input name="app_name" :label="__('App name')" :value="$s['app_name'] ?? ''" maxlength="60" counter :help="__('Shown under the app icon and in the app header.')" />
                         <div></div>
                         <div>
-                            <x-tenant::image-upload name="logo" label="Logo" :current="$s['logo'] ?? null" :max-kb="2048" help="PNG, JPG or WebP, up to 2 MB. Square or wide logos on a transparent background work best." />
+                            <x-tenant::image-upload name="logo" :label="__('Logo')" :current="$s['logo'] ?? null" :max-kb="2048" :help="__('PNG, JPG or WebP, up to 2 MB. Square or wide logos on a transparent background work best.')" />
                         </div>
                         <div>
-                            <x-tenant::image-upload name="splash" label="Splash image" :current="$s['splash'] ?? null" :max-kb="4096" help="Shown while the app loads. PNG or JPG, up to 4 MB; portrait (e.g. 1080 x 1920) recommended." />
+                            <x-tenant::image-upload name="splash" :label="__('Splash image')" :current="$s['splash'] ?? null" :max-kb="4096" :help="__('Shown while the app loads. PNG or JPG, up to 4 MB; portrait (e.g. 1080 x 1920) recommended.')" />
                         </div>
-                        @foreach(['primary_color' => ['Primary color', $primary], 'secondary_color' => ['Secondary color', $secondary]] as $field => [$label, $shown])
+                        @foreach(['primary_color' => [__('Primary color'), $primary], 'secondary_color' => [__('Secondary color'), $secondary]] as $field => [$label, $shown])
                             <div class="ma-color" data-ma-color>
-                                <label class="field-label" for="{{ $field }}">{{ $label }} <span class="ma-muted">(optional override)</span></label>
+                                <label class="field-label" for="{{ $field }}">{{ $label }} <span class="ma-muted">{{ __('(optional override)') }}</span></label>
                                 <div class="ma-color-row">
-                                    <input type="color" value="{{ $shown }}" data-ma-picker aria-label="{{ $label }} picker">
-                                    <input type="text" id="{{ $field }}" name="{{ $field }}" class="field-control {{ $errors->has($field) ? 'is-invalid' : '' }}" value="{{ old($field, $s[$field] ?? '') }}" placeholder="#RRGGBB" maxlength="7" data-ma-hex data-field="{{ $field }}" autocomplete="off">
+                                    <input type="color" value="{{ $shown }}" data-ma-picker aria-label="{{ __(':label picker', ['label' => $label]) }}">
+                                    <input type="text" id="{{ $field }}" name="{{ $field }}" class="field-control {{ $errors->has($field) ? 'is-invalid' : '' }}" value="{{ old($field, $s[$field] ?? '') }}" placeholder="{{ __('#RRGGBB') }}" maxlength="7" data-ma-hex data-field="{{ $field }}" autocomplete="off">
                                 </div>
                                 <p class="ma-hint" data-ma-contrast></p>
                             </div>
                         @endforeach
                     </div>
-                    <p class="panel-copy mt-3">Leave colours empty to use the colours of your active app theme.</p>
+                    <p class="panel-copy mt-3">{{ __('Leave colours empty to use the colours of your active app theme.') }}</p>
                 </section>
 
                 {{-- Store links --}}
                 <section class="card form-card">
                     <div class="panel-head mb-5"><div>
-                        <h3 class="panel-title">Store links &amp; landing page</h3>
-                        <p class="panel-copy">Where customers download the app. These buttons appear on your app landing page.</p>
+                        <h3 class="panel-title">{{ __('Store links & landing page') }}</h3>
+                        <p class="panel-copy">{{ __('Where customers download the app. These buttons appear on your app landing page.') }}</p>
                     </div></div>
                     <div class="form-grid form-grid-2">
-                        <x-tenant::input name="play_store_url" label="Google Play URL" :value="$s['play_store_url'] ?? ''" placeholder="https://play.google.com/store/apps/details?id=..." />
-                        <x-tenant::input name="app_store_url" label="App Store URL" :value="$s['app_store_url'] ?? ''" placeholder="https://apps.apple.com/app/..." />
+                        <x-tenant::input name="play_store_url" :label="__('Google Play URL')" :value="$s['play_store_url'] ?? ''" placeholder="https://play.google.com/store/apps/details?id=..." />
+                        <x-tenant::input name="app_store_url" :label="__('App Store URL')" :value="$s['app_store_url'] ?? ''" placeholder="https://apps.apple.com/app/..." />
                     </div>
                     <div class="ma-links">
                         @if($landingUrl)
-                            <div class="ma-link-row"><span class="ma-link-label">App landing page</span><code>{{ $landingUrl }}</code>
-                                <x-tenant::copy :value="$landingUrl" /><a href="{{ $landingUrl }}" target="_blank" rel="noopener" class="btn btn-secondary btn-sm">Open</a></div>
+                            <div class="ma-link-row"><span class="ma-link-label">{{ __('App landing page') }}</span><code>{{ $landingUrl }}</code>
+                                <x-tenant::copy :value="$landingUrl" /><a href="{{ $landingUrl }}" target="_blank" rel="noopener" class="btn btn-secondary btn-sm">{{ __('Open') }}</a></div>
                         @endif
-                        <div class="ma-link-row"><span class="ma-link-label">Store code</span><code>{{ $tenantCode }}</code><x-tenant::copy :value="$tenantCode" /></div>
-                        <div class="ma-link-row"><span class="ma-link-label">Domain</span><code>{{ $domain ?? '—' }}</code>@if($domain)<x-tenant::copy :value="$domain" />@endif</div>
-                        <p class="panel-copy">Customers open this store in the app by entering the store code or domain. Deep-link examples:</p>
+                        <div class="ma-link-row"><span class="ma-link-label">{{ __('Store code') }}</span><code>{{ $tenantCode }}</code><x-tenant::copy :value="$tenantCode" /></div>
+                        <div class="ma-link-row"><span class="ma-link-label">{{ __('Domain') }}</span><code>{{ $domain ?? '—' }}</code>@if($domain)<x-tenant::copy :value="$domain" />@endif</div>
+                        <p class="panel-copy">{{ __('Customers open this store in the app by entering the store code or domain. Deep-link examples:') }}</p>
                         @foreach(array_filter([$domain ? 'https://'.$domain.'/app' : null, $domain ? 'https://'.$domain.'/product/{slug}' : null, $domain ? 'https://'.$domain.'/category/{slug}' : null]) as $example)
                             <div class="ma-link-row"><code>{{ $example }}</code><x-tenant::copy :value="$example" /></div>
                         @endforeach
@@ -91,44 +91,44 @@
                 {{-- Support --}}
                 <section class="card form-card">
                     <div class="panel-head mb-5"><div>
-                        <h3 class="panel-title">Support</h3>
-                        <p class="panel-copy">Contact options customers see inside the app.</p>
+                        <h3 class="panel-title">{{ __('Support') }}</h3>
+                        <p class="panel-copy">{{ __('Contact options customers see inside the app.') }}</p>
                     </div></div>
                     <div class="form-grid form-grid-2">
-                        <x-tenant::input name="support_email" type="email" label="Support email" :value="$s['support_email'] ?? ''" placeholder="support@example.com" />
-                        <x-tenant::input name="support_phone" label="Support phone" :value="$s['support_phone'] ?? ''" placeholder="+20 100 000 0000" />
-                        <x-tenant::input name="support_whatsapp" label="Support WhatsApp" :value="$s['support_whatsapp'] ?? ''" placeholder="+20 100 000 0000" help="Include the country code." />
+                        <x-tenant::input name="support_email" type="email" :label="__('Support email')" :value="$s['support_email'] ?? ''" placeholder="support@example.com" />
+                        <x-tenant::input name="support_phone" :label="__('Support phone')" :value="$s['support_phone'] ?? ''" placeholder="+20 100 000 0000" />
+                        <x-tenant::input name="support_whatsapp" :label="__('Support WhatsApp')" :value="$s['support_whatsapp'] ?? ''" placeholder="+20 100 000 0000" :help="__('Include the country code.')" />
                     </div>
                 </section>
 
                 {{-- Localization --}}
                 <section class="card form-card">
                     <div class="panel-head mb-5"><div>
-                        <h3 class="panel-title">Localization</h3>
-                        <p class="panel-copy">Defaults used when the customer has not chosen a language or currency yet.</p>
+                        <h3 class="panel-title">{{ __('Localization') }}</h3>
+                        <p class="panel-copy">{{ __('Defaults used when the customer has not chosen a language or currency yet.') }}</p>
                     </div></div>
                     <div class="form-grid form-grid-2">
-                        <x-tenant::input name="default_locale" label="Default locale" :value="$s['default_locale'] ?? ''" placeholder="en" maxlength="10" help="Language code, e.g. en or ar." />
-                        <x-tenant::input name="default_currency" label="Default currency" :value="$s['default_currency'] ?? ''" placeholder="USD" maxlength="10" help="Currency code, e.g. USD or EGP." />
+                        <x-tenant::input name="default_locale" :label="__('Default locale')" :value="$s['default_locale'] ?? ''" placeholder="en" maxlength="10" :help="__('Language code, e.g. en or ar.')" />
+                        <x-tenant::input name="default_currency" :label="__('Default currency')" :value="$s['default_currency'] ?? ''" placeholder="USD" maxlength="10" :help="__('Currency code, e.g. USD or EGP.')" />
                     </div>
                 </section>
 
                 {{-- Features --}}
                 <section class="card form-card">
                     <div class="panel-head mb-5"><div>
-                        <h3 class="panel-title">Features</h3>
-                        <p class="panel-copy">Turn optional app capabilities on or off.</p>
+                        <h3 class="panel-title">{{ __('Features') }}</h3>
+                        <p class="panel-copy">{{ __('Turn optional app capabilities on or off.') }}</p>
                     </div></div>
                     @foreach($featureKeys as $f)
-                        <x-tenant::switch :name="'features['.$f.']'" :checked="$features[$f]" :label="ucfirst(str_replace('_', ' ', $f))" />
+                        <x-tenant::switch :name="'features['.$f.']'" :checked="$features[$f]" :label="__(ucfirst(str_replace('_', ' ', $f)))" />
                     @endforeach
                 </section>
 
                 {{-- Navigation --}}
                 <section class="card form-card">
                     <div class="panel-head mb-5"><div>
-                        <h3 class="panel-title">Bottom navigation</h3>
-                        <p class="panel-copy">Pick up to 5 tabs and drag the arrows to set their order (first = leftmost).</p>
+                        <h3 class="panel-title">{{ __('Bottom navigation') }}</h3>
+                        <p class="panel-copy">{{ __('Pick up to 5 tabs and drag the arrows to set their order (first = leftmost).') }}</p>
                     </div><span class="badge badge-cyan" id="ma-nav-count">0 / 5</span></div>
                     @error('nav_items')<p class="field-error">{{ $message }}</p>@enderror
                     <ul class="ma-nav" id="ma-nav">
@@ -137,11 +137,11 @@
                                 <label class="ma-nav-pick">
                                     <input type="checkbox" name="nav_items[]" value="{{ $n }}" @checked(in_array($n, $navSelected, true))>
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{ $navIcons[$n] ?? '' }}"/></svg>
-                                    <span>{{ ucfirst($n) }}</span>
+                                    <span>{{ __(ucfirst($n)) }}</span>
                                 </label>
                                 <span class="ma-nav-move">
-                                    <button type="button" class="btn btn-secondary btn-sm" data-move="-1" aria-label="Move up">&uarr;</button>
-                                    <button type="button" class="btn btn-secondary btn-sm" data-move="1" aria-label="Move down">&darr;</button>
+                                    <button type="button" class="btn btn-secondary btn-sm" data-move="-1" aria-label="{{ __('Move up') }}">&uarr;</button>
+                                    <button type="button" class="btn btn-secondary btn-sm" data-move="1" aria-label="{{ __('Move down') }}">&darr;</button>
                                 </span>
                             </li>
                         @endforeach
@@ -151,15 +151,15 @@
                 {{-- Availability --}}
                 <section class="card form-card">
                     <div class="panel-head mb-5"><div>
-                        <h3 class="panel-title">Availability &amp; releases</h3>
-                        <p class="panel-copy">Pause the app for maintenance or force old versions to update.</p>
+                        <h3 class="panel-title">{{ __('Availability & releases') }}</h3>
+                        <p class="panel-copy">{{ __('Pause the app for maintenance or force old versions to update.') }}</p>
                     </div></div>
                     <div class="form-grid form-grid-2">
-                        <x-tenant::input name="min_app_version" label="Minimum app version" :value="$s['min_app_version'] ?? ''" placeholder="1.0.0" help="Older versions are asked to update. Format: 1, 1.2 or 1.2.3." />
+                        <x-tenant::input name="min_app_version" :label="__('Minimum app version')" :value="$s['min_app_version'] ?? ''" placeholder="1.0.0" :help="__('Older versions are asked to update. Format: 1, 1.2 or 1.2.3.')" />
                         <div>
-                            <x-tenant::switch name="maintenance" :checked="$isMaintenance" label="Maintenance mode" description="Shows the message below instead of the store." />
+                            <x-tenant::switch name="maintenance" :checked="$isMaintenance" :label="__('Maintenance mode')" :description="__('Shows the message below instead of the store.')" />
                         </div>
-                        <x-tenant::input name="maintenance_message" label="Maintenance message" :value="$s['maintenance_message'] ?? ''" maxlength="500" wrapperClass="ma-span-2" />
+                        <x-tenant::input name="maintenance_message" :label="__('Maintenance message')" :value="$s['maintenance_message'] ?? ''" maxlength="500" wrapperClass="ma-span-2" />
                     </div>
                 </section>
             </div>
@@ -167,33 +167,33 @@
             {{-- Live preview --}}
             <aside class="ma-aside">
                 <div class="card form-card ma-preview-card">
-                    <h3 class="panel-title">Live preview</h3>
+                    <h3 class="panel-title">{{ __('Live preview') }}</h3>
                     <div class="ma-phones">
-                        <div class="ma-phone" aria-label="Splash preview">
+                        <div class="ma-phone" aria-label="{{ __('Splash preview') }}">
                             <div class="ma-screen ma-splash" id="ma-pv-splash" @if(!empty($s['splash'])) style="background-image:url('{{ $s['splash'] }}')" @endif>
                                 @if(!empty($s['logo']))<img id="ma-pv-logo-splash" src="{{ $s['logo'] }}" alt="">@else<img id="ma-pv-logo-splash" alt="" hidden>@endif
-                                <strong class="ma-pv-name">{{ $s['app_name'] ?? 'My Store' }}</strong>
+                                <strong class="ma-pv-name">{{ $s['app_name'] ?? __('My Store') }}</strong>
                             </div>
-                            <span>Splash</span>
+                            <span>{{ __('Splash') }}</span>
                         </div>
-                        <div class="ma-phone" aria-label="Home preview">
+                        <div class="ma-phone" aria-label="{{ __('Home preview') }}">
                             <div class="ma-screen ma-home">
-                                <div class="ma-pv-header"><strong class="ma-pv-name">{{ $s['app_name'] ?? 'My Store' }}</strong></div>
+                                <div class="ma-pv-header"><strong class="ma-pv-name">{{ $s['app_name'] ?? __('My Store') }}</strong></div>
                                 <div class="ma-pv-body"><i></i><i></i><i class="ma-pv-cta"></i></div>
                                 <div class="ma-pv-nav" id="ma-pv-nav"></div>
                             </div>
-                            <span>Home</span>
+                            <span>{{ __('Home') }}</span>
                         </div>
                     </div>
-                    <p class="panel-copy">Approximation of colours, name and tabs. Final look follows your app theme.</p>
+                    <p class="panel-copy">{{ __('Approximation of colours, name and tabs. Final look follows your app theme.') }}</p>
                 </div>
             </aside>
         </div>
 
         <div class="ma-savebar" id="ma-savebar">
-            <span class="ma-dirty" id="ma-dirty" hidden>Unsaved changes</span>
-            <span class="ma-clean" id="ma-clean">All changes saved</span>
-            <button type="submit" class="btn btn-primary">Save</button>
+            <span class="ma-dirty" id="ma-dirty" hidden>{{ __('Unsaved changes') }}</span>
+            <span class="ma-clean" id="ma-clean">{{ __('All changes saved') }}</span>
+            <button type="submit" class="btn btn-primary">{{ __('Save') }}</button>
         </div>
     </x-tenant::form>
 @endsection
@@ -248,8 +248,8 @@ document.addEventListener('DOMContentLoaded', function () {
     function colorUpdate(box){
         var hex = box.querySelector('[data-ma-hex]'), pick = box.querySelector('[data-ma-picker]'), hint = box.querySelector('[data-ma-contrast]');
         var v = hex.value.trim();
-        if (HEX.test(v)) { pick.value = v; var r = ratio(v, '#ffffff'); hint.textContent = 'Contrast with white text: ' + r.toFixed(1) + ':1 ' + (r >= 4.5 ? '(good)' : '(low: text may be hard to read)'); hint.className = 'ma-hint ' + (r >= 4.5 ? 'is-ok' : 'is-bad'); }
-        else { hint.textContent = v ? 'Use the format #RRGGBB.' : 'Using theme colour.'; hint.className = 'ma-hint' + (v ? ' is-bad' : ''); }
+        if (HEX.test(v)) { pick.value = v; var r = ratio(v, '#ffffff'); hint.textContent = @js(__('Contrast with white text: :ratio:1')).replace(':ratio', r.toFixed(1)) + ' ' + (r >= 4.5 ? @js(__('(good)')) : @js(__('(low: text may be hard to read)'))); hint.className = 'ma-hint ' + (r >= 4.5 ? 'is-ok' : 'is-bad'); }
+        else { hint.textContent = v ? @js(__('Use the format #RRGGBB.')) : @js(__('Using theme colour.')); hint.className = 'ma-hint' + (v ? ' is-bad' : ''); }
         var p = form.querySelector('[data-field=primary_color]').value.trim(), s = form.querySelector('[data-field=secondary_color]').value.trim();
         root.style.setProperty('--ma-primary', HEX.test(p) ? p : '#6D28D9');
         root.style.setProperty('--ma-secondary', HEX.test(s) ? s : '#F59E0B');
@@ -263,7 +263,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Name + images preview
     var name = form.querySelector('[name=app_name]');
-    function setName(){ document.querySelectorAll('.ma-pv-name').forEach(function(e){ e.textContent = name.value || 'My Store'; }); }
+    function setName(){ document.querySelectorAll('.ma-pv-name').forEach(function(e){ e.textContent = name.value || @js(__('My Store')); }); }
     name.addEventListener('input', setName); setName();
     function filePreview(field, apply){ var f = form.querySelector('[name='+field+']'); if(!f) return; f.addEventListener('change', function(){ if(f.files[0]) apply(URL.createObjectURL(f.files[0])); }); }
     filePreview('logo', function(u){ var i=document.getElementById('ma-pv-logo-splash'); i.src=u; i.hidden=false; });

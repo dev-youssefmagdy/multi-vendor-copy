@@ -10,30 +10,30 @@
             <div class="entity-subtitle" style="font-size:11px">{{ $card['native_name'] }}</div>
         </div>
         @unless ($card['is_active'])
-            <span class="badge badge-gray" style="margin-left:auto;font-size:10px">Not active</span>
+            <span class="badge badge-gray" style="margin-left:auto;font-size:10px">{{ __('Not active') }}</span>
         @endunless
     </div>
 
     <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
         @if ($card['is_free'])
-            <span class="badge badge-green">Free</span>
+            <span class="badge badge-green">{{ __('Free') }}</span>
         @else
             <span class="badge badge-violet">${{ number_format((float) $card['price'], 2) }}</span>
         @endif
 
         <span data-ai-card-last-status>
             @if ($card['last_status'] === 'completed')
-                <span class="badge badge-blue" style="font-size:10px">Last run: {{ $card['last_run'] }}</span>
+                <span class="badge badge-blue" style="font-size:10px">{{ __('Last run: :lastrun', ['lastrun' => $card['last_run']]) }}</span>
             @elseif ($card['last_status'] === 'pending')
-                <span class="badge badge-amber" style="font-size:10px">Running…</span>
+                <span class="badge badge-amber" style="font-size:10px">{{ __('Running…') }}</span>
             @elseif ($card['last_status'] === 'failed')
-                <span class="badge badge-red" style="font-size:10px">Last run failed</span>
+                <span class="badge badge-red" style="font-size:10px">{{ __('Last run failed') }}</span>
             @endif
         </span>
     </div>
 
     <p class="panel-copy" style="font-size:11px;margin:0">
-        Translates all products, categories, banners and UI strings into {{ $card['name'] }}, adapted to your store brand.
+        {{ __('Translates all products, categories, banners and UI strings into :name, adapted to your store brand.', ['name' => $card['name']]) }}
     </p>
 
     <div data-ai-card-progress @unless($running) hidden @endunless>
@@ -41,16 +41,16 @@
             <div data-ai-card-progress-bar style="height:100%;width:{{ $card['translation_progress'] }}%;background:var(--primary,#FF4B2B);transition:width .3s;"></div>
         </div>
         <p class="panel-copy" style="margin:4px 0 0;font-size:11px;" data-ai-card-progress-label>
-            {{ ucfirst((string) $card['translation_status']) }} — {{ $card['translation_progress'] }}%
+            {{ __(ucfirst((string) $card['translation_status'])) }} — {{ $card['translation_progress'] }}%
         </p>
     </div>
 
     <span data-ai-card-completed @unless($card['translation_status'] === 'completed') hidden @endunless>
-        <span class="badge badge-green" style="font-size:10px">Completed — {{ $summary['items_translated'] ?? 0 }} items translated</span>
+        <span class="badge badge-green" style="font-size:10px">{{ __('Completed — :itemstranslated items translated', ['itemstranslated' => $summary['items_translated'] ?? 0]) }}</span>
     </span>
 
     <span data-ai-card-failed @unless($card['translation_status'] === 'failed') hidden @endunless>
-        <span class="badge badge-red" style="font-size:10px">Translation failed</span>
+        <span class="badge badge-red" style="font-size:10px">{{ __('Translation failed') }}</span>
     </span>
 
     <button type="button" class="btn btn-primary"
@@ -64,11 +64,11 @@
             data-language-price="{{ number_format((float) $card['price'], 2) }}"
             @if(!$card['is_active'] || $running) disabled @endif>
         @if ($running)
-            Translating…
+            {{ __('Translating…') }}
         @elseif ($card['is_free'])
-            Run AI Translation
+            {{ __('Run AI Translation') }}
         @else
-            Buy AI Translation (${{ number_format((float) $card['price'], 2) }})
+            {{ __('Buy AI Translation ($:price)', ['price' => number_format((float) $card['price'], 2)]) }}
         @endif
     </button>
 </div>

@@ -320,12 +320,12 @@ class AffiliateService
             $affiliate = Affiliate::query()->lockForUpdate()->findOrFail($affiliate->id);
 
             if ($amount <= 0 || $amount > (float) $affiliate->balance) {
-                throw new \InvalidArgumentException('Invalid payout amount.');
+                throw new \InvalidArgumentException(__('Invalid payout amount.'));
             }
 
             $min = AffiliateSettings::minPayout();
             if ($amount < $min && $amount < (float) $affiliate->balance) {
-                throw new \InvalidArgumentException('Payout is below the minimum of $' . number_format($min, 2) . '.');
+                throw new \InvalidArgumentException(__('Payout is below the minimum of :amount.', ['amount' => '$' . number_format($min, 2)]));
             }
 
             $affiliate->decrement('balance', $amount);

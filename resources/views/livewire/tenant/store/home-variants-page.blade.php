@@ -73,33 +73,33 @@
     <div class="card table-card-shell fu d2">
         <div class="table-header-shell">
             <div>
-                <h3 class="panel-title">Home Page Variant</h3>
-                <p class="panel-copy">Choose which variant of {{ $selectedTheme?->name }}'s home page to show. Set a per-country override to give visitors from that country a different layout or colors.</p>
+                <h3 class="panel-title">{{ __('Home Page Variant') }}</h3>
+                <p class="panel-copy">{{ __('Choose which variant of :name\'s home page to show. Set a per-country override to give visitors from that country a different layout or colors.', ['name' => $selectedTheme?->name]) }}</p>
             </div>
         </div>
 
         @if ($availableVariants->isEmpty())
             <div class="empty-state">
-                <div class="empty-state-title">No variants available</div>
-                <p class="empty-state-copy">The platform hasn't published any home page variants for this theme yet.</p>
+                <div class="empty-state-title">{{ __('No variants available') }}</div>
+                <p class="empty-state-copy">{{ __('The platform hasn\'t published any home page variants for this theme yet.') }}</p>
             </div>
         @else
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>Scope</th>
-                        <th>Variant</th>
+                        <th>{{ __('Scope') }}</th>
+                        <th>{{ __('Variant') }}</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($rows as $row)
                         <tr>
-                            <td>{{ $row['label'] }}</td>
+                            <td>{{ __($row['label']) }}</td>
                             <td>
                                 <select class="field-control"
                                     wire:change="selectVariant({{ $row['country_id'] ?? 'null' }}, $event.target.value ? parseInt($event.target.value) : null)">
-                                    <option value="" @selected(!$row['selected_variant_id'])>Theme default</option>
+                                    <option value="" @selected(!$row['selected_variant_id'])>{{ __('Theme default') }}</option>
                                     @foreach ($availableVariants as $variant)
                                         <option value="{{ $variant->id }}" @selected($row['selected_variant_id'] === $variant->id)>
                                             {{ $variant->name }}{{ $variant->is_default ? ' (Default)' : '' }}

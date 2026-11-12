@@ -19,7 +19,7 @@ class SortCategories extends Component
 
         CacheVersion::bump('Category');
 
-        $this->toast('Category order saved.');
+        $this->toast(__('Category order saved.'));
     }
 
     public function render()

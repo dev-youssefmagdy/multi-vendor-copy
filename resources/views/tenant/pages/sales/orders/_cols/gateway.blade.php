@@ -1,1 +1,1 @@
-<span title="{{ $order->paid ? 'Paid' : 'Unpaid' }}{{ (float) $order->refunded_amount > 0 ? ' · '.$order->paymentState()->label() : '' }}">{{ str((string) $order->payment_method)->replace(['_', '-'], ' ')->lower()->ucfirst()->toString() ?: '—' }}</span>
+<span title="{{ $order->paid ? __('Paid') : __('Unpaid') }}{{ (float) $order->refunded_amount > 0 ? ' · '.$order->paymentState()->label() : '' }}">{{ str((string) $order->payment_method)->replace(['_', '-'], ' ')->lower()->ucfirst()->toString() ?: '—' }}</span>

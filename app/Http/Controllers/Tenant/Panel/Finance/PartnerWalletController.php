@@ -59,7 +59,7 @@ final class PartnerWalletController extends PanelController
         $affiliate = $this->affiliate();
 
         $rows = $affiliate->payouts()->get()->map(fn ($p) => [
-            'type'       => 'Payout',
+            'type'       => __('Payout'),
             'amount'     => (float) $p->amount,
             'status'     => 'paid',
             'reference'  => (string) ($p->reference ?: '—'),
@@ -67,7 +67,7 @@ final class PartnerWalletController extends PanelController
             'at'         => $p->paid_at ?? $p->created_at,
         ])->concat(
             $affiliate->payoutRequests()->get()->map(fn ($r) => [
-                'type'       => 'Request',
+                'type'       => __('Request'),
                 'amount'     => (float) $r->amount,
                 'status'     => (string) $r->status,
                 'reference'  => (string) ($r->admin_note ?: '—'),
@@ -83,7 +83,7 @@ final class PartnerWalletController extends PanelController
             ->editColumn('status', fn ($r) => $this->badge($r['status']))
             ->editColumn('reference', fn ($r) => e($r['reference']))
             ->addColumn('attachment', fn ($r) => $r['attachment']
-                ? '<a href="' . e($r['attachment']) . '" target="_blank" rel="noopener">View</a>'
+                ? '<a href="' . e($r['attachment']) . '" target="_blank" rel="noopener">' . e(__('View')) . '</a>'
                 : '—')
             ->addColumn('date', fn ($r) => $r['at']?->format('M d, Y H:i'))
             ->rawColumns(['status', 'attachment'])
@@ -101,7 +101,7 @@ final class PartnerWalletController extends PanelController
         }
 
         return $this->success(
-            'Withdrawal request submitted. It will be reviewed shortly.',
+            __('Withdrawal request submitted. It will be reviewed shortly.'),
             redirect: route('tenant.partner-program'),
         );
     }
@@ -121,6 +121,6 @@ final class PartnerWalletController extends PanelController
             default => 'gray',
         };
 
-        return '<span class="badge badge-' . $cls . '"><span class="badge-dot"></span>' . e(Str::headline($status)) . '</span>';
+        return '<span class="badge badge-' . $cls . '"><span class="badge-dot"></span>' . e(__((string) Str::headline($status))) . '</span>';
     }
 }

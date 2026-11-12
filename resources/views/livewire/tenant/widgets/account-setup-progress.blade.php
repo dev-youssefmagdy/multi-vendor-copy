@@ -2,7 +2,7 @@
     <button type="button" wire:click="toggle" style="width:100%;background:transparent;border:none;padding:0;cursor:pointer;display:flex;flex-direction:column;gap:6px;text-align:left;">
         <div style="display:flex;align-items:center;justify-content:space-between;">
             <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);">
-                Account Setup: {{ $progress['percent'] }}% Complete
+                {{ __('Account Setup: :percent% Complete', ['percent' => $progress['percent']]) }}
             </span>
             <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"
                 style="color:var(--t3);transform:rotate({{ $expanded ? '180deg' : '0deg' }});transition:transform .15s;">
@@ -26,7 +26,7 @@
                         @else
                             <span style="width:13px;height:13px;border-radius:50%;border:1.5px solid var(--border);flex-shrink:0;"></span>
                         @endif
-                        {{ $step['label'] }}
+                        {{ __($step['label']) }}
                     </div>
 
                     @unless ($step['done'])
@@ -34,14 +34,14 @@
                             @if ($step['key'] === 'email_verified')
                                 <form method="POST" action="{{ route('tenant.verification.send') }}" style="margin:0;">
                                     @csrf
-                                    <button type="submit" class="setup-step-action">{{ $step['action_label'] }}</button>
+                                    <button type="submit" class="setup-step-action">{{ __($step['action_label']) }}</button>
                                 </form>
                             @else
-                                <a href="{{ $step['action_url'] }}" class="setup-step-action">{{ $step['action_label'] }}</a>
+                                <a href="{{ $step['action_url'] }}" class="setup-step-action">{{ __($step['action_label']) }}</a>
 
                                 @if ($step['key'] === 'default_pages_reviewed')
                                     <button type="button" wire:click="markPagesReviewed" class="setup-step-action setup-step-action-primary">
-                                        Mark as complete
+                                        {{ __('Mark as complete') }}
                                     </button>
                                 @endif
                             @endif

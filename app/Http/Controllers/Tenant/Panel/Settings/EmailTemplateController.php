@@ -42,18 +42,18 @@ final class EmailTemplateController extends PanelController
 
         return view('tenant.pages.settings.email-templates.index', [
             'stats' => Metric::cards([
-                ['label' => 'Templates', 'value' => $stats['total'], 'format' => 'number', 'caption' => 'Templates available in this tenant database', 'dot' => 'dot-cyan'],
-                ['label' => 'Active', 'value' => $stats['active'], 'format' => 'number', 'caption' => 'Currently available for tenant mail flows', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Inactive', 'value' => $stats['total'] - $stats['active'], 'format' => 'number', 'caption' => 'Disabled templates retained in the tenant workspace', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Templates'), 'value' => $stats['total'], 'format' => 'number', 'caption' => __('Templates available in this tenant database'), 'dot' => 'dot-cyan'],
+                ['label' => __('Active'), 'value' => $stats['active'], 'format' => 'number', 'caption' => __('Currently available for tenant mail flows'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Inactive'), 'value' => $stats['total'] - $stats['active'], 'format' => 'number', 'caption' => __('Disabled templates retained in the tenant workspace'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
             ]),
             'columns' => [
                 TableColumn::index(),
-                TableColumn::make('name', 'Template'),
-                TableColumn::make('action', 'Event')->orderable(false),
-                TableColumn::make('subject', 'Subject')->orderable(false),
-                TableColumn::make('body', 'Body')->orderable(false)->searchable(false),
-                TableColumn::make('is_active', 'Status'),
-                TableColumn::make('updated_at', 'Updated At'),
+                TableColumn::make('name', __('Template')),
+                TableColumn::make('action', __('Event'))->orderable(false),
+                TableColumn::make('subject', __('Subject'))->orderable(false),
+                TableColumn::make('body', __('Body'))->orderable(false)->searchable(false),
+                TableColumn::make('is_active', __('Status')),
+                TableColumn::make('updated_at', __('Updated At')),
                 TableColumn::actions(),
             ],
         ]);
@@ -119,7 +119,7 @@ final class EmailTemplateController extends PanelController
             'translations' => $validated['translations'] ?? [],
         ], $emailTemplate);
 
-        return $this->success('Email template updated successfully.', [], route('tenant.settings.email-templates.edit', $emailTemplate));
+        return $this->success(__('Email template updated successfully.'), [], route('tenant.settings.email-templates.edit', $emailTemplate));
     }
 
     public function validateUpdate(SaveEmailTemplateRequest $request, EmailTemplate $emailTemplate): JsonResponse
@@ -132,11 +132,11 @@ final class EmailTemplateController extends PanelController
         $tenant = tenant();
 
         if (!$tenant) {
-            return $this->failure('No active tenant context.', 422);
+            return $this->failure(__('No active tenant context.'), 422);
         }
 
         $syncService->syncForTenant($tenant, ['email-templates']);
 
-        return $this->success('Email template re-synced from central successfully.', [], route('tenant.settings.email-templates.edit', $emailTemplate));
+        return $this->success(__('Email template re-synced from central successfully.'), [], route('tenant.settings.email-templates.edit', $emailTemplate));
     }
 }

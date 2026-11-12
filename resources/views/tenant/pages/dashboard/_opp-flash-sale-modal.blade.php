@@ -5,15 +5,15 @@
         <div class="card w-full sm:max-w-md relative z-10 p-0 modal-card">
             <div class="p-5 border-b flex justify-between items-center modal-header-shell">
                 <div>
-                    <h3 class="panel-title modal-title" id="opp-flash-sale-modal-title">Add to Flash Sale</h3>
-                    <p class="panel-copy">Select a flash sale to add this product to.</p>
+                    <h3 class="panel-title modal-title" id="opp-flash-sale-modal-title">{{ __('Add to Flash Sale') }}</h3>
+                    <p class="panel-copy">{{ __('Select a flash sale to add this product to.') }}</p>
                 </div>
-                <button type="button" data-modal-close class="modal-close-btn transition-colors" aria-label="Close">
+                <button type="button" data-modal-close class="modal-close-btn transition-colors" aria-label="{{ __('Close') }}">
                     <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 </button>
             </div>
             <div class="p-5 modal-body-shell" id="opp-flash-sale-modal-body">
-                <p style="color:var(--t3);font-size:14px;">Loading flash sales…</p>
+                <p style="color:var(--t3);font-size:14px;">{{ __('Loading flash sales…') }}</p>
             </div>
         </div>
     </div>

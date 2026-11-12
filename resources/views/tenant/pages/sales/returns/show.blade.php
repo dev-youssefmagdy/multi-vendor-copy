@@ -1,6 +1,6 @@
 @extends('tenant.layouts.app')
 
-@section('title', 'Return #' . $returnRecord['id'])
+@section('title', __('Return #:id', ['id' => $returnRecord['id']]))
 
 @section('content')
     @php
@@ -11,17 +11,17 @@
         $inspection = $returnRecord['inspection_result'] ?? null;
     @endphp
 
-    <x-tenant::page-header :title="'Return #' . $returnRecord['id']" badge="Return Management" description="Review this customer return request, respond, and take action.">
+    <x-tenant::page-header :title="__('Return #:id', ['id' => $returnRecord['id']])" :badge="__('Return Management')" :description="__('Review this customer return request, respond, and take action.')">
         <x-slot:actions>
-            <a class="btn btn-secondary" href="{{ route('tenant.returns.index') }}">← Returns</a>
+            <a class="btn btn-secondary" href="{{ route('tenant.returns.index') }}">{{ __('← Returns') }}</a>
             @if(!empty($orderId))
-                <a class="btn btn-secondary" target="_blank" href="{{ route('tenant.orders.show', $orderId) }}">View Order</a>
+                <a class="btn btn-secondary" target="_blank" href="{{ route('tenant.orders.show', $orderId) }}">{{ __('View Order') }}</a>
             @endif
         </x-slot:actions>
     </x-tenant::page-header>
 
     <div class="card form-card fu d1 section-gap">
-        <h4 class="panel-title">Return Status</h4>
+        <h4 class="panel-title">{{ __('Return Status') }}</h4>
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
             <x-tenant::status-badge :status="$returnRecord['status']" />
             @if(!empty($returnRecord['type_label']))
@@ -79,14 +79,14 @@
     </div>
 
     <div class="card form-card fu d2 section-gap">
-        <h4 class="panel-title">Return Details</h4>
+        <h4 class="panel-title">{{ __('Return Details') }}</h4>
         <div class="form-grid form-grid-2">
             <div>
-                <div class="field-label">Order Number</div>
+                <div class="field-label">{{ __('Order Number') }}</div>
                 <div class="D" style="font-family:ui-monospace,monospace;font-size:15px">{{ $returnRecord['order_number'] ?? '-' }}</div>
             </div>
             <div>
-                <div class="field-label">Submitted</div>
+                <div class="field-label">{{ __('Submitted') }}</div>
                 <div class="D">{{ $returnRecord['created_at'] ?? '-' }}</div>
             </div>
             <div>
@@ -106,12 +106,12 @@
                 <div class="D">{{ $returnRecord['return_method'] ?? '-' }}</div>
             </div>
             <div>
-                <div class="field-label">Reason</div>
+                <div class="field-label">{{ __('Reason') }}</div>
                 <div class="D">{{ $returnRecord['reason'] ?? '-' }}</div>
             </div>
             @if($returnRecord['refund_amount'] ?? null)
             <div>
-                <div class="field-label">Refund Amount</div>
+                <div class="field-label">{{ __('Refund Amount') }}</div>
                 <div class="D" style="font-weight:700;color:var(--green)">${{ number_format((float) $returnRecord['refund_amount'], 2) }}</div>
             </div>
             @endif
@@ -119,7 +119,7 @@
 
         @if($returnRecord['description'] ?? false)
         <div style="margin-top:12px">
-            <div class="field-label">Customer Description</div>
+            <div class="field-label">{{ __('Customer Description') }}</div>
             <div class="D" style="background:var(--elevated);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-top:4px;line-height:1.6">
                 {{ $returnRecord['description'] }}
             </div>
@@ -137,7 +137,7 @@
 
         @if(!empty($returnRecord['media']))
         <div style="margin-top:16px">
-            <div class="field-label">Evidence</div>
+            <div class="field-label">{{ __('Evidence') }}</div>
             <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
                 @foreach($returnRecord['media'] as $m)
                     @if($m['type'] === 'photo')
@@ -145,7 +145,7 @@
                             <img src="{{ $m['url'] }}" style="width:96px;height:96px;object-fit:cover;border-radius:8px;border:1px solid var(--border)">
                         </a>
                     @else
-                        <a href="{{ $m['url'] }}" target="_blank" class="link-btn">Watch Video</a>
+                        <a href="{{ $m['url'] }}" target="_blank" class="link-btn">{{ __('Watch Video') }}</a>
                     @endif
                 @endforeach
             </div>
@@ -159,7 +159,7 @@
         <div class="form-grid form-grid-2">
             <div>
                 <div class="field-label">{{ __('Replacement') }}</div>
-                <div class="D">{{ $replacement['label'] }} × {{ $replacement['quantity'] }}</div>
+                <div class="D">{{ __(':label × :quantity', ['label' => $replacement['label'], 'quantity' => $replacement['quantity']]) }}</div>
             </div>
             <div>
                 <div class="field-label">{{ __('Available stock') }}</div>
@@ -264,14 +264,14 @@
     </div>
 
     <div class="card form-card fu d3 section-gap">
-        <h4 class="panel-title">Notes</h4>
+        <h4 class="panel-title">{{ __('Notes') }}</h4>
 
         <x-tenant::chat
             id="return-notes-chat"
-            empty="No notes yet."
+            :empty="__('No notes yet.')"
             :messages="collect($returnRecord['notes'] ?? [])->map(fn ($note) => [
                 'id' => $note['created_at'] . '-' . $note['author_type'],
-                'author' => ucfirst($note['author_type']),
+                'author' => __(ucfirst($note['author_type'])),
                 'at' => $note['created_at'],
                 'body' => $note['note'],
                 'is_me' => $note['author_type'] === 'tenant',
@@ -279,9 +279,9 @@
         >
             <x-slot:composer>
                 <x-tenant::form action="{{ route('tenant.returns.notes', $returnRecord['id']) }}" validate="{{ route('tenant.returns.notes.validate', $returnRecord['id']) }}" success="reload-page">
-                    <textarea name="note_text" rows="3" class="input" placeholder="Add an internal note…" style="resize:vertical"></textarea>
+                    <textarea name="note_text" rows="3" class="input" placeholder="{{ __('Add an internal note…') }}" style="resize:vertical"></textarea>
                     <div style="margin-top:10px">
-                        <button type="submit" class="btn btn-primary">Add Note</button>
+                        <button type="submit" class="btn btn-primary">{{ __('Add Note') }}</button>
                     </div>
                 </x-tenant::form>
             </x-slot:composer>
@@ -290,7 +290,7 @@
 
     @if(!empty($order))
     <div class="card form-card fu d4 section-gap">
-        <h4 class="panel-title">Order Summary</h4>
+        <h4 class="panel-title">{{ __('Order Summary') }}</h4>
         @include('tenant.pages.sales.orders._partials.details', ['order' => $order])
     </div>
     @endif
@@ -311,24 +311,24 @@
     @endif
 
     @if($can('reject'))
-    <x-tenant::modal id="reject-modal" title="Reject Return">
+    <x-tenant::modal id="reject-modal" :title="__('Reject Return')">
         <x-tenant::form action="{{ route('tenant.returns.reject', $returnRecord['id']) }}" validate="{{ route('tenant.returns.reject.validate', $returnRecord['id']) }}" success="reload-page">
-            <textarea name="reject_reason" rows="3" class="input" placeholder="Reason for rejection (shown to customer)…" style="resize:vertical" required>{{ $inspection?->value === 'failed' ? ($returnRecord['inspection_notes'] ?? '') : '' }}</textarea>
+            <textarea name="reject_reason" rows="3" class="input" placeholder="{{ __('Reason for rejection (shown to customer)…') }}" style="resize:vertical" required>{{ $inspection?->value === 'failed' ? ($returnRecord['inspection_notes'] ?? '') : '' }}</textarea>
             <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
-                <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
-                <button type="submit" class="btn" style="background:var(--red);color:#fff">Confirm Reject</button>
+                <button type="button" class="btn btn-secondary" data-modal-close>{{ __('Cancel') }}</button>
+                <button type="submit" class="btn" style="background:var(--red);color:#fff">{{ __('Confirm Reject') }}</button>
             </div>
         </x-tenant::form>
     </x-tenant::modal>
     @endif
 
     @if($can('request_info'))
-    <x-tenant::modal id="info-modal" title="Request More Information">
+    <x-tenant::modal id="info-modal" :title="__('Request More Information')">
         <x-tenant::form action="{{ route('tenant.returns.request-info', $returnRecord['id']) }}" validate="{{ route('tenant.returns.request-info.validate', $returnRecord['id']) }}" success="reload-page">
-            <textarea name="info_message" rows="3" class="input" placeholder="What do you need from the customer?" style="resize:vertical" required></textarea>
+            <textarea name="info_message" rows="3" class="input" placeholder="{{ __('What do you need from the customer?') }}" style="resize:vertical" required></textarea>
             <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
-                <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
-                <button type="submit" class="btn btn-primary">Send Request</button>
+                <button type="button" class="btn btn-secondary" data-modal-close>{{ __('Cancel') }}</button>
+                <button type="submit" class="btn btn-primary">{{ __('Send Request') }}</button>
             </div>
         </x-tenant::form>
     </x-tenant::modal>

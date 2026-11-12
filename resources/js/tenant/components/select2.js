@@ -1,4 +1,5 @@
 import loadSelect2 from '../vendor/select2.js';
+import { t } from '../core/i18n.js';
 
 const dependents = new WeakMap();
 
@@ -26,9 +27,9 @@ export async function init(el) {
         dropdownParent: $(el.closest('.t-modal') || document.body),
         tags: el.dataset.tags === 'true',
         language: {
-            noResults: () => 'No results found',
-            searching: () => 'Searching…',
-            inputTooShort: (args) => `Please enter ${args.minimum} or more characters`,
+            noResults: () => t('No results found'),
+            searching: () => t('Searching…'),
+            inputTooShort: (args) => t('Please enter :minimum or more characters', { minimum: args.minimum }),
         },
     };
 

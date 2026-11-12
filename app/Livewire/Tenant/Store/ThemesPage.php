@@ -33,9 +33,9 @@ class ThemesPage extends ListPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Themes',
-            'badge' => 'Storefront',
-            'description' => 'Switch the active storefront theme for the current tenant.',
+            'title' => __('Themes'),
+            'badge' => __('Storefront'),
+            'description' => __('Switch the active storefront theme for the current tenant.'),
         ];
     }
 
@@ -122,13 +122,13 @@ class ThemesPage extends ListPage
             // Universal variant: radio — "Set Active" / "Active" (disabled)
             // Country-specific variant: toggle — "Activate" / "Deactivate"
             if ($isUniversal) {
-                $actionLabel = $isActive ? 'Active' : 'Set Active';
+                $actionLabel = $isActive ? __('Active') : __('Set Active');
                 $actionMethod = $isActive ? null : 'activateVariant';
                 $actionClass = $isActive
                     ? 'theme-pill-btn is-disabled'
                     : 'theme-pill-btn is-primary';
             } else {
-                $actionLabel = $isActive ? 'Deactivate' : 'Activate';
+                $actionLabel = $isActive ? __('Deactivate') : __('Activate');
                 $actionMethod = $isActive ? 'deactivateTheme' : 'activateTheme';
                 $actionClass = $isActive
                     ? 'theme-pill-btn is-danger'
@@ -154,31 +154,31 @@ class ThemesPage extends ListPage
                 'theme_slug' => $theme->slug,
                 'is_active' => $isActive,
                 'is_universal' => $isUniversal,
-                'scope_label' => $isUniversal ? 'Universal' : 'Country-specific',
+                'scope_label' => $isUniversal ? __('Universal') : __('Country-specific'),
                 'action_label' => $actionLabel,
                 'action_method' => $actionMethod,
                 'action_class' => $actionClass,
                 'preview_path' => $previewUrl,
-                'preview_label' => 'Preview',
+                'preview_label' => __('Preview'),
                 'storefront_url' => $storefrontUrl,
                 'initials' => Str::upper(Str::substr((string) $variant->name, 0, 2)),
                 'countries_label' => $isUniversal
-                    ? 'All countries'
+                    ? __('All countries')
                     : sprintf('%d of %d countries', $enabledCount, $totalCount),
                 'has_countries' => $totalCount > 0,
             ];
         })->filter()->values()->all();
 
         $activeVariantName = $allVariants->firstWhere('id', $activeVariantId)?->name
-            ?? ($activeUniversalTheme?->name ?? 'No theme active');
+            ?? ($activeUniversalTheme?->name ?? __('No theme active'));
 
         return array_merge(parent::pageData(), [
             'activeThemeName' => $activeVariantName,
             'variantCards' => $variantCards,
             'statistics' => [
-                ['label' => 'Variants', 'value' => number_format(count($variantCards)), 'caption' => 'Available home page layouts', 'dot' => 'dot-cyan'],
-                ['label' => 'Active', 'value' => number_format(collect($variantCards)->where('is_active', true)->count()), 'caption' => 'Currently live variant', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Themes', 'value' => number_format($themes->count()), 'caption' => 'Base themes available', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Variants'), 'value' => number_format(count($variantCards)), 'caption' => __('Available home page layouts'), 'dot' => 'dot-cyan'],
+                ['label' => __('Active'), 'value' => number_format(collect($variantCards)->where('is_active', true)->count()), 'caption' => __('Currently live variant'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Themes'), 'value' => number_format($themes->count()), 'caption' => __('Base themes available'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
             ],
         ]);
     }
@@ -186,7 +186,7 @@ class ThemesPage extends ListPage
     public function activateTheme(int $themeId, TenantPanelService $service): void
     {
         $service->activateTheme(Theme::query()->findOrFail($themeId));
-        $this->toast('Theme activated successfully.');
+        $this->toast(__('Theme activated successfully.'));
         $this->dispatch('setup-step-completed');
     }
 
@@ -204,7 +204,7 @@ class ThemesPage extends ListPage
             ['home_variant_id' => $variantId]
         );
 
-        $this->toast('Variant activated successfully.');
+        $this->toast(__('Variant activated successfully.'));
         $this->dispatch('setup-step-completed');
     }
 
@@ -216,7 +216,7 @@ class ThemesPage extends ListPage
             $this->toast($e->getMessage(), 'error');
             return;
         }
-        $this->toast('Theme deactivated.');
+        $this->toast(__('Theme deactivated.'));
     }
 
     public function openCountries(int $themeId): void
@@ -276,7 +276,7 @@ class ThemesPage extends ListPage
         CacheVersion::bump('Theme');
 
         $this->closeCountries();
-        $this->toast('Theme countries updated successfully.');
+        $this->toast(__('Theme countries updated successfully.'));
     }
 
     public function getModalCountriesProperty()

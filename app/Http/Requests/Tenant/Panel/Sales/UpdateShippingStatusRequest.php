@@ -20,15 +20,15 @@ final class UpdateShippingStatusRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'shipping_status' => 'shipping status',
+            'shipping_status' => __('shipping status'),
         ];
     }
 
     public function messages(): array
     {
         return [
-            'shipping_status.required' => 'Invalid shipping status selected.',
-            'shipping_status.enum' => 'Invalid shipping status selected.',
+            'shipping_status.required' => __('Invalid shipping status selected.'),
+            'shipping_status.enum' => __('Invalid shipping status selected.'),
         ];
     }
 }

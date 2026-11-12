@@ -19,13 +19,13 @@
         {{-- ── Page Header ──────────────────────────────────────────────── --}}
         <div class="page-head fu d0">
             <div>
-                <div class="eyebrow">Own Catalog</div>
+                <div class="eyebrow">{{ __('Own Catalog') }}</div>
                 <h1 class="D page-title">{{ $pageTitle }}</h1>
                 <p class="page-copy">{{ $pageDescription }}</p>
             </div>
             <div class="page-actions" style="flex-shrink:0">
-                <a href="{{ route('tenant.own-products.index') }}" class="btn btn-secondary">Back to Products</a>
-                <button type="submit" class="btn btn-primary">Save Product</button>
+                <a href="{{ route('tenant.own-products.index') }}" class="btn btn-secondary">{{ __('Back to Products') }}</a>
+                <button type="submit" class="btn btn-primary">{{ __('Save Product') }}</button>
             </div>
         </div>
 
@@ -35,8 +35,8 @@
 
         @if ($errors->any())
             <div class="card section-gap notice-error">
-                <h3 class="panel-title">Please fix the highlighted fields</h3>
-                <p class="panel-copy">The product was not saved because some required values are missing or invalid.</p>
+                <h3 class="panel-title">{{ __('Please fix the highlighted fields') }}</h3>
+                <p class="panel-copy">{{ __('The product was not saved because some required values are missing or invalid.') }}</p>
                 <ul style="margin-top:8px;padding-left:1.2em">
                     @foreach ($errors->all() as $error)
                         <li style="font-size:13px">{{ $error }}</li>
@@ -48,23 +48,23 @@
         <div class="grid gap-2">
 
             {{-- ── Basics ────────────────────────────────────────────────── --}}
-            <x-card-collapse title="Basics"
-                subtitle="Identifiers, publication state, and catalog flags."
+            <x-card-collapse :title="__('Basics')"
+                :subtitle="__('Identifiers, publication state, and catalog flags.')"
                 class="form-card span-12"
                 :start-open="true">
                 <div class="form-grid form-grid-3">
 
                     <div>
-                        <label class="field-label" for="sku">SKU</label>
+                        <label class="field-label" for="sku">{{ __('SKU') }}</label>
                         <input id="sku" name="sku" type="text"
                                class="field-control {{ $errors->has('sku') ? 'is-invalid' : '' }}"
                                value="{{ $f('sku') }}"
-                               placeholder="PRD-001">
+                               placeholder="{{ __('PRD-001') }}">
                         @error('sku') <p class="field-error">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
-                        <label class="field-label" for="slug">Slug</label>
+                        <label class="field-label" for="slug">{{ __('Slug') }}</label>
                         <input id="slug" name="slug" type="text"
                                class="field-control {{ $errors->has('slug') ? 'is-invalid' : '' }}"
                                value="{{ $f('slug') }}"
@@ -73,7 +73,7 @@
                     </div>
 
                     <div>
-                        <label class="field-label" for="weight_grams">Weight (grams)</label>
+                        <label class="field-label" for="weight_grams">{{ __('Weight (grams)') }}</label>
                         <input id="weight_grams" name="weight_grams" type="number" min="0"
                                class="field-control {{ $errors->has('weight_grams') ? 'is-invalid' : '' }}"
                                value="{{ $f('weight_grams') }}"
@@ -86,13 +86,13 @@
                             <input type="hidden" name="active" value="0">
                             <input type="checkbox" name="active" value="1"
                                 {{ $f('active', true) ? 'checked' : '' }}>
-                            <span>Product is Active</span>
+                            <span>{{ __('Product is Active') }}</span>
                         </label>
                         <label class="toggle-field">
                             <input type="hidden" name="featured" value="0">
                             <input type="checkbox" name="featured" value="1"
                                 {{ $f('featured', false) ? 'checked' : '' }}>
-                            <span>Featured</span>
+                            <span>{{ __('Featured') }}</span>
                         </label>
                         <label class="toggle-field">
                             <input type="hidden" name="manage_stock" value="0">
@@ -100,13 +100,13 @@
                                 id="manage_stock_cb"
                                 onchange="toggleManageStock(this)"
                                 {{ $f('manage_stock', true) ? 'checked' : '' }}>
-                            <span>Manage Stock</span>
+                            <span>{{ __('Manage Stock') }}</span>
                         </label>
                         <label class="toggle-field">
                             <input type="hidden" name="is_taxable" value="0">
                             <input type="checkbox" name="is_taxable" value="1"
                                 {{ $f('is_taxable', true) ? 'checked' : '' }}>
-                            <span>Taxable</span>
+                            <span>{{ __('Taxable') }}</span>
                         </label>
                     </div>
 
@@ -114,8 +114,8 @@
             </x-card-collapse>
 
             {{-- ── Primary Image ─────────────────────────────────────────── --}}
-            <x-card-collapse title="Primary Image"
-                subtitle="Main product image shown on listings and the product page."
+            <x-card-collapse :title="__('Primary Image')"
+                :subtitle="__('Main product image shown on listings and the product page.')"
                 class="form-card span-4"
                 :start-open="true">
 
@@ -123,11 +123,11 @@
                     @if ($existingImage)
                         <div id="primary-image-preview" style="margin-bottom:12px">
                             <div class="media-preview-wrap" style="width:120px;aspect-ratio:1/1">
-                                <img id="primary-img-tag" src="{{ $existingImage }}" alt="Current image" class="media-preview-image">
+                                <img id="primary-img-tag" src="{{ $existingImage }}" alt="{{ __('Current image') }}" class="media-preview-image">
                             </div>
                             <button type="button" class="btn btn-secondary btn-sm btn-danger" style="margin-top:6px"
                                     onclick="removePrimaryImage()">
-                                Remove current image
+                                {{ __('Remove current image') }}
                             </button>
                         </div>
                     @endif
@@ -146,8 +146,8 @@
                                 </svg>
                             </div>
                             <div class="relative text-center z-10">
-                                <h4 class="text-[12px] font-semibold text-(--t1) mb-1">Upload primary image</h4>
-                                <p class="text-[11px] text-(--t3)">PNG, JPG, WEBP up to 5MB</p>
+                                <h4 class="text-[12px] font-semibold text-(--t1) mb-1">{{ __('Upload primary image') }}</h4>
+                                <p class="text-[11px] text-(--t3)">{{ __('PNG, JPG, WEBP up to 5MB') }}</p>
                             </div>
                             <input id="primary_image" name="primary_image" type="file" accept="image/*" class="dropzone-input sr-only">
                         </label>
@@ -158,8 +158,8 @@
             </x-card-collapse>
 
             {{-- ── Media Gallery ─────────────────────────────────────────── --}}
-            <x-card-collapse title="Media Gallery"
-                subtitle="Additional images and videos shown in the product slider. JPG, PNG, GIF, WEBP, MP4, WEBM, MOV."
+            <x-card-collapse :title="__('Media Gallery')"
+                :subtitle="__('Additional images and videos shown in the product slider. JPG, PNG, GIF, WEBP, MP4, WEBM, MOV.')"
                 class="form-card span-8"
                 :start-open="true">
 
@@ -168,7 +168,7 @@
                     <div class="gallery-grid" id="existing-gallery">
                         @foreach ($existingGallery as $file)
                             <div class="gallery-item" id="gallery-item-{{ $file->id }}" data-file-id="{{ $file->id }}">
-                                <div class="gallery-item-handle" title="Drag to reorder">
+                                <div class="gallery-item-handle" title="{{ __('Drag to reorder') }}">
                                     <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                         <circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/>
                                         <circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/>
@@ -178,7 +178,7 @@
                                 @if ($file->file_type->value === 'video')
                                     <div class="gallery-item-video"
                                          style="cursor:pointer"
-                                         title="Click to preview"
+                                         title="{{ __('Click to preview') }}"
                                          data-video-url="{{ $file->full_path }}"
                                          onclick="openVideoModal(this)">
                                         <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
@@ -187,9 +187,9 @@
                                         <span>{{ strtoupper($file->extension) }}</span>
                                     </div>
                                 @else
-                                    <img src="{{ $file->full_path }}" alt="Gallery image" class="gallery-item-thumb">
+                                    <img src="{{ $file->full_path }}" alt="{{ __('Gallery image') }}" class="gallery-item-thumb">
                                 @endif
-                                <button type="button" class="gallery-item-remove" title="Remove"
+                                <button type="button" class="gallery-item-remove" title="{{ __('Remove') }}"
                                         onclick="removeGalleryItem({{ $file->id }}, this)">
                                     <svg width="10" height="10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                         <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -214,8 +214,8 @@
                             </svg>
                         </div>
                         <div class="relative text-center z-10">
-                            <h4 class="text-[14px] font-semibold text-(--t1) mb-1">Upload images or videos</h4>
-                            <p class="text-[12px] text-(--t3)">JPG, PNG, GIF, WEBP, MP4, WEBM, MOV — multiple allowed</p>
+                            <h4 class="text-[14px] font-semibold text-(--t1) mb-1">{{ __('Upload images or videos') }}</h4>
+                            <p class="text-[12px] text-(--t3)">{{ __('JPG, PNG, GIF, WEBP, MP4, WEBM, MOV — multiple allowed') }}</p>
                         </div>
                         <input name="gallery_files[]" type="file" multiple
                                accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/quicktime"
@@ -226,8 +226,8 @@
             </x-card-collapse>
 
             {{-- ── Translations ──────────────────────────────────────────── --}}
-            <x-card-collapse title="Translations"
-                subtitle="Multilingual product name, summary, description, and SEO meta fields."
+            <x-card-collapse :title="__('Translations')"
+                :subtitle="__('Multilingual product name, summary, description, and SEO meta fields.')"
                 class="form-card span-12"
                 :start-open="true">
 
@@ -255,45 +255,45 @@
 
                                 <div class="span-2">
                                     <label class="field-label">
-                                        Name ({{ strtoupper($language->code) }})
+                                        {{ __('Name (:code)', ['code' => strtoupper($language->code)]) }}
                                         @if ($language->is_default) * @endif
                                     </label>
                                     <input type="text"
                                            name="translations[{{ $language->code }}][name]"
                                            class="field-control {{ $errors->has("translations.{$language->code}.name") ? 'is-invalid' : '' }}"
                                            value="{{ $t['name'] ?? '' }}"
-                                           placeholder="Localized product name">
+                                           placeholder="{{ __('Localized product name') }}">
                                     @error("translations.{$language->code}.name")
                                         <p class="field-error">{{ $message }}</p>
                                     @enderror
                                 </div>
 
                                 <div>
-                                    <label class="field-label">Label</label>
+                                    <label class="field-label">{{ __('Label') }}</label>
                                     <input type="text"
                                            name="translations[{{ $language->code }}][label]"
                                            class="field-control {{ $errors->has("translations.{$language->code}.label") ? 'is-invalid' : '' }}"
                                            value="{{ $t['label'] ?? '' }}"
-                                           placeholder="Short display label (used in UI, breadcrumbs, listings)">
+                                           placeholder="{{ __('Short display label (used in UI, breadcrumbs, listings)') }}">
                                     @error("translations.{$language->code}.label")
                                         <p class="field-error">{{ $message }}</p>
                                     @enderror
                                 </div>
 
                                 <div>
-                                    <label class="field-label">Summary</label>
+                                    <label class="field-label">{{ __('Summary') }}</label>
                                     <input type="text"
                                            name="translations[{{ $language->code }}][summary]"
                                            class="field-control {{ $errors->has("translations.{$language->code}.summary") ? 'is-invalid' : '' }}"
                                            value="{{ $t['summary'] ?? '' }}"
-                                           placeholder="Short merchandising summary">
+                                           placeholder="{{ __('Short merchandising summary') }}">
                                     @error("translations.{$language->code}.summary")
                                         <p class="field-error">{{ $message }}</p>
                                     @enderror
                                 </div>
 
                                 <div class="span-2">
-                                    <label class="field-label">Description</label>
+                                    <label class="field-label">{{ __('Description') }}</label>
                                     <textarea id="tme-desc-{{ $language->code }}"
                                               name="translations[{{ $language->code }}][description]"
                                               class="field-control field-textarea"
@@ -304,23 +304,23 @@
                                 </div>
 
                                 <div>
-                                    <label class="field-label">Meta Keywords</label>
+                                    <label class="field-label">{{ __('Meta Keywords') }}</label>
                                     <input type="text"
                                            name="translations[{{ $language->code }}][meta_keywords]"
                                            class="field-control {{ $errors->has("translations.{$language->code}.meta_keywords") ? 'is-invalid' : '' }}"
                                            value="{{ $t['meta_keywords'] ?? '' }}"
-                                           placeholder="keyword1, keyword2, keyword3">
+                                           placeholder="{{ __('keyword1, keyword2, keyword3') }}">
                                     @error("translations.{$language->code}.meta_keywords")
                                         <p class="field-error">{{ $message }}</p>
                                     @enderror
                                 </div>
 
                                 <div>
-                                    <label class="field-label">Meta Description</label>
+                                    <label class="field-label">{{ __('Meta Description') }}</label>
                                     <textarea name="translations[{{ $language->code }}][meta_description]"
                                               rows="3"
                                               class="field-control field-textarea {{ $errors->has("translations.{$language->code}.meta_description") ? 'is-invalid' : '' }}"
-                                              placeholder="SEO-friendly page description (≤ 160 chars)">{{ $t['meta_description'] ?? '' }}</textarea>
+                                              placeholder="{{ __('SEO-friendly page description (≤ 160 chars)') }}">{{ $t['meta_description'] ?? '' }}</textarea>
                                     @error("translations.{$language->code}.meta_description")
                                         <p class="field-error">{{ $message }}</p>
                                     @enderror
@@ -330,19 +330,19 @@
                         </div>
                     @endforeach
                 @else
-                    <div class="notice-muted">Create at least one active language before managing translated product content.</div>
+                    <div class="notice-muted">{{ __('Create at least one active language before managing translated product content.') }}</div>
                 @endif
             </x-card-collapse>
 
             {{-- ── Pricing & Inventory ───────────────────────────────────── --}}
-            <x-card-collapse title="Pricing &amp; Inventory"
-                subtitle="Base pricing, promotional pricing, and stock thresholds."
+            <x-card-collapse :title="__('Pricing & Inventory')"
+                :subtitle="__('Base pricing, promotional pricing, and stock thresholds.')"
                 class="form-card span-6"
                 :start-open="true">
                 <div class="form-grid form-grid-2">
 
                     <div>
-                        <label class="field-label" for="base_price">Base Price *</label>
+                        <label class="field-label" for="base_price">{{ __('Base Price *') }}</label>
                         <input id="base_price" name="base_price" type="number" min="0" step="0.01"
                                class="field-control {{ $errors->has('base_price') ? 'is-invalid' : '' }}"
                                value="{{ $f('base_price', '0.00') }}">
@@ -350,7 +350,7 @@
                     </div>
 
                     <div>
-                        <label class="field-label" for="sale_price">Sale Price</label>
+                        <label class="field-label" for="sale_price">{{ __('Sale Price') }}</label>
                         <input id="sale_price" name="sale_price" type="number" min="0" step="0.01"
                                class="field-control {{ $errors->has('sale_price') ? 'is-invalid' : '' }}"
                                value="{{ $f('sale_price') }}">
@@ -358,7 +358,7 @@
                     </div>
 
                     <div>
-                        <label class="field-label" for="cost_price">Cost Price</label>
+                        <label class="field-label" for="cost_price">{{ __('Cost Price') }}</label>
                         <input id="cost_price" name="cost_price" type="number" min="0" step="0.01"
                                class="field-control {{ $errors->has('cost_price') ? 'is-invalid' : '' }}"
                                value="{{ $f('cost_price') }}">
@@ -366,7 +366,7 @@
                     </div>
 
                     <div id="stock-field-wrap" style="{{ !$f('manage_stock', true) ? 'display:none' : '' }}">
-                        <label class="field-label" for="stock">Stock</label>
+                        <label class="field-label" for="stock">{{ __('Stock') }}</label>
                         <input id="stock" name="stock" type="number" min="0"
                                class="field-control {{ $errors->has('stock') ? 'is-invalid' : '' }}"
                                value="{{ $f('stock', 0) }}">
@@ -374,7 +374,7 @@
                     </div>
 
                     <div id="min-stock-field-wrap" style="{{ !$f('manage_stock', true) ? 'display:none' : '' }}">
-                        <label class="field-label" for="min_stock">Minimum Stock</label>
+                        <label class="field-label" for="min_stock">{{ __('Minimum Stock') }}</label>
                         <input id="min_stock" name="min_stock" type="number" min="0"
                                class="field-control {{ $errors->has('min_stock') ? 'is-invalid' : '' }}"
                                value="{{ $f('min_stock', 0) }}">
@@ -385,8 +385,8 @@
             </x-card-collapse>
 
             {{-- ── Categories ────────────────────────────────────────────── --}}
-            <x-card-collapse class="form-card span-6" title="Categories"
-                subtitle="Drill into sub-categories; selecting the deepest level adds it as a tag."
+            <x-card-collapse class="form-card span-6" :title="__('Categories')"
+                :subtitle="__('Drill into sub-categories; selecting the deepest level adds it as a tag.')"
                 :start-open="true">
                 @php
                     $selectedCategoryIds = array_map('intval', old('category_ids', $categoryIds ?? []));
@@ -426,7 +426,7 @@
                                 + 'background:rgba(34,211,238,.1);color:var(--cyan);'
                                 + 'border:1px solid rgba(34,211,238,.25);border-radius:20px;font-size:12px;line-height:1.4">'
                                 + esc(label(id))
-                                + '<button type="button" onclick="__catRemove(' + id + ')" title="Remove"'
+                                + '<button type="button" onclick="__catRemove(' + id + ')" title="{{ __('Remove') }}"'
                                 + ' style="display:flex;align-items:center;background:none;border:none;cursor:pointer;color:inherit;padding:0;opacity:.65">'
                                 + '<svg width="10" height="10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">'
                                 + '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>'
@@ -450,11 +450,11 @@
                             if (i > 0) {
                                 var parentName = catMap[catPath[i - 1]] ? catMap[catPath[i - 1]].name : '';
                                 html += '<label class="field-label" style="font-size:11px;color:var(--t3);margin-top:10px;margin-bottom:4px;display:block">'
-                                    + 'Sub categories of ' + esc(parentName) + '</label>';
+                                    + @js(__('Sub categories of :name')).replace(':name', esc(parentName)) + '</label>';
                             }
 
                             html += '<select class="field-control" onchange="__catChange(' + i + ',this.value)">';
-                            html += '<option value="">' + (i === 0 ? '— Select category —' : '— None —') + '</option>';
+                            html += '<option value="">' + (i === 0 ? @js(__('— Select category —')) : @js(__('— None —'))) + '</option>';
                             children.forEach(function (cat) {
                                 var sel = String(activeId) === String(cat.id) ? ' selected' : '';
                                 html += '<option value="' + cat.id + '"' + sel + '>' + esc(cat.name) + '</option>';
@@ -468,7 +468,7 @@
                             key = String(activeId);
                         }
 
-                        el.innerHTML = html || '<div class="notice-muted">No categories available yet.</div>';
+                        el.innerHTML = html || '<div class="notice-muted">{{ __('No categories available yet.') }}</div>';
                     }
 
                     function syncInputs() {
@@ -510,18 +510,18 @@
             </x-card-collapse>
 
             {{-- ── Badges ─────────────────────────────────────────────────── --}}
-            <x-card-collapse class="form-card span-6" title="Badges"
-                subtitle="Assign badges such as Featured or Recommended — used to highlight this product on the storefront."
+            <x-card-collapse class="form-card span-6" :title="__('Badges')"
+                :subtitle="__('Assign badges such as Featured or Recommended — used to highlight this product on the storefront.')"
                 :start-open="true">
                 @if ($badges->isEmpty())
-                    <div class="notice-muted">No badges available yet.</div>
+                    <div class="notice-muted">{{ __('No badges available yet.') }}</div>
                 @else
                     @php $selectedBadgeIds = old('badge_ids', $selectedBadgeIds ?? []); @endphp
-                    <x-select multiple searchable name="badge_ids[]" placeholder="Search and select badges">
+                    <x-select multiple searchable name="badge_ids[]" :placeholder="__('Search and select badges')">
                         @foreach ($badges as $badge)
                             <option value="{{ $badge->id }}"
                                 {{ in_array($badge->id, $selectedBadgeIds) ? 'selected' : '' }}>
-                                {{ ucfirst(str_replace('-', ' ', $badge->text)) }}
+                                {{ __(ucfirst(str_replace('-', ' ', $badge->text))) }}
                             </option>
                         @endforeach
                     </x-select>
@@ -530,15 +530,12 @@
             </x-card-collapse>
 
             {{-- ── Product Variants ──────────────────────────────────────── --}}
-            <x-card-collapse class="form-card span-12" title="Product Variants"
-                subtitle="Optional: build product variants. Each variant is a combination of variation options (e.g. Size: Small + Color: Red) with its own price, stock and image."
+            <x-card-collapse class="form-card span-12" :title="__('Product Variants')"
+                :subtitle="__('Optional: build product variants. Each variant is a combination of variation options (e.g. Size: Small + Color: Red) with its own price, stock and image.')"
                 :start-open="true">
 
                 <div class="notice-muted" style="margin-bottom:16px">
-                    <strong>How it works:</strong> Click <em>Add Variant</em>, pick one option per variation group
-                    (Size, Color, …), and set this variant's own price, stock and image.
-                    Use <em>+ Add another group</em> to combine multiple groups per variant.
-                    When variants exist, per-variant stock replaces the product-level stock field.
+                    <strong>{{ __('How it works:') }}</strong> {{ __('Click') }} <em>{{ __('Add Variant') }}</em>{{ __(', pick one option per variation group (Size, Color, …), and set this variant\'s own price, stock and image. Use') }} <em>{{ __('+ Add another group') }}</em> {{ __('to combine multiple groups per variant. When variants exist, per-variant stock replaces the product-level stock field.') }}
                 </div>
 
                 @php
@@ -571,7 +568,7 @@
                         <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
                         </svg>
-                        Add Variant
+                        {{ __('Add Variant') }}
                     </button>
                 </div>
             </x-card-collapse>
@@ -580,8 +577,8 @@
 
         {{-- ── Bottom Actions ───────────────────────────────────────────────── --}}
         <div class="page-actions" style="display:flex;justify-content:flex-end;gap:8px;padding-top:8px">
-            <a href="{{ route('tenant.own-products.index') }}" class="btn btn-secondary">Back to Products</a>
-            <button type="submit" class="btn btn-primary">Save Product</button>
+            <a href="{{ route('tenant.own-products.index') }}" class="btn btn-secondary">{{ __('Back to Products') }}</a>
+            <button type="submit" class="btn btn-primary">{{ __('Save Product') }}</button>
         </div>
     </form>
 
@@ -592,7 +589,7 @@
         <div style="position:relative;max-width:92vw" onclick="event.stopPropagation()">
             <button type="button" onclick="closeVideoModal()"
                     style="position:absolute;top:-38px;right:0;background:none;border:none;color:#fff;font-size:26px;line-height:1;cursor:pointer;opacity:.85"
-                    title="Close">&times;</button>
+                    title="{{ __('Close') }}">{{ __('×') }}</button>
             <video id="video-modal-player" controls
                    style="display:block;max-width:92vw;max-height:82vh;border-radius:10px;background:#000;box-shadow:0 8px 40px rgba(0,0,0,.7)">
             </video>
@@ -735,13 +732,13 @@
         variationId = variationId || '';
         optionId    = optionId    || '';
 
-        var variationOptions = '<option value="">Select variation group</option>';
+        var variationOptions = '<option value="">{{ __('Select variation group') }}</option>';
         Object.keys(__variations).forEach(function (id) {
             var sel = String(variationId) === String(id) ? ' selected' : '';
             variationOptions += '<option value="' + id + '"' + sel + '>' + escHtml(__variations[id].name) + '</option>';
         });
 
-        var optionOptions = '<option value="">Select option value</option>';
+        var optionOptions = '<option value="">{{ __('Select option value') }}</option>';
         if (variationId && __variations[variationId]) {
             __variations[variationId].options.forEach(function (opt) {
                 var sel = String(optionId) === String(opt.id) ? ' selected' : '';
@@ -750,7 +747,7 @@
         }
 
         var removeBtn = pIdx > 0
-            ? '<button type="button" class="btn btn-secondary btn-sm btn-danger" onclick="removeOptionPair(this)" title="Remove" style="padding:6px 8px">'
+            ? '<button type="button" class="btn btn-secondary btn-sm btn-danger" onclick="removeOptionPair(this)" title="{{ __('Remove') }}" style="padding:6px 8px">'
                 + '<svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">'
                 + '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>'
                 + '</svg></button>'
@@ -777,7 +774,7 @@
             + '<input type="hidden" name="variants[' + vIdx + '][remove_image]" value="0" class="v-remove-img-flag">'
 
             + '<div class="vrow-lead">'
-            + '<div class="vrow-handle" title="Drag to reorder">'
+            + '<div class="vrow-handle" title="{{ __('Drag to reorder') }}">'
             + '<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">'
             + '<circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/><circle cx="9" cy="12" r="1.2"/>'
             + '<circle cx="15" cy="12" r="1.2"/><circle cx="9" cy="18" r="1.2"/><circle cx="15" cy="18" r="1.2"/>'
@@ -787,27 +784,27 @@
             + '</div>'
 
             + '<div class="vrow-pairs-col">'
-            + '<span class="vrow-pairs-label">Options</span>'
+            + '<span class="vrow-pairs-label">{{ __('Options') }}</span>'
             + '<div class="v-pairs">' + buildPairRow(vIdx, 0, '', '') + '</div>'
             + '<button type="button" class="btn btn-secondary btn-sm vrow-add-pair-btn" onclick="addOptionPair(this)">'
             + '<svg width="10" height="10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">'
             + '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>'
             + '</svg>'
-            + 'Add another group'
+            + @js(__('Add another group'))
             + '</button>'
             + '</div>'
 
             + '<div class="vrow-meta">'
-            + '<input type="text" name="variants[' + vIdx + '][title]" class="field-control vrow-meta-name" value="" placeholder="Variant name (auto-generated if blank)">'
-            + '<input type="number" step="0.01" min="0" name="variants[' + vIdx + '][price]" value="" class="field-control" placeholder="Price">'
-            + '<input type="number" min="0" step="1" name="variants[' + vIdx + '][stock]" value="0" class="field-control" placeholder="Stock">'
-            + '<input type="text" name="variants[' + vIdx + '][sku]" value="" placeholder="SKU (auto)" class="field-control">'
-            + '<input type="number" min="0" step="1" name="variants[' + vIdx + '][weight_grams]" value="" placeholder="Weight (g)" class="field-control">'
+            + '<input type="text" name="variants[' + vIdx + '][title]" class="field-control vrow-meta-name" value="" placeholder="{{ __('Variant name (auto-generated if blank)') }}">'
+            + '<input type="number" step="0.01" min="0" name="variants[' + vIdx + '][price]" value="" class="field-control" placeholder="{{ __('Price') }}">'
+            + '<input type="number" min="0" step="1" name="variants[' + vIdx + '][stock]" value="0" class="field-control" placeholder="{{ __('Stock') }}">'
+            + '<input type="text" name="variants[' + vIdx + '][sku]" value="" placeholder="{{ __('SKU (auto)') }}" class="field-control">'
+            + '<input type="number" min="0" step="1" name="variants[' + vIdx + '][weight_grams]" value="" placeholder="{{ __('Weight (g)') }}" class="field-control">'
             + '<label class="toggle-field vrow-meta-name"><input type="hidden" name="variants[' + vIdx + '][active]" value="0">'
-            + '<input type="checkbox" name="variants[' + vIdx + '][active]" value="1" checked><span>Active</span></label>'
+            + '<input type="checkbox" name="variants[' + vIdx + '][active]" value="1" checked><span>{{ __('Active') }}</span></label>'
             + '</div>'
 
-            + '<button type="button" class="btn btn-secondary btn-sm btn-danger vrow-remove" onclick="removeVariant(this)" title="Remove variant">'
+            + '<button type="button" class="btn btn-secondary btn-sm btn-danger vrow-remove" onclick="removeVariant(this)" title="{{ __('Remove variant') }}">'
             + '<svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">'
             + '<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/>'
             + '</svg></button>'
@@ -851,7 +848,7 @@
         var optionSelect = row.querySelector('.var-options select');
         if (!optionSelect) return;
         var varId = select.value;
-        optionSelect.innerHTML = '<option value="">Select option value</option>';
+        optionSelect.innerHTML = '<option value="">{{ __('Select option value') }}</option>';
         if (varId && __variations[varId]) {
             __variations[varId].options.forEach(function (opt) {
                 var o = document.createElement('option');

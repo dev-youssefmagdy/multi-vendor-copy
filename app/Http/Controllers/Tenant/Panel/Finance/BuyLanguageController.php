@@ -35,10 +35,10 @@ final class BuyLanguageController extends PanelController
         return view('tenant.pages.finance.buy-languages.index', [
             'presented' => $this->presenter->present($gateways),
             'columns' => [
-                TableColumn::make('language', 'Language')->orderable(false),
-                TableColumn::make('direction', 'Direction')->orderable(false),
-                TableColumn::make('price', 'Price')->orderable(false),
-                TableColumn::actions('Action'),
+                TableColumn::make('language', __('Language'))->orderable(false),
+                TableColumn::make('direction', __('Direction'))->orderable(false),
+                TableColumn::make('price', __('Price'))->orderable(false),
+                TableColumn::actions(__('Action')),
             ],
         ]);
     }
@@ -70,7 +70,7 @@ final class BuyLanguageController extends PanelController
         $tenant = tenant();
 
         if ($this->service->tenantHasPurchased($tenant, $language->id)) {
-            throw new PanelActionException('You have already purchased this language.', 422);
+            throw new PanelActionException(__('You have already purchased this language.'), 422);
         }
 
         $this->stashInlineTokens($request, $validated['gateway']);
@@ -82,7 +82,7 @@ final class BuyLanguageController extends PanelController
             ],
         ]);
 
-        return $this->success('Redirecting to payment…', redirect: route('tenant.language-purchase.charge', [
+        return $this->success(__('Redirecting to payment…'), redirect: route('tenant.language-purchase.charge', [
             'gateway' => $validated['gateway'],
             'languageId' => $language->id,
         ]));

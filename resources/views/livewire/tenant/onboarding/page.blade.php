@@ -4,8 +4,8 @@
 
     <div class="page-head fu d0">
         <div class="page-title-row">
-            <h1 class="D page-title">Get Started</h1>
-            <span class="page-badge">Onboarding</span>
+            <h1 class="D page-title">{{ __('Get Started') }}</h1>
+            <span class="page-badge">{{ __('Onboarding') }}</span>
         </div>
     </div>
 
@@ -16,7 +16,7 @@
             {{ session('setup_warning') }}
             @if (session('setup_return_url'))
                 <a href="{{ session('setup_return_url') . (str_contains(session('setup_return_url'), '?') ? '&' : '?') . 'skip_setup=1' }}"
-                    class="ob-setup-banner-skip">Skip for now</a>
+                    class="ob-setup-banner-skip">{{ __('Skip for now') }}</a>
             @endif
         </div>
     @endif
@@ -25,11 +25,11 @@
     <div class="ob-page-tabs">
         <a href="{{ route('tenant.onboarding', ['tab' => 'tour']) }}" wire:navigate
             class="ob-page-tab {{ $tab === 'tour' ? 'ob-page-tab-active' : '' }}">
-            Product Tour
+            {{ __('Product Tour') }}
         </a>
         <a href="{{ route('tenant.onboarding', ['tab' => 'setup']) }}" wire:navigate
             class="ob-page-tab {{ $tab === 'setup' ? 'ob-page-tab-active' : '' }}">
-            Store Setup
+            {{ __('Store Setup') }}
             @php $doneCount = collect($setupItems)->where('done', true)->count(); @endphp
             <span class="ob-page-tab-count">{{ $doneCount }}/{{ count($setupItems) }}</span>
         </a>
@@ -46,7 +46,7 @@
                 </div>
 
                 <div class="ob-step-counter">
-                    <span class="ob-step-pill">Step {{ $currentStep + 1 }} of {{ $totalSteps }}</span>
+                    <span class="ob-step-pill">{{ __('Step :currentStep of :totalSteps', ['currentStep' => $currentStep + 1, 'totalSteps' => $totalSteps]) }}</span>
                 </div>
 
                 <div class="ob-icon-wrap ob-icon-{{ $step['color'] ?? 'cyan' }}">
@@ -54,31 +54,31 @@
                 </div>
 
                 <div class="ob-content">
-                    <h2 class="ob-title">{{ $step['title'] }}</h2>
-                    <p class="ob-description">{{ $step['description'] }}</p>
+                    <h2 class="ob-title">{{ __($step['title']) }}</h2>
+                    <p class="ob-description">{{ __($step['description']) }}</p>
                 </div>
 
                 <div class="ob-dots">
                     @foreach ($steps as $index => $_)
                         <button type="button" wire:click="$set('currentStep', {{ $index }})"
                             class="ob-dot {{ $index === $currentStep ? 'ob-dot-active' : '' }} {{ $index < $currentStep ? 'ob-dot-done' : '' }}"
-                            aria-label="Go to step {{ $index + 1 }}"></button>
+                            aria-label="{{ __('Go to step :index', ['index' => $index + 1]) }}"></button>
                     @endforeach
                 </div>
 
                 <div class="ob-actions">
                     <button type="button" wire:click="skipTour" class="ob-btn-skip">
-                        Skip to Store Setup
+                        {{ __('Skip to Store Setup') }}
                     </button>
                     <button type="button" wire:click="nextStep" class="ob-btn-next">
                         @if ($currentStep < $totalSteps - 1)
-                            Next
+                            {{ __('Next') }}
                             <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                                 stroke-width="2.5">
                                 <polyline points="9 18 15 12 9 6" />
                             </svg>
                         @else
-                            Continue to Setup
+                            {{ __('Continue to Setup') }}
                             <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <polyline points="20 6 9 17 4 12" />
                             </svg>
@@ -100,8 +100,8 @@
                         </svg>
                     </div>
                     <div style="flex:1;min-width:0">
-                        <h2 class="ob-setup-title">Quick Store Setup</h2>
-                        <p class="ob-setup-subtitle">Complete these steps to get your store ready for customers.</p>
+                        <h2 class="ob-setup-title">{{ __('Quick Store Setup') }}</h2>
+                        <p class="ob-setup-subtitle">{{ __('Complete these steps to get your store ready for customers.') }}</p>
                     </div>
                     @php
                         $doneCount = collect($setupItems)->where('done', true)->count();
@@ -110,7 +110,7 @@
                     @endphp
                     <div style="flex-shrink:0;text-align:right">
                         <div style="font-size:11px;font-weight:700;color:var(--cyan);letter-spacing:.02em">
-                            Setup {{ $pct }}% complete — {{ $totalCount - $doneCount }} {{ \Illuminate\Support\Str::plural('step', $totalCount - $doneCount) }} remaining
+                            {{ ($totalCount - $doneCount) === 1 ? __('Setup :pct% complete — :remaining step remaining', ['pct' => $pct, 'remaining' => $totalCount - $doneCount]) : __('Setup :pct% complete — :remaining steps remaining', ['pct' => $pct, 'remaining' => $totalCount - $doneCount]) }}
                         </div>
                         <div style="margin-top:4px;width:100%;height:4px;border-radius:4px;background:var(--border);overflow:hidden">
                             <div style="width:{{ $pct }}%;height:100%;background:linear-gradient(90deg,var(--cyan),var(--violet));border-radius:4px;transition:width .4s"></div>
@@ -140,14 +140,14 @@
 
                                 <div class="ob-setup-item-body">
                                     <div class="ob-setup-item-head">
-                                        <span class="ob-setup-item-label">{{ $item['label'] }}</span>
+                                        <span class="ob-setup-item-label">{{ __($item['label']) }}</span>
                                     </div>
-                                    <p class="ob-setup-item-detail">{{ $item['detail'] }}</p>
+                                    <p class="ob-setup-item-detail">{{ __($item['detail']) }}</p>
                                 </div>
 
                                 @if (!$item['done'])
                                     <a href="{{ $item['action_url'] }}" class="ob-setup-action">
-                                        {{ $item['action_label'] }}
+                                        {{ __($item['action_label']) }}
                                         <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                                             stroke-width="2.5">
                                             <polyline points="9 18 15 12 9 6" />
@@ -158,7 +158,7 @@
                                         <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                             <polyline points="20 6 9 17 4 12" />
                                         </svg>
-                                        Done
+                                        {{ __('Done') }}
                                     </div>
                                 @endif
                             </div>
@@ -170,8 +170,8 @@
 
                                         <button type="submit" class="ob-upload-submit"
                                                 wire:loading.attr="disabled" wire:target="saveLogo">
-                                            <span wire:loading.remove wire:target="saveLogo" style="white-space:nowrap">Save Logo</span>
-                                            <span wire:loading wire:target="saveLogo">Saving…</span>
+                                            <span wire:loading.remove wire:target="saveLogo" style="white-space:nowrap">{{ __('Save Logo') }}</span>
+                                            <span wire:loading wire:target="saveLogo">{{ __('Saving…') }}</span>
                                         </button>
                                     </form>
                                 @endif
@@ -186,14 +186,14 @@
                     <div class="ob-payment-readiness-card">
                         <div class="ob-payment-readiness-head">
                             <div>
-                                <h3 class="ob-payment-readiness-title">Payment Readiness</h3>
-                                <p class="ob-payment-readiness-subtitle">Whether your storefront is set up to actually get paid, based on connected gateways and your target countries.</p>
+                                <h3 class="ob-payment-readiness-title">{{ __('Payment Readiness') }}</h3>
+                                <p class="ob-payment-readiness-subtitle">{{ __('Whether your storefront is set up to actually get paid, based on connected gateways and your target countries.') }}</p>
                             </div>
                             <button type="button" wire:click="skipPaymentReadiness"
                                     class="ob-btn-dismiss" style="flex-shrink:0"
                                     wire:loading.attr="disabled" wire:target="skipPaymentReadiness">
-                                <span wire:loading.remove wire:target="skipPaymentReadiness">Mark as complete</span>
-                                <span wire:loading wire:target="skipPaymentReadiness">Saving…</span>
+                                <span wire:loading.remove wire:target="skipPaymentReadiness">{{ __('Mark as complete') }}</span>
+                                <span wire:loading wire:target="skipPaymentReadiness">{{ __('Saving…') }}</span>
                             </button>
                         </div>
 
@@ -202,20 +202,20 @@
                                 <div class="legend-row">
                                     <div class="legend-meta">
                                         <span class="dot {{ $item['ready'] ? 'dot-green' : 'dot-amber' }}"></span>
-                                        <span class="text-t2">{{ $item['label'] }}</span>
+                                        <span class="text-t2">{{ __($item['label']) }}</span>
                                     </div>
                                     <span class="legend-value">
-                                        <span class="badge {{ $item['ready'] ? 'badge-green' : 'badge-amber' }}">{{ $item['ready'] ? 'Ready' : 'Needs setup' }}</span>
+                                        <span class="badge {{ $item['ready'] ? 'badge-green' : 'badge-amber' }}">{{ $item['ready'] ? __('Ready') : __('Needs setup') }}</span>
                                     </span>
                                 </div>
-                                <p class="panel-copy" style="margin:2px 0 8px;">{{ $item['caption'] }}</p>
+                                <p class="panel-copy" style="margin:2px 0 8px;">{{ __($item['caption']) }}</p>
                             @endforeach
                         </div>
 
                         @if (collect($paymentReadinessItems)->where('ready', false)->isNotEmpty())
                             <div class="ob-pr-cta">
                                 <a href="{{ route('tenant.settings.payment-gateways') }}" class="ob-setup-action">
-                                    Configure Payment Gateways
+                                    {{ __('Configure Payment Gateways') }}
                                     <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                         <polyline points="9 18 15 12 9 6" />
                                     </svg>
@@ -235,16 +235,16 @@
                             </div>
                             <div class="ob-setup-item-body">
                                 <div class="ob-setup-item-head">
-                                    <span class="ob-setup-item-label">Payment Readiness</span>
-                                    <span class="ob-badge-optional">Reviewed</span>
+                                    <span class="ob-setup-item-label">{{ __('Payment Readiness') }}</span>
+                                    <span class="ob-badge-optional">{{ __('Reviewed') }}</span>
                                 </div>
-                                <p class="ob-setup-item-detail">You've reviewed your payment readiness status.</p>
+                                <p class="ob-setup-item-detail">{{ __('You\'ve reviewed your payment readiness status.') }}</p>
                             </div>
                             <div style="flex-shrink:0;display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--green)">
                                 <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                     <polyline points="20 6 9 17 4 12" />
                                 </svg>
-                                Done
+                                {{ __('Done') }}
                             </div>
                         </div>
                     </div>
@@ -260,12 +260,12 @@
                                 </svg>
                             </div>
                             <div>
-                                <div class="ob-setup-done-title">Your store is ready!</div>
-                                <div class="ob-setup-done-copy">All setup tasks are complete. You're good to go.</div>
+                                <div class="ob-setup-done-title">{{ __('Your store is ready!') }}</div>
+                                <div class="ob-setup-done-copy">{{ __('All setup tasks are complete. You\'re good to go.') }}</div>
                             </div>
                         </div>
                         <button type="button" wire:click="dismissSetup" class="ob-btn-next" style="flex-shrink:0">
-                            Go to Dashboard
+                            {{ __('Go to Dashboard') }}
                             <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                                 stroke-width="2.5">
                                 <polyline points="9 18 15 12 9 6" />
@@ -281,10 +281,10 @@
                                 <line x1="12" y1="8" x2="12" y2="12" />
                                 <line x1="12" y1="16" x2="12.01" y2="16" />
                             </svg>
-                            You can come back to this page anytime from the sidebar.
+                            {{ __('You can come back to this page anytime from the sidebar.') }}
                         </p>
                         <button type="button" wire:click="dismissSetup" class="ob-btn-dismiss">
-                            I'll do this later
+                            {{ __('I\'ll do this later') }}
                         </button>
                     </div>
                 @endif

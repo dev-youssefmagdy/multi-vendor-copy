@@ -69,7 +69,7 @@
                         </div>
                         <div class="flex-1 min-w-0">
                             <p class="text-[12px] font-medium text-[#222] line-clamp-1">{{ $name }}</p>
-                            <p class="text-[12px] text-[#888]">{{ $item['qty'] }} × {{ $symbol }}{{ $displayPrice }}</p>
+                            <p class="text-[12px] text-[#888]">{{ __(':qty × :symbol:displayPrice', ['qty' => $item['qty'], 'symbol' => $symbol, 'displayPrice' => $displayPrice]) }}</p>
                         </div>
                         <button wire:click="removeItem('{{ $item['key'] }}')"
                             class="text-[#bbb] hover:text-red-500 transition shrink-0 ml-1">

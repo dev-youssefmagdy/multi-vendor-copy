@@ -24,7 +24,7 @@
                 <div class="card {{ $card['glow'] ?? 'card-glow-cyan' }}">
                     <div class="stat-head">
                         <div>
-                            <div class="eyebrow">{{ $card['label'] }}</div>
+                            <div class="eyebrow">{{ __($card['label']) }}</div>
                             <div class="D stat-value">{{ $card['value'] }}</div>
                         </div>
                         <div class="mini-stat-dot {{ $card['dot'] ?? 'dot-cyan' }}"></div>
@@ -41,9 +41,9 @@
                 <section class="card {{ $chartCard['wrapperClass'] ?? '' }}">
                     <div class="panel-head">
                         <div>
-                            <h3 class="panel-title">{{ $chartCard['title'] }}</h3>
+                            <h3 class="panel-title">{{ __($chartCard['title']) }}</h3>
                             @if (!empty($chartCard['description']))
-                                <p class="panel-copy">{{ $chartCard['description'] }}</p>
+                                <p class="panel-copy">{{ __($chartCard['description']) }}</p>
                             @endif
                         </div>
                     </div>
@@ -52,12 +52,12 @@
                         <div class="metric-list">
                             @forelse ($chartCard['metrics'] as $metric)
                                 <div class="metric-row">
-                                    <span class="metric-label">{{ $metric['label'] }}</span>
+                                    <span class="metric-label">{{ __($metric['label']) }}</span>
                                     <span class="metric-value">{{ $metric['value'] }}</span>
                                 </div>
                             @empty
                                 <div class="empty-state">
-                                    <div class="empty-state-title">No data available</div>
+                                    <div class="empty-state-title">{{ __('No data available') }}</div>
                                 </div>
                             @endforelse
                         </div>
@@ -72,9 +72,9 @@
             <section class="card section-gap table-card-shell">
                 <div class="table-header-shell">
                     <div>
-                        <h3 class="panel-title">{{ $section['title'] }}</h3>
+                        <h3 class="panel-title">{{ __($section['title']) }}</h3>
                         @if (!empty($section['description']))
-                            <p class="panel-copy">{{ $section['description'] }}</p>
+                            <p class="panel-copy">{{ __($section['description']) }}</p>
                         @endif
                     </div>
                 </div>
@@ -89,8 +89,8 @@
                         <tr>
                             <td colspan="{{ count($section['headers']) }}">
                                 <div class="empty-state">
-                                    <div class="empty-state-title">No data available</div>
-                                    <p class="empty-state-copy">Not enough return requests yet to populate this section.</p>
+                                    <div class="empty-state-title">{{ __('No data available') }}</div>
+                                    <p class="empty-state-copy">{{ __('Not enough return requests yet to populate this section.') }}</p>
                                 </div>
                             </td>
                         </tr>

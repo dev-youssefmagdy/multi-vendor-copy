@@ -4,7 +4,7 @@
 @endphp
 <div class="entity-title">{{ number_format((int) $stockQty) }}</div>
 @if($stockStatus === 'out_of_stock')
-    <div class="entity-subtitle products-stock-out">Out of stock</div>
+    <div class="entity-subtitle products-stock-out">{{ __('Out of stock') }}</div>
 @elseif($stockStatus === 'partial')
-    <div class="entity-subtitle products-stock-partial">Partial</div>
+    <div class="entity-subtitle products-stock-partial">{{ __('Partial') }}</div>
 @endif

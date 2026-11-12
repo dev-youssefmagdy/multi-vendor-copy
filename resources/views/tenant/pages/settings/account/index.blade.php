@@ -1,6 +1,6 @@
 @extends('tenant.layouts.app')
 
-@section('title', 'Account Settings')
+@section('title', __('Account Settings'))
 
 @section('content')
     @php
@@ -8,9 +8,9 @@
                   . strtoupper(substr(strstr($adminName ?: '', ' ') ?: '', 1, 1));
     @endphp
 
-    <x-tenant::page-header title="Account Settings" badge="Profile" description="Manage your admin credentials and store identity.">
+    <x-tenant::page-header :title="__('Account Settings')" :badge="__('Profile')" :description="__('Manage your admin credentials and store identity.')">
         <x-slot:actions>
-            <button type="submit" form="account-settings-form" class="btn btn-primary">Save Changes</button>
+            <button type="submit" form="account-settings-form" class="btn btn-primary">{{ __('Save Changes') }}</button>
         </x-slot:actions>
     </x-tenant::page-header>
 
@@ -27,9 +27,9 @@
                     </div>
                 </div>
                 <div class="acct-avatar-meta">
-                    <div class="acct-avatar-name D">{{ $adminName ?: 'Admin' }}</div>
+                    <div class="acct-avatar-name D">{{ $adminName ?: __('Admin') }}</div>
                     <div class="acct-avatar-email">{{ $adminEmail }}</div>
-                    <span class="page-badge" style="margin-top:8px;">Store Admin</span>
+                    <span class="page-badge" style="margin-top:8px;">{{ __('Store Admin') }}</span>
                 </div>
                 <div class="acct-info-list">
                     <div class="acct-info-row">
@@ -65,15 +65,15 @@
                         </svg>
                     </div>
                     <div>
-                        <h3 class="panel-title">Profile &amp; Store Identity</h3>
-                        <p class="panel-copy">Your admin credentials and storefront-facing details.</p>
+                        <h3 class="panel-title">{{ __('Profile & Store Identity') }}</h3>
+                        <p class="panel-copy">{{ __('Your admin credentials and storefront-facing details.') }}</p>
                     </div>
                 </div>
                 <div class="form-grid form-grid-2">
-                    <x-tenant::input name="adminName" label="Admin Name" required maxlength="255" :value="$adminName" />
-                    <x-tenant::input type="email" name="adminEmail" label="Admin Email" required maxlength="255" :value="$adminEmail" />
-                    <x-tenant::phone name="phone" label="Store Phone" :value="$phone" />
-                    <x-tenant::input name="shopName" label="Shop Name" required maxlength="255" :value="$shopName" />
+                    <x-tenant::input name="adminName" :label="__('Admin Name')" required maxlength="255" :value="$adminName" />
+                    <x-tenant::input type="email" name="adminEmail" :label="__('Admin Email')" required maxlength="255" :value="$adminEmail" />
+                    <x-tenant::phone name="phone" :label="__('Store Phone')" :value="$phone" />
+                    <x-tenant::input name="shopName" :label="__('Shop Name')" required maxlength="255" :value="$shopName" />
                 </div>
             </section>
 
@@ -87,13 +87,13 @@
                         </svg>
                     </div>
                     <div>
-                        <h3 class="panel-title">Store Details</h3>
-                        <p class="panel-copy">Details shown to customers on your storefront.</p>
+                        <h3 class="panel-title">{{ __('Store Details') }}</h3>
+                        <p class="panel-copy">{{ __('Details shown to customers on your storefront.') }}</p>
                     </div>
                 </div>
                 <div class="form-grid form-grid-2">
-                    <x-tenant::input name="description" label="Store Description" maxlength="1000" :value="$description" wrapper-class="acct-span-full" />
-                    <x-tenant::input name="address" label="Address" maxlength="255" :value="$address" wrapper-class="acct-span-full" />
+                    <x-tenant::input name="description" :label="__('Store Description')" maxlength="1000" :value="$description" wrapper-class="acct-span-full" />
+                    <x-tenant::input name="address" :label="__('Address')" maxlength="255" :value="$address" wrapper-class="acct-span-full" />
                 </div>
             </section>
 
@@ -107,18 +107,18 @@
                         </svg>
                     </div>
                     <div>
-                        <h3 class="panel-title">Password &amp; Security</h3>
-                        <p class="panel-copy">Leave blank to keep your current password.</p>
+                        <h3 class="panel-title">{{ __('Password & Security') }}</h3>
+                        <p class="panel-copy">{{ __('Leave blank to keep your current password.') }}</p>
                     </div>
                 </div>
                 <div class="form-grid form-grid-2">
-                    <x-tenant::input type="password" name="password" label="New Password" toggle
-                        help="Minimum 6 characters. Leave empty to keep your current password." wrapper-class="acct-span-full" />
+                    <x-tenant::input type="password" name="password" :label="__('New Password')" toggle
+                        :help="__('Minimum 6 characters. Leave empty to keep your current password.')" wrapper-class="acct-span-full" />
                 </div>
             </section>
 
             <div class="acct-mobile-save">
-                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <button type="submit" class="btn btn-primary">{{ __('Save Changes') }}</button>
             </div>
 
         </div>

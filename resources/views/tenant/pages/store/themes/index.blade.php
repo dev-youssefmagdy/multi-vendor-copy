@@ -1,23 +1,23 @@
 @extends('tenant.layouts.app')
 
-@section('title', 'Themes')
+@section('title', __('Themes'))
 
 @section('content')
     <div class="theme-library-shell">
-        <x-tenant::page-header title="Themes" badge="Storefront" description="Switch the active storefront theme for the current tenant." />
+        <x-tenant::page-header :title="__('Themes')" :badge="__('Storefront')" :description="__('Switch the active storefront theme for the current tenant.')" />
 
         <section class="theme-hero fu d1">
             <div class="theme-hero-grid">
                 <div class="theme-hero-copy">
-                    <span class="theme-hero-kicker">Theme Gallery</span>
-                    <h2 class="theme-hero-title">Choose the storefront look that fits your catalog.</h2>
-                    <p>Browse live preview cards, compare visual direction at a glance, and activate the design you want customers to see right now.</p>
+                    <span class="theme-hero-kicker">{{ __('Theme Gallery') }}</span>
+                    <h2 class="theme-hero-title">{{ __('Choose the storefront look that fits your catalog.') }}</h2>
+                    <p>{{ __('Browse live preview cards, compare visual direction at a glance, and activate the design you want customers to see right now.') }}</p>
                 </div>
 
                 <div class="theme-hero-stat">
-                    <div class="eyebrow">Current Live Theme</div>
+                    <div class="eyebrow">{{ __('Current Live Theme') }}</div>
                     <div class="theme-hero-stat-value">{{ $activeThemeName }}</div>
-                    <p class="panel-copy">Use Preview to inspect the theme asset, then activate it when you are ready to switch the storefront.</p>
+                    <p class="panel-copy">{{ __('Use Preview to inspect the theme asset, then activate it when you are ready to switch the storefront.') }}</p>
                 </div>
             </div>
         </section>
@@ -55,14 +55,14 @@
                                     <h3 class="theme-group-title" id="theme-title-{{ $group['theme_id'] }}">
                                         {{ $group['name'] }}
                                         @if($group['has_active'])
-                                            <span class="theme-group-live">Live</span>
+                                            <span class="theme-group-live">{{ __('Live') }}</span>
                                         @endif
                                     </h3>
                                     <div class="theme-group-meta">
                                         <span class="theme-scope-badge theme-scope-{{ $group['is_universal'] ? 'universal' : 'specific' }}">{{ $group['scope_label'] }}</span>
                                         <span>{{ $group['countries_label'] }}</span>
                                         <span aria-hidden="true">·</span>
-                                        <span>{{ $group['cards']->count() }} {{ \Illuminate\Support\Str::plural('variant', $group['cards']->count()) }}</span>
+                                        <span>{{ trans_choice(':count variant|:count variants', $group['cards']->count(), ['count' => $group['cards']->count()]) }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -75,7 +75,7 @@
                                         data-theme-name="{{ $group['name'] }}"
                                         data-countries-url="{{ route('tenant.store.themes.countries', $group['theme_id']) }}"
                                         data-countries-action="{{ route('tenant.store.themes.countries.update', $group['theme_id']) }}">
-                                        Countries
+                                        {{ __('Countries') }}
                                     </button>
                                     <button type="button" class="theme-pill-btn"
                                         data-theme-cv-open
@@ -83,7 +83,7 @@
                                         data-theme-name="{{ $group['name'] }}"
                                         data-cv-url="{{ route('tenant.store.themes.country-variants', $group['theme_id']) }}"
                                         data-cv-action="{{ route('tenant.store.themes.country-variants.update', $group['theme_id']) }}">
-                                        Country Variants
+                                        {{ __('Country Variants') }}
                                     </button>
                                 </div>
                             @endif
@@ -98,7 +98,7 @@
                                         </div>
 
                                         @if($theme['is_active'])
-                                            <div class="theme-card-status">Live Theme</div>
+                                            <div class="theme-card-status">{{ __('Live Theme') }}</div>
                                         @endif
                                     </div>
 
@@ -119,8 +119,8 @@
             </div>
         @else
             <div class="theme-empty-state">
-                <div class="empty-state-title">No variants available</div>
-                <p class="empty-state-copy">Variant cards will appear here after home page variants are published for your themes.</p>
+                <div class="empty-state-title">{{ __('No variants available') }}</div>
+                <p class="empty-state-copy">{{ __('Variant cards will appear here after home page variants are published for your themes.') }}</p>
             </div>
         @endif
     </div>

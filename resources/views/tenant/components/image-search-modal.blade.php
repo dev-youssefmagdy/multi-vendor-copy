@@ -14,11 +14,11 @@
                     </svg>
                 </div>
                 <div>
-                    <div class="t-ism-title">Search by Image</div>
-                    <div class="t-ism-subtitle">Use your camera or upload a file to find similar products</div>
+                    <div class="t-ism-title">{{ __('Search by Image') }}</div>
+                    <div class="t-ism-subtitle">{{ __('Use your camera or upload a file to find similar products') }}</div>
                 </div>
             </div>
-            <button type="button" class="t-ism-close-btn" data-ism-close aria-label="Close">
+            <button type="button" class="t-ism-close-btn" data-ism-close aria-label="{{ __('Close') }}">
                 <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M18 6L6 18M6 6l12 12"/></svg>
             </button>
         </div>
@@ -32,8 +32,8 @@
                             <circle cx="12" cy="13" r="3.5"/>
                         </svg>
                     </div>
-                    <span class="t-ism-option-label">Take Photo</span>
-                    <span class="t-ism-option-hint">Use device camera</span>
+                    <span class="t-ism-option-label">{{ __('Take Photo') }}</span>
+                    <span class="t-ism-option-hint">{{ __('Use device camera') }}</span>
                 </button>
                 <button type="button" class="t-ism-option" data-ism-upload>
                     <div class="t-ism-option-icon">
@@ -43,8 +43,8 @@
                             <line x1="12" y1="4" x2="12" y2="16" stroke-linecap="round"/>
                         </svg>
                     </div>
-                    <span class="t-ism-option-label">Upload Image</span>
-                    <span class="t-ism-option-hint">JPG &middot; PNG &middot; WEBP &middot; 8 MB</span>
+                    <span class="t-ism-option-label">{{ __('Upload Image') }}</span>
+                    <span class="t-ism-option-hint">{{ __('JPG · PNG · WEBP · 8 MB') }}</span>
                 </button>
             </div>
 
@@ -56,8 +56,8 @@
                     <canvas class="t-ism-canvas" data-ism-canvas hidden></canvas>
                 </div>
                 <div class="t-ism-camera-bar">
-                    <button type="button" class="t-ism-btn-ghost" data-ism-cancel-camera>Cancel</button>
-                    <button type="button" class="t-ism-shutter" data-ism-capture aria-label="Capture photo">
+                    <button type="button" class="t-ism-btn-ghost" data-ism-cancel-camera>{{ __('Cancel') }}</button>
+                    <button type="button" class="t-ism-shutter" data-ism-capture aria-label="{{ __('Capture photo') }}">
                         <span class="t-ism-shutter-dot"></span>
                     </button>
                 </div>
@@ -68,14 +68,14 @@
                     <img class="t-ism-preview-img" data-ism-preview-img alt="">
                 </div>
                 <div class="t-ism-preview-bar">
-                    <button type="button" class="t-ism-btn-ghost" data-ism-retake>Retake</button>
-                    <button type="button" class="t-ism-btn-primary" data-ism-submit>Find Similar Products</button>
+                    <button type="button" class="t-ism-btn-ghost" data-ism-retake>{{ __('Retake') }}</button>
+                    <button type="button" class="t-ism-btn-primary" data-ism-submit>{{ __('Find Similar Products') }}</button>
                 </div>
             </div>
 
             <div class="t-ism-loading" data-ism-loading hidden>
                 <span class="t-ism-spinner"></span>
-                <span class="t-ism-loading-text">Analyzing image&hellip;</span>
+                <span class="t-ism-loading-text">{{ __('Analyzing image…') }}</span>
             </div>
 
             <div class="t-ism-error" data-ism-error hidden></div>

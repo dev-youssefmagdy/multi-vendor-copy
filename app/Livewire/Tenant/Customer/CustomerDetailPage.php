@@ -49,9 +49,9 @@ class CustomerDetailPage extends TenantPage
     protected function pageMeta(): array
     {
         return [
-            'title' => $this->fullName ?: 'Customer Detail',
+            'title' => $this->fullName ?: __('Customer Detail'),
             'badge' => 'CRM',
-            'description' => 'Full customer profile — orders, payment history, saved addresses and inline editing.',
+            'description' => __('Full customer profile — orders, payment history, saved addresses and inline editing.'),
         ];
     }
 
@@ -123,7 +123,7 @@ class CustomerDetailPage extends TenantPage
 
         Customer::query()->where('id', $this->customerId)->update($payload);
         $this->syncProfileFields(Customer::query()->find($this->customerId));
-        $this->toast('Profile updated successfully.');
+        $this->toast(__('Profile updated successfully.'));
     }
 
     public function toggleActive(): void
@@ -131,7 +131,7 @@ class CustomerDetailPage extends TenantPage
         $customer = Customer::query()->findOrFail($this->customerId);
         $customer->update(['active' => !$customer->active]);
         $this->active = (bool) $customer->active;
-        $this->toast($this->active ? 'Customer activated.' : 'Customer deactivated.');
+        $this->toast($this->active ? __('Customer activated.') : __('Customer deactivated.'));
     }
 
     public function updatedCountryId(): void
@@ -202,10 +202,10 @@ class CustomerDetailPage extends TenantPage
                 ->where('customer_id', $this->customerId)
                 ->where('id', $this->editAddressId)
                 ->update($data);
-            $this->toast('Address updated.');
+            $this->toast(__('Address updated.'));
         } else {
             CustomerAddress::query()->create($data);
-            $this->toast('Address added.');
+            $this->toast(__('Address added.'));
         }
 
         $this->closeAddressModal();
@@ -223,7 +223,7 @@ class CustomerDetailPage extends TenantPage
                 ->where('customer_id', $this->customerId)
                 ->where('id', $this->deleteAddressId)
                 ->delete();
-            $this->toast('Address deleted.');
+            $this->toast(__('Address deleted.'));
         }
         $this->deleteAddressId = null;
     }

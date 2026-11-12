@@ -43,9 +43,9 @@ final class DashboardController extends PanelController
             ->map(fn($post) => [
                 'image'    => $post['image_url'] ?? null,
                 'video'    => null,
-                'platform' => $post['platform'] ?? 'Social',
+                'platform' => $post['platform'] ?? __('Social'),
                 'duration' => '30s',
-                'title'    => $post['hook'] ?? 'View this post',
+                'title'    => $post['hook'] ?? __('View this post'),
                 'hook'     => $post['content'] ?? '',
                 'markets'  => ['sa' => 'KSA', 'gb' => 'UK', 'eg' => 'Egy', 'us' => 'USA', 'ae' => 'UAE'],
             ])
@@ -53,26 +53,26 @@ final class DashboardController extends PanelController
             ->all();
 
         $latestOrdersColumns = [
-            ['title' => 'Order'],
-            ['title' => 'Customer'],
-            ['title' => 'Total'],
-            ['title' => 'Gateway'],
-            ['title' => 'Created'],
+            ['title' => __('Order')],
+            ['title' => __('Customer')],
+            ['title' => __('Total')],
+            ['title' => __('Gateway')],
+            ['title' => __('Created')],
         ];
 
         $latestOrdersRows = collect($overview['latest_orders'])->map(fn ($order) => [
             e($order->uuid),
-            e($order->customer?->full_name ?? 'Guest'),
+            e($order->customer?->full_name ?? __('Guest')),
             '$'.e(number_format((float) $order->grand_total, 2)),
-            e($order->paymentGateway?->name ?? str((string) $order->payment_method)->replace(['_', '-'], ' ')->headline()->toString()),
+            e($order->paymentGateway?->name ?? __((string) str((string) $order->payment_method)->replace(['_', '-'], ' ')->headline())),
             e($order->created_at?->format('M d, Y H:i') ?? ''),
         ])->all();
 
         $topCustomersColumns = [
-            ['title' => 'Customer'],
-            ['title' => 'Orders'],
-            ['title' => 'Total Spend'],
-            ['title' => 'Last Order'],
+            ['title' => __('Customer')],
+            ['title' => __('Orders')],
+            ['title' => __('Total Spend')],
+            ['title' => __('Last Order')],
         ];
 
         $topCustomersRows = collect($overview['top_customers'])->map(fn (array $row) => [
@@ -83,11 +83,11 @@ final class DashboardController extends PanelController
         ])->all();
 
         $topProductsColumns = [
-            ['title' => 'Product'],
-            ['title' => 'Units'],
-            ['title' => 'Revenue'],
-            ['title' => 'Gross Profit'],
-            ['title' => 'Margin'],
+            ['title' => __('Product')],
+            ['title' => __('Units')],
+            ['title' => __('Revenue')],
+            ['title' => __('Gross Profit')],
+            ['title' => __('Margin')],
         ];
 
         $topProductsRows = collect($overview['top_products'])->map(fn (array $row) => [
@@ -132,7 +132,7 @@ final class DashboardController extends PanelController
         $commissionValue = rtrim(rtrim(number_format((float) $affiliate->commission_value, 2, '.', ''), '0'), '.');
 
         return [
-            'commission_type'  => $affiliate->commission_type === 'percentage' ? 'Percentage' : 'Fixed',
+            'commission_type'  => $affiliate->commission_type === 'percentage' ? __('Percentage') : __('Fixed'),
             'commission_value' => $affiliate->commission_type === 'percentage' ? $commissionValue . '%' : '$' . $commissionValue,
             'invite_link'    => $service->referralUrl($affiliate),
             'visits'         => number_format((int) $stats['visits']),
@@ -142,7 +142,7 @@ final class DashboardController extends PanelController
             'reward'         => '$' . number_format((float) $stats['balance'], 2),
             'reward_status'  => $pending > 0
                 ? '$' . number_format($pending, 2) . ' pending requested'
-                : ((float) $stats['requestable'] > 0 ? 'Ready to withdraw' : 'No reward yet'),
+                : ((float) $stats['requestable'] > 0 ? __('Ready to withdraw') : __('No reward yet')),
         ];
     }
 }

@@ -35,17 +35,17 @@ final class CouponController extends PanelController
         return view('tenant.pages.store.coupons.index', [
             'countryOptions' => CountryScope::options($countries),
             'stats' => Metric::cards([
-                ['label' => 'Coupons', 'value' => $stats['total'], 'format' => 'number', 'caption' => 'Coupons stored for this tenant', 'dot' => 'dot-cyan'],
-                ['label' => 'Active', 'value' => $stats['active'], 'format' => 'number', 'caption' => 'Coupons currently usable', 'dot' => 'dot-green'],
-                ['label' => 'Scheduled', 'value' => $stats['scheduled'], 'format' => 'number', 'caption' => 'Coupons with future start dates', 'dot' => 'dot-amber'],
+                ['label' => __('Coupons'), 'value' => $stats['total'], 'format' => 'number', 'caption' => __('Coupons stored for this tenant'), 'dot' => 'dot-cyan'],
+                ['label' => __('Active'), 'value' => $stats['active'], 'format' => 'number', 'caption' => __('Coupons currently usable'), 'dot' => 'dot-green'],
+                ['label' => __('Scheduled'), 'value' => $stats['scheduled'], 'format' => 'number', 'caption' => __('Coupons with future start dates'), 'dot' => 'dot-amber'],
             ]),
             'columns' => [
                 TableColumn::index(),
-                TableColumn::make('coupon', 'Coupon')->orderable(false),
-                TableColumn::make('type', 'Type')->orderable(false),
-                TableColumn::make('value', 'Value')->orderable(false),
-                TableColumn::make('countries', 'Countries')->orderable(false),
-                TableColumn::make('window', 'Window')->orderable(false),
+                TableColumn::make('coupon', __('Coupon'))->orderable(false),
+                TableColumn::make('type', __('Type'))->orderable(false),
+                TableColumn::make('value', __('Value'))->orderable(false),
+                TableColumn::make('countries', __('Countries'))->orderable(false),
+                TableColumn::make('window', __('Window'))->orderable(false),
                 TableColumn::actions(),
             ],
         ]);
@@ -67,7 +67,7 @@ final class CouponController extends PanelController
         return DataTables::eloquent($query)
             ->addIndexColumn()
             ->editColumn('coupon', fn (Coupon $coupon) => e($coupon->name ?? $coupon->code))
-            ->editColumn('type', fn (Coupon $coupon) => e($coupon->type->label()))
+            ->editColumn('type', fn (Coupon $coupon) => e(__($coupon->type->label())))
             ->editColumn('value', fn (Coupon $coupon) => $coupon->type === CouponType::Percentage
                 ? e(number_format((float) $coupon->value, 2)).'%'
                 : '$'.e(number_format((float) $coupon->value, 2)))
@@ -113,7 +113,7 @@ final class CouponController extends PanelController
             $maxPercentage = (float) (tenant('profit_percentage') ?? 0);
 
             if ((float) $validated['value'] >= $maxPercentage) {
-                $message = "Discount percentage must be less than the store's profit percentage ({$maxPercentage}%).";
+                $message = __("Discount percentage must be less than the store's profit percentage (:max%).", ['max' => $maxPercentage]);
 
                 return $this->failure($message, 422, ['value' => [$message]]);
             }
@@ -132,7 +132,7 @@ final class CouponController extends PanelController
             'country_ids' => $request->countryIds(),
         ], $coupon);
 
-        return $this->success($coupon ? 'Coupon updated successfully.' : 'Coupon created successfully.');
+        return $this->success($coupon ? __('Coupon updated successfully.') : __('Coupon created successfully.'));
     }
 
     public function validateStore(SaveCouponRequest $request): JsonResponse
@@ -149,6 +149,6 @@ final class CouponController extends PanelController
     {
         $this->service->deleteModel($coupon);
 
-        return $this->success('Coupon deleted successfully.');
+        return $this->success(__('Coupon deleted successfully.'));
     }
 }

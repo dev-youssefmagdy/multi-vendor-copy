@@ -48,34 +48,34 @@ final class MailConfigurationsController extends PanelController
 
         $groups = [
             [
-                'title' => 'SMTP Settings',
+                'title' => __('SMTP Settings'),
                 'description' => __('Fill in your own mail server to send store emails from your address, or leave every field blank to use the platform mail server. When you save, we send a confirmation email through your server; if it fails, your emails keep going out through the platform mail server and you are notified.'),
                 'gridClass' => 'form-grid-2',
                 'fields' => [
                     [
-                        'label' => 'Mailer',
+                        'label' => __('Mailer'),
                         'model' => 'mail_mailer',
                         'type' => 'select',
                         'options' => ['' => __('Use central default')] + array_map(fn ($label) => __($label), MailConfigurationResolver::availableMailers()),
                         'help' => __('Choose SMTP to send through your own mail account (e.g. Gmail).'),
                     ],
-                    ['label' => 'Host', 'model' => 'mail_host', 'placeholder' => 'smtp.gmail.com'],
-                    ['label' => 'Port', 'model' => 'mail_port', 'placeholder' => '465 / 587'],
+                    ['label' => __('Host'), 'model' => 'mail_host', 'placeholder' => 'smtp.gmail.com'],
+                    ['label' => __('Port'), 'model' => 'mail_port', 'placeholder' => '465 / 587'],
                     [
-                        'label' => 'Encryption',
+                        'label' => __('Encryption'),
                         'model' => 'mail_encryption',
                         'type' => 'select',
                         'options' => ['' => __('None'), 'ssl' => 'SSL (port 465)', 'tls' => 'TLS / STARTTLS (port 587)'],
                     ],
-                    ['label' => 'Username', 'model' => 'mail_username'],
+                    ['label' => __('Username'), 'model' => 'mail_username'],
                     [
-                        'label' => 'Password',
+                        'label' => __('Password'),
                         'model' => 'mail_password',
                         'type' => 'password',
                         'help' => __('For Gmail, use a 16-character App Password (Google Account → Security → 2-Step Verification → App passwords), not your normal password.'),
                     ],
-                    ['label' => 'From Address', 'model' => 'mail_from_address'],
-                    ['label' => 'From Name', 'model' => 'mail_from_name'],
+                    ['label' => __('From Address'), 'model' => 'mail_from_address'],
+                    ['label' => __('From Name'), 'model' => 'mail_from_name'],
                 ],
             ],
         ];

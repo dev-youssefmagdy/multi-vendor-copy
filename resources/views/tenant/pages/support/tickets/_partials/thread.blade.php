@@ -4,7 +4,7 @@
 
 <x-tenant::chat
     id="support-ticket-chat"
-    empty="No messages yet."
+    :empty="__('No messages yet.')"
     :messages="$ticket['messages']"
 >
     @if(!($ticket['is_closed'] ?? false))
@@ -15,15 +15,15 @@
                 validate="{{ route('tenant.support.replies.validate', $ticket['id']) }}"
                 success="none"
             >
-                <x-tenant::textarea name="reply" label="Reply" rows="4" required placeholder="Type your reply&hellip;" />
+                <x-tenant::textarea name="reply" :label="__('Reply')" rows="4" required :placeholder="__('Type your reply…')" />
                 <div class="page-actions compact-actions justify-end" style="margin-top:12px;">
-                    <button type="submit" class="btn btn-primary">Send Reply</button>
+                    <button type="submit" class="btn btn-primary">{{ __('Send Reply') }}</button>
                 </div>
             </x-tenant::form>
         </x-slot:composer>
     @else
         <x-slot:composer>
-            <p class="panel-copy">This ticket is {{ strtolower($statusOptions[$ticket['status']] ?? '') }} and can no longer receive replies.</p>
+            <p class="panel-copy">{{ __('This ticket is :status and can no longer receive replies.', ['status' => strtolower($statusOptions[$ticket['status']] ?? '')]) }}</p>
         </x-slot:composer>
     @endif
 </x-tenant::chat>

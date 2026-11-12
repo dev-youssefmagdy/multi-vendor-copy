@@ -26,12 +26,12 @@ class BadgesList extends ListPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Product Badges',
-            'badge' => 'Catalog',
-            'description' => 'Synced badge definitions from central admin. Product assignments are managed centrally and propagated to this tenant.',
+            'title' => __('Product Badges'),
+            'badge' => __('Catalog'),
+            'description' => __('Synced badge definitions from central admin. Product assignments are managed centrally and propagated to this tenant.'),
             'actionLabel' => null,
-            'tableTitle' => 'Badges',
-            'headers' => ['Badge', 'Products', 'Status', 'Updated At'],
+            'tableTitle' => __('Badges'),
+            'headers' => [__('Badge'), __('Products'), __('Status'), __('Updated At')],
         ];
     }
 
@@ -49,23 +49,23 @@ class BadgesList extends ListPage
         return array_merge(parent::pageData(), [
             'records' => $records,
             'filterFields' => [
-                ['label' => 'Search', 'model' => 'search', 'placeholder' => 'Badge text'],
+                ['label' => __('Search'), 'model' => 'search', 'placeholder' => __('Badge text')],
             ],
             'statistics' => [
-                ['label' => 'Total Badges', 'value' => $total, 'caption' => 'Central badge definitions synced into this tenant', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
-                ['label' => 'Active Badges', 'value' => $active, 'caption' => 'Visible on storefront when assigned to products', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Total Badges'), 'value' => $total, 'caption' => __('Central badge definitions synced into this tenant'), 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
+                ['label' => __('Active Badges'), 'value' => $active, 'caption' => __('Visible on storefront when assigned to products'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
             ],
             'rows' => collect($records->items())->map(function (ProductBadge $badge) {
                 return [
                     '<div class="entity-title">' . e($badge->text) . '</div>',
                     e((string) $badge->products_count),
                     '<span class="badge ' . ($badge->active ? 'badge-green' : 'badge-amber') . '">'
-                    . e($badge->active ? 'Active' : 'Inactive') . '</span>',
+                    . e($badge->active ? __('Active') : __('Inactive')) . '</span>',
                     e($badge->updated_at?->format('M d, Y')),
                 ];
             })->all(),
             'tableDescription' => $records->total() . ' synced badges in the tenant catalog.',
-            'filtersNote' => 'Badges and their product assignments are synced from central admin.',
+            'filtersNote' => __('Badges and their product assignments are synced from central admin.'),
         ]);
     }
 }

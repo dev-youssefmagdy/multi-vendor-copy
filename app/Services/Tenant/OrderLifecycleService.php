@@ -112,7 +112,7 @@ class OrderLifecycleService
         $targetStatus = $this->mapShippingStatusToOrderStatus($shippingStatus);
 
         if ($order->status instanceof OrderStatus && $order->status->isTerminal()) {
-            throw new InvalidArgumentException('Cancelled, rejected or refunded orders cannot be moved through shipping states.');
+            throw new InvalidArgumentException(__('Cancelled, rejected or refunded orders cannot be moved through shipping states.'));
         }
 
         if ($order->status === $targetStatus) {
@@ -203,11 +203,11 @@ class OrderLifecycleService
         }
 
         if ($order->status instanceof OrderStatus && $order->status->isTerminal()) {
-            throw new InvalidArgumentException('Cancelled, rejected or refunded orders can no longer change status.');
+            throw new InvalidArgumentException(__('Cancelled, rejected or refunded orders can no longer change status.'));
         }
 
         if ($orderStatus === OrderStatus::Refunded) {
-            throw new InvalidArgumentException('An order becomes Refunded automatically once its refunds are completed.');
+            throw new InvalidArgumentException(__('An order becomes Refunded automatically once its refunds are completed.'));
         }
 
         if ($orderStatus === OrderStatus::Cancelled) {

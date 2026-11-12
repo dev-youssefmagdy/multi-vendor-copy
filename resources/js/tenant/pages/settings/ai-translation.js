@@ -7,6 +7,7 @@
 // badges in place — there is no full page reload.
 import { post, get } from '../../core/http.js';
 import { openModal, closeModal } from '../../core/modals.js';
+import { t } from '../../core/i18n.js';
 
 const POLL_INTERVAL = 3000;
 
@@ -53,7 +54,7 @@ function patchCard(card) {
             const badge = completedEl.querySelector('.badge');
             const summary = card.translation_summary ? JSON.parse(card.translation_summary) : {};
             if (badge) {
-                badge.textContent = `Completed — ${summary.items_translated ?? 0} items translated`;
+                badge.textContent = t('Completed — :count items translated', { count: summary.items_translated ?? 0 });
             }
         }
     }
@@ -67,11 +68,11 @@ function patchCard(card) {
         const price = button.dataset.languagePrice;
         button.disabled = running || button.disabled;
         if (running) {
-            button.textContent = 'Translating…';
+            button.textContent = t('Translating…');
         } else if (isFree) {
-            button.textContent = 'Run AI Translation';
+            button.textContent = t('Run AI Translation');
         } else {
-            button.textContent = `Buy AI Translation ($${price})`;
+            button.textContent = t('Buy AI Translation (:price)', { price: `$${price}` });
         }
     }
 }
@@ -165,7 +166,7 @@ document.addEventListener('click', (event) => {
 
     modal.querySelector('[data-ai-purchase-summary-name]').textContent = button.dataset.languageName ?? '';
     modal.querySelector('[data-ai-purchase-summary-code]').textContent = button.dataset.languageCode ?? '';
-    modal.querySelector('[data-ai-purchase-summary-native]').textContent = `One-time payment · ${button.dataset.languageNative ?? ''}`;
+    modal.querySelector('[data-ai-purchase-summary-native]').textContent = t('One-time payment · :language', { language: button.dataset.languageNative ?? '' });
     modal.querySelector('[data-ai-purchase-summary-price]').textContent = `$${button.dataset.languagePrice ?? '0.00'}`;
 
     openModal('ai-translation-purchase-modal');

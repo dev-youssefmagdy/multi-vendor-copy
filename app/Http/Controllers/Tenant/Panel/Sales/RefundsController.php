@@ -37,8 +37,8 @@ final class RefundsController extends PanelController
                 ['label' => __('Failed'), 'value' => $stats['failed'], 'format' => 'number', 'caption' => __('Need a retry or manual completion'), 'dot' => 'dot-red', 'glow' => 'card-glow-red'],
                 ['label' => __('Completed'), 'value' => $stats['completed'], 'format' => 'number', 'caption' => __('Refunds completed'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
             ]),
-            'statusOptions' => collect(RefundStatus::cases())->mapWithKeys(fn (RefundStatus $status) => [$status->value => $status->label()])->all(),
-            'sourceOptions' => collect(RefundSource::cases())->mapWithKeys(fn (RefundSource $source) => [$source->value => $source->label()])->all(),
+            'statusOptions' => collect(RefundStatus::cases())->mapWithKeys(fn (RefundStatus $status) => [$status->value => __($status->label())])->all(),
+            'sourceOptions' => collect(RefundSource::cases())->mapWithKeys(fn (RefundSource $source) => [$source->value => __($source->label())])->all(),
             'columns' => [
                 TableColumn::make('reference', __('Reference'))->orderable(false),
                 TableColumn::make('order', __('Order'))->orderable(false)->searchable(false),

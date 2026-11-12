@@ -154,7 +154,7 @@ class OnboardingPage extends Component
 
         return array_values(array_filter(
             $items,
-            fn (array $item) => !str_contains(strtolower($item['label']), 'target currencies')
+            fn (array $item) => ($item['key'] ?? null) !== 'target_currencies'
         ));
     }
 
@@ -195,7 +195,7 @@ class OnboardingPage extends Component
 
         $this->logoUploadAr = null;
         $this->logoUploadEn = null;
-        $this->dispatch('admin-toast', message: 'Logo saved successfully.', type: 'success');
+        $this->dispatch('admin-toast', message: __('Logo saved successfully.'), type: 'success');
     }
 
     // ── Setup status helpers ────────────────────────────────────────────────
@@ -241,77 +241,77 @@ class OnboardingPage extends Component
         return [
             [
                 'key' => 'logo',
-                'label' => 'Set Up Your Store Logo',
-                'detail' => 'Your brand logo appears on the storefront header and invoices.',
+                'label' => __('Set Up Your Store Logo'),
+                'detail' => __('Your brand logo appears on the storefront header and invoices.'),
                 'done' => $logoSet,
                 'action_url' => route('tenant.store.appearance'),
-                'action_label' => 'Go to Appearance',
+                'action_label' => __('Go to Appearance'),
                 'icon' => 'logo',
             ],
             [
                 'key' => 'theme',
-                'label' => 'Choose a Storefront Theme',
+                'label' => __('Choose a Storefront Theme'),
                 'detail' => $activeTheme
-                    ? 'Active theme: ' . $activeTheme . '. You can switch anytime.'
-                    : 'Pick a theme to define the look and feel of your store.',
+                    ? __('Active theme: :theme. You can switch anytime.', ['theme' => $activeTheme])
+                    : __('Pick a theme to define the look and feel of your store.'),
                 'done' => $activeTheme !== null,
                 'action_url' => route('tenant.store.themes'),
-                'action_label' => 'Browse Themes',
+                'action_label' => __('Browse Themes'),
                 'icon' => 'theme',
             ],
             [
                 'key' => 'payment_gateway',
-                'label' => 'Set Up a Payment Gateway',
+                'label' => __('Set Up a Payment Gateway'),
                 'detail' => $this->paymentGatewayConfigured()
-                    ? 'At least one payment method is active on your store.'
-                    : 'Enable a payment gateway so customers can complete purchases.',
+                    ? __('At least one payment method is active on your store.')
+                    : __('Enable a payment gateway so customers can complete purchases.'),
                 'done' => $this->paymentGatewayConfigured(),
                 'action_url' => route('tenant.settings.payment-gateways', ['from' => 'onboarding']),
-                'action_label' => 'Configure Payments',
+                'action_label' => __('Configure Payments'),
                 'icon' => 'payment',
             ],
             [
                 'key' => 'languages',
-                'label' => 'Configure Store Languages',
+                'label' => __('Configure Store Languages'),
                 'detail' => $this->languageConfigured()
-                    ? 'Multiple languages are active on your store.'
-                    : 'Add more languages to reach a wider audience.',
+                    ? __('Multiple languages are active on your store.')
+                    : __('Add more languages to reach a wider audience.'),
                 'done' => $this->languageConfigured(),
                 'action_url' => route('tenant.settings.languages'),
-                'action_label' => 'Manage Languages',
+                'action_label' => __('Manage Languages'),
                 'icon' => 'languages',
             ],
             [
                 'key' => 'profile',
-                'label' => 'Complete Your Profile',
+                'label' => __('Complete Your Profile'),
                 'detail' => TenantNavigation::profileComplete()
-                    ? 'Your business name, logo, and contact info are set.'
-                    : 'Add your business name, logo, and contact info.',
+                    ? __('Your business name, logo, and contact info are set.')
+                    : __('Add your business name, logo, and contact info.'),
                 'done' => TenantNavigation::profileComplete(),
                 'action_url' => route('tenant.settings.account', ['from' => 'onboarding']),
-                'action_label' => 'Go to Account Settings',
+                'action_label' => __('Go to Account Settings'),
                 'icon' => 'logo',
             ],
             [
                 'key' => 'store_details',
-                'label' => 'Complete Store Details',
+                'label' => __('Complete Store Details'),
                 'detail' => TenantNavigation::storeDetailsComplete()
-                    ? 'Your store name, description, and address are set.'
-                    : 'Add your store name, description, and address.',
+                    ? __('Your store name, description, and address are set.')
+                    : __('Add your store name, description, and address.'),
                 'done' => TenantNavigation::storeDetailsComplete(),
                 'action_url' => route('tenant.settings.account', ['from' => 'onboarding']) . '#store-details',
-                'action_label' => 'Go to Store Details',
+                'action_label' => __('Go to Store Details'),
                 'icon' => 'storefront',
             ],
             [
                 'key' => 'compliance',
-                'label' => 'Complete Compliance Information',
+                'label' => __('Complete Compliance Information'),
                 'detail' => TenantNavigation::complianceComplete()
-                    ? 'Owner details, business registration, and bank info are on file.'
-                    : 'Add owner details, business registration, and bank info in the Compliance Center.',
+                    ? __('Owner details, business registration, and bank info are on file.')
+                    : __('Add owner details, business registration, and bank info in the Compliance Center.'),
                 'done' => TenantNavigation::complianceComplete(),
                 'action_url' => route('tenant.settings.compliance', ['from' => 'onboarding']),
-                'action_label' => 'Go to Compliance Center',
+                'action_label' => __('Go to Compliance Center'),
                 'icon' => 'settings',
             ],
         ];
@@ -323,63 +323,63 @@ class OnboardingPage extends Component
     {
         return [
             [
-                'title' => 'Welcome to Your Vendor Panel',
-                'description' => 'This is your central command center for managing every aspect of your online store — products, orders, customers, analytics, and more. Let us walk you through the key sections.',
+                'title' => __('Welcome to Your Vendor Panel'),
+                'description' => __('This is your central command center for managing every aspect of your online store — products, orders, customers, analytics, and more. Let us walk you through the key sections.'),
                 'icon' => 'welcome',
                 'color' => 'cyan',
             ],
             [
-                'title' => 'Dashboard',
-                'description' => 'The Dashboard gives you a real-time snapshot of your store\'s performance: total revenue, orders, customer growth, sales charts, and order status distribution — all in one view.',
+                'title' => __('Dashboard'),
+                'description' => __('The Dashboard gives you a real-time snapshot of your store\'s performance: total revenue, orders, customer growth, sales charts, and order status distribution — all in one view.'),
                 'icon' => 'dashboard',
                 'color' => 'violet',
                 'route_hint' => 'tenant.dashboard',
             ],
             [
-                'title' => 'Catalog & Inventory',
-                'description' => 'Manage your product catalog here. Add products, organize categories, set up product variants, and flag featured or new-in items. Own Products lets you create store-exclusive listings.',
+                'title' => __('Catalog & Inventory'),
+                'description' => __('Manage your product catalog here. Add products, organize categories, set up product variants, and flag featured or new-in items. Own Products lets you create store-exclusive listings.'),
                 'icon' => 'products',
                 'color' => 'cyan',
                 'route_hint' => 'tenant.products.index',
             ],
             [
-                'title' => 'Orders & Customers',
-                'description' => 'Track every order from placement to delivery, update order statuses, and handle manufacturing requests. The Customers section shows purchase history, wallet balances, and lifetime value.',
+                'title' => __('Orders & Customers'),
+                'description' => __('Track every order from placement to delivery, update order statuses, and handle manufacturing requests. The Customers section shows purchase history, wallet balances, and lifetime value.'),
                 'icon' => 'orders',
                 'color' => 'green',
                 'route_hint' => 'tenant.orders.index',
             ],
             [
-                'title' => 'Analytics & Insights',
-                'description' => 'Dive deep into your business data with Order Analytics, Customer Lifetime Value, Shipping performance, and Product Profitability reports to make informed decisions.',
+                'title' => __('Analytics & Insights'),
+                'description' => __('Dive deep into your business data with Order Analytics, Customer Lifetime Value, Shipping performance, and Product Profitability reports to make informed decisions.'),
                 'icon' => 'analytics',
                 'color' => 'amber',
                 'route_hint' => 'tenant.analytics.orders',
             ],
             [
-                'title' => 'Finance — Wallet & Billing',
-                'description' => 'Monitor your wallet balance, review transaction history, and keep track of subscription billing. Funds collected from orders are reflected here after platform processing.',
+                'title' => __('Finance — Wallet & Billing'),
+                'description' => __('Monitor your wallet balance, review transaction history, and keep track of subscription billing. Funds collected from orders are reflected here after platform processing.'),
                 'icon' => 'wallet',
                 'color' => 'violet',
                 'route_hint' => 'tenant.finance.wallet',
             ],
             [
-                'title' => 'Storefront & Online Store',
-                'description' => 'Control the customer-facing side of your business. Switch themes, create custom pages, manage flash sales, coupons, and configure your storefront\'s appearance including logo, banners, and social links.',
+                'title' => __('Storefront & Online Store'),
+                'description' => __('Control the customer-facing side of your business. Switch themes, create custom pages, manage flash sales, coupons, and configure your storefront\'s appearance including logo, banners, and social links.'),
                 'icon' => 'storefront',
                 'color' => 'cyan',
                 'route_hint' => 'tenant.store.appearance',
             ],
             [
-                'title' => 'Settings & Configuration',
-                'description' => 'Manage your store\'s regional settings (currencies, languages), access control (admins & roles), payment gateways, email templates, and mail configuration to keep everything running smoothly.',
+                'title' => __('Settings & Configuration'),
+                'description' => __('Manage your store\'s regional settings (currencies, languages), access control (admins & roles), payment gateways, email templates, and mail configuration to keep everything running smoothly.'),
                 'icon' => 'settings',
                 'color' => 'green',
                 'route_hint' => 'tenant.settings.account',
             ],
             [
-                'title' => 'You\'re All Set!',
-                'description' => 'You now know your way around the vendor panel. Next, we\'ll help you complete a few quick setup tasks to get your store ready for customers. It only takes a minute.',
+                'title' => __('You\'re All Set!'),
+                'description' => __('You now know your way around the vendor panel. Next, we\'ll help you complete a few quick setup tasks to get your store ready for customers. It only takes a minute.'),
                 'icon' => 'done',
                 'color' => 'green',
             ],

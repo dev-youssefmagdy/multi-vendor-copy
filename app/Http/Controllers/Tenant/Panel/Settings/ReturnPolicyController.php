@@ -49,13 +49,13 @@ final class ReturnPolicyController extends PanelController
         return view('tenant.pages.settings.return-policy.index', [
             'groups' => [
                 [
-                    'title' => 'Own Products Return Policy',
-                    'description' => 'Return window, fees, and evidence requirements for products you sell directly.',
+                    'title' => __('Own Products Return Policy'),
+                    'description' => __('Return window, fees, and evidence requirements for products you sell directly.'),
                     'gridClass' => 'form-grid-2',
                     'fields' => [
-                        ['label' => 'Return Window (days)', 'model' => 'window_days', 'type' => 'number'],
-                        ['label' => 'Return Fee', 'model' => 'fee', 'type' => 'number'],
-                        ['label' => 'Accepted Conditions', 'model' => 'conditions', 'type' => 'textarea', 'wrapperClass' => 'span-2'],
+                        ['label' => __('Return Window (days)'), 'model' => 'window_days', 'type' => 'number'],
+                        ['label' => __('Return Fee'), 'model' => 'fee', 'type' => 'number'],
+                        ['label' => __('Accepted Conditions'), 'model' => 'conditions', 'type' => 'textarea', 'wrapperClass' => 'span-2'],
                     ],
                 ],
             ],
@@ -86,10 +86,10 @@ final class ReturnPolicyController extends PanelController
         } catch (Throwable $exception) {
             report($exception);
 
-            return $this->failure('Something went wrong while saving the return policy. Please try again.');
+            return $this->failure(__('Something went wrong while saving the return policy. Please try again.'));
         }
 
-        return $this->success('Return policy saved successfully.');
+        return $this->success(__('Return policy saved successfully.'));
     }
 
     public function validateUpdate(SaveReturnPolicyRequest $request): JsonResponse

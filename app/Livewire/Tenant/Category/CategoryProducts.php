@@ -26,7 +26,7 @@ class CategoryProducts extends Component
 
         CacheVersion::bumpMany(['Category', 'Product']);
 
-        $this->toast('Product order saved.');
+        $this->toast(__('Product order saved.'));
     }
 
     public function render()

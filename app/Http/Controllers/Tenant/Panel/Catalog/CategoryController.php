@@ -32,17 +32,17 @@ final class CategoryController extends PanelController
 
         return view('tenant.pages.catalog.categories.index', [
             'stats' => Metric::cards([
-                ['label' => 'Categories', 'value' => $stats['total'], 'format' => 'number', 'caption' => 'Tenant storefront categories', 'dot' => 'dot-cyan'],
-                ['label' => 'Active', 'value' => $stats['active'], 'format' => 'number', 'caption' => 'Visible categories', 'dot' => 'dot-green'],
-                ['label' => 'Featured', 'value' => $stats['featured'], 'format' => 'number', 'caption' => 'Highlighted category groups', 'dot' => 'dot-amber'],
+                ['label' => __('Categories'), 'value' => $stats['total'], 'format' => 'number', 'caption' => __('Tenant storefront categories'), 'dot' => 'dot-cyan'],
+                ['label' => __('Active'), 'value' => $stats['active'], 'format' => 'number', 'caption' => __('Visible categories'), 'dot' => 'dot-green'],
+                ['label' => __('Featured'), 'value' => $stats['featured'], 'format' => 'number', 'caption' => __('Highlighted category groups'), 'dot' => 'dot-amber'],
             ]),
             'columns' => [
                 TableColumn::index(),
-                TableColumn::make('category', 'Category')->orderable(false)->width('320px'),
-                TableColumn::make('parent', 'Parent')->orderable(false)->width('160px'),
-                TableColumn::make('status', 'Status')->orderable(false)->width('140px'),
-                TableColumn::make('products', 'Products')->orderable(false)->width('100px'),
-                TableColumn::make('updated_at', 'Updated At')->width('120px'),
+                TableColumn::make('category', __('Category'))->orderable(false)->width('320px'),
+                TableColumn::make('parent', __('Parent'))->orderable(false)->width('160px'),
+                TableColumn::make('status', __('Status'))->orderable(false)->width('140px'),
+                TableColumn::make('products', __('Products'))->orderable(false)->width('100px'),
+                TableColumn::make('updated_at', __('Updated At'))->width('120px'),
                 TableColumn::actions(),
             ],
         ]);
@@ -63,7 +63,7 @@ final class CategoryController extends PanelController
 
                 return view('tenant.pages.catalog.categories._cols.category', ['category' => $category, 'central' => $central])->render();
             })
-            ->editColumn('parent', fn (Category $category) => e($category->parent?->translationValue('name') ?? 'Root'))
+            ->editColumn('parent', fn (Category $category) => e($category->parent?->translationValue('name') ?? __('Root')))
             ->editColumn('status', fn (Category $category) => view('tenant.pages.catalog.categories._cols.status', ['category' => $category])->render())
             ->editColumn('products', fn (Category $category) => (string) $category->products->count())
             ->editColumn('updated_at', fn (Category $category) => $category->updated_at?->format('M d, Y'))
@@ -100,8 +100,8 @@ final class CategoryController extends PanelController
 
         return view('tenant.pages.catalog.categories.form', [
             'category' => $category,
-            'pageTitle' => $category ? 'Edit Category' : 'Add Category',
-            'pageDescription' => $category ? 'Update storefront category hierarchy and translations.' : 'Create a tenant category from the selected catalog scope.',
+            'pageTitle' => $category ? __('Edit Category') : __('Add Category'),
+            'pageDescription' => $category ? __('Update storefront category hierarchy and translations.') : __('Create a tenant category from the selected catalog scope.'),
             'languages' => $languages,
             'activeLocale' => $activeLocale,
             'translations' => $translations,
@@ -129,7 +129,7 @@ final class CategoryController extends PanelController
             $snapshot = $this->repo->centralCategorySnapshot((int) $validated['central_category_id']);
 
             if (!$snapshot) {
-                return $this->failure('The linked central category could not be found.', 422, ['central_category_id' => ['The linked central category could not be found.']]);
+                return $this->failure(__('The linked central category could not be found.'), 422, ['central_category_id' => [__('The linked central category could not be found.')]]);
             }
         }
 
@@ -162,7 +162,7 @@ final class CategoryController extends PanelController
         }
 
         return $this->success(
-            $category ? 'Category updated successfully.' : 'Category created successfully.',
+            $category ? __('Category updated successfully.') : __('Category created successfully.'),
             redirect: route('tenant.categories.edit', $saved),
         );
     }
@@ -181,22 +181,22 @@ final class CategoryController extends PanelController
     {
         $category->update(['active' => !$category->active]);
 
-        return $this->success('Category status updated successfully.');
+        return $this->success(__('Category status updated successfully.'));
     }
 
     public function toggleFeatured(Category $category): JsonResponse
     {
         $category->update(['featured' => !$category->featured]);
 
-        return $this->success('Category featured state updated successfully.');
+        return $this->success(__('Category featured state updated successfully.'));
     }
 
     public function destroy(Category $category): JsonResponse
     {
-        abort_if($category->central_category_id !== null, 403, 'Only tenant-created categories can be deleted.');
+        abort_if($category->central_category_id !== null, 403, __('Only tenant-created categories can be deleted.'));
 
         $category->delete();
 
-        return $this->success('Category deleted successfully.');
+        return $this->success(__('Category deleted successfully.'));
     }
 }

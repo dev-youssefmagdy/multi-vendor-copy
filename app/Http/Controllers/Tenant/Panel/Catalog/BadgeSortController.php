@@ -40,6 +40,6 @@ final class BadgeSortController extends PanelController
 
         CacheVersion::bumpMany(['ProductBadge', 'Product']);
 
-        return $this->success('Product order saved.');
+        return $this->success(__('Product order saved.'));
     }
 }

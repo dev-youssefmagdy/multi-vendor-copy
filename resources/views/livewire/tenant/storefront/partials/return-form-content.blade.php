@@ -146,7 +146,7 @@
                         <label class="flex items-center gap-3 px-3 py-2.5 cursor-pointer"
                             style="border:1px solid {{ ($returnMethod ?? '') === $__method->value ? $__ui['accent'] : '#E5E7EB' }};border-radius:12px">
                             <input type="radio" wire:model.live="returnMethod" value="{{ $__method->value }}" style="accent-color:{{ $__ui['accent'] }}">
-                            <span class="text-sm">{{ $__method->label() }}</span>
+                            <span class="text-sm">{{ __($__method->label()) }}</span>
                         </label>
                     @endforeach
                 </div>
@@ -159,7 +159,7 @@
                     class="px-3 py-2.5 text-sm focus:outline-none" style="{{ $__input }}">
                     <option value="">{{ __('Select a reason') }}</option>
                     @foreach ($reasons as $r)
-                        <option value="{{ $r->value }}">{{ $r->label() }}</option>
+                        <option value="{{ $r->value }}">{{ __($r->label()) }}</option>
                     @endforeach
                 </select>
             </div>
@@ -203,7 +203,7 @@
                                 <button type="button" wire:click="removePhoto({{ $__i }})"
                                     class="absolute w-5 h-5 rounded-full bg-white flex items-center justify-center text-xs shadow"
                                     style="top:-8px;inset-inline-end:-8px"
-                                    aria-label="{{ __('Remove photo :n', ['n' => $__i + 1]) }}">&times;</button>
+                                    aria-label="{{ __('Remove photo :n', ['n' => $__i + 1]) }}">{{ __('×') }}</button>
                             </div>
                         @endforeach
                     </div>

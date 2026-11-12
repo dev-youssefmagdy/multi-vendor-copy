@@ -55,22 +55,22 @@ final class WalletController extends PanelController
             'packages' => $packages,
             'presented' => $this->presenter->present($gateways),
             'subscriptionColumns' => [
-                TableColumn::make('subscription', 'Subscription')->orderable(false),
-                TableColumn::make('status', 'Status')->orderable(false),
-                TableColumn::make('term', 'Term')->orderable(false),
-                TableColumn::make('gateway', 'Gateway')->orderable(false),
-                TableColumn::make('price', 'Price')->orderable(false),
-                TableColumn::make('window', 'Window')->orderable(false),
-                TableColumn::make('transaction', 'Transaction')->orderable(false),
+                TableColumn::make('subscription', __('Subscription'))->orderable(false),
+                TableColumn::make('status', __('Status'))->orderable(false),
+                TableColumn::make('term', __('Term'))->orderable(false),
+                TableColumn::make('gateway', __('Gateway'))->orderable(false),
+                TableColumn::make('price', __('Price'))->orderable(false),
+                TableColumn::make('window', __('Window'))->orderable(false),
+                TableColumn::make('transaction', __('Transaction'))->orderable(false),
             ],
             'transactionColumns' => [
-                TableColumn::make('uuid', 'Reference')->orderable(false),
-                TableColumn::make('type', 'Direction')->orderable(false),
-                TableColumn::make('amount', 'Amount')->orderable(false),
-                TableColumn::make('admin_profit', 'Admin Profit')->orderable(false),
-                TableColumn::make('model', 'Linked Model')->orderable(false),
-                TableColumn::make('details', 'Details')->orderable(false),
-                TableColumn::make('created_at', 'Created At')->orderable(false),
+                TableColumn::make('uuid', __('Reference'))->orderable(false),
+                TableColumn::make('type', __('Direction'))->orderable(false),
+                TableColumn::make('amount', __('Amount'))->orderable(false),
+                TableColumn::make('admin_profit', __('Admin Profit'))->orderable(false),
+                TableColumn::make('model', __('Linked Model'))->orderable(false),
+                TableColumn::make('details', __('Details'))->orderable(false),
+                TableColumn::make('created_at', __('Created At'))->orderable(false),
             ],
         ]);
     }
@@ -81,7 +81,7 @@ final class WalletController extends PanelController
             ->addIndexColumn()
             ->editColumn('subscription', fn (Subscription $s) => view('tenant.pages.finance.wallet._cols.subscription', ['subscription' => $s])->render())
             ->editColumn('status', fn (Subscription $s) => view('tenant.pages.finance.wallet._cols.status', ['subscription' => $s])->render())
-            ->editColumn('term', fn (Subscription $s) => str($s->term->value)->headline()->toString())
+            ->editColumn('term', fn (Subscription $s) => __((string) str($s->term->value)->headline()))
             ->editColumn('gateway', fn (Subscription $s) => view('tenant.pages.finance.wallet._cols.gateway', ['subscription' => $s])->render())
             ->editColumn('price', fn (Subscription $s) => '$' . number_format((float) $s->price, 2))
             ->editColumn('window', fn (Subscription $s) => (optional($s->start_date)->format('M d, Y') ?: '-') . ' - ' . (optional($s->end_date)->format('M d, Y') ?: '-'))
@@ -127,7 +127,7 @@ final class WalletController extends PanelController
             ],
         ]);
 
-        return $this->success('Redirecting to payment…', redirect: route('tenant.subscription-payment.charge', [
+        return $this->success(__('Redirecting to payment…'), redirect: route('tenant.subscription-payment.charge', [
             'gateway' => $validated['gateway'],
             'packageId' => $package->id,
             'type' => $type,

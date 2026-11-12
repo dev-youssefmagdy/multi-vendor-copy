@@ -18,12 +18,12 @@ class EmailTemplatesPage extends ListPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Email Templates',
-            'badge' => 'Settings',
-            'description' => 'Review and adjust the vendor-facing email templates available to this tenant storefront.',
+            'title' => __('Email Templates'),
+            'badge' => __('Settings'),
+            'description' => __('Review and adjust the vendor-facing email templates available to this tenant storefront.'),
             'actionLabel' => null,
-            'tableTitle' => 'Tenant Email Templates',
-            'headers' => ['Template', 'Event', 'Subject', 'Body', 'Status', 'Updated At', 'Actions'],
+            'tableTitle' => __('Tenant Email Templates'),
+            'headers' => [__('Template'), __('Event'), __('Subject'), __('Body'), __('Status'), __('Updated At'), __('Actions')],
         ];
     }
 
@@ -39,25 +39,25 @@ class EmailTemplatesPage extends ListPage
         return array_merge(parent::pageData(), [
             'records' => $records,
             'filterFields' => [
-                ['label' => 'Search', 'model' => 'search', 'placeholder' => 'Template name or subject'],
-                ['label' => 'Status', 'model' => 'statusFilter', 'type' => 'select', 'options' => ['' => 'All statuses', 'active' => 'Active', 'inactive' => 'Inactive']],
+                ['label' => __('Search'), 'model' => 'search', 'placeholder' => __('Template name or subject')],
+                ['label' => __('Status'), 'model' => 'statusFilter', 'type' => 'select', 'options' => ['' => __('All statuses'), 'active' => __('Active'), 'inactive' => __('Inactive')]],
             ],
             'statistics' => [
-                ['label' => 'Templates', 'value' => number_format($stats['total']), 'caption' => 'Templates available in this tenant database', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
-                ['label' => 'Active', 'value' => number_format($stats['active']), 'caption' => 'Currently available for tenant mail flows', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Inactive', 'value' => number_format($stats['total'] - $stats['active']), 'caption' => 'Disabled templates retained in the tenant workspace', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Templates'), 'value' => number_format($stats['total']), 'caption' => __('Templates available in this tenant database'), 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
+                ['label' => __('Active'), 'value' => number_format($stats['active']), 'caption' => __('Currently available for tenant mail flows'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Inactive'), 'value' => number_format($stats['total'] - $stats['active']), 'caption' => __('Disabled templates retained in the tenant workspace'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
             ],
             'rows' => collect($records->items())->map(fn(EmailTemplate $template) => [
                 '<div class="entity-title">' . e($template->name) . '</div>',
                 '<span class="entity-subtitle">' . e(EmailTemplateAction::tryFrom((string) $template->action)?->label() ?? $template->action ?? '-') . '</span>',
                 e($template->subject),
                 '<div class="entity-subtitle">' . e(str($template->body)->stripTags()->limit(80)) . '</div>',
-                '<span class="badge ' . ($template->is_active ? 'badge-green' : 'badge-amber') . '">' . e($template->is_active ? 'Active' : 'Inactive') . '</span>',
+                '<span class="badge ' . ($template->is_active ? 'badge-green' : 'badge-amber') . '">' . e($template->is_active ? __('Active') : __('Inactive')) . '</span>',
                 e($template->updated_at?->format('M d, Y')),
-                '<a href="' . route('tenant.settings.email-templates.edit', $template) . '" class="btn btn-secondary btn-sm">Edit</a>',
+                '<a href="' . route('tenant.settings.email-templates.edit', $template) . '" class="btn btn-secondary btn-sm">' . e(__('Edit')) . '</a>',
             ])->all(),
             'tableDescription' => $records->total() . ' tenant email templates matched the current filters.',
-            'filtersNote' => 'These templates are seeded from central defaults and stored locally for this tenant workspace.',
+            'filtersNote' => __('These templates are seeded from central defaults and stored locally for this tenant workspace.'),
         ]);
     }
 

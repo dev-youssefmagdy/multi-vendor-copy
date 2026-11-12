@@ -22,9 +22,9 @@ class BillingDetailPage extends TenantPage
     protected function pageMeta(): array
     {
         return [
-            'title' => $this->order['uuid'] ?? 'Billing Details',
-            'badge' => 'Finance',
-            'description' => 'Full billing detail — payment state, gateway payload, financials, and order line items.',
+            'title' => $this->order['uuid'] ?? __('Billing Details'),
+            'badge' => __('Finance'),
+            'description' => __('Full billing detail — payment state, gateway payload, financials, and order line items.'),
         ];
     }
 

@@ -17,11 +17,11 @@ class LanguagesPage extends ListPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Languages',
-            'badge' => 'Settings',
-            'description' => 'Control tenant storefront languages, activation, and the default locale.',
-            'tableTitle' => 'Tenant Languages',
-            'headers' => ['Language', 'Direction', 'Type', 'Status', 'Actions'],
+            'title' => __('Languages'),
+            'badge' => __('Settings'),
+            'description' => __('Control tenant storefront languages, activation, and the default locale.'),
+            'tableTitle' => __('Tenant Languages'),
+            'headers' => [__('Language'), __('Direction'), __('Type'), __('Status'), __('Actions')],
         ];
     }
 
@@ -40,22 +40,22 @@ class LanguagesPage extends ListPage
                     ? (CentralLanguage::query()->where('id', $language->central_language_id)->value('is_free') ?? true)
                     : false;
                 $typeLabel = $isFree
-                    ? '<span class="badge badge-green">Free</span>'
-                    : '<span class="badge badge-violet">Purchased</span>';
+                    ? '<span class="badge badge-green">' . e(__('Free')) . '</span>'
+                    : '<span class="badge badge-violet">' . e(__('Purchased')) . '</span>';
 
                 return [
                     ($language->imageFile ? '<img src="' . e($language->imageFile->full_path) . '" alt="' . e($language->name) . '" style="width:36px;height:24px;object-fit:cover;border-radius:4px;margin-right:8px;vertical-align:middle" />' : '') . e($language->code . ' - ' . ($language->native_name ?: $language->name)),
                     e(strtoupper($language->direction->value)),
                     $typeLabel,
-                    '<span class="badge ' . ($language->is_default ? 'badge-green' : ($language->is_active ? 'badge-cyan' : 'badge-amber')) . '">' . e($language->is_default ? 'Default' : ($language->is_active ? 'Active' : 'Inactive')) . '</span>',
-                    '<div class="flex gap-2"><button type="button" class="btn btn-secondary btn-sm" wire:click="toggleActive(' . $language->id . ')">' . ($language->is_active ? 'Disable' : 'Enable') . '</button><button type="button" class="btn btn-secondary btn-sm" wire:click="makeDefault(' . $language->id . ')">Make Default</button></div>',
+                    '<span class="badge ' . ($language->is_default ? 'badge-green' : ($language->is_active ? 'badge-cyan' : 'badge-amber')) . '">' . e($language->is_default ? __('Default') : ($language->is_active ? __('Active') : __('Inactive'))) . '</span>',
+                    '<div class="flex gap-2"><button type="button" class="btn btn-secondary btn-sm" wire:click="toggleActive(' . $language->id . ')">' . ($language->is_active ? __('Disable') : __('Enable')) . '</button><button type="button" class="btn btn-secondary btn-sm" wire:click="makeDefault(' . $language->id . ')">' . e(__('Make Default')) . '</button></div>',
                 ];
             })->all(),
             'statistics' => [
-                ['label' => 'Languages', 'value' => number_format($languages->count()), 'caption' => 'Languages available in tenant DB', 'dot' => 'dot-cyan'],
-                ['label' => 'Active', 'value' => number_format($languages->where('is_active', true)->count()), 'caption' => 'Locales visible on storefront', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Default', 'value' => e(optional($languages->firstWhere('is_default', true))->code ?? '-'), 'caption' => 'Current default locale', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
-                ['label' => 'Purchased', 'value' => number_format(count($purchasedIds)), 'caption' => 'Paid language add-ons purchased', 'dot' => 'dot-violet'],
+                ['label' => __('Languages'), 'value' => number_format($languages->count()), 'caption' => __('Languages available in tenant DB'), 'dot' => 'dot-cyan'],
+                ['label' => __('Active'), 'value' => number_format($languages->where('is_active', true)->count()), 'caption' => __('Locales visible on storefront'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Default'), 'value' => e(optional($languages->firstWhere('is_default', true))->code ?? '-'), 'caption' => __('Current default locale'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Purchased'), 'value' => number_format(count($purchasedIds)), 'caption' => __('Paid language add-ons purchased'), 'dot' => 'dot-violet'],
             ],
         ]);
     }
@@ -66,7 +66,7 @@ class LanguagesPage extends ListPage
         $language->update(['is_active' => !$language->is_active]);
 
         $this->dispatch('setup-step-completed');
-        $this->toast('Language state updated successfully.');
+        $this->toast(__('Language state updated successfully.'));
     }
 
     public function makeDefault(int $languageId, TenantPanelService $service): void
@@ -74,7 +74,7 @@ class LanguagesPage extends ListPage
         $service->markDefaultLanguage(Language::query()->findOrFail($languageId));
 
         $this->dispatch('setup-step-completed');
-        $this->toast('Default language updated successfully.');
+        $this->toast(__('Default language updated successfully.'));
     }
 
     public function clearFilters(): void

@@ -28,31 +28,31 @@
     data-logo-shape="{{ $logoShape }}"
     data-logo-font-ar="{{ $logoFontAr }}"
     data-logo-font-en="{{ $logoFontEn }}">
-    <label class="field-label">Logo</label>
+    <label class="field-label">{{ __('Logo') }}</label>
 
     <input type="hidden" name="logo_mode" value="{{ $logoMode }}" data-logo-mode-input>
 
     <div class="logo-builder-modes">
-        <button type="button" class="logo-builder-mode {{ $logoMode === 'text' ? 'act' : '' }}" data-logo-mode-btn="text">Text Logo</button>
-        <button type="button" class="logo-builder-mode {{ $logoMode === 'image' ? 'act' : '' }}" data-logo-mode-btn="image">Image Logo</button>
+        <button type="button" class="logo-builder-mode {{ $logoMode === 'text' ? 'act' : '' }}" data-logo-mode-btn="text">{{ __('Text Logo') }}</button>
+        <button type="button" class="logo-builder-mode {{ $logoMode === 'image' ? 'act' : '' }}" data-logo-mode-btn="image">{{ __('Image Logo') }}</button>
     </div>
 
     {{-- ─── Text mode ─── --}}
     <div data-logo-mode-panel="text" @if($logoMode !== 'text') hidden @endif>
         <div class="logo-builder-colors">
-            <x-tenant::color name="logo_color" label="Text Color" :value="$logoColor" wrapper-class="logo-builder-color-field" />
-            <x-tenant::color name="logo_bg_color" label="Background Color" :value="$logoBgColor" allow-transparent wrapper-class="logo-builder-color-field" />
-            <x-tenant::select name="logo_shape" label="Shape" :value="$logoShape" :options="['rectangle' => 'Rectangle', 'rounded' => 'Rounded']" wrapper-class="logo-builder-shape-field" />
+            <x-tenant::color name="logo_color" :label="__('Text Color')" :value="$logoColor" wrapper-class="logo-builder-color-field" />
+            <x-tenant::color name="logo_bg_color" :label="__('Background Color')" :value="$logoBgColor" allow-transparent wrapper-class="logo-builder-color-field" />
+            <x-tenant::select name="logo_shape" :label="__('Shape')" :value="$logoShape" :options="['rectangle' => __('Rectangle'), 'rounded' => __('Rounded')]" wrapper-class="logo-builder-shape-field" />
         </div>
 
         <div class="logo-builder-grid">
             {{-- Arabic --}}
             <div class="locale-fields-group">
-                <span class="locale-badge">Arabic</span>
+                <span class="locale-badge">{{ __('Arabic') }}</span>
 
-                <x-tenant::input type="text" dir="rtl" name="logo_text_ar" label="Logo Text" :value="$logoTextAr" data-logo-text="ar" />
+                <x-tenant::input type="text" dir="rtl" name="logo_text_ar" :label="__('Logo Text')" :value="$logoTextAr" data-logo-text="ar" />
 
-                <x-tenant::field label="Font">
+                <x-tenant::field :label="__('Font')">
                     <select class="field-control" name="logo_font_ar" data-logo-font="ar">
                         @foreach($logoFonts['ar'] as $key => $font)
                             <option value="{{ $key }}" data-font-family="{{ $font['family'] }}" style="font-family:{{ $font['family'] }}" @selected($key === $logoFontAr)>{{ $font['label'] }}</option>
@@ -67,11 +67,11 @@
 
             {{-- English --}}
             <div class="locale-fields-group">
-                <span class="locale-badge">English</span>
+                <span class="locale-badge">{{ __('English') }}</span>
 
-                <x-tenant::input type="text" name="logo_text_en" label="Logo Text" :value="$logoTextEn" data-logo-text="en" />
+                <x-tenant::input type="text" name="logo_text_en" :label="__('Logo Text')" :value="$logoTextEn" data-logo-text="en" />
 
-                <x-tenant::field label="Font">
+                <x-tenant::field :label="__('Font')">
                     <select class="field-control" name="logo_font_en" data-logo-font="en">
                         @foreach($logoFonts['en'] as $key => $font)
                             <option value="{{ $key }}" data-font-family="{{ $font['family'] }}" style="font-family:{{ $font['family'] }}" @selected($key === $logoFontEn)>{{ $font['label'] }}</option>
@@ -80,7 +80,7 @@
                 </x-tenant::field>
 
                 <div class="logo-builder-preview">
-                    <span data-logo-preview="en">{{ $logoTextEn !== '' ? $logoTextEn : 'Store Name' }}</span>
+                    <span data-logo-preview="en">{{ $logoTextEn !== '' ? $logoTextEn : __('Store Name') }}</span>
                 </div>
             </div>
         </div>
@@ -91,28 +91,28 @@
         <div class="logo-builder-grid">
             {{-- Arabic --}}
             <div class="locale-fields-group">
-                <span class="locale-badge">Arabic</span>
-                <x-tenant::image-upload name="logo_upload_ar" label="Upload Arabic logo" :current="$logoPathAr" data-logo-image-input="ar" />
+                <span class="locale-badge">{{ __('Arabic') }}</span>
+                <x-tenant::image-upload name="logo_upload_ar" :label="__('Upload Arabic logo')" :current="$logoPathAr" data-logo-image-input="ar" />
                 <div class="logo-builder-preview">
                     @if($logoPathAr)
-                        <img src="{{ $logoPathAr }}" alt="Arabic logo" class="logo-preview-img" data-logo-image-preview="ar">
+                        <img src="{{ $logoPathAr }}" alt="{{ __('Arabic logo') }}" class="logo-preview-img" data-logo-image-preview="ar">
                     @else
-                        <img src="" alt="Arabic logo" class="logo-preview-img" data-logo-image-preview="ar" hidden>
-                        <span class="panel-copy t-logo-empty" data-logo-image-empty="ar">No Arabic logo uploaded.</span>
+                        <img src="" alt="{{ __('Arabic logo') }}" class="logo-preview-img" data-logo-image-preview="ar" hidden>
+                        <span class="panel-copy t-logo-empty" data-logo-image-empty="ar">{{ __('No Arabic logo uploaded.') }}</span>
                     @endif
                 </div>
             </div>
 
             {{-- English --}}
             <div class="locale-fields-group">
-                <span class="locale-badge">English</span>
-                <x-tenant::image-upload name="logo_upload_en" label="Upload English logo" :current="$logoPathEn" data-logo-image-input="en" />
+                <span class="locale-badge">{{ __('English') }}</span>
+                <x-tenant::image-upload name="logo_upload_en" :label="__('Upload English logo')" :current="$logoPathEn" data-logo-image-input="en" />
                 <div class="logo-builder-preview">
                     @if($logoPathEn)
-                        <img src="{{ $logoPathEn }}" alt="English logo" class="logo-preview-img" data-logo-image-preview="en">
+                        <img src="{{ $logoPathEn }}" alt="{{ __('English logo') }}" class="logo-preview-img" data-logo-image-preview="en">
                     @else
-                        <img src="" alt="English logo" class="logo-preview-img" data-logo-image-preview="en" hidden>
-                        <span class="panel-copy t-logo-empty" data-logo-image-empty="en">No English logo uploaded.</span>
+                        <img src="" alt="{{ __('English logo') }}" class="logo-preview-img" data-logo-image-preview="en" hidden>
+                        <span class="panel-copy t-logo-empty" data-logo-image-empty="en">{{ __('No English logo uploaded.') }}</span>
                     @endif
                 </div>
             </div>

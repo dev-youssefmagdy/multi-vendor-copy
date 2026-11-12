@@ -31,26 +31,26 @@ $shippingByCountry – array "default"|country_id → shipping amount for that r
     @endif
 
     <p class="entity-subtitle mb-4">
-        <strong>Sale Price</strong> = central catalog price &nbsp;·&nbsp;
-        <strong>Profit</strong> = your markup (% or fixed amount) &nbsp;·&nbsp;
-        <strong>Fixed Cost</strong> = shipping baked in &nbsp;·&nbsp;
-        <strong>Your Price</strong> = Sale + Profit + Fixed Cost (auto-calculated, readonly).
+        <strong>{{ __('Sale Price') }}</strong> {{ __('= central catalog price ·') }}
+        <strong>{{ __('Profit') }}</strong> {{ __('= your markup (% or fixed amount) ·') }}
+        <strong>{{ __('Fixed Cost') }}</strong> {{ __('= shipping baked in ·') }}
+        <strong>{{ __('Your Price') }}</strong> {{ __('= Sale + Profit + Fixed Cost (auto-calculated, readonly).') }}
     </p>
 
     {{-- ── Product prices ─────────────────────────────────────────────────── --}}
     @if ($hasPrices)
         <h3 style="font-size:14px;font-weight:600;color:var(--text-primary,#f1f5f9);margin-bottom:10px;">
-            Product Sell Prices
+            {{ __('Product Sell Prices') }}
         </h3>
         <div class="card" style="overflow:auto;margin-bottom:20px;">
             <table style="width:100%;border-collapse:collapse;font-size:13px;">
                 <thead>
                     <tr style="border-bottom:1px solid rgba(255,255,255,.08);">
-                        <th style="text-align:left;padding:8px 12px;color:var(--text-muted,#94a3b8);font-weight:500;">Country</th>
-                        <th style="{{ $thStyle }}">Sale Price</th>
-                        <th style="{{ $thStyle }}" colspan="2">Profit</th>
-                        <th style="{{ $thStyle }}">Fixed Cost</th>
-                        <th style="{{ $thStyle }}">Your Price</th>
+                        <th style="text-align:left;padding:8px 12px;color:var(--text-muted,#94a3b8);font-weight:500;">{{ __('Country') }}</th>
+                        <th style="{{ $thStyle }}">{{ __('Sale Price') }}</th>
+                        <th style="{{ $thStyle }}" colspan="2">{{ __('Profit') }}</th>
+                        <th style="{{ $thStyle }}">{{ __('Fixed Cost') }}</th>
+                        <th style="{{ $thStyle }}">{{ __('Your Price') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -64,9 +64,9 @@ $shippingByCountry – array "default"|country_id → shipping amount for that r
                         @endphp
                         <tr style="border-bottom:1px solid rgba(255,255,255,.04);">
                             <td style="padding:8px 12px;color:var(--text-primary,#f1f5f9);">
-                                {{ $countryLabels[(string) $countryKey] ?? ('Country #' . $countryKey) }}
+                                {{ $countryLabels[(string) $countryKey] ?? (__('Country #:id', ['id' => $countryKey])) }}
                                 @if ((string) $countryKey === 'default')
-                                    <span class="badge badge-amber" style="margin-left:6px;font-size:10px;">Fallback</span>
+                                    <span class="badge badge-amber" style="margin-left:6px;font-size:10px;">{{ __('Fallback') }}</span>
                                 @endif
                             </td>
                             <td style="{{ $tdRef }}">${{ number_format($centralSalePrice, 2) }}</td>
@@ -76,8 +76,8 @@ $shippingByCountry – array "default"|country_id → shipping amount for that r
                                     style="padding:4px 8px;font-size:12px;width:110px;"
                                     wire:model.live="priceListProfits.{{ $countryKey }}.type"
                                     wire:change="recalculateProductPrices">
-                                    <option value="percentage">% of price</option>
-                                    <option value="fixed">Fixed ($)</option>
+                                    <option value="percentage">{{ __('% of price') }}</option>
+                                    <option value="fixed">{{ __('Fixed ($)') }}</option>
                                 </select>
                             </td>
                             {{-- Profit value --}}
@@ -95,33 +95,33 @@ $shippingByCountry – array "default"|country_id → shipping amount for that r
             </table>
         </div>
     @else
-        <p class="entity-subtitle mb-4">No pricing data loaded. Please close and re-open the modal.</p>
+        <p class="entity-subtitle mb-4">{{ __('No pricing data loaded. Please close and re-open the modal.') }}</p>
     @endif
 
     {{-- ── Variant prices ──────────────────────────────────────────────────── --}}
     @if ($hasVariants)
         <h3 style="font-size:14px;font-weight:600;color:var(--text-primary,#f1f5f9);margin-bottom:10px;">
-            Variant Sell Prices
+            {{ __('Variant Sell Prices') }}
         </h3>
 
         @foreach ($priceListVariants as $variantIndex => $variantData)
             @php $realPrice = (float) ($variantData['real_price'] ?? 0); @endphp
             <div style="margin-bottom:16px;">
                 <div class="entity-subtitle" style="margin-bottom:6px;font-weight:500;color:var(--text-secondary,#cbd5e1);">
-                    {{ $variantData['label'] ?? 'Variant #' . $variantData['id'] }}
+                    {{ $variantData['label'] ?? __('Variant #:id', ['id' => $variantData['id']]) }}
                     <span style="color:var(--text-muted,#94a3b8);margin-left:8px;font-size:11px;">
-                        cost: ${{ number_format($realPrice, 2) }}
+                        {{ __('cost: $:realPrice', ['realPrice' => number_format($realPrice, 2)]) }}
                     </span>
                 </div>
                 <div class="card" style="overflow:auto;">
                     <table style="width:100%;border-collapse:collapse;font-size:13px;">
                         <thead>
                             <tr style="border-bottom:1px solid rgba(255,255,255,.08);">
-                                <th style="text-align:left;padding:8px 12px;color:var(--text-muted,#94a3b8);font-weight:500;">Country</th>
-                                <th style="{{ $thStyle }}">Cost Price</th>
-                                <th style="{{ $thStyle }}" colspan="2">Profit</th>
-                                <th style="{{ $thStyle }}">Fixed Cost</th>
-                                <th style="{{ $thStyle }}">Your Price</th>
+                                <th style="text-align:left;padding:8px 12px;color:var(--text-muted,#94a3b8);font-weight:500;">{{ __('Country') }}</th>
+                                <th style="{{ $thStyle }}">{{ __('Cost Price') }}</th>
+                                <th style="{{ $thStyle }}" colspan="2">{{ __('Profit') }}</th>
+                                <th style="{{ $thStyle }}">{{ __('Fixed Cost') }}</th>
+                                <th style="{{ $thStyle }}">{{ __('Your Price') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -135,9 +135,9 @@ $shippingByCountry – array "default"|country_id → shipping amount for that r
                                 @endphp
                                 <tr style="border-bottom:1px solid rgba(255,255,255,.04);">
                                     <td style="padding:8px 12px;color:var(--text-primary,#f1f5f9);">
-                                        {{ $countryLabels[(string) $countryKey] ?? ('Country #' . $countryKey) }}
+                                        {{ $countryLabels[(string) $countryKey] ?? (__('Country #:id', ['id' => $countryKey])) }}
                                         @if ((string) $countryKey === 'default')
-                                            <span class="badge badge-amber" style="margin-left:6px;font-size:10px;">Fallback</span>
+                                            <span class="badge badge-amber" style="margin-left:6px;font-size:10px;">{{ __('Fallback') }}</span>
                                         @endif
                                     </td>
                                     <td style="{{ $tdRef }}">${{ number_format($realPrice, 2) }}</td>
@@ -147,8 +147,8 @@ $shippingByCountry – array "default"|country_id → shipping amount for that r
                                             style="padding:4px 8px;font-size:12px;width:110px;"
                                             wire:model.live="priceListVariants.{{ $variantIndex }}.profits.{{ $countryKey }}.type"
                                             wire:change="recalculateVariantPrices({{ $variantIndex }})">
-                                            <option value="percentage">% of price</option>
-                                            <option value="fixed">Fixed ($)</option>
+                                            <option value="percentage">{{ __('% of price') }}</option>
+                                            <option value="fixed">{{ __('Fixed ($)') }}</option>
                                         </select>
                                     </td>
                                     {{-- Profit value --}}
@@ -173,12 +173,12 @@ $shippingByCountry – array "default"|country_id → shipping amount for that r
     <div class="flex gap-3 justify-end"
         style="margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08);">
         <button type="button" class="btn btn-secondary btn-sm" wire:click="closePriceListModal">
-            Cancel
+            {{ __('Cancel') }}
         </button>
         <button type="button" class="btn btn-primary btn-sm" wire:click="savePriceList" wire:loading.attr="disabled"
             wire:target="savePriceList">
-            <span wire:loading.remove wire:target="savePriceList">Save Prices</span>
-            <span wire:loading wire:target="savePriceList">Saving…</span>
+            <span wire:loading.remove wire:target="savePriceList">{{ __('Save Prices') }}</span>
+            <span wire:loading wire:target="savePriceList">{{ __('Saving…') }}</span>
         </button>
     </div>
 

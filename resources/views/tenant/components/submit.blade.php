@@ -1,7 +1,7 @@
 @props([
     'variant' => 'primary',
     'icon' => null,
-    'loadingText' => 'Saving…',
+    'loadingText' => __('Saving…'),
     'size' => null,
 ])
 

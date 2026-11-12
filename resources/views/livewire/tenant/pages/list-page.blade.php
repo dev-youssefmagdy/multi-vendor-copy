@@ -6,13 +6,13 @@
         $records = $records ?? null;
         $actionUrl = $actionUrl ?? null;
         $actionMethod = $actionMethod ?? null;
-        $emptyTitle = $emptyTitle ?? 'No records found';
-        $emptyCopy = $emptyCopy ?? 'No tenant records match the current filters yet.';
+        $emptyTitle = $emptyTitle ?? __('No records found');
+        $emptyCopy = $emptyCopy ?? __('No tenant records match the current filters yet.');
         $modalModel = $modalModel ?? null;
-        $modalTitle = $modalTitle ?? 'Manage Record';
+        $modalTitle = $modalTitle ?? __('Manage Record');
         $modalCloseAction = $modalCloseAction ?? 'closeModal';
         $modalSubmitAction = $modalSubmitAction ?? 'save';
-        $modalSubmitLabel = $modalSubmitLabel ?? 'Save';
+        $modalSubmitLabel = $modalSubmitLabel ?? __('Save');
         $modalFieldGroups = $modalFieldGroups ?? [];
         $modalMaxWidth = $modalMaxWidth ?? '2xl';
         $statisticsGridClass = $statisticsGridClass ?? (count($statistics) > 3 ? 'g-stats4' : 'g-stats3');
@@ -34,7 +34,7 @@
         </div>
         <div class="page-actions">
             @if ($exportable ?? false)
-                <x-btn variant="secondary" class="xs-hide" type="button" wire:click="export">Export</x-btn>
+                <x-btn variant="secondary" class="xs-hide" type="button" wire:click="export">{{ __('Export') }}</x-btn>
             @endif
             @if (!empty($secondaryActionLabel) && $secondaryActionUrl)
                 <a href="{{ $secondaryActionUrl }}" class="btn btn-secondary">{{ $secondaryActionLabel }}</a>
@@ -53,11 +53,11 @@
 
     @if (!empty($recommendations ?? []))
         <div class="card section-gap fu d1" style="padding:16px 20px;">
-            <div class="panel-title" style="margin-bottom:6px;">Best gateways for you</div>
-            <p class="panel-copy" style="margin-bottom:8px;">Based on the countries you sell to, these gateways are most likely to accept payments from your customers.</p>
+            <div class="panel-title" style="margin-bottom:6px;">{{ __('Best gateways for you') }}</div>
+            <p class="panel-copy" style="margin-bottom:8px;">{{ __('Based on the countries you sell to, these gateways are most likely to accept payments from your customers.') }}</p>
             <div class="flex gap-2" style="flex-wrap:wrap;">
                 @foreach ($recommendations as $rec)
-                    <span class="badge badge-cyan">{{ $rec['name'] }} ({{ $rec['score'] }} {{ $rec['score'] === 1 ? 'country' : 'countries' }} matched)</span>
+                    <span class="badge badge-cyan">{{ $rec['score'] === 1 ? __(':name (:score country matched)', ['name' => $rec['name'], 'score' => $rec['score']]) : __(':name (:score countries matched)', ['name' => $rec['name'], 'score' => $rec['score']]) }}</span>
                 @endforeach
             </div>
         </div>
@@ -70,7 +70,7 @@
                 <p class="panel-copy">{{ $filtersDescription }}</p>
             </div>
             <div class="filters-summary-meta">
-                <span class="filter-pill">Tenant</span>
+                <span class="filter-pill">{{ __('Tenant') }}</span>
                 <svg class="filters-chevron" width="14" height="14" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor" stroke-width="2.5">
                     <polyline points="6 9 12 15 18 9" />
@@ -81,7 +81,7 @@
         <div class="filters-grid">
             @forelse ($filterFields as $field)
                 <div>
-                    <label class="field-label">{{ $field['label'] }}</label>
+                    <label class="field-label">{{ __($field['label']) }}</label>
                     @if (($field['type'] ?? 'text') === 'select')
                         @if (!empty($field['multiple']))
                             <x-select multiple wire:model.live="{{ $field['model'] }}"
@@ -128,18 +128,18 @@
                 </div>
             @empty
                 <div>
-                    <label class="field-label">Keyword</label>
-                    <x-input placeholder="Search {{ strtolower($title) }}" />
+                    <label class="field-label">{{ __('Keyword') }}</label>
+                    <x-input :placeholder="__('Search :title', ['title' => strtolower($title)])" />
                 </div>
             @endforelse
         </div>
 
         <div class="filters-actions">
             <p class="filters-note">
-                {{ $filtersNote ?? 'Filters are wired to repository-backed tenant queries for this module.' }}
+                {{ $filtersNote ?? __('Filters are wired to repository-backed tenant queries for this module.') }}
             </p>
             <div class="page-actions compact-actions">
-                <x-btn type="button" variant="secondary" wire:click="clearFilters">Reset</x-btn>
+                <x-btn type="button" variant="secondary" wire:click="clearFilters">{{ __('Reset') }}</x-btn>
             </div>
         </div>
     </details>
@@ -149,12 +149,12 @@
             <div class="card {{ $stat['glow'] ?? '' }} fu d{{ min($loop->iteration, 6) }}">
                 <div class="stat-head">
                     <div>
-                        <div class="eyebrow">{{ $stat['label'] }}</div>
+                        <div class="eyebrow">{{ __($stat['label']) }}</div>
                         <div class="D stat-value">{{ $stat['value'] }}</div>
                     </div>
                     <div class="mini-stat-dot {{ $stat['dot'] ?? 'dot-cyan' }}"></div>
                 </div>
-                <p class="panel-copy">{{ $stat['caption'] }}</p>
+                <p class="panel-copy">{{ __($stat['caption']) }}</p>
             </div>
         @endforeach
     </div>
@@ -167,7 +167,7 @@
             </div>
             <div class="table-header-actions">
                 @if (collect($filterFields)->contains(fn($field) => ($field['model'] ?? null) === 'search'))
-                    <x-input wire:model.live.debounce.300ms="search" placeholder="Quick search" class="table-search" />
+                    <x-input wire:model.live.debounce.300ms="search" :placeholder="__('Quick search')" class="table-search" />
                 @endif
             </div>
         </div>
@@ -194,10 +194,9 @@
         <div class="table-footer-shell">
             <div class="panel-copy">
                 @if ($records)
-                    Showing {{ $records->firstItem() ?? 0 }} to {{ $records->lastItem() ?? 0 }} of {{ $records->total() }}
-                    records for {{ strtolower($title) }}.
+                    {{ __('Showing :firstItem to :lastItem of :total records for :title.', ['firstItem' => $records->firstItem() ?? 0, 'lastItem' => $records->lastItem() ?? 0, 'total' => $records->total(), 'title' => strtolower($title)]) }}
                 @else
-                    Showing 0 to 0 of 0 records for {{ strtolower($title) }}.
+                    {{ __('Showing 0 to 0 of 0 records for :title.', ['title' => strtolower($title)]) }}
                 @endif
             </div>
             <div class="pagination-shell">
@@ -217,11 +216,11 @@
                 <form wire:submit="{{ $modalSubmitAction }}" class="page-stack">
                     @include($modalContentView, $modalContentData)
                     <div class="page-actions compact-actions justify-end">
-                        <x-btn type="button" variant="secondary" wire:click="{{ $modalCloseAction }}">Cancel</x-btn>
+                        <x-btn type="button" variant="secondary" wire:click="{{ $modalCloseAction }}">{{ __('Cancel') }}</x-btn>
                         <x-btn type="submit" wire:loading.attr="disabled" wire:loading.class="opacity-60 cursor-not-allowed"
                             wire:target="{{ $modalSubmitAction }}">
                             <span wire:loading.remove wire:target="{{ $modalSubmitAction }}">{{ $modalSubmitLabel }}</span>
-                            <span wire:loading wire:target="{{ $modalSubmitAction }}">Saving…</span>
+                            <span wire:loading wire:target="{{ $modalSubmitAction }}">{{ __('Saving…') }}</span>
                         </x-btn>
                     </div>
                 </form>
@@ -231,7 +230,7 @@
                         <div class="form-grid {{ $group['gridClass'] ?? '' }}">
                             @foreach ($group['fields'] as $field)
                                 <div class="{{ $field['wrapperClass'] ?? '' }}">
-                                    <label class="field-label">{{ $field['label'] }}</label>
+                                    <label class="field-label">{{ __($field['label']) }}</label>
                                     @if (($field['type'] ?? 'text') === 'editor')
                                         <div wire:key="{{ $field['editorKey'] ?? $field['model'] }}">
                                             <x-editor model="{{ $field['model'] }}" :value="data_get($this, $field['model'])"
@@ -289,7 +288,7 @@
                     @if (!empty($credentialFields))
                         @if (count($credentialFields) > 0)
                             <div>
-                                <label class="field-label">Credentials</label>
+                                <label class="field-label">{{ __('Credentials') }}</label>
                                 <div class="pg-credentials-list">
                                     @foreach ($credentialFields as $index => $cred)
                                         @if($cred['key'] == 'sandbox')
@@ -298,7 +297,7 @@
                                                     <code class="pg-credential-code">{{ $cred['key'] }}</code>
                                                 </div>
                                                 <div class="pg-credential-input-col">
-                                                    <x-checkbox wire:model.defer="requiredFields.{{ $index }}.value" label="Sandbox mode" />
+                                                    <x-checkbox wire:model.defer="requiredFields.{{ $index }}.value" :label="__('Sandbox mode')" />
                                                     @error("requiredFields.{$index}.value")
                                                         <div class="field-error">{{ $message }}</div>
                                                     @enderror
@@ -311,7 +310,7 @@
                                                 </div>
                                                 <div class="pg-credential-input-col">
                                                     <x-input type="password" wire:model.defer="requiredFields.{{ $index }}.value"
-                                                        placeholder="Enter {{ str($cred['key'])->headline()->lower() }}" autocomplete="off" />
+                                                        :placeholder="__('Enter :lower', ['lower' => str($cred['key'])->headline()->lower()])" autocomplete="off" />
                                                     @error("requiredFields.{$index}.value")
                                                         <div class="field-error">{{ $message }}</div>
                                                     @enderror
@@ -323,22 +322,22 @@
                             </div>
                         @else
                             <div class="empty-state" style="padding:16px 0;">
-                                <div class="empty-state-title">No credentials required</div>
-                                <p class="empty-state-copy">This gateway has no credential keys defined.</p>
+                                <div class="empty-state-title">{{ __('No credentials required') }}</div>
+                                <p class="empty-state-copy">{{ __('This gateway has no credential keys defined.') }}</p>
                             </div>
                         @endif
                     @endif
 
                     @if (!empty($webhookUrl ?? ''))
                         <div>
-                            <label class="field-label">Webhook URL</label>
+                            <label class="field-label">{{ __('Webhook URL') }}</label>
                             <x-input type="text" value="{{ $webhookUrl }}" readonly onclick="this.select()" />
-                            <p class="field-hint">Paste this URL into your gateway's dashboard so it can notify us of payment events.</p>
+                            <p class="field-hint">{{ __('Paste this URL into your gateway\'s dashboard so it can notify us of payment events.') }}</p>
                         </div>
                     @endif
 
                     <div class="page-actions compact-actions justify-end">
-                        <x-btn type="button" variant="secondary" wire:click="{{ $modalCloseAction }}">Cancel</x-btn>
+                        <x-btn type="button" variant="secondary" wire:click="{{ $modalCloseAction }}">{{ __('Cancel') }}</x-btn>
                         <x-btn type="submit">{{ $modalSubmitLabel }}</x-btn>
                     </div>
                 </form>
@@ -355,7 +354,7 @@
                     @include($em['contentView'], $em['contentData'] ?? [])
                 @endif
                 <div class="page-actions compact-actions justify-end">
-                    <x-btn type="button" variant="secondary" wire:click="{{ $em['closeAction'] ?? 'closeModal' }}">Close</x-btn>
+                    <x-btn type="button" variant="secondary" wire:click="{{ $em['closeAction'] ?? 'closeModal' }}">{{ __('Close') }}</x-btn>
                 </div>
             </x-modal>
         @endif

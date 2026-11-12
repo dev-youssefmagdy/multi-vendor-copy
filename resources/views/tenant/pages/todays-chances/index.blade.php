@@ -1,6 +1,6 @@
 @extends('tenant.layouts.app')
 
-@section('title', "Today's chances")
+@section('title', __('Today\'s chances'))
 
 {{--
     Today's chances — every winning opportunity, 12 per page.
@@ -26,20 +26,20 @@
     <div class="tc-page">
         <div class="db-welcome fu d0">
             <div class="db-welcome-copy">
-                <h1 class="db-welcome-title">Welcome back, {{ tenant('name') ?? 'your store' }}</h1>
-                <p class="db-welcome-sub">These are your store's most important opportunities, actions, and results all in one place.</p>
+                <h1 class="db-welcome-title">{{ __('Welcome back, :value', ['value' => tenant('name') ?? __('your store')]) }}</h1>
+                <p class="db-welcome-sub">{{ __('These are your store\'s most important opportunities, actions, and results all in one place.') }}</p>
             </div>
             {{-- Market selector — flag dropdown; UI only until the backend provides markets. --}}
             <x-tenant::country-picker trigger-class="tc-country">
-                <span data-country-label>Select your country</span>
+                <span data-country-label>{{ __('Select your country') }}</span>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 9l-6 6-6-6"/></svg>
             </x-tenant::country-picker>
         </div>
 
         @if($products->total() === 0)
             <div class="pm-empty fu d1">
-                <h3>No opportunities yet</h3>
-                <p>Add products with cost prices set to see opportunities here.</p>
+                <h3>{{ __('No opportunities yet') }}</h3>
+                <p>{{ __('Add products with cost prices set to see opportunities here.') }}</p>
             </div>
         @else
             <div class="tc-grid fu d1">
@@ -48,18 +48,18 @@
                 @endforeach
             </div>
 
-            <nav class="tc-pagination" aria-label="Opportunities pages">
-                <p>Show <strong>{{ $count }}</strong> of {{ $total }} result</p>
+            <nav class="tc-pagination" aria-label="{{ __('Opportunities pages') }}">
+                <p>{{ __('Show') }} <strong>{{ $count }}</strong> {{ __('of :total result', ['total' => $total]) }}</p>
                 <div class="tc-pages">
                     @if($page > 1)
                         <a href="{{ $pageUrl($page - 1) }}" class="tc-page-btn is-text" rel="prev">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
-                            Previous
+                            {{ __('Previous') }}
                         </a>
                     @else
                         <span class="tc-page-btn is-text is-disabled" aria-disabled="true">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
-                            Previous
+                            {{ __('Previous') }}
                         </span>
                     @endif
 
@@ -76,12 +76,12 @@
 
                     @if($page < $lastPage)
                         <a href="{{ $pageUrl($page + 1) }}" class="tc-page-btn is-next" rel="next">
-                            Next
+                            {{ __('Next') }}
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
                         </a>
                     @else
                         <span class="tc-page-btn is-next is-disabled" aria-disabled="true">
-                            Next
+                            {{ __('Next') }}
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
                         </span>
                     @endif

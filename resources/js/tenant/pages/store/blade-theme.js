@@ -1,6 +1,7 @@
 import '@tenant-css/pages/blade-theme.css';
 import { upload } from '@tenant/core/http.js';
 import { toast } from '@tenant/core/toast.js';
+import { t } from '../../core/i18n.js';
 
 const form = document.getElementById('bt-upload-form');
 
@@ -18,7 +19,7 @@ if (form) {
         event.stopImmediatePropagation();
 
         if (!fileInput?.files?.length) {
-            toast.error('Please choose a theme ZIP to upload.');
+            toast.error(t('Please choose a theme ZIP to upload.'));
             return;
         }
 

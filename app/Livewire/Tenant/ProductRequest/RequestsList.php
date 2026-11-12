@@ -17,9 +17,9 @@ class RequestsList extends TenantPage
     protected function pageMeta(): array
     {
         return [
-            'title'       => 'Product Requests',
-            'badge'       => 'Catalog',
-            'description' => 'Track the status of your product requests to the Neozena team.',
+            'title'       => __('Product Requests'),
+            'badge'       => __('Catalog'),
+            'description' => __('Track the status of your product requests to the Neozena team.'),
         ];
     }
 

@@ -11,13 +11,13 @@
     <div class="page-head fu d0">
         <div>
             <div class="page-title-row">
-                <h1 class="D page-title">Account Settings</h1>
-                <span class="page-badge">Profile</span>
+                <h1 class="D page-title">{{ __('Account Settings') }}</h1>
+                <span class="page-badge">{{ __('Profile') }}</span>
             </div>
-            <p class="page-copy">Manage your admin credentials and store identity.</p>
+            <p class="page-copy">{{ __('Manage your admin credentials and store identity.') }}</p>
         </div>
         <div class="page-actions">
-            <x-btn type="submit" form="account-settings-form">Save Changes</x-btn>
+            <x-btn type="submit" form="account-settings-form">{{ __('Save Changes') }}</x-btn>
         </div>
     </div>
 
@@ -38,9 +38,9 @@
                     </div>
                 </div>
                 <div class="acct-avatar-meta">
-                    <div class="acct-avatar-name D">{{ $adminName ?: 'Admin' }}</div>
+                    <div class="acct-avatar-name D">{{ $adminName ?: __('Admin') }}</div>
                     <div class="acct-avatar-email">{{ $adminEmail }}</div>
-                    <span class="page-badge" style="margin-top:8px;">Store Admin</span>
+                    <span class="page-badge" style="margin-top:8px;">{{ __('Store Admin') }}</span>
                 </div>
                 <div class="acct-info-list">
                     <div class="acct-info-row">
@@ -76,34 +76,34 @@
                         </svg>
                     </div>
                     <div>
-                        <h3 class="panel-title">Profile &amp; Store Identity</h3>
-                        <p class="panel-copy">Your admin credentials and storefront-facing details.</p>
+                        <h3 class="panel-title">{{ __('Profile & Store Identity') }}</h3>
+                        <p class="panel-copy">{{ __('Your admin credentials and storefront-facing details.') }}</p>
                     </div>
                 </div>
                 <div class="form-grid form-grid-2">
                     <div>
-                        <label class="field-label">Admin Name</label>
+                        <label class="field-label">{{ __('Admin Name') }}</label>
                         <x-input type="text" name="adminName"
                                  value="{{ old('adminName', $adminName) }}"
                                  :error="$errors->has('adminName')" />
                         @error('adminName')<div class="field-error">{{ $message }}</div>@enderror
                     </div>
                     <div>
-                        <label class="field-label">Admin Email</label>
+                        <label class="field-label">{{ __('Admin Email') }}</label>
                         <x-input type="email" name="adminEmail"
                                  value="{{ old('adminEmail', $adminEmail) }}"
                                  :error="$errors->has('adminEmail')" />
                         @error('adminEmail')<div class="field-error">{{ $message }}</div>@enderror
                     </div>
                     <div>
-                        <label class="field-label">Store Phone</label>
+                        <label class="field-label">{{ __('Store Phone') }}</label>
                         <x-input type="tel" name="phone" data-phone-input
                                  value="{{ old('phone', $phone) }}"
                                  :error="$errors->has('phone')" />
                         @error('phone')<div class="field-error">{{ $message }}</div>@enderror
                     </div>
                     <div>
-                        <label class="field-label">Shop Name</label>
+                        <label class="field-label">{{ __('Shop Name') }}</label>
                         <x-input type="text" name="shopName"
                                  value="{{ old('shopName', $shopName) }}"
                                  :error="$errors->has('shopName')" />
@@ -122,20 +122,20 @@
                         </svg>
                     </div>
                     <div>
-                        <h3 class="panel-title">Store Details</h3>
-                        <p class="panel-copy">Details shown to customers on your storefront.</p>
+                        <h3 class="panel-title">{{ __('Store Details') }}</h3>
+                        <p class="panel-copy">{{ __('Details shown to customers on your storefront.') }}</p>
                     </div>
                 </div>
                 <div class="form-grid form-grid-2">
                     <div class="acct-span-full">
-                        <label class="field-label">Store Description</label>
+                        <label class="field-label">{{ __('Store Description') }}</label>
                         <x-input type="text" name="description"
                                  value="{{ old('description', $description) }}"
                                  :error="$errors->has('description')" />
                         @error('description')<div class="field-error">{{ $message }}</div>@enderror
                     </div>
                     <div class="acct-span-full">
-                        <label class="field-label">Address</label>
+                        <label class="field-label">{{ __('Address') }}</label>
                         <x-input type="text" name="address"
                                  value="{{ old('address', $address) }}"
                                  :error="$errors->has('address')" />
@@ -154,23 +154,23 @@
                         </svg>
                     </div>
                     <div>
-                        <h3 class="panel-title">Password &amp; Security</h3>
-                        <p class="panel-copy">Leave blank to keep your current password.</p>
+                        <h3 class="panel-title">{{ __('Password & Security') }}</h3>
+                        <p class="panel-copy">{{ __('Leave blank to keep your current password.') }}</p>
                     </div>
                 </div>
                 <div class="form-grid form-grid-2">
                     <div class="acct-span-full">
-                        <label class="field-label">New Password</label>
+                        <label class="field-label">{{ __('New Password') }}</label>
                         <x-input type="password" name="password"
                                  :error="$errors->has('password')" />
                         @error('password')<div class="field-error">{{ $message }}</div>@enderror
-                        <p class="acct-hint">Minimum 6 characters. Leave empty to keep your current password.</p>
+                        <p class="acct-hint">{{ __('Minimum 6 characters. Leave empty to keep your current password.') }}</p>
                     </div>
                 </div>
             </section>
 
             <div class="acct-mobile-save">
-                <x-btn type="submit" form="account-settings-form">Save Changes</x-btn>
+                <x-btn type="submit" form="account-settings-form">{{ __('Save Changes') }}</x-btn>
             </div>
 
         </div>

@@ -58,9 +58,9 @@ class OrderDetailPage extends TenantPage
     protected function pageMeta(): array
     {
         return [
-            'title' => $this->order['uuid'] ?? 'Order Details',
-            'badge' => 'Sales',
-            'description' => 'Full order detail — financials, line items, shipping address, and gateway payload.',
+            'title' => $this->order['uuid'] ?? __('Order Details'),
+            'badge' => __('Sales'),
+            'description' => __('Full order detail — financials, line items, shipping address, and gateway payload.'),
         ];
     }
 

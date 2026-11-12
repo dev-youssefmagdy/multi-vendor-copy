@@ -14,30 +14,30 @@ Variables injected via modalContentData:
     {{-- ── Cost breakdown ──────────────────────────────────────────────── --}}
     <div class="settle-breakdown">
         <div class="settle-row">
-            <span class="settle-label">Product Cost</span>
+            <span class="settle-label">{{ __('Product Cost') }}</span>
             <span class="settle-value">${{ number_format((float) data_get($breakdown, 'product_cost', 0), 2) }}</span>
         </div>
         <div class="settle-row">
-            <span class="settle-label">Shipping Cost</span>
+            <span class="settle-label">{{ __('Shipping Cost') }}</span>
             <span class="settle-value">${{ number_format((float) data_get($breakdown, 'shipping_cost', 0), 2) }}</span>
         </div>
         <div class="settle-row settle-subtotal">
-            <span class="settle-label">Subtotal</span>
+            <span class="settle-label">{{ __('Subtotal') }}</span>
             <span class="settle-value">${{ number_format((float) data_get($breakdown, 'subtotal', 0), 2) }}</span>
         </div>
         <div class="settle-row settle-fee {{ data_get($breakdown, 'gateway_fee', 0) > 0 ? '' : 'settle-fee-zero' }}">
-            <span class="settle-label">Gateway Fee</span>
+            <span class="settle-label">{{ __('Gateway Fee') }}</span>
             <span class="settle-value">+${{ number_format((float) data_get($breakdown, 'gateway_fee', 0), 2) }}</span>
         </div>
         <div class="settle-row settle-total">
-            <span class="settle-label">Total to Pay</span>
+            <span class="settle-label">{{ __('Total to Pay') }}</span>
             <span class="settle-value">${{ number_format((float) data_get($breakdown, 'total', 0), 2) }}</span>
         </div>
     </div>
 
     {{-- ── Gateway selection ──────────────────────────────────────────── --}}
     <div>
-        <label class="field-label">Payment Gateway <span class="field-required">*</span></label>
+        <label class="field-label">{{ __('Payment Gateway') }} <span class="field-required">*</span></label>
         @if (!empty($gateways))
             <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
                 @foreach ($gateways as $gw)
@@ -77,12 +77,12 @@ Variables injected via modalContentData:
                 <div class="field-error" style="margin-top:6px;">{{ $message }}</div>
             @enderror
             <p class="text-xs text-gray-400 mt-1" style="font-size:12px;color:var(--t3);margin-top:6px;">
-                Fee is recalculated automatically when you pick a gateway.
+                {{ __('Fee is recalculated automatically when you pick a gateway.') }}
             </p>
         @else
             <div class="empty-state" style="padding:16px 0;">
-                <div class="empty-state-title">No payment gateways configured</div>
-                <p class="empty-state-copy">Please contact the platform administrator to enable payment gateways.</p>
+                <div class="empty-state-title">{{ __('No payment gateways configured') }}</div>
+                <p class="empty-state-copy">{{ __('Please contact the platform administrator to enable payment gateways.') }}</p>
             </div>
         @endif
     </div>
@@ -108,12 +108,12 @@ Variables injected via modalContentData:
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                 </svg>
-                Secure card details
+                {{ __('Secure card details') }}
             </div>
 
             @if ($activeInlineGateway['code'] === 'stripe')
                 <div>
-                    <label class="field-label">Card</label>
+                    <label class="field-label">{{ __('Card') }}</label>
                     <div id="vps-stripe-card-element"
                          style="border:1.5px solid var(--border);border-radius:8px;padding:11px 14px;background:var(--input-bg,var(--card));min-height:42px;">
                     </div>
@@ -123,18 +123,18 @@ Variables injected via modalContentData:
             @else
                 <div class="form-grid form-grid-1" style="gap:10px;">
                     <div>
-                        <label class="field-label">Card number</label>
+                        <label class="field-label">{{ __('Card number') }}</label>
                         <x-input type="text" id="vps-card-number" inputmode="numeric" autocomplete="cc-number"
                                  placeholder="1234  5678  9012  3456" />
                     </div>
                     <div class="form-grid form-grid-2" style="gap:10px;">
                         <div>
-                            <label class="field-label">Expiry</label>
+                            <label class="field-label">{{ __('Expiry') }}</label>
                             <x-input type="text" id="vps-card-expiry" inputmode="numeric" autocomplete="cc-exp"
-                                     placeholder="MM / YY" maxlength="7" />
+                                     :placeholder="__('MM / YY')" maxlength="7" />
                         </div>
                         <div>
-                            <label class="field-label">CVC</label>
+                            <label class="field-label">{{ __('CVC') }}</label>
                             <x-input type="text" id="vps-card-cvc" inputmode="numeric" autocomplete="cc-csc"
                                      placeholder="•••" maxlength="4" />
                         </div>
@@ -269,7 +269,7 @@ Variables injected via modalContentData:
                 // ── Stripe ─────────────────────────────────────────────
                 if (gateway === 'stripe') {
                     if (!_vpsStripe || !_vpsStripeCard) {
-                        alert('Stripe.js is still loading. Please try again in a moment.');
+                        alert(@js(__('Stripe.js is still loading. Please try again in a moment.')));
                         return;
                     }
                     const { token, error } = await _vpsStripe.createToken(_vpsStripeCard);
@@ -285,7 +285,7 @@ Variables injected via modalContentData:
 
                 // ── Authorize.Net ──────────────────────────────────────
                 if (gateway === 'authorize_net') {
-                    if (typeof Accept === 'undefined') { alert('Accept.js is still loading.'); return; }
+                    if (typeof Accept === 'undefined') { alert(@js(__('Accept.js is still loading.'))); return; }
                     const rawExp = document.getElementById('vps-card-expiry')?.value.replace(/\s/g, '') ?? '';
                     const [mon, yr] = rawExp.split('/');
                     const secureData = {
@@ -300,7 +300,7 @@ Variables injected via modalContentData:
                     Accept.dispatchData(secureData, async (response) => {
                         if (response.messages.resultCode === 'Error') {
                             const el = document.getElementById('vps-card-errors');
-                            if (el) { el.textContent = response.messages.message?.[0]?.text ?? 'Card error'; el.style.display = ''; }
+                            if (el) { el.textContent = response.messages.message?.[0]?.text ?? @js(__('Card error')); el.style.display = ''; }
                             return;
                         }
                         await $wire.set('settleAuthnetDesc',  response.opaqueData.dataDescriptor);
@@ -312,7 +312,7 @@ Variables injected via modalContentData:
 
                 // ── 2Checkout ──────────────────────────────────────────
                 if (gateway === '2checkout') {
-                    if (typeof TCO === 'undefined') { alert('2Pay.js is still loading.'); return; }
+                    if (typeof TCO === 'undefined') { alert(@js(__('2Pay.js is still loading.'))); return; }
                     const rawExp = document.getElementById('vps-card-expiry')?.value.replace(/\s/g, '') ?? '';
                     const [mon, yr] = rawExp.split('/');
                     TCO.requestToken({
@@ -325,7 +325,7 @@ Variables injected via modalContentData:
                     }, async (data) => {
                         if (data.errorCode > 0) {
                             const el = document.getElementById('vps-card-errors');
-                            if (el) { el.textContent = data.errorMsg ?? 'Card error'; el.style.display = ''; }
+                            if (el) { el.textContent = data.errorMsg ?? @js(__('Card error')); el.style.display = ''; }
                             return;
                         }
                         await $wire.set('settleTwocoToken', data.token.token);

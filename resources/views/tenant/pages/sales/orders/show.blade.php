@@ -1,17 +1,17 @@
 @extends('tenant.layouts.app')
 
-@section('title', $order['uuid'] ?? 'Order Details')
+@section('title', $order['uuid'] ?? __('Order Details'))
 
 @section('content')
-    <x-tenant::page-header :title="$order['uuid'] ?? 'Order Details'" badge="Sales" description="Full order detail — financials, line items, shipping address, and gateway payload.">
+    <x-tenant::page-header :title="$order['uuid'] ?? __('Order Details')" :badge="__('Sales')" :description="__('Full order detail — financials, line items, shipping address, and gateway payload.')">
         <x-slot:actions>
             @if(!empty($afterSales['can_cancel']))
                 <button type="button" class="btn" style="background:var(--red);color:#fff" data-modal-open="cancel-order-modal">{{ __('Cancel order') }}</button>
             @endif
             @if(!empty($settlement))
-                <a class="btn btn-primary" href="#pay-central">Pay platform</a>
+                <a class="btn btn-primary" href="#pay-central">{{ __('Pay platform') }}</a>
             @endif
-            <a class="btn btn-secondary" href="{{ route('tenant.orders.index') }}">← Orders</a>
+            <a class="btn btn-secondary" href="{{ route('tenant.orders.index') }}">{{ __('← Orders') }}</a>
         </x-slot:actions>
     </x-tenant::page-header>
 

@@ -93,15 +93,15 @@ class ProductsList extends ListPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Products',
-            'badge' => 'Catalog',
-            'description' => 'Manage tenant-scoped product details, pricing, availability, and featured status.',
+            'title' => __('Products'),
+            'badge' => __('Catalog'),
+            'description' => __('Manage tenant-scoped product details, pricing, availability, and featured status.'),
             // 'actionLabel' => 'Add Product',
             // 'actionUrl' => route('tenant.products.create'),
-            'secondaryActionLabel' => 'Sort Products',
+            'secondaryActionLabel' => __('Sort Products'),
             'secondaryActionUrl' => route('tenant.products.sort'),
-            'tableTitle' => 'Vendor Products',
-            'headers' => ['Product', 'Central Price', 'Vendor Price', 'AI Price', 'Stock', 'Status', 'Categories', 'Updated At', 'Actions'],
+            'tableTitle' => __('Vendor Products'),
+            'headers' => [__('Product'), __('Central Price'), __('Vendor Price'), __('AI Price'), __('Stock'), __('Status'), __('Categories'), __('Updated At'), __('Actions')],
         ];
     }
 
@@ -128,15 +128,15 @@ class ProductsList extends ListPage
             'imageSearchIds' => $this->imageSearchIds,
             'imageSearchActive' => $this->imageSearchActive,
             'filterFields' => [
-                ['label' => 'Search', 'model' => 'search', 'placeholder' => 'Name or slug'],
-                ['label' => 'Status', 'model' => 'statusFilter', 'type' => 'select', 'options' => ['' => 'All', 'active' => 'Active', 'inactive' => 'Inactive']],
-                ['label' => 'Stock', 'model' => 'stockFilter', 'type' => 'select', 'options' => ['' => 'All', 'in' => 'In Stock', 'partial' => 'Partially Out of Stock', 'out' => 'Out of Stock']],
-                ['label' => 'Category', 'model' => 'categoryFilter', 'type' => 'select', 'options' => $categoryOptions],
+                ['label' => __('Search'), 'model' => 'search', 'placeholder' => __('Name or slug')],
+                ['label' => __('Status'), 'model' => 'statusFilter', 'type' => 'select', 'options' => ['' => __('All'), 'active' => __('Active'), 'inactive' => __('Inactive')]],
+                ['label' => __('Stock'), 'model' => 'stockFilter', 'type' => 'select', 'options' => ['' => __('All'), 'in' => __('In Stock'), 'partial' => __('Partially Out of Stock'), 'out' => __('Out of Stock')]],
+                ['label' => __('Category'), 'model' => 'categoryFilter', 'type' => 'select', 'options' => $categoryOptions],
             ],
             'statistics' => [
-                ['label' => 'Products', 'value' => number_format($stats['total']), 'caption' => 'Products in this tenant catalog', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
-                ['label' => 'Active', 'value' => number_format($stats['active']), 'caption' => 'Currently saleable products', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Featured', 'value' => number_format($stats['featured']), 'caption' => 'Homepage promoted products', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Products'), 'value' => number_format($stats['total']), 'caption' => __('Products in this tenant catalog'), 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
+                ['label' => __('Active'), 'value' => number_format($stats['active']), 'caption' => __('Currently saleable products'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Featured'), 'value' => number_format($stats['featured']), 'caption' => __('Homepage promoted products'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
             ],
             'rowClasses' => collect($records->items())->map(fn(Product $product) => match ($product->stockStatus()) {
                 'out_of_stock' => 'row-out-of-stock',
@@ -152,7 +152,7 @@ class ProductsList extends ListPage
 
                 // AI price cell
                 $aiPriceCell = $hasPriceData
-                    ? '<div class="entity-title" style="color:#4ade80;">$' . e(number_format((float) ($product->ai_price_data['average_price'] ?? 0), 2)) . '</div><div class="entity-subtitle">avg · ' . e($product->ai_price_data['sample_size'] ?? 0) . ' sources</div>'
+                    ? '<div class="entity-title" style="color:#4ade80;">$' . e(number_format((float) ($product->ai_price_data['average_price'] ?? 0), 2)) . '</div><div class="entity-subtitle">' . e(__('avg · :samplesize sources', ['samplesize' => $product->ai_price_data['sample_size'] ?? 0])) . '</div>'
                     : '<span class="entity-subtitle">—</span>';
 
                 $stockQty = $product->variants->isNotEmpty()
@@ -160,15 +160,15 @@ class ProductsList extends ListPage
                     : ($product->stock ?? 0);
                 $stockStatus = $product->stockStatus();
                 $stockBadge = match ($stockStatus) {
-                    'out_of_stock' => '<div class="entity-subtitle" style="color:var(--red);">Out of stock</div>',
-                    'partial' => '<div class="entity-subtitle" style="color:var(--amber);">Partial</div>',
+                    'out_of_stock' => '<div class="entity-subtitle" style="color:var(--red);">' . e(__('Out of stock')) . '</div>',
+                    'partial' => '<div class="entity-subtitle" style="color:var(--amber);">' . e(__('Partial')) . '</div>',
                     default => '',
                 };
                 $stockCell = '<div class="entity-title">' . e(number_format((int) $stockQty)) . '</div>' . $stockBadge;
 
                 $titleStockBadge = match ($stockStatus) {
-                    'out_of_stock' => '<span class="badge badge-red" style="font-size:10px;margin-top:4px;display:inline-block;">Out of Stock</span>',
-                    'partial' => '<span class="badge badge-amber" style="font-size:10px;margin-top:4px;display:inline-block;">Partial</span>',
+                    'out_of_stock' => '<span class="badge badge-red" style="font-size:10px;margin-top:4px;display:inline-block;">' . e(__('Out of Stock')) . '</span>',
+                    'partial' => '<span class="badge badge-amber" style="font-size:10px;margin-top:4px;display:inline-block;">' . e(__('Partial')) . '</span>',
                     default => '',
                 };
 
@@ -178,41 +178,41 @@ class ProductsList extends ListPage
                     'best-selling' => 'badge-amber',
                     'new-in' => 'badge-cyan',
                 ];
-                $badgePills = $product->badges->map(fn($badge) => '<span class="badge ' . ($badgeTones[$badge->text] ?? 'badge-amber') . '" style="font-size:10px;">' . e(ucfirst(str_replace('-', ' ', $badge->text))) . '</span>')->implode(' ');
+                $badgePills = $product->badges->map(fn($badge) => '<span class="badge ' . ($badgeTones[$badge->text] ?? 'badge-amber') . '" style="font-size:10px;">' . e(__(ucfirst(str_replace('-', ' ', $badge->text)))) . '</span>')->implode(' ');
                 $badgeCell = $badgePills !== '' ? '<div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:4px;">' . $badgePills . '</div>' : '';
 
                 return [
                     ($imageUrl
-                        ? '<img src="' . e($imageUrl) . '" alt="' . e($product->translationValue('name') ?? $product->slug ?? 'Product') . '" style="width:44px;height:44px;object-fit:cover;border-radius:10px;display:inline-block;vertical-align:middle;margin-right:12px;border:1px solid rgba(255,255,255,.12);">'
+                        ? '<img src="' . e($imageUrl) . '" alt="' . e($product->translationValue('name') ?? $product->slug ?? __('Product')) . '" style="width:44px;height:44px;object-fit:cover;border-radius:10px;display:inline-block;vertical-align:middle;margin-right:12px;border:1px solid rgba(255,255,255,.12);">'
                         : '<span style="width:44px;height:44px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;margin-right:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);">' . e(strtoupper(substr($product->translationValue('name') ?? $product->slug ?? 'P', 0, 1))) . '</span>'
-                    ) . '<span style="display:inline-block;vertical-align:middle;"><div class="entity-title">' . e($product->translationValue('name') ?? $product->slug ?? 'Product #' . $product->id) . '</div><div class="entity-subtitle">' . e($central['sku'] ?? 'No central SKU') . ' · /' . e($product->slug ?? '-') . '</div>' . $titleStockBadge . $badgeCell . '</span>',
+                    ) . '<span style="display:inline-block;vertical-align:middle;"><div class="entity-title">' . e($product->translationValue('name') ?? $product->slug ?? __('Product #:id', ['id' => $product->id])) . '</div><div class="entity-subtitle">' . e($central['sku'] ?? __('No central SKU')) . ' · /' . e($product->slug ?? '-') . '</div>' . $titleStockBadge . $badgeCell . '</span>',
                     $central
-                    ? '<div class="entity-title">$' . e(number_format((float) $centralPrice, 2)) . '</div><div class="entity-subtitle">Base $' . e(number_format((float) ($central['base_price'] ?? $centralPrice), 2)) . '</div>'
-                    : '<span class="entity-subtitle">Not linked</span>',
-                    '<div class="entity-title">$' . e(number_format((float) ($product->default_price ?? 0), 2)) . '</div><div class="entity-subtitle">Base price</div>',
+                    ? '<div class="entity-title">$' . e(number_format((float) $centralPrice, 2)) . '</div><div class="entity-subtitle">' . e(__('Base $:currentprice', ['currentprice' => number_format((float) ($central['base_price'] ?? $centralPrice), 2)])) . '</div>'
+                    : '<span class="entity-subtitle">' . e(__('Not linked')) . '</span>',
+                    '<div class="entity-title">$' . e(number_format((float) ($product->default_price ?? 0), 2)) . '</div><div class="entity-subtitle">' . e(__('Base price')) . '</div>',
                     $aiPriceCell,
                     $stockCell,
-                    '<span class="badge ' . ($product->active ? 'badge-green' : 'badge-amber') . '">' . e($product->active ? 'Active' : 'Inactive') . '</span>' . ($product->featured ? ' <span class="badge badge-cyan">Featured</span>' : ''),
-                    e($product->categories->pluck(fn($q) => $q->translationValue('name'))->filter()->implode(', ') ?: 'Unassigned'),
+                    '<span class="badge ' . ($product->active ? 'badge-green' : 'badge-amber') . '">' . e($product->active ? __('Active') : __('Inactive')) . '</span>' . ($product->featured ? ' <span class="badge badge-cyan">' . e(__('Featured')) . '</span>' : ''),
+                    e($product->categories->pluck(fn($q) => $q->translationValue('name'))->filter()->implode(', ') ?: __('Unassigned')),
                     e($product->updated_at?->format('M d, Y')),
                     '<div class="flex gap-2 flex-wrap">'
-                    . '<a href="' . route('tenant.products.edit', $product) . '"  class="btn btn-secondary btn-sm">Edit</a>'
-                    . '<button type="button" class="btn btn-secondary btn-sm" wire:click="toggleActive(' . $product->id . ')">' . ($product->active ? 'Disable' : 'Enable') . '</button>'
-                    . '<button type="button" class="btn btn-secondary btn-sm" wire:click="toggleFeatured(' . $product->id . ')">' . ($product->featured ? 'Unfeature' : 'Feature') . '</button>'
-                    . '<button type="button" class="btn ' . ($hasSocial ? 'btn-secondary' : 'btn-primary') . ' btn-sm" wire:click="openSocialModal(' . $product->id . ')" title="' . ($hasSocial ? 'View / regenerate social posts' : 'Generate social media posts') . '">'
-                    . ($hasSocial ? '&#10003; Social' : '&#x2605; Social')
+                    . '<a href="' . route('tenant.products.edit', $product) . '"  class="btn btn-secondary btn-sm">' . e(__('Edit')) . '</a>'
+                    . '<button type="button" class="btn btn-secondary btn-sm" wire:click="toggleActive(' . $product->id . ')">' . ($product->active ? __('Disable') : __('Enable')) . '</button>'
+                    . '<button type="button" class="btn btn-secondary btn-sm" wire:click="toggleFeatured(' . $product->id . ')">' . ($product->featured ? __('Unfeature') : __('Feature')) . '</button>'
+                    . '<button type="button" class="btn ' . ($hasSocial ? 'btn-secondary' : 'btn-primary') . ' btn-sm" wire:click="openSocialModal(' . $product->id . ')" title="' . ($hasSocial ? __('View / regenerate social posts') : __('Generate social media posts')) . '">'
+                    . ($hasSocial ? '&#10003; ' : '&#x2605; ') . e(__('Social'))
                     . '</button>'
-                    . '<button type="button" class="btn ' . ($hasPriceData ? 'btn-secondary' : 'btn-secondary') . ' btn-sm" wire:click="openPriceModal(' . $product->id . ')" title="' . ($hasPriceData ? 'View AI price data' : 'Fetch AI price data') . '">'
-                    . ($hasPriceData ? '💰 Price' : '💰 Price')
+                    . '<button type="button" class="btn ' . ($hasPriceData ? 'btn-secondary' : 'btn-secondary') . ' btn-sm" wire:click="openPriceModal(' . $product->id . ')" title="' . ($hasPriceData ? __('View AI price data') : __('Fetch AI price data')) . '">'
+                    . ($hasPriceData ? __('💰 Price') : __('💰 Price'))
                     . '</button>'
                     . '<button type="button" class="btn btn-secondary btn-sm" wire:click="openShareModal(' . $product->id . ')" title="Share this product">'
-                    . 'Share'
+                    . e(__('Share'))
                     . '</button>'
                     . '<button type="button" class="btn btn-secondary btn-sm" wire:click="openPriceListModal(' . $product->id . ')" title="Edit per-country prices">'
-                    . '&#9776; Prices'
+                    . '&#9776; ' . e(__('Prices'))
                     . '</button>'
                     . '<button type="button" class="btn btn-secondary btn-sm" wire:click="openVideoAdModal(' . $product->id . ')" title="Generate a video ad for this product">'
-                    . '&#127909; Video Ad'
+                    . '&#127909; ' . e(__('Video Ad'))
                     . '</button>'
                     . '</div>',
                 ];
@@ -224,7 +224,7 @@ class ProductsList extends ListPage
             'extraModals' => [
                 [
                     'model' => 'socialModalOpen',
-                    'title' => '✦ Social Media Posts — ' . $this->socialProductName,
+                    'title' => __('✦ Social Media Posts — :product', ['product' => $this->socialProductName]),
                     'closeAction' => 'closeSocialModal',
                     'contentView' => 'livewire.tenant.product.social-posts-modal',
                     'maxWidth' => '4xl',
@@ -243,7 +243,7 @@ class ProductsList extends ListPage
                 ],
                 [
                     'model' => 'priceModalOpen',
-                    'title' => '💰 AI Price Finder — ' . $this->priceProductName,
+                    'title' => __('💰 AI Price Finder — :product', ['product' => $this->priceProductName]),
                     'closeAction' => 'closePriceModal',
                     'contentView' => 'livewire.tenant.product.price-finder-modal',
                     'maxWidth' => '3xl',
@@ -258,7 +258,7 @@ class ProductsList extends ListPage
                 ],
                 [
                     'model' => 'shareModalOpen',
-                    'title' => 'Share — ' . $this->shareTitle,
+                    'title' => __('Share — :product', ['product' => $this->shareTitle]),
                     'closeAction' => 'closeShareModal',
                     'contentView' => 'livewire.tenant.product.share-modal',
                     'maxWidth' => '2xl',
@@ -272,7 +272,7 @@ class ProductsList extends ListPage
                 ],
                 [
                     'model' => 'priceListOpen',
-                    'title' => 'Price List — ' . $this->priceListProductName,
+                    'title' => __('Price List — :product', ['product' => $this->priceListProductName]),
                     'closeAction' => 'closePriceListModal',
                     'contentView' => 'livewire.tenant.product.price-list-modal',
                     'maxWidth' => '3xl',
@@ -288,7 +288,7 @@ class ProductsList extends ListPage
                 ],
                 [
                     'model' => 'videoAdModalOpen',
-                    'title' => 'Generate new Video Ad',
+                    'title' => __('Generate new Video Ad'),
                     'closeAction' => 'closeVideoAdModal',
                     'maxWidth' => '2xl',
                 ],
@@ -314,7 +314,7 @@ class ProductsList extends ListPage
             ->all();
 
         $this->socialProductId = $productId;
-        $this->socialProductName = $product->translationValue('name') ?? $product->slug ?? 'Product #' . $productId;
+        $this->socialProductName = $product->translationValue('name') ?? $product->slug ?? __('Product #:id', ['id' => $productId]);
         $this->socialGenerating = false;
         $this->socialError = '';
         $this->socialEnabledLanguages = $languageOptions;
@@ -366,7 +366,7 @@ class ProductsList extends ListPage
         $product = Product::query()->with('translations.language')->findOrFail($productId);
 
         $this->videoAdProductId = $productId;
-        $this->videoAdProductName = $product->translationValue('name') ?? $product->slug ?? 'Product #' . $productId;
+        $this->videoAdProductName = $product->translationValue('name') ?? $product->slug ?? __('Product #:id', ['id' => $productId]);
         $this->videoAdModalOpen = true;
     }
 
@@ -396,7 +396,7 @@ class ProductsList extends ListPage
             );
 
             if (empty($result['posts'])) {
-                $this->socialError = 'The AI service returned no posts. Please check that the Python service is running and OPENAI_API_KEY is set.';
+                $this->socialError = __('The AI service returned no posts. Please check that the Python service is running and OPENAI_API_KEY is set.');
                 $this->socialGenerating = false;
                 return;
             }
@@ -431,16 +431,16 @@ class ProductsList extends ListPage
             }
 
             $label = $this->socialSelectedPlatform === 'all'
-                ? 'all platforms'
-                : ucfirst($this->socialSelectedPlatform);
+                ? __('all platforms')
+                : __(ucfirst($this->socialSelectedPlatform));
             $languageLabel = $this->socialSelectedLanguage === 'all'
-                ? 'all enabled languages'
+                ? __('all enabled languages')
                 : ($this->socialEnabledLanguages[$this->socialSelectedLanguage] ?? strtoupper($this->socialSelectedLanguage));
-            $imageLabel = $this->socialIncludeImage === 'on' ? 'with image' : 'without image';
+            $imageLabel = $this->socialIncludeImage === 'on' ? __('with image') : __('without image');
 
-            $this->toast("Social media posts generated for {$label} in {$languageLabel} ({$imageLabel}).");
+            $this->toast(__('Social media posts generated for :product in :language (:image).', ['product' => $label, 'language' => $languageLabel, 'image' => $imageLabel]));
         } catch (\Throwable $e) {
-            $this->socialError = 'Generation failed: ' . $e->getMessage();
+            $this->socialError = __('Generation failed: :error', ['error' => $e->getMessage()]);
         } finally {
             $this->socialGenerating = false;
         }
@@ -453,14 +453,14 @@ class ProductsList extends ListPage
         $product = Product::query()->with('translations.language', 'variants')->findOrFail($productId);
 
         $this->priceProductId = $productId;
-        $this->priceProductName = $product->translationValue('name') ?? $product->slug ?? 'Product #' . $productId;
+        $this->priceProductName = $product->translationValue('name') ?? $product->slug ?? __('Product #:id', ['id' => $productId]);
         $this->priceFetching = false;
         $this->priceError = '';
         $this->priceData = $product->ai_price_data ?? null;
         $this->priceUseImage = false;
         $this->priceVariantId = null;
         $this->priceVariants = $product->variants
-            ->mapWithKeys(fn($variant) => [$variant->id => $variant->display_label ?? ('Variant #' . $variant->id)])
+            ->mapWithKeys(fn($variant) => [$variant->id => $variant->display_label ?? __('Variant #:id', ['id' => $variant->id])])
             ->all();
         $this->priceModalOpen = true;
     }
@@ -494,9 +494,9 @@ class ProductsList extends ListPage
                 : null;
 
             $this->priceData = $service->fetchForProduct($product, useImage: $this->priceUseImage, variant: $variant);
-            $this->toast('Price data fetched and saved successfully.');
+            $this->toast(__('Price data fetched and saved successfully.'));
         } catch (\Throwable $e) {
-            $this->priceError = 'Fetch failed: ' . $e->getMessage();
+            $this->priceError = __('Fetch failed: :error', ['error' => $e->getMessage()]);
         } finally {
             $this->priceFetching = false;
         }
@@ -508,7 +508,7 @@ class ProductsList extends ListPage
     {
         $product = Product::query()->with('translations.language', 'files')->findOrFail($productId);
 
-        $name = $product->translationValue('name') ?? $product->slug ?? 'Product #' . $productId;
+        $name = $product->translationValue('name') ?? $product->slug ?? __('Product #:id', ['id' => $productId]);
         $description = strip_tags($product->translationValue('description') ?? '');
 
         // Use AI social post caption if available, fall back to product description.
@@ -553,14 +553,14 @@ class ProductsList extends ListPage
     {
         $product = Product::query()->findOrFail($productId);
         $product->update(['active' => !$product->active]);
-        $this->toast('Product status updated successfully.');
+        $this->toast(__('Product status updated successfully.'));
     }
 
     public function toggleFeatured(int $productId): void
     {
         $product = Product::query()->findOrFail($productId);
         $product->update(['featured' => !$product->featured]);
-        $this->toast('Product featured state updated successfully.');
+        $this->toast(__('Product featured state updated successfully.'));
     }
 
     public function updatedSearch(): void
@@ -599,7 +599,7 @@ class ProductsList extends ListPage
      */
     private function categoryOptions(): array
     {
-        $options = ['' => 'All Categories'];
+        $options = ['' => __('All Categories')];
 
         $roots = Category::query()
             ->with(['translations.language', 'children.translations.language', 'children.children.translations.language', 'children.children.children.translations.language'])
@@ -642,7 +642,7 @@ class ProductsList extends ListPage
         $product = Product::query()->with('variants')->findOrFail($productId);
 
         $this->priceListProductId = $productId;
-        $this->priceListProductName = $product->translationValue('name') ?? $product->slug ?? 'Product #' . $productId;
+        $this->priceListProductName = $product->translationValue('name') ?? $product->slug ?? __('Product #:id', ['id' => $productId]);
         $this->priceListSaveMessage = '';
 
         // Load shipping costs + central product reference data from central DB.
@@ -681,9 +681,9 @@ class ProductsList extends ListPage
         $this->priceListShippingByCountry = $shippingByCountry;
 
         // Build country label map for display in the blade view.
-        $countryLabels = ['default' => 'Default (no country)'];
+        $countryLabels = ['default' => __('Default (no country)')];
         foreach ($shippingCosts as $countryId => $record) {
-            $countryLabels[(string) $countryId] = $record->country?->name ?? ('Country #' . $countryId);
+            $countryLabels[(string) $countryId] = $record->country?->name ?? __('Country #:id', ['id' => $countryId]);
         }
         $this->priceListCountryLabels = $countryLabels;
 
@@ -740,7 +740,7 @@ class ProductsList extends ListPage
 
             return [
                 'id' => $variant->id,
-                'label' => $variant->display_label ?? 'Variant #' . $variant->id,
+                'label' => $variant->display_label ?? __('Variant #:id', ['id' => $variant->id]),
                 'real_price' => $realPrice,
                 'shipping' => $shippingByCountry,
                 'central_price' => $centralVariantPrices->get($variant->central_product_variant_id, 0.0),
@@ -829,8 +829,8 @@ class ProductsList extends ListPage
             }
         }
 
-        $this->priceListSaveMessage = 'Prices saved successfully.';
-        $this->toast('Prices updated successfully.');
+        $this->priceListSaveMessage = __('Prices saved successfully.');
+        $this->toast(__('Prices updated successfully.'));
     }
 
     /**

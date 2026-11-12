@@ -22,12 +22,12 @@
             <div class="card {{ $stat['glow'] ?? '' }} fu d{{ min($loop->iteration, 6) }}">
                 <div class="stat-head">
                     <div>
-                        <div class="eyebrow">{{ $stat['label'] }}</div>
+                        <div class="eyebrow">{{ __($stat['label']) }}</div>
                         <div class="D stat-value">{{ $stat['value'] }}</div>
                     </div>
                     <div class="mini-stat-dot {{ $stat['dot'] ?? 'dot-cyan' }}"></div>
                 </div>
-                <p class="panel-copy">{{ $stat['caption'] }}</p>
+                <p class="panel-copy">{{ __($stat['caption']) }}</p>
             </div>
         @endforeach
     </div>
@@ -38,13 +38,13 @@
     <section class="card table-card-shell section-gap fu d4">
         <div class="table-header-shell">
             <div>
-                <h3 class="panel-title">Installed Languages</h3>
-                <p class="panel-copy">Languages currently available in your store. Activate, disable, or set the default locale.</p>
+                <h3 class="panel-title">{{ __('Installed Languages') }}</h3>
+                <p class="panel-copy">{{ __('Languages currently available in your store. Activate, disable, or set the default locale.') }}</p>
             </div>
         </div>
 
         @if (count($installedRows) > 0)
-            <x-table :headers="['Language', 'Direction', 'Countries', 'Type', 'Status', 'Actions']">
+            <x-table :headers="[__('Language'), __('Direction'), __('Countries'), __('Type'), __('Status'), __('Actions')]">
                 @foreach ($installedRows as $row)
                     <tr wire:key="installed-{{ $row['id'] }}">
                         <td>
@@ -74,23 +74,23 @@
                         <td>{!! $row['typeLabel'] !!}</td>
                         <td>
                             @if ($row['isDefault'])
-                                <span class="badge badge-green">Default</span>
+                                <span class="badge badge-green">{{ __('Default') }}</span>
                             @elseif ($row['isActive'])
-                                <span class="badge badge-cyan">Active</span>
+                                <span class="badge badge-cyan">{{ __('Active') }}</span>
                             @else
-                                <span class="badge badge-amber">Inactive</span>
+                                <span class="badge badge-amber">{{ __('Inactive') }}</span>
                             @endif
                         </td>
                         <td>
                             <div class="flex gap-2">
                                 <button type="button" class="btn btn-secondary btn-sm"
                                         wire:click="toggleActive({{ $row['id'] }})">
-                                    {{ $row['isActive'] ? 'Disable' : 'Enable' }}
+                                    {{ $row['isActive'] ? __('Disable') : __('Enable') }}
                                 </button>
                                 @unless ($row['isDefault'])
                                     <button type="button" class="btn btn-secondary btn-sm"
                                             wire:click="makeDefault({{ $row['id'] }})">
-                                        Make Default
+                                        {{ __('Make Default') }}
                                     </button>
                                 @endunless
                             </div>
@@ -100,8 +100,8 @@
             </x-table>
         @else
             <div class="empty-state">
-                <div class="empty-state-title">No languages installed</div>
-                <p class="empty-state-copy">No languages have been set up in your tenant store yet.</p>
+                <div class="empty-state-title">{{ __('No languages installed') }}</div>
+                <p class="empty-state-copy">{{ __('No languages have been set up in your tenant store yet.') }}</p>
             </div>
         @endif
     </section>
@@ -113,8 +113,8 @@
         <section class="card table-card-shell section-gap fu d5">
             <div class="table-header-shell">
                 <div>
-                    <h3 class="panel-title">Available Language Add-ons</h3>
-                    <p class="panel-copy">Purchase a language once to unlock it permanently for your storefront and admin panel.</p>
+                    <h3 class="panel-title">{{ __('Available Language Add-ons') }}</h3>
+                    <p class="panel-copy">{{ __('Purchase a language once to unlock it permanently for your storefront and admin panel.') }}</p>
                 </div>
             </div>
 
@@ -125,7 +125,7 @@
                 <div class="notice-error" style="margin:0 22px 16px;">{{ $errors->first('payment') }}</div>
             @endif
 
-            <x-table :headers="['Language', 'Direction', 'Countries', 'Price', 'Action']">
+            <x-table :headers="[__('Language'), __('Direction'), __('Countries'), __('Price'), __('Action')]">
                 @foreach ($availableLanguages as $language)
                     <tr wire:key="available-{{ $language->id }}">
                         <td>
@@ -154,12 +154,12 @@
                         </td>
                         <td>
                             <div class="entity-title">${{ number_format((float) $language->price, 2) }}</div>
-                            <div class="entity-subtitle">One-time payment</div>
+                            <div class="entity-subtitle">{{ __('One-time payment') }}</div>
                         </td>
                         <td>
                             <button type="button" class="btn btn-primary btn-sm"
                                     wire:click="selectLanguage({{ $language->id }})">
-                                Buy Language
+                                {{ __('Buy Language') }}
                             </button>
                         </td>
                     </tr>
@@ -198,7 +198,7 @@
                             <div class="entity-title">{{ $selectedLanguage->name }}
                                 <span class="badge badge-green" style="margin-left:6px;vertical-align:middle;">{{ strtoupper($selectedLanguage->code) }}</span>
                             </div>
-                            <div class="entity-subtitle">One-time payment · {{ $selectedLanguage->native_name }}</div>
+                            <div class="entity-subtitle">{{ __('One-time payment · :nativename', ['nativename' => $selectedLanguage->native_name]) }}</div>
                         </div>
                         <div style="font-size:18px;font-weight:700;color:var(--accent);white-space:nowrap;">
                             ${{ number_format((float) $selectedLanguage->price, 2) }}
@@ -208,7 +208,7 @@
 
                 {{-- ── Gateway selection ────────────────────────────────── --}}
                 <div>
-                    <label class="field-label">Payment Gateway</label>
+                    <label class="field-label">{{ __('Payment Gateway') }}</label>
                     @if ($gateways->isNotEmpty())
                         <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
                             @foreach ($gateways as $gateway)
@@ -238,8 +238,8 @@
                         @enderror
                     @else
                         <div class="empty-state" style="padding:16px 0;">
-                            <div class="empty-state-title">No payment gateways configured</div>
-                            <p class="empty-state-copy">Please contact the platform administrator.</p>
+                            <div class="empty-state-title">{{ __('No payment gateways configured') }}</div>
+                            <p class="empty-state-copy">{{ __('Please contact the platform administrator.') }}</p>
                         </div>
                     @endif
                 </div>
@@ -265,12 +265,12 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                       d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                             </svg>
-                            Secure card details
+                            {{ __('Secure card details') }}
                         </div>
 
                         @if ($activeInlineGateway['code'] === 'stripe')
                             <div>
-                                <label class="field-label">Card</label>
+                                <label class="field-label">{{ __('Card') }}</label>
                                 <div id="lm-stripe-card-element"
                                      style="border:1.5px solid var(--border);border-radius:8px;padding:11px 14px;background:var(--input-bg,var(--card));min-height:42px;">
                                 </div>
@@ -280,18 +280,18 @@
                         @else
                             <div class="form-grid form-grid-1" style="gap:10px;">
                                 <div>
-                                    <label class="field-label">Card number</label>
+                                    <label class="field-label">{{ __('Card number') }}</label>
                                     <x-input type="text" id="lm-card-number" inputmode="numeric" autocomplete="cc-number"
                                              placeholder="1234  5678  9012  3456" />
                                 </div>
                                 <div class="form-grid form-grid-2" style="gap:10px;">
                                     <div>
-                                        <label class="field-label">Expiry</label>
+                                        <label class="field-label">{{ __('Expiry') }}</label>
                                         <x-input type="text" id="lm-card-expiry" inputmode="numeric" autocomplete="cc-exp"
-                                                 placeholder="MM / YY" maxlength="7" />
+                                                 :placeholder="__('MM / YY')" maxlength="7" />
                                     </div>
                                     <div>
-                                        <label class="field-label">CVC</label>
+                                        <label class="field-label">{{ __('CVC') }}</label>
                                         <x-input type="text" id="lm-card-cvc" inputmode="numeric" autocomplete="cc-csc"
                                                  placeholder="•••" maxlength="4" />
                                     </div>
@@ -310,14 +310,14 @@
 
                 {{-- ── Actions ──────────────────────────────────────────── --}}
                 <div class="page-actions compact-actions justify-end">
-                    <x-btn type="button" variant="secondary" wire:click="closeModal">Cancel</x-btn>
+                    <x-btn type="button" variant="secondary" wire:click="closeModal">{{ __('Cancel') }}</x-btn>
                     @if ($gateways->isNotEmpty())
                         <x-btn type="button" id="lm-pay-btn"
                                wire:loading.attr="disabled"
                                wire:loading.class="opacity-60 cursor-not-allowed"
                                wire:target="initiatePayment">
-                            <span wire:loading.remove wire:target="initiatePayment">Proceed to Payment</span>
-                            <span wire:loading wire:target="initiatePayment">Processing…</span>
+                            <span wire:loading.remove wire:target="initiatePayment">{{ __('Proceed to Payment') }}</span>
+                            <span wire:loading wire:target="initiatePayment">{{ __('Processing…') }}</span>
                         </x-btn>
                     @endif
                 </div>
@@ -432,7 +432,7 @@
             // ── Stripe ────────────────────────────────────────────────────
             if (gateway === 'stripe') {
                 if (!_lmStripe || !_lmStripeCard) {
-                    alert('Stripe.js is still loading. Please try again in a moment.');
+                    alert(@js(__('Stripe.js is still loading. Please try again in a moment.')));
                     button.disabled = false;
                     return;
                 }
@@ -451,7 +451,7 @@
             // ── Authorize.Net Accept.js ───────────────────────────────────
             if (gateway === 'authorize_net') {
                 if (typeof Accept === 'undefined') {
-                    alert('Accept.js is still loading. Please try again.');
+                    alert(@js(__('Accept.js is still loading. Please try again.')));
                     button.disabled = false;
                     return;
                 }
@@ -472,7 +472,7 @@
                 Accept.dispatchData(secureData, async (response) => {
                     if (response.messages.resultCode === 'Error') {
                         const errEl = document.getElementById('lm-card-errors');
-                        if (errEl) { errEl.textContent = response.messages.message?.[0]?.text ?? 'Card error'; errEl.style.display = ''; }
+                        if (errEl) { errEl.textContent = response.messages.message?.[0]?.text ?? @js(__('Card error')); errEl.style.display = ''; }
                         button.disabled = false;
                         return;
                     }
@@ -486,7 +486,7 @@
             // ── 2Checkout 2Pay.js ─────────────────────────────────────────
             if (gateway === '2checkout') {
                 if (typeof TCO === 'undefined') {
-                    alert('2Pay.js is still loading. Please try again.');
+                    alert(@js(__('2Pay.js is still loading. Please try again.')));
                     button.disabled = false;
                     return;
                 }
@@ -502,7 +502,7 @@
                 }, async (data) => {
                     if (data.errorCode > 0) {
                         const errEl = document.getElementById('lm-card-errors');
-                        if (errEl) { errEl.textContent = data.errorMsg ?? 'Card error'; errEl.style.display = ''; }
+                        if (errEl) { errEl.textContent = data.errorMsg ?? @js(__('Card error')); errEl.style.display = ''; }
                         button.disabled = false;
                         return;
                     }

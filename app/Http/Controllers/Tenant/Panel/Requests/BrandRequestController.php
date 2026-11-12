@@ -38,19 +38,19 @@ final class BrandRequestController extends PanelController
         $stats = $this->repo->brandRequestStats();
 
         return view('tenant.pages.requests.brand.index', [
-            'title' => 'Brand Requests',
-            'badge' => 'Brands',
-            'description' => "Track the status of your brand requests to the admin team.",
+            'title' => __('Brand Requests'),
+            'badge' => __('Brands'),
+            'description' => __("Track the status of your brand requests to the admin team."),
             'stats' => Metric::cards([
-                ['label' => 'Total Requests', 'value' => $stats['total'], 'format' => 'number', 'caption' => "All brand requests you've submitted.", 'dot' => 'dot-cyan'],
-                ['label' => 'Pending', 'value' => $stats['pending'], 'format' => 'number', 'caption' => 'Awaiting admin review.', 'dot' => 'dot-amber'],
-                ['label' => 'Approved', 'value' => $stats['approved'], 'format' => 'number', 'caption' => 'Approved and moving forward.', 'dot' => 'dot-violet'],
+                ['label' => __('Total Requests'), 'value' => $stats['total'], 'format' => 'number', 'caption' => __("All brand requests you've submitted."), 'dot' => 'dot-cyan'],
+                ['label' => __('Pending'), 'value' => $stats['pending'], 'format' => 'number', 'caption' => __('Awaiting admin review.'), 'dot' => 'dot-amber'],
+                ['label' => __('Approved'), 'value' => $stats['approved'], 'format' => 'number', 'caption' => __('Approved and moving forward.'), 'dot' => 'dot-violet'],
             ]),
             'statusOptions' => BrandRequestStatus::cases(),
             'columns' => [
-                TableColumn::make('request', 'Request')->orderable(false),
-                TableColumn::make('status', 'Status')->orderable(false),
-                TableColumn::make('created_at', 'Submitted'),
+                TableColumn::make('request', __('Request'))->orderable(false),
+                TableColumn::make('status', __('Status'))->orderable(false),
+                TableColumn::make('created_at', __('Submitted')),
                 TableColumn::actions(),
             ],
         ]);
@@ -73,9 +73,9 @@ final class BrandRequestController extends PanelController
     public function create(): View
     {
         return view('tenant.pages.requests.brand.create', [
-            'title' => 'New Brand Request',
-            'badge' => 'Brands',
-            'description' => "Submit a new brand request. Our team will review it and update the status.",
+            'title' => __('New Brand Request'),
+            'badge' => __('Brands'),
+            'description' => __("Submit a new brand request. Our team will review it and update the status."),
         ]);
     }
 
@@ -90,7 +90,7 @@ final class BrandRequestController extends PanelController
         );
 
         return $this->success(
-            'Brand request submitted successfully. We will update you when the status changes.',
+            __('Brand request submitted successfully. We will update you when the status changes.'),
             redirect: route('tenant.brand-requests.index'),
         );
     }
@@ -121,34 +121,34 @@ final class BrandRequestController extends PanelController
 
         $paymentColumns = [
             ['title' => '#'],
-            ['title' => 'Label'],
-            ['title' => 'Amount'],
-            ['title' => 'Status'],
-            ['title' => 'Notes'],
-            ['title' => 'Action'],
+            ['title' => __('Label')],
+            ['title' => __('Amount')],
+            ['title' => __('Status')],
+            ['title' => __('Notes')],
+            ['title' => __('Action')],
         ];
 
         $paymentRows = $brandRequest->paymentRequests->map(fn ($pr) => [
             e('#'.$pr->id),
             e($pr->label),
-            e($pr->currency.' '.number_format((float) $pr->amount, 2)).($pr->paid_at ? '<div class="entity-subtitle">Paid '.e($pr->paid_at->format('M d, Y')).' via '.e(strtoupper($pr->gateway_code ?? '')).'</div>' : ''),
+            e($pr->currency.' '.number_format((float) $pr->amount, 2)).($pr->paid_at ? '<div class="entity-subtitle">'.e(__('Paid :paidat via :gatewaycode', ['paidat' => $pr->paid_at->format('M d, Y'), 'gatewaycode' => strtoupper($pr->gateway_code ?? '')])).'</div>' : ''),
             view('tenant::components.status-badge', ['status' => $pr->status])->render(),
             e($pr->notes ?: '—'),
             $pr->status->value === 'pending'
-                ? '<button type="button" class="btn btn-primary btn-sm" data-brand-pay-request data-payment-request-id="'.$pr->id.'" data-payment-request-label="'.e($pr->label).'" data-payment-request-amount="'.e(number_format((float) $pr->amount, 2)).'" data-payment-request-currency="'.e($pr->currency).'">Pay Now</button>'
+                ? '<button type="button" class="btn btn-primary btn-sm" data-brand-pay-request data-payment-request-id="'.$pr->id.'" data-payment-request-label="'.e($pr->label).'" data-payment-request-amount="'.e(number_format((float) $pr->amount, 2)).'" data-payment-request-currency="'.e($pr->currency).'">' . e(__('Pay Now')) . '</button>'
                 : '<span class="entity-subtitle">—</span>',
         ])->all();
 
         return view('tenant.pages.requests.brand.show', [
             'title' => $brandRequest->title,
-            'badge' => 'Brands',
-            'description' => 'View details, pay outstanding invoices, and communicate with the admin team.',
+            'badge' => __('Brands'),
+            'description' => __('View details, pay outstanding invoices, and communicate with the admin team.'),
             'request' => $brandRequest,
             'messages' => $messages,
             'presented' => $presented,
             'paymentColumns' => $paymentColumns,
             'paymentRows' => $paymentRows,
-            'tenantUserName' => $tenantUser?->name ?? tenant('name') ?? 'Vendor',
+            'tenantUserName' => $tenantUser?->name ?? tenant('name') ?? __('Vendor'),
         ]);
     }
 
@@ -160,12 +160,12 @@ final class BrandRequestController extends PanelController
         $brandRequest = BrandRequest::where('tenant_id', tenant('id'))->findOrFail($id);
 
         if ($brandRequest->status !== BrandRequestStatus::Pending) {
-            return $this->failure('Only pending brand requests can be deleted.');
+            return $this->failure(__('Only pending brand requests can be deleted.'));
         }
 
         $brandRequest->delete(); // messages and payment requests cascade
 
-        return $this->success('Brand request deleted successfully.');
+        return $this->success(__('Brand request deleted successfully.'));
     }
 
     public function sendMessage(SendBrandRequestMessageRequest $request, int $id): JsonResponse
@@ -173,11 +173,11 @@ final class BrandRequestController extends PanelController
         $brandRequest = BrandRequest::where('tenant_id', tenant('id'))->findOrFail($id);
 
         $tenantUser = auth('tenant')->user();
-        $senderName = $tenantUser?->name ?? tenant('name') ?? 'Vendor';
+        $senderName = $tenantUser?->name ?? tenant('name') ?? __('Vendor');
 
         $message = $this->service->sendMessage($brandRequest, $senderName, $request->validated()['message']);
 
-        return $this->success('Message sent.', data: [
+        return $this->success(__('Message sent.'), data: [
             'message' => [
                 'id' => $message->id,
                 'author' => $message->sender_name,
@@ -209,7 +209,7 @@ final class BrandRequestController extends PanelController
             ],
         ]);
 
-        return $this->success('Redirecting to payment…', redirect: route('tenant.brand-request-payment.charge', [
+        return $this->success(__('Redirecting to payment…'), redirect: route('tenant.brand-request-payment.charge', [
             'gateway' => $validated['gateway'],
             'paymentRequestId' => $validated['payment_request_id'],
         ]));

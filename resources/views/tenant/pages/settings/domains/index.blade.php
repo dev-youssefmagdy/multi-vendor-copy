@@ -1,6 +1,6 @@
 @extends('tenant.layouts.app')
 
-@section('title', 'Domains')
+@section('title', __('Domains'))
 
 @php
     $centralDomain = collect(config('tenancy.central_domains', []))->first(fn ($d) => !in_array($d, ['127.0.0.1', 'localhost']));
@@ -8,13 +8,13 @@
 @endphp
 
 @section('content')
-    <x-tenant::page-header title="Domains" badge="Store" description="Manage your store domains and DNS connection status.">
+    <x-tenant::page-header :title="__('Domains')" :badge="__('Store')" :description="__('Manage your store domains and DNS connection status.')">
         <x-slot:actions>
             <button type="button" class="btn btn-primary" data-modal-open="add-domain-modal">
                 <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.8">
                     <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
                 </svg>
-                Add Custom Domain
+                {{ __('Add Custom Domain') }}
             </button>
         </x-slot:actions>
     </x-tenant::page-header>
@@ -31,13 +31,13 @@
                         </svg>
                     </div>
                     <div>
-                        <div class="section-title">Subdomain</div>
-                        <div class="section-copy">Your auto-generated store address — always active.</div>
+                        <div class="section-title">{{ __('Subdomain') }}</div>
+                        <div class="section-copy">{{ __('Your auto-generated store address — always active.') }}</div>
                     </div>
                 </div>
                 <span class="chip c-g domains-chip">
                     <span class="dot dot-glow-green domains-dot"></span>
-                    Active
+                    {{ __('Active') }}
                 </span>
             </div>
 
@@ -51,7 +51,7 @@
                             </svg>
                             <span class="text-strong domains-url-text">{{ $domain->domain }}</span>
                         </div>
-                        <x-tenant::copy :value="'https://'.$domain->domain" label="Copy URL" />
+                        <x-tenant::copy :value="'https://'.$domain->domain" :label="__('Copy URL')" />
                     </div>
                     <div class="domains-actions">
                         <a href="https://{{ $domain->domain }}" target="_blank" class="btn btn-secondary btn-sm">
@@ -59,7 +59,7 @@
                                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
                                 <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
                             </svg>
-                            Visit Store
+                            {{ __('Visit Store') }}
                         </a>
                     </div>
                 </div>
@@ -77,12 +77,12 @@
                     </svg>
                 </div>
                 <div>
-                    <div class="section-title">Custom Domains</div>
-                    <div class="section-copy">Point your own domain to this store.</div>
+                    <div class="section-title">{{ __('Custom Domains') }}</div>
+                    <div class="section-copy">{{ __('Point your own domain to this store.') }}</div>
                 </div>
             </div>
             @if ($domainRequests->isNotEmpty())
-                <span class="domains-count">{{ $domainRequests->count() }} domain(s)</span>
+                <span class="domains-count">{{ __(':domainRequests domain(s)', ['domainRequests' => $domainRequests->count()]) }}</span>
             @endif
         </div>
 
@@ -90,9 +90,9 @@
             @php
                 $statusValue = $req->status->value ?? $req->status;
                 $statusCfg = match ($statusValue) {
-                    'connected' => ['c-g', 'dot-glow-green', 'Connected'],
-                    'pending' => ['c-a', 'dot-amber', 'Pending Review'],
-                    'removed' => ['', 'dot-muted', 'Removed'],
+                    'connected' => ['c-g', 'dot-glow-green', __('Connected')],
+                    'pending' => ['c-a', 'dot-amber', __('Pending Review')],
+                    'removed' => ['', 'dot-muted', __('Removed')],
                     default => ['', 'dot-muted', $statusValue],
                 };
                 [$chipCls, $dotCls, $statusLabel] = $statusCfg;
@@ -112,7 +112,7 @@
                         </div>
                         <div class="domains-request-text">
                             <div class="text-strong domains-request-domain">{{ $req->domain }}</div>
-                            <div class="td-date">Added {{ $req->requested_at?->diffForHumans() }}</div>
+                            <div class="td-date">{{ __('Added :diffForHumans', ['diffForHumans' => $req->requested_at?->diffForHumans()]) }}</div>
                         </div>
                     </div>
 
@@ -128,7 +128,7 @@
                                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
                                 <polyline points="22 4 12 14.01 9 11.01"/>
                             </svg>
-                            Check DNS
+                            {{ __('Check DNS') }}
                         </button>
 
                         @if ($isConnected)
@@ -137,7 +137,7 @@
                                     <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
                                     <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
                                 </svg>
-                                Visit
+                                {{ __('Visit') }}
                             </a>
                         @endif
 
@@ -151,13 +151,13 @@
                                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                             </svg>
-                            Edit
+                            {{ __('Edit') }}
                         </button>
 
                         <button type="button" class="btn btn-secondary btn-sm domains-delete-btn"
                             data-action-url="{{ route('tenant.settings.domains.destroy', $req) }}"
                             data-action-method="DELETE"
-                            data-confirm="Delete this domain? This cannot be undone."
+                            data-confirm="{{ __('Delete this domain? This cannot be undone.') }}"
                             data-confirm-danger
                             data-success="reload-page">
                             <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -165,7 +165,7 @@
                                 <path d="M10 11v6"/><path d="M14 11v6"/>
                                 <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
                             </svg>
-                            Delete
+                            {{ __('Delete') }}
                         </button>
                     </div>
                 </div>
@@ -178,13 +178,13 @@
                     <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
                     <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
                 </svg>
-                <div class="empty-state-title">No custom domains yet</div>
-                <div class="empty-state-copy">Add your own domain to give your store a branded URL.</div>
+                <div class="empty-state-title">{{ __('No custom domains yet') }}</div>
+                <div class="empty-state-copy">{{ __('Add your own domain to give your store a branded URL.') }}</div>
                 <button type="button" class="btn btn-primary domains-empty-cta" data-modal-open="add-domain-modal">
                     <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.8">
                         <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
                     </svg>
-                    Add Custom Domain
+                    {{ __('Add Custom Domain') }}
                 </button>
             </div>
         @endforelse
@@ -198,54 +198,54 @@
                 </svg>
             </div>
             <div>
-                <div class="text-strong domains-guide-title">How to connect a custom domain</div>
+                <div class="text-strong domains-guide-title">{{ __('How to connect a custom domain') }}</div>
                 <div class="domains-guide-copy">
-                    1. Add the domain here to get the required DNS records.<br>
-                    2. Go to your domain registrar and add the DNS records shown after checking.<br>
-                    3. Wait for DNS propagation (up to 48 h), then click "Check DNS" to verify.
+                    {{ __('1. Add the domain here to get the required DNS records.') }}<br>
+                    {{ __('2. Go to your domain registrar and add the DNS records shown after checking.') }}<br>
+                    {{ __('3. Wait for DNS propagation (up to 48 h), then click "Check DNS" to verify.') }}
                 </div>
             </div>
         </div>
     </div>
 
-    <x-tenant::modal id="add-domain-modal" title="Add Custom Domain" description="Enter your domain name to begin the connection process.">
+    <x-tenant::modal id="add-domain-modal" :title="__('Add Custom Domain')" :description="__('Enter your domain name to begin the connection process.')">
         <x-tenant::form action="{{ route('tenant.settings.domains.store') }}" method="POST"
             validate="{{ route('tenant.settings.domains.validate') }}"
             success="close-modal reload-page">
             <div class="domains-modal-field">
-                <label class="field-label">Domain Name</label>
+                <label class="field-label">{{ __('Domain Name') }}</label>
                 <x-tenant::input name="domain" placeholder="shop.yourbrand.com" autocomplete="off" spellcheck="false" />
-                <p class="field-hint">Use a subdomain (e.g. shop.yourbrand.com) or a root domain (yourbrand.com).</p>
+                <p class="field-hint">{{ __('Use a subdomain (e.g. shop.yourbrand.com) or a root domain (yourbrand.com).') }}</p>
             </div>
 
             <div class="domains-next-steps">
-                <div class="domains-next-steps-title">What happens next</div>
+                <div class="domains-next-steps-title">{{ __('What happens next') }}</div>
                 <div class="domains-next-steps-list">
-                    <div><span class="domains-step-num">1.</span> We create your domain request for review.</div>
-                    <div><span class="domains-step-num">2.</span> You add the DNS records shown after checking.</div>
-                    <div><span class="domains-step-num">3.</span> Once verified your domain goes live automatically.</div>
+                    <div><span class="domains-step-num">1.</span> {{ __('We create your domain request for review.') }}</div>
+                    <div><span class="domains-step-num">2.</span> {{ __('You add the DNS records shown after checking.') }}</div>
+                    <div><span class="domains-step-num">3.</span> {{ __('Once verified your domain goes live automatically.') }}</div>
                 </div>
             </div>
 
             <div class="modal-actions">
-                <button type="button" class="btn btn-secondary modal-actions-btn" data-modal-close>Cancel</button>
-                <button type="submit" class="btn btn-primary modal-actions-btn">Submit Request</button>
+                <button type="button" class="btn btn-secondary modal-actions-btn" data-modal-close>{{ __('Cancel') }}</button>
+                <button type="submit" class="btn btn-primary modal-actions-btn">{{ __('Submit Request') }}</button>
             </div>
         </x-tenant::form>
     </x-tenant::modal>
 
-    <x-tenant::modal id="edit-domain-modal" title="Edit Domain" description="Changing the domain will reset its status to Pending.">
+    <x-tenant::modal id="edit-domain-modal" :title="__('Edit Domain')" :description="__('Changing the domain will reset its status to Pending.')">
         <x-tenant::form action="" method="PUT"
             success="close-modal reload-page">
             <div class="domains-modal-field">
-                <label class="field-label">Domain Name</label>
+                <label class="field-label">{{ __('Domain Name') }}</label>
                 <x-tenant::input name="domain" autocomplete="off" spellcheck="false" />
-                <p class="field-hint">Use a subdomain (e.g. shop.yourbrand.com) or a root domain (yourbrand.com).</p>
+                <p class="field-hint">{{ __('Use a subdomain (e.g. shop.yourbrand.com) or a root domain (yourbrand.com).') }}</p>
             </div>
 
             <div class="modal-actions">
-                <button type="button" class="btn btn-secondary modal-actions-btn" data-modal-close>Cancel</button>
-                <button type="submit" class="btn btn-primary modal-actions-btn">Save Changes</button>
+                <button type="button" class="btn btn-secondary modal-actions-btn" data-modal-close>{{ __('Cancel') }}</button>
+                <button type="submit" class="btn btn-primary modal-actions-btn">{{ __('Save Changes') }}</button>
             </div>
         </x-tenant::form>
     </x-tenant::modal>

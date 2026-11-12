@@ -8,6 +8,7 @@
 // Supports a configurable field prefix via data-logo-builder="prefix_" so the
 // footer logo builder (prefix "footer_logo_") can reuse the same logic.
 import '@tenant-css/pages/logo-fonts.css';
+import { t } from '../core/i18n.js';
 
 function applyPreviewStyle(root, prefix) {
     const colorField = root.querySelector(`[name="${prefix}color"]`);
@@ -30,7 +31,7 @@ function bindTextPreview(root) {
         const textInput = root.querySelector(`[data-logo-text="${locale}"]`);
         const preview = root.querySelector(`[data-logo-preview="${locale}"]`);
         const fontSelect = root.querySelector(`[data-logo-font="${locale}"]`);
-        const placeholder = locale === 'ar' ? 'اسم المتجر' : 'Store Name';
+        const placeholder = locale === 'ar' ? 'اسم المتجر' : t('Store Name');
 
         const syncText = () => {
             if (preview) {

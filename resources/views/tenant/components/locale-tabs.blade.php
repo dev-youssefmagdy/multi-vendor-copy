@@ -16,7 +16,7 @@
                 data-locale-tab="{{ $language['code'] }}"
                 aria-selected="{{ $language['code'] === $activeCode ? 'true' : 'false' }}">
                 {{ $language['name'] }}
-                @if(!empty($language['is_default']))<span class="t-locale-default">Default</span>@endif
+                @if(!empty($language['is_default']))<span class="t-locale-default">{{ __('Default') }}</span>@endif
                 <span class="t-locale-error-dot" hidden></span>
             </button>
         @endforeach

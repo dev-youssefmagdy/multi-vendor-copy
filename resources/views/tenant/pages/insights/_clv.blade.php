@@ -21,12 +21,12 @@
     {{-- Top Customer Spend --}}
     <section class="an-card an-spend-card">
         <div>
-            <h3 class="an-card-title is-xl">Top Customer Spend</h3>
-            <p class="an-card-sub">Highest lifetime value customers ranked by total spend.</p>
+            <h3 class="an-card-title is-xl">{{ __('Top Customer Spend') }}</h3>
+            <p class="an-card-sub">{{ __('Highest lifetime value customers ranked by total spend.') }}</p>
         </div>
         <div class="an-table-wrap">
             <table class="an-table an-spend-table" data-report-table="Top Customer Spend">
-                <thead><tr><th>Customer</th><th>Orders</th><th class="is-wide">Spend</th><th></th></tr></thead>
+                <thead><tr><th>{{ __('Customer') }}</th><th>{{ __('Orders') }}</th><th class="is-wide">{{ __('Spend') }}</th><th></th></tr></thead>
                 <tbody>
                     @forelse($topSpend as $i => $row)
                         <tr>
@@ -36,7 +36,7 @@
                             <td class="an-spend-value">{{ $money($row['total']) }}</td>
                         </tr>
                     @empty
-                        <tr><td colspan="4" class="an-empty">No customer orders yet.</td></tr>
+                        <tr><td colspan="4" class="an-empty">{{ __('No customer orders yet.') }}</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -46,11 +46,11 @@
     {{-- Buyer Mix: large donut, legend underneath --}}
     <section class="an-card an-donut-card is-large">
         <div>
-            <h3 class="an-card-title is-lg">Buyer Mix</h3>
-            <p class="an-card-sub">Active, inactive, one-time, and repeat buyer distribution.</p>
+            <h3 class="an-card-title is-lg">{{ __('Buyer Mix') }}</h3>
+            <p class="an-card-sub">{{ __('Active, inactive, one-time, and repeat buyer distribution.') }}</p>
         </div>
         <div class="an-donut-lg">
-            <canvas id="donutChart" width="295" height="295" role="img" aria-label="Buyer mix"
+            <canvas id="donutChart" width="295" height="295" role="img" aria-label="{{ __('Buyer mix') }}"
                 data-colors='@json($donutRows->pluck('color'))'></canvas>
             <div class="db-donut-center">
                 <span class="an-donut-total">{{ $donutCenter }}</span>
@@ -60,7 +60,7 @@
         <ul class="db-status-list">
             @foreach($legendRows as $row)
                 <li>
-                    <span class="db-status-name"><i style="background:{{ $row['color'] }}"></i>{{ $row['label'] }}</span>
+                    <span class="db-status-name"><i style="background:{{ $row['color'] }}"></i>{{ __($row['label']) }}</span>
                     <span class="db-status-count">{{ number_format($row['count']) }}</span>
                     <span class="db-status-pct">{{ $row['percent'] }}%</span>
                 </li>
@@ -73,25 +73,25 @@
 <section class="an-card an-chart-card fu d2">
     <div class="an-card-head">
         <div>
-            <h3 class="an-card-title">Customer Momentum</h3>
-            <p class="an-card-sub">New customer growth compared with repeat buyer activity.</p>
+            <h3 class="an-card-title">{{ __('Customer Momentum') }}</h3>
+            <p class="an-card-sub">{{ __('New customer growth compared with repeat buyer activity.') }}</p>
         </div>
         <div class="db-legend-inline" data-legend-for="lineChart"></div>
     </div>
     <div class="an-canvas-scroll">
-        <div class="an-canvas"><canvas id="lineChart" role="img" aria-label="Customer momentum"></canvas></div>
+        <div class="an-canvas"><canvas id="lineChart" role="img" aria-label="{{ __('Customer momentum') }}"></canvas></div>
     </div>
 </section>
 
 {{-- Customer Ranking --}}
 <section class="an-card an-table-card fu d3">
     <div class="an-table-head">
-        <h3>Customer Ranking</h3>
-        <p>Lifetime value ranked by total spend and repeat order activity.</p>
+        <h3>{{ __('Customer Ranking') }}</h3>
+        <p>{{ __('Lifetime value ranked by total spend and repeat order activity.') }}</p>
     </div>
     <div class="an-table-wrap">
         <table class="an-table is-brand" data-report-table="Customer Ranking">
-            <thead><tr><th>Customer</th><th>Orders</th><th>Paid</th><th>Total spend</th><th>Collected</th><th>AVG Order</th><th>Last order</th></tr></thead>
+            <thead><tr><th>{{ __('Customer') }}</th><th>{{ __('Orders') }}</th><th>{{ __('Paid') }}</th><th>{{ __('Total spend') }}</th><th>{{ __('Collected') }}</th><th>{{ __('AVG Order') }}</th><th>{{ __('Last order') }}</th></tr></thead>
             <tbody>
                 @forelse($ranking as $row)
                     <tr>
@@ -104,10 +104,10 @@
                         <td>{{ !empty($row['last_order']) ? \Illuminate\Support\Carbon::parse($row['last_order'])->format('D, d M, Y') : '—' }}</td>
                     </tr>
                 @empty
-                    <tr><td colspan="7" class="an-empty">No customer orders yet.</td></tr>
+                    <tr><td colspan="7" class="an-empty">{{ __('No customer orders yet.') }}</td></tr>
                 @endforelse
             </tbody>
         </table>
     </div>
-    <p class="an-table-foot">Showing <strong>{{ $ranking->count() }}</strong> top customers by lifetime value</p>
+    <p class="an-table-foot">{{ __('Showing') }} <strong>{{ $ranking->count() }}</strong> {{ __('top customers by lifetime value') }}</p>
 </section>

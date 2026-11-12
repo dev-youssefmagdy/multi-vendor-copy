@@ -20,6 +20,6 @@ final class SetupProgressController extends PanelController
     {
         $service->markDefaultPagesReviewed();
 
-        return $this->success('Default pages marked as reviewed.');
+        return $this->success(__('Default pages marked as reviewed.'));
     }
 }

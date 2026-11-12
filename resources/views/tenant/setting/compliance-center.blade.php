@@ -83,11 +83,11 @@
     <div class="page-head fu d0">
         <div>
             <div class="page-title-row">
-                <h1 class="D page-title">Compliance Center</h1>
-                <span class="page-badge">Compliance</span>
-                <span class="badge {{ $completionPercent >= 100 ? 'badge-green' : 'badge-amber' }}">{{ $completionPercent }}% Complete</span>
+                <h1 class="D page-title">{{ __('Compliance Center') }}</h1>
+                <span class="page-badge">{{ __('Compliance') }}</span>
+                <span class="badge {{ $completionPercent >= 100 ? 'badge-green' : 'badge-amber' }}">{{ __(':completionPercent% Complete', ['completionPercent' => $completionPercent]) }}</span>
             </div>
-            <p class="page-copy">Business, owner, company, banking, and verification details required to keep your store in good standing. Each section below saves independently.</p>
+            <p class="page-copy">{{ __('Business, owner, company, banking, and verification details required to keep your store in good standing. Each section below saves independently.') }}</p>
         </div>
     </div>
 
@@ -104,28 +104,28 @@
                     </svg>
                 </div>
                 <div>
-                    <h3 class="panel-title">Business Info</h3>
-                    <p class="panel-copy">Where your business legally operates from.</p>
+                    <h3 class="panel-title">{{ __('Business Info') }}</h3>
+                    <p class="panel-copy">{{ __('Where your business legally operates from.') }}</p>
                 </div>
                 <div class="acct-section-save">
-                    <x-btn type="submit">Save Changes</x-btn>
+                    <x-btn type="submit">{{ __('Save Changes') }}</x-btn>
                 </div>
             </div>
             <div class="form-grid form-grid-2">
                 <div>
-                    <label class="field-label">Business Name</label>
+                    <label class="field-label">{{ __('Business Name') }}</label>
                     <x-input type="text" name="businessName" value="{{ old('businessName', $businessName) }}" :error="$errors->has('businessName')" />
                     @error('businessName')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
-                    <label class="field-label">Store Name</label>
+                    <label class="field-label">{{ __('Store Name') }}</label>
                     <x-input type="text" name="storeName" value="{{ old('storeName', $storeName) }}" :error="$errors->has('storeName')" />
                     @error('storeName')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
-                    <label class="field-label">Country</label>
-                    <x-select id="complianceCountrySelect" name="countryId" placeholder="Select country" searchable :error="$errors->has('countryId')">
-                        <option value="">Select country</option>
+                    <label class="field-label">{{ __('Country') }}</label>
+                    <x-select id="complianceCountrySelect" name="countryId" :placeholder="__('Select country')" searchable :error="$errors->has('countryId')">
+                        <option value="">{{ __('Select country') }}</option>
                         @foreach ($countries as $country)
                             <option value="{{ $country->id }}" @selected(old('countryId', $countryId) == $country->id)>{{ $country->name }}</option>
                         @endforeach
@@ -133,9 +133,9 @@
                     @error('countryId')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
-                    <label class="field-label">City</label>
-                    <x-select id="complianceCitySelect" name="cityId" placeholder="Select city" searchable :disabled="$cities->isEmpty()" :error="$errors->has('cityId')">
-                        <option value="">Select city</option>
+                    <label class="field-label">{{ __('City') }}</label>
+                    <x-select id="complianceCitySelect" name="cityId" :placeholder="__('Select city')" searchable :disabled="$cities->isEmpty()" :error="$errors->has('cityId')">
+                        <option value="">{{ __('Select city') }}</option>
                         @foreach ($cities as $cityOption)
                             <option value="{{ $cityOption->id }}" @selected(old('cityId', $cityId) == $cityOption->id)>{{ $cityOption->name }}</option>
                         @endforeach
@@ -143,12 +143,12 @@
                     @error('cityId')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
-                    <label class="field-label">Phone</label>
+                    <label class="field-label">{{ __('Phone') }}</label>
                     <x-input type="tel" data-phone-input name="phone" value="{{ old('phone', $phone) }}" :error="$errors->has('phone')" />
                     @error('phone')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
-                    <label class="field-label">Email</label>
+                    <label class="field-label">{{ __('Email') }}</label>
                     <x-input type="email" name="email" value="{{ old('email', $email) }}" :error="$errors->has('email')" />
                     @error('email')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
@@ -169,32 +169,32 @@
                     </svg>
                 </div>
                 <div>
-                    <h3 class="panel-title">Owner Info</h3>
-                    <p class="panel-copy">The legal owner or representative of this store.</p>
+                    <h3 class="panel-title">{{ __('Owner Info') }}</h3>
+                    <p class="panel-copy">{{ __('The legal owner or representative of this store.') }}</p>
                 </div>
                 <div class="acct-section-save">
-                    <x-btn type="submit">Save Changes</x-btn>
+                    <x-btn type="submit">{{ __('Save Changes') }}</x-btn>
                 </div>
             </div>
             <div class="form-grid form-grid-2">
                 <div>
-                    <label class="field-label">Owner Full Name</label>
+                    <label class="field-label">{{ __('Owner Full Name') }}</label>
                     <x-input type="text" name="ownerName" value="{{ old('ownerName', $ownerName) }}" :error="$errors->has('ownerName')" />
                     @error('ownerName')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
-                    <label class="field-label">Owner ID / Passport Number</label>
+                    <label class="field-label">{{ __('Owner ID / Passport Number') }}</label>
                     <x-input type="text" name="ownerIdNumber" value="{{ old('ownerIdNumber', $ownerIdNumber) }}" :error="$errors->has('ownerIdNumber')" />
                     @error('ownerIdNumber')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
-                    <label class="field-label">Date of Birth (optional)</label>
+                    <label class="field-label">{{ __('Date of Birth (optional)') }}</label>
                     <x-input type="date" name="ownerDob" value="{{ old('ownerDob', $ownerDob) }}" :error="$errors->has('ownerDob')" />
                     @error('ownerDob')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
-                    <label class="field-label">Owner Contact Details</label>
-                    <x-input type="text" name="ownerContact" placeholder="Phone or alternate email" value="{{ old('ownerContact', $ownerContact) }}" :error="$errors->has('ownerContact')" />
+                    <label class="field-label">{{ __('Owner Contact Details') }}</label>
+                    <x-input type="text" name="ownerContact" :placeholder="__('Phone or alternate email')" value="{{ old('ownerContact', $ownerContact) }}" :error="$errors->has('ownerContact')" />
                     @error('ownerContact')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
             </div>
@@ -214,42 +214,42 @@
                     </svg>
                 </div>
                 <div>
-                    <h3 class="panel-title">Company Info (if applicable)</h3>
-                    <p class="panel-copy">Registered company details, if you operate under a legal entity.</p>
+                    <h3 class="panel-title">{{ __('Company Info (if applicable)') }}</h3>
+                    <p class="panel-copy">{{ __('Registered company details, if you operate under a legal entity.') }}</p>
                 </div>
                 <div class="acct-section-save">
-                    <x-btn type="submit">Save Changes</x-btn>
+                    <x-btn type="submit">{{ __('Save Changes') }}</x-btn>
                 </div>
             </div>
             <div class="form-grid form-grid-2">
                 <div>
-                    <label class="field-label">Company Name</label>
+                    <label class="field-label">{{ __('Company Name') }}</label>
                     <x-input type="text" name="companyName" value="{{ old('companyName', $companyName) }}" :error="$errors->has('companyName')" />
                     @error('companyName')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
-                    <label class="field-label">Commercial Registration Number</label>
+                    <label class="field-label">{{ __('Commercial Registration Number') }}</label>
                     <x-input type="text" name="registrationNumber" value="{{ old('registrationNumber', $registrationNumber) }}" :error="$errors->has('registrationNumber')" />
                     @error('registrationNumber')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
-                    <label class="field-label">Registration Expiry Date</label>
+                    <label class="field-label">{{ __('Registration Expiry Date') }}</label>
                     <x-input type="date" name="registrationExpiry" value="{{ old('registrationExpiry', $registrationExpiry) }}" :error="$errors->has('registrationExpiry')" />
                     @error('registrationExpiry')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
-                    <label class="field-label">VAT / Tax Registration Number</label>
+                    <label class="field-label">{{ __('VAT / Tax Registration Number') }}</label>
                     <x-input type="text" name="vatNumber" value="{{ old('vatNumber', $vatNumber) }}" :error="$errors->has('vatNumber')" />
                     @error('vatNumber')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div class="acct-span-full">
-                    <label class="field-label">Commercial Registration Document</label>
+                    <label class="field-label">{{ __('Commercial Registration Document') }}</label>
                     <input type="hidden" name="existing_registration_document_path" value="{{ $registrationDocumentPath }}">
                     @if ($registrationDocumentPath)
                         <div class="flex items-center gap-2" style="margin-bottom:8px;">
-                            <a href="{{ $registrationDocumentPath }}" target="_blank" class="btn btn-secondary btn-sm">View uploaded document</a>
+                            <a href="{{ $registrationDocumentPath }}" target="_blank" class="btn btn-secondary btn-sm">{{ __('View uploaded document') }}</a>
                             <label class="compliance-remove-label">
-                                <input type="checkbox" name="remove_registration_document" value="1"> Remove
+                                <input type="checkbox" name="remove_registration_document" value="1"> {{ __('Remove') }}
                             </label>
                         </div>
                     @endif
@@ -273,38 +273,38 @@
                     </svg>
                 </div>
                 <div>
-                    <h3 class="panel-title">Bank Account</h3>
-                    <p class="panel-copy">Used to process payouts for your store's earnings.</p>
+                    <h3 class="panel-title">{{ __('Bank Account') }}</h3>
+                    <p class="panel-copy">{{ __('Used to process payouts for your store\'s earnings.') }}</p>
                 </div>
                 <div class="acct-section-save">
-                    <x-btn type="submit">Save Changes</x-btn>
+                    <x-btn type="submit">{{ __('Save Changes') }}</x-btn>
                 </div>
             </div>
             <div class="form-grid form-grid-2">
                 <div>
-                    <label class="field-label">Bank Name</label>
+                    <label class="field-label">{{ __('Bank Name') }}</label>
                     <x-input type="text" name="bankName" value="{{ old('bankName', $bankName) }}" :error="$errors->has('bankName')" />
                     @error('bankName')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
-                    <label class="field-label">Account Holder Name</label>
+                    <label class="field-label">{{ __('Account Holder Name') }}</label>
                     <x-input type="text" name="bankHolderName" value="{{ old('bankHolderName', $bankHolderName) }}" :error="$errors->has('bankHolderName')" />
                     @error('bankHolderName')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
-                    <label class="field-label">IBAN</label>
+                    <label class="field-label">{{ __('IBAN') }}</label>
                     <x-input type="text" name="bankIban" value="{{ old('bankIban', $bankIban) }}" :error="$errors->has('bankIban')" />
                     @error('bankIban')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
-                    <label class="field-label">Account Number</label>
+                    <label class="field-label">{{ __('Account Number') }}</label>
                     <x-input type="text" name="bankAccountNumber" value="{{ old('bankAccountNumber', $bankAccountNumber) }}" :error="$errors->has('bankAccountNumber')" />
                     @error('bankAccountNumber')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
-                    <label class="field-label">Currency</label>
-                    <x-select name="currencyId" placeholder="Select currency" searchable :error="$errors->has('currencyId')">
-                        <option value="">Select currency</option>
+                    <label class="field-label">{{ __('Currency') }}</label>
+                    <x-select name="currencyId" :placeholder="__('Select currency')" searchable :error="$errors->has('currencyId')">
+                        <option value="">{{ __('Select currency') }}</option>
                         @foreach ($currencies as $currency)
                             <option value="{{ $currency->id }}" @selected(old('currencyId', $currencyId) == $currency->id)>{{ $currency->code }} — {{ $currency->name }}</option>
                         @endforeach
@@ -328,22 +328,22 @@
                     </svg>
                 </div>
                 <div>
-                    <h3 class="panel-title">Verification Documents</h3>
-                    <p class="panel-copy">Upload the documents our compliance team needs to verify your store.</p>
+                    <h3 class="panel-title">{{ __('Verification Documents') }}</h3>
+                    <p class="panel-copy">{{ __('Upload the documents our compliance team needs to verify your store.') }}</p>
                 </div>
                 <div class="acct-section-save">
-                    <x-btn type="submit">Save Changes</x-btn>
+                    <x-btn type="submit">{{ __('Save Changes') }}</x-btn>
                 </div>
             </div>
             <div class="form-grid form-grid-2">
                 <div>
-                    <label class="field-label">National ID</label>
+                    <label class="field-label">{{ __('National ID') }}</label>
                     <input type="hidden" name="existing_doc_national_id_path" value="{{ $docNationalIdPath }}">
                     @if ($docNationalIdPath)
                         <div class="flex items-center gap-2" style="margin-bottom:8px;">
-                            <a href="{{ $docNationalIdPath }}" target="_blank" class="btn btn-secondary btn-sm">View</a>
+                            <a href="{{ $docNationalIdPath }}" target="_blank" class="btn btn-secondary btn-sm">{{ __('View') }}</a>
                             <label class="compliance-remove-label">
-                                <input type="checkbox" name="remove_doc_national_id" value="1"> Remove
+                                <input type="checkbox" name="remove_doc_national_id" value="1"> {{ __('Remove') }}
                             </label>
                         </div>
                     @endif
@@ -351,13 +351,13 @@
                     @error('docNationalIdUpload')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
-                    <label class="field-label">Commercial Registration</label>
+                    <label class="field-label">{{ __('Commercial Registration') }}</label>
                     <input type="hidden" name="existing_doc_commercial_registration_path" value="{{ $docCommercialRegistrationPath }}">
                     @if ($docCommercialRegistrationPath)
                         <div class="flex items-center gap-2" style="margin-bottom:8px;">
-                            <a href="{{ $docCommercialRegistrationPath }}" target="_blank" class="btn btn-secondary btn-sm">View</a>
+                            <a href="{{ $docCommercialRegistrationPath }}" target="_blank" class="btn btn-secondary btn-sm">{{ __('View') }}</a>
                             <label class="compliance-remove-label">
-                                <input type="checkbox" name="remove_doc_commercial_registration" value="1"> Remove
+                                <input type="checkbox" name="remove_doc_commercial_registration" value="1"> {{ __('Remove') }}
                             </label>
                         </div>
                     @endif
@@ -365,13 +365,13 @@
                     @error('docCommercialRegistrationUpload')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
-                    <label class="field-label">Tax Certificate</label>
+                    <label class="field-label">{{ __('Tax Certificate') }}</label>
                     <input type="hidden" name="existing_doc_tax_certificate_path" value="{{ $docTaxCertificatePath }}">
                     @if ($docTaxCertificatePath)
                         <div class="flex items-center gap-2" style="margin-bottom:8px;">
-                            <a href="{{ $docTaxCertificatePath }}" target="_blank" class="btn btn-secondary btn-sm">View</a>
+                            <a href="{{ $docTaxCertificatePath }}" target="_blank" class="btn btn-secondary btn-sm">{{ __('View') }}</a>
                             <label class="compliance-remove-label">
-                                <input type="checkbox" name="remove_doc_tax_certificate" value="1"> Remove
+                                <input type="checkbox" name="remove_doc_tax_certificate" value="1"> {{ __('Remove') }}
                             </label>
                         </div>
                     @endif
@@ -379,15 +379,15 @@
                     @error('docTaxCertificateUpload')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div class="acct-span-full">
-                    <label class="field-label">Additional Documents</label>
+                    <label class="field-label">{{ __('Additional Documents') }}</label>
                     @if (!empty($docAdditionalPaths))
                         <div class="flex flex-wrap gap-2" style="margin-bottom:8px;">
                             @foreach ($docAdditionalPaths as $i => $path)
                                 <span class="flex items-center gap-2">
                                     <input type="hidden" name="existing_doc_additional_paths[]" value="{{ $path }}">
-                                    <a href="{{ $path }}" target="_blank" class="btn btn-secondary btn-sm">Document {{ $i + 1 }}</a>
+                                    <a href="{{ $path }}" target="_blank" class="btn btn-secondary btn-sm">{{ __('Document :i', ['i' => $i + 1]) }}</a>
                                     <label class="compliance-remove-label">
-                                        <input type="checkbox" name="remove_doc_additional_paths[]" value="{{ $path }}"> Remove
+                                        <input type="checkbox" name="remove_doc_additional_paths[]" value="{{ $path }}"> {{ __('Remove') }}
                                     </label>
                                 </span>
                             @endforeach
@@ -409,18 +409,18 @@
                 </svg>
             </div>
             <div>
-                <h3 class="panel-title">Store Policies</h3>
-                <p class="panel-copy">Your Return, Privacy, Terms, and Shipping pages, managed under Storefront → Pages.</p>
+                <h3 class="panel-title">{{ __('Store Policies') }}</h3>
+                <p class="panel-copy">{{ __('Your Return, Privacy, Terms, and Shipping pages, managed under Storefront → Pages.') }}</p>
             </div>
         </div>
         <div class="form-grid form-grid-2">
             @foreach ($policyPages as $entry)
                 <div class="flex items-center justify-between" style="padding:10px 14px;border:1px solid var(--border);border-radius:10px;">
-                    <span class="field-label" style="margin:0;">{{ $entry['label'] }}</span>
+                    <span class="field-label" style="margin:0;">{{ __($entry['label']) }}</span>
                     @if ($entry['page'])
-                        <a href="{{ route('tenant.store.pages.edit', $entry['page']->id) }}" class="btn btn-secondary btn-sm">Edit page</a>
+                        <a href="{{ route('tenant.store.pages.edit', $entry['page']->id) }}" class="btn btn-secondary btn-sm">{{ __('Edit page') }}</a>
                     @else
-                        <a href="{{ route('tenant.store.pages.create') }}" class="btn btn-secondary btn-sm">Create page</a>
+                        <a href="{{ route('tenant.store.pages.create') }}" class="btn btn-secondary btn-sm">{{ __('Create page') }}</a>
                     @endif
                 </div>
             @endforeach
@@ -445,7 +445,7 @@
         countrySelect.addEventListener('change', async () => {
             const countryId = countrySelect.value;
 
-            citySelect.innerHTML = '<option value="">Select city</option>';
+            citySelect.innerHTML = '<option value="">{{ __('Select city') }}</option>';
             citySelect.disabled = true;
 
             if (countryId) {

@@ -44,9 +44,9 @@ final class BladeThemeController extends PanelController
             'activeTheme' => $themes->first(fn (BladeTheme $t) => $t->is_active),
             'rows' => $rows,
             'columns' => [
-                TableColumn::make('version', 'Version')->orderable(false),
-                TableColumn::make('uploaded_at', 'Uploaded')->orderable(false),
-                TableColumn::make('status', 'Status')->orderable(false),
+                TableColumn::make('version', __('Version'))->orderable(false),
+                TableColumn::make('uploaded_at', __('Uploaded'))->orderable(false),
+                TableColumn::make('status', __('Status'))->orderable(false),
                 TableColumn::actions(),
             ],
         ]);
@@ -61,12 +61,12 @@ final class BladeThemeController extends PanelController
         } catch (Throwable $e) {
             Log::error('Blade theme upload failed', ['error' => $e->getMessage()]);
 
-            $message = 'The theme could not be processed. Please check the ZIP contents and try again.';
+            $message = __('The theme could not be processed. Please check the ZIP contents and try again.');
 
             return $this->failure($message, 422, ['theme_zip' => [$message]]);
         }
 
-        return $this->success('Theme uploaded and queued for admin review.');
+        return $this->success(__('Theme uploaded and queued for admin review.'));
     }
 
     public function validateUpload(UploadBladeThemeRequest $request): JsonResponse
@@ -78,7 +78,7 @@ final class BladeThemeController extends PanelController
     {
         $this->service->deactivate((string) tenant()->getTenantKey());
 
-        return $this->success('Blade theme deactivated. Your storefront now uses the system theme again.');
+        return $this->success(__('Blade theme deactivated. Your storefront now uses the system theme again.'));
     }
 
     public function destroy(int $upload): JsonResponse
@@ -90,7 +90,7 @@ final class BladeThemeController extends PanelController
                 $theme = BladeTheme::query()->where('tenant_id', $tenantId)->findOrFail($upload);
 
                 if ($theme->is_active) {
-                    throw new RuntimeException('Cannot delete an active blade theme. Deactivate it first.');
+                    throw new RuntimeException(__('Cannot delete an active blade theme. Deactivate it first.'));
                 }
 
                 $path = storage_path('app/'.$theme->storage_path);
@@ -124,6 +124,6 @@ final class BladeThemeController extends PanelController
             }
         }
 
-        return $this->success('Theme deleted.');
+        return $this->success(__('Theme deleted.'));
     }
 }

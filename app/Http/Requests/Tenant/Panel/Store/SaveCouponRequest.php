@@ -31,9 +31,9 @@ final class SaveCouponRequest extends TenantFormRequest
         return [
             'country_ids' => 'countries',
             'name_text' => 'name',
-            'minimum_spend' => 'minimum spend',
-            'start_date' => 'start date',
-            'end_date' => 'end date',
+            'minimum_spend' => __('minimum spend'),
+            'start_date' => __('start date'),
+            'end_date' => __('end date'),
         ];
     }
 }

@@ -31,9 +31,9 @@ final class SaveCustomerAddressRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'full_name' => 'recipient name',
+            'full_name' => __('recipient name'),
             'address_line_1' => 'address line 1',
-            'is_default' => 'default address',
+            'is_default' => __('default address'),
         ];
     }
 }

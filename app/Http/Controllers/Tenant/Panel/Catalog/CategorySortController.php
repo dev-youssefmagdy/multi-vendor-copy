@@ -34,6 +34,6 @@ final class CategorySortController extends PanelController
 
         CacheVersion::bump('Category');
 
-        return $this->success('Category order saved.');
+        return $this->success(__('Category order saved.'));
     }
 }

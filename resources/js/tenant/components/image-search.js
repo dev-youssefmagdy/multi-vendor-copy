@@ -1,4 +1,5 @@
 import { emit } from '../core/events.js';
+import { t } from '../core/i18n.js';
 
 function openModal(modal) {
     modal.hidden = false;
@@ -52,7 +53,7 @@ async function startCamera(modal) {
         modal.__stream = stream;
         modal.querySelector('[data-ism-video]').srcObject = stream;
     } catch {
-        showError(modal, 'Could not access the camera. Please allow camera permission or use Upload Image instead.');
+        showError(modal, t('Could not access the camera. Please allow camera permission or use Upload Image instead.'));
         modal.querySelector('[data-ism-camera]').hidden = true;
         modal.querySelector('[data-ism-choice]').hidden = false;
     }
@@ -69,7 +70,7 @@ function capturePhoto(modal) {
         if (blob) {
             showPreview(modal, blob);
         } else {
-            showError(modal, 'Could not capture the photo. Please try again.');
+            showError(modal, t('Could not capture the photo. Please try again.'));
         }
     }, 'image/jpeg', 0.92);
 }
@@ -99,7 +100,7 @@ async function submitSearch(modal) {
 
         const contentType = response.headers.get('content-type') || '';
         if (!response.ok || !contentType.includes('application/json')) {
-            throw new Error('Image search failed. Please try again.');
+            throw new Error(t('Image search failed. Please try again.'));
         }
 
         const json = await response.json();
@@ -109,7 +110,7 @@ async function submitSearch(modal) {
         emit('tenant:image-search:results', { ids });
     } catch (e) {
         modal.querySelector('[data-ism-loading]').hidden = true;
-        showError(modal, e.message || 'Image search failed. Please try again.');
+        showError(modal, e.message || t('Image search failed. Please try again.'));
         modal.querySelector('[data-ism-preview]').hidden = false;
     }
 }

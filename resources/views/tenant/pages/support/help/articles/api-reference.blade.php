@@ -255,209 +255,184 @@ Content-Type: application/json
 CODE;
 @endphp
 
-<h2>Storefront API</h2>
+<h2>{{ __('Storefront API') }}</h2>
 <p>
-    A complete REST API for your storefront — browsing, cart, favorites,
-    reviews, addresses, checkout, coupons, account, and orders — for calling
-    from an external client (a mobile app, a headless frontend, a third-party
-    integration). No domain-based tenancy resolution is required to identify
-    the store; the bearer token below does that.
+    {{ __('A complete REST API for your storefront — browsing, cart, favorites, reviews, addresses, checkout, coupons, account, and orders — for calling from an external client (a mobile app, a headless frontend, a third-party integration). No domain-based tenancy resolution is required to identify the store; the bearer token below does that.') }}
 </p>
 
-<h3>Base URL</h3>
+<h3>{{ __('Base URL') }}</h3>
 <div class="docs-code-block">
-<div class="docs-code-block-head"><x-tenant::copy :value="$baseUrl" label="Copy" /></div>
+<div class="docs-code-block-head"><x-tenant::copy :value="$baseUrl" :label="__('Copy')" /></div>
 <pre>{{ $baseUrl }}</pre>
 </div>
 
-<h3>Authentication</h3>
+<h3>{{ __('Authentication') }}</h3>
 <p>
-    Every request must identify your store with a bearer token. The token is
-    your store's tenant id, shown below:
+    {{ __('Every request must identify your store with a bearer token. The token is your store\'s tenant id, shown below:') }}
 </p>
 <div class="docs-code-block">
-<div class="docs-code-block-head"><x-tenant::copy :value="$authHeader" label="Copy" /></div>
+<div class="docs-code-block-head"><x-tenant::copy :value="$authHeader" :label="__('Copy')" /></div>
 <pre>{{ $authHeader }}</pre>
 </div>
 <p>
-    Keep this token private — anyone holding it can act on your store's cart
-    and, together with a logged-in shopper session, its favorites. Requests
-    without a valid token receive <code>401 Unauthorized</code>.
+    {{ __('Keep this token private — anyone holding it can act on your store\'s cart and, together with a logged-in shopper session, its favorites. Requests without a valid token receive') }} <code>401 Unauthorized</code>.
 </p>
 
-<h3>Endpoints</h3>
+<h3>{{ __('Endpoints') }}</h3>
 
-<h4>Add to cart</h4>
+<h4>{{ __('Add to cart') }}</h4>
 <div class="docs-code-block">
-<div class="docs-code-block-head"><x-tenant::copy :value="$addToCart" label="Copy" /></div>
+<div class="docs-code-block-head"><x-tenant::copy :value="$addToCart" :label="__('Copy')" /></div>
 <pre>{{ $addToCart }}</pre>
 </div>
 
-<h4>Remove from cart</h4>
+<h4>{{ __('Remove from cart') }}</h4>
 <div class="docs-code-block">
-<div class="docs-code-block-head"><x-tenant::copy :value="$removeFromCart" label="Copy" /></div>
+<div class="docs-code-block-head"><x-tenant::copy :value="$removeFromCart" :label="__('Copy')" /></div>
 <pre>{{ $removeFromCart }}</pre>
 </div>
 
-<h4>Update cart quantity</h4>
+<h4>{{ __('Update cart quantity') }}</h4>
 <div class="docs-code-block">
-<div class="docs-code-block-head"><x-tenant::copy :value="$updateCartQty" label="Copy" /></div>
+<div class="docs-code-block-head"><x-tenant::copy :value="$updateCartQty" :label="__('Copy')" /></div>
 <pre>{{ $updateCartQty }}</pre>
 </div>
 
-<h4>Toggle favorite <span class="docs-badge">requires shopper login</span></h4>
+<h4>{{ __('Toggle favorite') }} <span class="docs-badge">{{ __('requires shopper login') }}</span></h4>
 <div class="docs-code-block">
-<div class="docs-code-block-head"><x-tenant::copy :value="$toggleFavorite" label="Copy" /></div>
+<div class="docs-code-block-head"><x-tenant::copy :value="$toggleFavorite" :label="__('Copy')" /></div>
 <pre>{{ $toggleFavorite }}</pre>
 </div>
 
-<h4>List favorited products <span class="docs-badge">requires shopper login</span></h4>
+<h4>{{ __('List favorited products') }} <span class="docs-badge">{{ __('requires shopper login') }}</span></h4>
 <div class="docs-code-block">
-<div class="docs-code-block-head"><x-tenant::copy :value="$listFavorites" label="Copy" /></div>
+<div class="docs-code-block-head"><x-tenant::copy :value="$listFavorites" :label="__('Copy')" /></div>
 <pre>{{ $listFavorites }}</pre>
 </div>
 
-<h4>Get favorited product IDs <span class="docs-badge">requires shopper login</span></h4>
+<h4>{{ __('Get favorited product IDs') }} <span class="docs-badge">{{ __('requires shopper login') }}</span></h4>
 <div class="docs-code-block">
-<div class="docs-code-block-head"><x-tenant::copy :value="$favoriteIds" label="Copy" /></div>
+<div class="docs-code-block-head"><x-tenant::copy :value="$favoriteIds" :label="__('Copy')" /></div>
 <pre>{{ $favoriteIds }}</pre>
 </div>
 
-<h3>Browsing — categories &amp; products</h3>
+<h3>{{ __('Browsing — categories & products') }}</h3>
 
-<h4>List root categories</h4>
+<h4>{{ __('List root categories') }}</h4>
 <div class="docs-code-block">
-<div class="docs-code-block-head"><x-tenant::copy :value="$listCategories" label="Copy" /></div>
+<div class="docs-code-block-head"><x-tenant::copy :value="$listCategories" :label="__('Copy')" /></div>
 <pre>{{ $listCategories }}</pre>
 </div>
 
-<h4>Category detail + products <span class="docs-badge">accepts filters</span></h4>
+<h4>{{ __('Category detail + products') }} <span class="docs-badge">{{ __('accepts filters') }}</span></h4>
 <div class="docs-code-block">
-<div class="docs-code-block-head"><x-tenant::copy :value="$categoryDetail" label="Copy" /></div>
+<div class="docs-code-block-head"><x-tenant::copy :value="$categoryDetail" :label="__('Copy')" /></div>
 <pre>{{ $categoryDetail }}</pre>
 </div>
 <p>
-    All query params are optional and every param page in the storefront
-    (category, search, badge listings) shares this filter set:
+    {{ __('All query params are optional and every param page in the storefront (category, search, badge listings) shares this filter set:') }}
 </p>
 <ul>
-    <li><code>keyword</code> — free-text search</li>
+    <li><code>keyword</code> {{ __('— free-text search') }}</li>
     <li><code>sort</code> — <code>latest</code>, <code>old</code>, <code>ascending</code>, <code>descending</code>, <code>rating</code></li>
-    <li><code>availability</code> — <code>in_stock</code> or <code>out_of_stock</code></li>
+    <li><code>availability</code> — <code>in_stock</code> {{ __('or') }} <code>out_of_stock</code></li>
     <li><code>product_flag</code> — <code>featured</code></li>
-    <li><code>sale</code> — <code>on_sale</code> or <code>flash_sale</code></li>
-    <li><code>ratings</code> — minimum star rating, <code>1</code>–<code>4</code></li>
+    <li><code>sale</code> — <code>on_sale</code> {{ __('or') }} <code>flash_sale</code></li>
+    <li><code>ratings</code> {{ __('— minimum star rating,') }} <code>1</code>–<code>4</code></li>
     <li><code>section</code> — <code>trending</code>, <code>flash_sale</code>, <code>new_arrivals</code>, <code>top_products</code>, <code>explore</code>, <code>featured</code>, <code>hot_deals</code>, <code>special_offers</code>, <code>top_rated</code>, <code>recommended</code></li>
-    <li><code>min</code> / <code>max</code> — price range</li>
-    <li><code>per_page</code> (max 60) / <code>page</code></li>
+    <li><code>min</code> / <code>max</code> {{ __('— price range') }}</li>
+    <li><code>per_page</code> {{ __('(max 60) /') }} <code>page</code></li>
 </ul>
 
-<h4>List / search products</h4>
+<h4>{{ __('List / search products') }}</h4>
 <div class="docs-code-block">
-<div class="docs-code-block-head"><x-tenant::copy :value="$listProducts" label="Copy" /></div>
+<div class="docs-code-block-head"><x-tenant::copy :value="$listProducts" :label="__('Copy')" /></div>
 <pre>{{ $listProducts }}</pre>
 </div>
 
-<h4>Product detail</h4>
+<h4>{{ __('Product detail') }}</h4>
 <div class="docs-code-block">
-<div class="docs-code-block-head"><x-tenant::copy :value="$productDetail" label="Copy" /></div>
+<div class="docs-code-block-head"><x-tenant::copy :value="$productDetail" :label="__('Copy')" /></div>
 <pre>{{ $productDetail }}</pre>
 </div>
 
-<h3>Reviews</h3>
+<h3>{{ __('Reviews') }}</h3>
 
-<h4>List a product's reviews</h4>
+<h4>{{ __('List a product\'s reviews') }}</h4>
 <div class="docs-code-block">
-<div class="docs-code-block-head"><x-tenant::copy :value="$listReviews" label="Copy" /></div>
+<div class="docs-code-block-head"><x-tenant::copy :value="$listReviews" :label="__('Copy')" /></div>
 <pre>{{ $listReviews }}</pre>
 </div>
 
-<h4>Submit a review <span class="docs-badge">requires shopper login</span></h4>
+<h4>{{ __('Submit a review') }} <span class="docs-badge">{{ __('requires shopper login') }}</span></h4>
 <div class="docs-code-block">
-<div class="docs-code-block-head"><x-tenant::copy :value="$submitReview" label="Copy" /></div>
+<div class="docs-code-block-head"><x-tenant::copy :value="$submitReview" :label="__('Copy')" /></div>
 <pre>{{ $submitReview }}</pre>
 </div>
 
-<h3>Addresses <span class="docs-badge">requires shopper login</span></h3>
+<h3>{{ __('Addresses') }} <span class="docs-badge">{{ __('requires shopper login') }}</span></h3>
 
-<h4>List addresses</h4>
+<h4>{{ __('List addresses') }}</h4>
 <div class="docs-code-block">
-<div class="docs-code-block-head"><x-tenant::copy :value="$listAddresses" label="Copy" /></div>
+<div class="docs-code-block-head"><x-tenant::copy :value="$listAddresses" :label="__('Copy')" /></div>
 <pre>{{ $listAddresses }}</pre>
 </div>
 
-<h4>Create address</h4>
+<h4>{{ __('Create address') }}</h4>
 <div class="docs-code-block">
-<div class="docs-code-block-head"><x-tenant::copy :value="$createAddress" label="Copy" /></div>
+<div class="docs-code-block-head"><x-tenant::copy :value="$createAddress" :label="__('Copy')" /></div>
 <pre>{{ $createAddress }}</pre>
 </div>
 
-<h4>Update / delete / set default</h4>
+<h4>{{ __('Update / delete / set default') }}</h4>
 <div class="docs-code-block">
-<div class="docs-code-block-head"><x-tenant::copy :value="$updateAddress" label="Copy" /></div>
+<div class="docs-code-block-head"><x-tenant::copy :value="$updateAddress" :label="__('Copy')" /></div>
 <pre>{{ $updateAddress }}</pre>
 </div>
 
-<h3>Checkout <span class="docs-badge">requires shopper login</span></h3>
+<h3>{{ __('Checkout') }} <span class="docs-badge">{{ __('requires shopper login') }}</span></h3>
 
-<h4>Place order</h4>
+<h4>{{ __('Place order') }}</h4>
 <div class="docs-code-block">
-<div class="docs-code-block-head"><x-tenant::copy :value="$placeOrder" label="Copy" /></div>
+<div class="docs-code-block-head"><x-tenant::copy :value="$placeOrder" :label="__('Copy')" /></div>
 <pre>{{ $placeOrder }}</pre>
 </div>
 <p>
-    Builds order(s) from the current session cart using the same order-placement
-    logic as the storefront checkout page, so it needs a persistent session
-    (cookies) carrying the cart between <code>/cart/*</code> calls and this one.
-    When <code>requires_payment</code> is <code>true</code>, redirect the
-    shopper to your payment flow for <code>payment_gateway_code</code>; COD
-    orders are confirmed immediately.
+    {{ __('Builds order(s) from the current session cart using the same order-placement logic as the storefront checkout page, so it needs a persistent session (cookies) carrying the cart between') }} <code>/cart/*</code> {{ __('calls and this one. When') }} <code>requires_payment</code> {{ __('is') }} <code>true</code>{{ __(', redirect the shopper to your payment flow for') }} <code>payment_gateway_code</code>{{ __('; COD orders are confirmed immediately.') }}
 </p>
 
-<h3>Coupons <span class="docs-badge">requires shopper login</span></h3>
+<h3>{{ __('Coupons') }} <span class="docs-badge">{{ __('requires shopper login') }}</span></h3>
 
-<h4>Current coupon / apply / remove</h4>
+<h4>{{ __('Current coupon / apply / remove') }}</h4>
 <div class="docs-code-block">
-<div class="docs-code-block-head"><x-tenant::copy :value="$coupons" label="Copy" /></div>
+<div class="docs-code-block-head"><x-tenant::copy :value="$coupons" :label="__('Copy')" /></div>
 <pre>{{ $coupons }}</pre>
 </div>
 
-<h3>Account <span class="docs-badge">requires shopper login</span></h3>
+<h3>{{ __('Account') }} <span class="docs-badge">{{ __('requires shopper login') }}</span></h3>
 
-<h4>Profile</h4>
+<h4>{{ __('Profile') }}</h4>
 <div class="docs-code-block">
-<div class="docs-code-block-head"><x-tenant::copy :value="$profile" label="Copy" /></div>
+<div class="docs-code-block-head"><x-tenant::copy :value="$profile" :label="__('Copy')" /></div>
 <pre>{{ $profile }}</pre>
 </div>
 
-<h3>Orders <span class="docs-badge">requires shopper login</span></h3>
+<h3>{{ __('Orders') }} <span class="docs-badge">{{ __('requires shopper login') }}</span></h3>
 
-<h4>List / detail / reorder / cancel</h4>
+<h4>{{ __('List / detail / reorder / cancel') }}</h4>
 <div class="docs-code-block">
-<div class="docs-code-block-head"><x-tenant::copy :value="$orders" label="Copy" /></div>
+<div class="docs-code-block-head"><x-tenant::copy :value="$orders" :label="__('Copy')" /></div>
 <pre>{{ $orders }}</pre>
 </div>
 <p>
-    Cancelling needs a <code>reason</code> from <code>GET /orders/cancellation-reasons</code>; the
-    <code>note</code> is optional (max 1000 characters) but required when the reason's
-    <code>requires_note</code> is <code>true</code> (<code>other</code>). A <code>pending</code> order can always
-    be cancelled; a <code>processing</code> order only while your store's cancellation policy allows it
-    (Settings → Return Policy). Shipped, delivered, cancelled and refunded orders can't be cancelled —
-    the 422 response explains why, and <code>can_request_return_instead</code> tells you to offer a return.
-    Use <code>can_cancel</code> / <code>cancel_blocked_reason</code> from <code>GET /orders/{uuid}</code> to show or hide
-    your cancel button. Paid orders are refunded automatically; follow the refund in <code>refunds</code>.
+    {{ __('Cancelling needs a') }} <code>reason</code> {{ __('from') }} <code>GET /orders/cancellation-reasons</code>{{ __('; the') }}
+    <code>note</code> {{ __('is optional (max 1000 characters) but required when the reason\'s') }}
+    <code>requires_note</code> {{ __('is') }} <code>true</code> (<code>other</code>{{ __('). A') }} <code>pending</code> {{ __('order can always be cancelled; a') }} <code>processing</code> {{ __('order only while your store\'s cancellation policy allows it (Settings → Return Policy). Shipped, delivered, cancelled and refunded orders can\'t be cancelled — the 422 response explains why, and') }} <code>can_request_return_instead</code> {{ __('tells you to offer a return. Use') }} <code>can_cancel</code> / <code>cancel_blocked_reason</code> {{ __('from') }} <code>GET /orders/{uuid}</code> {{ __('to show or hide your cancel button. Paid orders are refunded automatically; follow the refund in') }} <code>refunds</code>.
 </p>
 
-<h3>Notes</h3>
+<h3>{{ __('Notes') }}</h3>
 <ul>
-    <li>The cart itself is scoped to the shopper's browser session on the
-        server, so <code>/cart/*</code>, <code>/checkout</code>, and
-        <code>/coupon/*</code> calls need the token above and a persistent
-        session (cookies) between requests from the same client.</li>
-    <li>Every endpoint tagged "requires shopper login" additionally needs the
-        shopper authenticated on the <code>storefront</code> guard — log them
-        in via your existing storefront login flow before calling these.
-        Unauthenticated requests to these endpoints redirect to the storefront
-        login page rather than returning JSON, so keep the shopper's session
-        cookie attached throughout.</li>
+    <li>{{ __('The cart itself is scoped to the shopper\'s browser session on the server, so') }} <code>/cart/*</code>, <code>/checkout</code>{{ __(', and') }}
+        <code>/coupon/*</code> {{ __('calls need the token above and a persistent session (cookies) between requests from the same client.') }}</li>
+    <li>{{ __('Every endpoint tagged "requires shopper login" additionally needs the shopper authenticated on the') }} <code>storefront</code> {{ __('guard — log them in via your existing storefront login flow before calling these. Unauthenticated requests to these endpoints redirect to the storefront login page rather than returning JSON, so keep the shopper\'s session cookie attached throughout.') }}</li>
 </ul>

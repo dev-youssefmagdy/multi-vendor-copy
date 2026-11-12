@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { toast } from './toast.js';
+import { t } from './i18n.js';
 
 const http = axios.create({
     headers: {
@@ -62,13 +63,13 @@ http.interceptors.response.use(
                     location.assign(loginUrl());
                     break;
                 case 403:
-                    toast[toastType](data.message || 'You do not have permission to perform this action.');
+                    toast[toastType](data.message || t('You do not have permission to perform this action.'));
                     if (data.redirect) {
                         setTimeout(() => location.assign(data.redirect), 1200);
                     }
                     break;
                 case 404:
-                    toast[toastType]('The requested record no longer exists.');
+                    toast[toastType](t('The requested record no longer exists.'));
                     break;
                 case 409:
                     toast[toastType](data.message);
@@ -77,7 +78,7 @@ http.interceptors.response.use(
                     }
                     break;
                 case 419:
-                    toast.error('Your session expired. Reloading…');
+                    toast.error(t('Your session expired. Reloading…'));
                     setTimeout(() => location.reload(), 1200);
                     break;
                 case 422:
@@ -86,11 +87,11 @@ http.interceptors.response.use(
                     }
                     break;
                 case 429:
-                    toast[toastType]('Too many requests. Please wait a moment.');
+                    toast[toastType](t('Too many requests. Please wait a moment.'));
                     break;
                 default:
                     if (!status || status >= 500) {
-                        toast[toastType]('Something went wrong. Please try again.');
+                        toast[toastType](t('Something went wrong. Please try again.'));
                     } else if (data.toast_type) {
                         toast[toastType](data.message);
                     }

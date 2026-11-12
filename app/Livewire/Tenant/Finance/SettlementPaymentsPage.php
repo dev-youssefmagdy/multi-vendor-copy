@@ -23,12 +23,12 @@ class SettlementPaymentsPage extends ListPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Settlement Payments',
-            'badge' => 'Finance',
+            'title' => __('Settlement Payments'),
+            'badge' => __('Finance'),
             'actionLabel' => '',
-            'description' => 'Review the settlement payments you have made to central for product cost and shipping.',
-            'tableTitle' => 'Settlement Records',
-            'headers' => ['Invoice', 'Order', 'Gateway', 'Transaction', 'Amount', 'Settled At'],
+            'description' => __('Review the settlement payments you have made to central for product cost and shipping.'),
+            'tableTitle' => __('Settlement Records'),
+            'headers' => [__('Invoice'), __('Order'), __('Gateway'), __('Transaction'), __('Amount'), __('Settled At')],
         ];
     }
 
@@ -70,12 +70,12 @@ class SettlementPaymentsPage extends ListPage
             return [
                 '<div class="entity-title" style="font-family:monospace;font-size:12px;">' . e($s->invoice_number) . '</div>',
                 '<div class="entity-title" style="font-family:monospace;font-size:11px;">' . e(str()->limit($s->order_uuid, 28)) . '</div>',
-                '<div class="entity-title">' . e(ucwords(str_replace('_', ' ', $s->gateway_code ?? '—'))) . '</div>',
+                '<div class="entity-title">' . e(__(ucwords(str_replace('_', ' ', $s->gateway_code ?? '—')))) . '</div>',
                 $s->transaction_id
                 ? '<div class="entity-subtitle" style="font-family:monospace;font-size:11px;">' . e(str()->limit($s->transaction_id, 28)) . '</div>'
                 : '<span class="entity-subtitle">—</span>',
                 '<strong>$' . number_format((float) $s->total, 2) . '</strong>'
-                . '<div class="entity-subtitle">Fee: $' . number_format((float) $s->gateway_fee, 2) . '</div>',
+                . '<div class="entity-subtitle">' . e(__('Fee: $:gatewayfee', ['gatewayfee' => number_format((float) $s->gateway_fee, 2)])) . '</div>',
                 '<div class="entity-title">' . e($s->settled_at?->format('M d, Y')) . '</div>'
                 . '<div class="entity-subtitle">' . e($s->settled_at?->format('H:i')) . '</div>',
             ];
@@ -84,18 +84,18 @@ class SettlementPaymentsPage extends ListPage
         return array_merge(parent::pageData(), [
             'records' => $records,
             'filterFields' => [
-                ['label' => 'Search', 'model' => 'search', 'placeholder' => 'Invoice, order UUID, transaction…'],
+                ['label' => __('Search'), 'model' => 'search', 'placeholder' => __('Invoice, order UUID, transaction…')],
                 [
-                    'label' => 'Status',
+                    'label' => __('Status'),
                     'model' => 'statusFilter',
                     'type' => 'select',
-                    'options' => ['' => 'All Statuses'] + array_map(fn($s) => ucwords(str_replace('_', ' ', $s)), $statuses),
+                    'options' => ['' => __('All Statuses')] + array_map(fn($s) => __(ucwords(str_replace('_', ' ', $s))), $statuses),
                 ],
             ],
             'statistics' => $this->presentMetricCards([
-                ['label' => 'Total Settlements', 'value' => $totalCount, 'format' => 'number', 'caption' => 'Settlement payments made to central.', 'dot' => 'dot-cyan'],
-                ['label' => 'Total Paid', 'value' => $totalPaid, 'format' => 'currency', 'caption' => 'Cumulative amount settled with central.', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'This Month', 'value' => $thisMonth, 'format' => 'currency', 'caption' => 'Settlements paid this calendar month.', 'dot' => 'dot-cyan'],
+                ['label' => __('Total Settlements'), 'value' => $totalCount, 'format' => 'number', 'caption' => __('Settlement payments made to central.'), 'dot' => 'dot-cyan'],
+                ['label' => __('Total Paid'), 'value' => $totalPaid, 'format' => 'currency', 'caption' => __('Cumulative amount settled with central.'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('This Month'), 'value' => $thisMonth, 'format' => 'currency', 'caption' => __('Settlements paid this calendar month.'), 'dot' => 'dot-cyan'],
             ]),
             'rows' => $rows,
             'tableDescription' => $records->total() . ' settlement records matched the current filters.',

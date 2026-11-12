@@ -32,12 +32,12 @@ final class BadgeController extends PanelController
     public function show(Request $request, ProductBadge $badge): View
     {
         $badgeTitle = match ($badge->text) {
-            'new-in' => 'New In Products',
-            'best-selling' => 'Best Selling Products',
-            'featured' => 'Featured Products',
-            'recommended' => 'Recommended Products',
-            'trending-now' => 'Trending Now Products',
-            default => ucwords(str_replace('-', ' ', $badge->text)).' Products',
+            'new-in' => __('New In Products'),
+            'best-selling' => __('Best Selling Products'),
+            'featured' => __('Featured Products'),
+            'recommended' => __('Recommended Products'),
+            'trending-now' => __('Trending Now Products'),
+            default => __(':badge Products', ['badge' => __(ucwords(str_replace('-', ' ', $badge->text)))]),
         };
 
         $activeCountryId = $request->integer('country_id') ?: null;
@@ -62,8 +62,8 @@ final class BadgeController extends PanelController
             'selectedProductLabels' => $selectedProductLabels,
             'categoryTree' => $this->repo->categoryTreeOptions(),
             'stats' => Metric::cards([
-                ['label' => 'Selected', 'value' => count($selectedProductIds), 'format' => 'number', 'caption' => "Products currently selected for the {$badge->text} badge.", 'dot' => 'dot-cyan'],
-                ['label' => 'Catalog Products', 'value' => Product::query()->count(), 'format' => 'number', 'caption' => 'Total products available to assign to this badge.', 'dot' => 'dot-green'],
+                ['label' => __('Selected'), 'value' => count($selectedProductIds), 'format' => 'number', 'caption' => __('Products currently selected for the :badge badge.', ['badge' => $badge->text]), 'dot' => 'dot-cyan'],
+                ['label' => __('Catalog Products'), 'value' => Product::query()->count(), 'format' => 'number', 'caption' => __('Total products available to assign to this badge.'), 'dot' => 'dot-green'],
             ]),
         ]);
     }
@@ -87,7 +87,7 @@ final class BadgeController extends PanelController
         $categoryId = (int) $request->input('category_id');
 
         if (!$categoryId) {
-            return $this->failure('Please choose a category first.');
+            return $this->failure(__('Please choose a category first.'));
         }
 
         $productIds = Product::query()
@@ -98,7 +98,7 @@ final class BadgeController extends PanelController
             ->all();
 
         if (empty($productIds)) {
-            return $this->failure('No products found in that category.');
+            return $this->failure(__('No products found in that category.'));
         }
 
         $names = $this->repo->productNamesForIds($productIds);
@@ -141,8 +141,8 @@ final class BadgeController extends PanelController
 
         CacheVersion::bumpMany(['ProductBadge', 'Product']);
 
-        $label = $countryId ? ('country #'.$countryId) : 'Default';
+        $label = $countryId ? ('country #'.$countryId) : __('Default');
 
-        return $this->success('Badge assignment saved — '.count($ids)." products assigned for {$label}.");
+        return $this->success(__('Badge assignment saved — :count products assigned for :badge.', ['count' => count($ids), 'badge' => $label]));
     }
 }

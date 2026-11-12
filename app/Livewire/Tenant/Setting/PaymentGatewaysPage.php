@@ -37,11 +37,11 @@ class PaymentGatewaysPage extends ListPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Payment Gateways',
-            'badge' => 'Settings',
-            'description' => 'Configure tenant payment gateways. Activation is synced from central settings.',
-            'tableTitle' => 'Gateway Configurations',
-            'headers' => ['Gateway', 'Mode', 'Status', 'Connection', 'Webhook', 'Monitoring', 'Actions'],
+            'title' => __('Payment Gateways'),
+            'badge' => __('Settings'),
+            'description' => __('Configure tenant payment gateways. Activation is synced from central settings.'),
+            'tableTitle' => __('Gateway Configurations'),
+            'headers' => [__('Gateway'), __('Mode'), __('Status'), __('Connection'), __('Webhook'), __('Monitoring'), __('Actions')],
         ];
     }
 
@@ -58,51 +58,51 @@ class PaymentGatewaysPage extends ListPage
             'rows' => $gateways->map(function (PaymentGateway $gateway) {
                 $connStatus = $this->resolveConnectionStatus($gateway);
                 $connBadge = match ($connStatus) {
-                    'connected'     => '<span class="badge badge-green">Connected</span>',
-                    'not_connected' => '<span class="badge badge-red">Not Connected</span>',
-                    default         => '<span class="badge badge-gray">Not checked</span>',
+                    'connected'     => '<span class="badge badge-green">' . e(__('Connected')) . '</span>',
+                    'not_connected' => '<span class="badge badge-red">' . e(__('Not Connected')) . '</span>',
+                    default         => '<span class="badge badge-gray">' . e(__('Not checked')) . '</span>',
                 };
 
                 $webhookBadge = match ($gateway->webhook_status) {
-                    'connected' => '<span class="badge badge-green">Webhook OK</span>',
-                    'failed'    => '<span class="badge badge-red">Webhook failed</span>',
-                    default     => '<span class="badge badge-gray">No webhook events yet</span>',
+                    'connected' => '<span class="badge badge-green">' . e(__('Webhook OK')) . '</span>',
+                    'failed'    => '<span class="badge badge-red">' . e(__('Webhook failed')) . '</span>',
+                    default     => '<span class="badge badge-gray">' . e(__('No webhook events yet')) . '</span>',
                 };
 
-                $name = e($gateway->name) . ($gateway->is_primary ? ' <span class="badge badge-cyan">Primary</span>' : '');
+                $name = e($gateway->name) . ($gateway->is_primary ? ' <span class="badge badge-cyan">' . e(__('Primary')) . '</span>' : '');
                 $lastTransaction = $gateway->last_transaction_at?->diffForHumans() ?? '—';
                 $lastSynced = $gateway->last_synced_at?->diffForHumans() ?? '—';
 
                 return [
                     $name,
-                    e($gateway->mode->label()),
-                    '<span class="badge ' . ($gateway->is_active ? 'badge-green' : 'badge-amber') . '">' . e($gateway->is_active ? 'Active' : 'Inactive') . '</span>',
+                    e(__($gateway->mode->label())),
+                    '<span class="badge ' . ($gateway->is_active ? 'badge-green' : 'badge-amber') . '">' . e($gateway->is_active ? __('Active') : __('Inactive')) . '</span>',
                     $connBadge,
                     $webhookBadge,
-                    '<div class="entity-subtitle">Last synced: ' . e($lastSynced) . '</div><div class="entity-subtitle">Last transaction: ' . e($lastTransaction) . '</div>' . ($gateway->last_error ? '<div class="entity-subtitle" style="color:var(--danger,#dc2626);">' . e($gateway->last_error) . '</div>' : ''),
+                    '<div class="entity-subtitle">' . e(__('Last synced: :diffForHumans', ['diffForHumans' => $lastSynced])) . '</div><div class="entity-subtitle">' . e(__('Last transaction: :diffForHumans', ['diffForHumans' => $lastTransaction])) . '</div>' . ($gateway->last_error ? '<div class="entity-subtitle" style="color:var(--danger,#dc2626);">' . e($gateway->last_error) . '</div>' : ''),
                     '<div class="flex gap-2">'
-                    . '<button type="button" class="btn btn-secondary btn-sm" wire:click="editGateway(' . $gateway->id . ')">Configure</button>'
-                    . '<button type="button" class="btn btn-outline btn-sm" wire:click="checkConnection(' . $gateway->id . ')" wire:loading.attr="disabled" wire:target="checkConnection(' . $gateway->id . ')">Recheck</button>'
-                    . ($gateway->is_active && !$gateway->is_primary ? '<button type="button" class="btn btn-outline btn-sm" wire:click="setPrimary(' . $gateway->id . ')">Set primary</button>' : '')
+                    . '<button type="button" class="btn btn-secondary btn-sm" wire:click="editGateway(' . $gateway->id . ')">' . e(__('Configure')) . '</button>'
+                    . '<button type="button" class="btn btn-outline btn-sm" wire:click="checkConnection(' . $gateway->id . ')" wire:loading.attr="disabled" wire:target="checkConnection(' . $gateway->id . ')">' . e(__('Recheck')) . '</button>'
+                    . ($gateway->is_active && !$gateway->is_primary ? '<button type="button" class="btn btn-outline btn-sm" wire:click="setPrimary(' . $gateway->id . ')">' . e(__('Set primary')) . '</button>' : '')
                     . '</div>',
                 ];
             })->all(),
             'statistics' => [
-                ['label' => 'Gateways', 'value' => number_format($gateways->count()), 'caption' => 'Payment methods available to this tenant', 'dot' => 'dot-cyan'],
-                ['label' => 'Live Mode', 'value' => number_format($gateways->where('mode', PaymentGatewayMode::Live)->count()), 'caption' => 'Gateways currently in live mode', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Gateways'), 'value' => number_format($gateways->count()), 'caption' => __('Payment methods available to this tenant'), 'dot' => 'dot-cyan'],
+                ['label' => __('Live Mode'), 'value' => number_format($gateways->where('mode', PaymentGatewayMode::Live)->count()), 'caption' => __('Gateways currently in live mode'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
             ],
             'modalModel' => 'showFormModal',
-            'modalTitle' => 'Configure Gateway',
+            'modalTitle' => __('Configure Gateway'),
             'modalCloseAction' => 'closeModal',
             'modalSubmitAction' => 'save',
-            'modalSubmitLabel' => $this->useOwn ? 'Connect and Save' : 'Save Gateway',
+            'modalSubmitLabel' => $this->useOwn ? __('Connect and Save') : __('Save Gateway'),
             'modalMaxWidth' => '2xl',
             'modalFieldGroups' => [
                 [
                     'gridClass' => 'form-grid-2',
                     'fields' => [
-                        ['label' => 'Use tenant credentials', 'model' => 'useOwn', 'type' => 'checkbox', 'toggleLabel' => 'Use your own configuration', 'live' => true],
-                        ['label' => 'Sandbox / test mode', 'model' => 'sandboxMode', 'type' => 'checkbox', 'toggleLabel' => 'Enable sandbox (test) mode'],
+                        ['label' => __('Use tenant credentials'), 'model' => 'useOwn', 'type' => 'checkbox', 'toggleLabel' => __('Use your own configuration'), 'live' => true],
+                        ['label' => __('Sandbox / test mode'), 'model' => 'sandboxMode', 'type' => 'checkbox', 'toggleLabel' => __('Enable sandbox (test) mode')],
                     ],
                 ]
             ],
@@ -183,7 +183,7 @@ class PaymentGatewaysPage extends ListPage
             $gateway->update(['connection_status' => $result['ok'] ? 'connected' : 'not_connected']);
 
             if (!$result['ok']) {
-                $this->addError('requiredFields', 'Connection failed: ' . $result['message']);
+                $this->addError('requiredFields', __('Connection failed: :error', ['error' => $result['message']]));
                 $this->toast($result['message'], type: 'error');
 
                 return;
@@ -207,7 +207,7 @@ class PaymentGatewaysPage extends ListPage
             return;
         }
 
-        $this->toast($this->useOwn ? 'Connected and saved successfully.' : 'Gateway configuration updated successfully.');
+        $this->toast($this->useOwn ? __('Connected and saved successfully.') : __('Gateway configuration updated successfully.'));
     }
 
     public function closeModal(): void

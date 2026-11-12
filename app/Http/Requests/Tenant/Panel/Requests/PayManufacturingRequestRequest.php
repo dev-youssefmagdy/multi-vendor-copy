@@ -45,7 +45,7 @@ final class PayManufacturingRequestRequest extends TenantFormRequest
                 ->exists();
 
             if (!$owned) {
-                $validator->errors()->add('payment_request_id', 'This payment request could not be found.');
+                $validator->errors()->add('payment_request_id', __('This payment request could not be found.'));
             }
         });
     }
@@ -53,7 +53,7 @@ final class PayManufacturingRequestRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'gateway' => 'payment gateway',
+            'gateway' => __('payment gateway'),
         ];
     }
 }

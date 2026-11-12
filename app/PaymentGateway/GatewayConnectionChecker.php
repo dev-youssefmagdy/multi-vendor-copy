@@ -42,7 +42,7 @@ class GatewayConnectionChecker
                 default => $this->credentialPresenceCheck($config),
             };
         } catch (\Throwable $e) {
-            return $this->fail('Error: ' . $e->getMessage());
+            return $this->fail(__('Error: :error', ['error' => $e->getMessage()]));
         }
     }
 
@@ -51,7 +51,7 @@ class GatewayConnectionChecker
     private function stripe(array $cfg): array
     {
         if (empty($cfg['secret'])) {
-            return $this->fail('Secret key is missing.');
+            return $this->fail(__('Secret key is missing.'));
         }
 
         $response = Http::withToken($cfg['secret'])
@@ -62,7 +62,7 @@ class GatewayConnectionChecker
             $responseGatewayMode = $response->json('livemode') ? 'live' : 'test';
             $isSame = $responseGatewayMode === ($cfg['sandbox'] ?? false ? 'test' : 'live');
             if (!$isSame) {
-                return $this->fail('Stripe: The provided key does not match the selected mode.');
+                return $this->fail(__('Stripe: The provided key does not match the selected mode.'));
             }
         }
 
@@ -78,7 +78,7 @@ class GatewayConnectionChecker
     private function paypal(array $cfg): array
     {
         if (empty($cfg['client_id']) || empty($cfg['client_secret'])) {
-            return $this->fail('Client ID or secret is missing.');
+            return $this->fail(__('Client ID or secret is missing.'));
         }
 
         $base = ($cfg['sandbox'] ?? false)
@@ -112,7 +112,7 @@ class GatewayConnectionChecker
             ->get('https://api.mollie.com/v2/me');
 
         if ($response->successful()) {
-            $name = $response->json('name') ?? 'your account';
+            $name = $response->json('name') ?? __('your account');
             return $this->ok("Connected to Mollie — {$name}.");
         }
 
@@ -123,7 +123,7 @@ class GatewayConnectionChecker
     private function razorpay(array $cfg): array
     {
         if (empty($cfg['key']) || empty($cfg['secret'])) {
-            return $this->fail('Key ID or secret is missing.');
+            return $this->fail(__('Key ID or secret is missing.'));
         }
 
         $response = Http::withBasicAuth($cfg['key'], $cfg['secret'])
@@ -132,7 +132,7 @@ class GatewayConnectionChecker
 
         // 200 = valid; 401 = bad creds; 400 = valid auth but bad params (still connected)
         if ($response->status() === 200 || $response->status() === 400) {
-            return $this->ok('Connected to Razorpay.');
+            return $this->ok(__('Connected to Razorpay.'));
         }
 
         $error = $response->json('error.description') ?? $response->body();
@@ -142,7 +142,7 @@ class GatewayConnectionChecker
     private function flutterwave(array $cfg): array
     {
         if (empty($cfg['secret_key'])) {
-            return $this->fail('Secret key is missing.');
+            return $this->fail(__('Secret key is missing.'));
         }
 
         $response = Http::withToken($cfg['secret_key'])
@@ -150,7 +150,7 @@ class GatewayConnectionChecker
             ->get('https://api.flutterwave.com/v3/banks/NG');
 
         if ($response->successful()) {
-            return $this->ok('Connected to Flutterwave.');
+            return $this->ok(__('Connected to Flutterwave.'));
         }
 
         $error = $response->json('message') ?? $response->body();
@@ -160,7 +160,7 @@ class GatewayConnectionChecker
     private function paystack(array $cfg): array
     {
         if (empty($cfg['secret_key'])) {
-            return $this->fail('Secret key is missing.');
+            return $this->fail(__('Secret key is missing.'));
         }
 
         $response = Http::withToken($cfg['secret_key'])
@@ -168,7 +168,7 @@ class GatewayConnectionChecker
             ->get('https://api.paystack.co/balance');
 
         if ($response->successful() && $response->json('status')) {
-            return $this->ok('Connected to Paystack.');
+            return $this->ok(__('Connected to Paystack.'));
         }
 
         $error = $response->json('message') ?? $response->body();
@@ -178,7 +178,7 @@ class GatewayConnectionChecker
     private function mercadopago(array $cfg): array
     {
         if (empty($cfg['access_token'])) {
-            return $this->fail('Access token is missing.');
+            return $this->fail(__('Access token is missing.'));
         }
 
         $response = Http::withToken($cfg['access_token'])
@@ -187,7 +187,7 @@ class GatewayConnectionChecker
 
         if ($response->successful()) {
             $email = $response->json('email') ?? '';
-            return $this->ok('Connected to MercadoPago' . ($email ? " ({$email})" : '') . '.');
+            return $this->ok(__('Connected to MercadoPago') . ($email ? " ({$email})" : '') . '.');
         }
 
         $error = $response->json('message') ?? $response->body();
@@ -209,7 +209,7 @@ class GatewayConnectionChecker
             ->get("{$base}/v2/GetCurrenciesExchangeList");
 
         if ($response->successful() && $response->json('IsSuccess')) {
-            return $this->ok('Connected to MyFatoorah.');
+            return $this->ok(__('Connected to MyFatoorah.'));
         }
 
         $error = $response->json('ValidationErrors.0.Error') ?? $response->json('Message') ?? $response->body();
@@ -219,7 +219,7 @@ class GatewayConnectionChecker
     private function xendit(array $cfg): array
     {
         if (empty($cfg['secret_key'])) {
-            return $this->fail('Secret key is missing.');
+            return $this->fail(__('Secret key is missing.'));
         }
 
         $response = Http::withBasicAuth($cfg['secret_key'], '')
@@ -238,7 +238,7 @@ class GatewayConnectionChecker
     private function yoco(array $cfg): array
     {
         if (empty($cfg['secret_key'])) {
-            return $this->fail('Secret key is missing.');
+            return $this->fail(__('Secret key is missing.'));
         }
 
         $response = Http::withToken($cfg['secret_key'])
@@ -247,7 +247,7 @@ class GatewayConnectionChecker
 
         // 200 or 404 (no checkouts yet) both indicate valid credentials
         if ($response->status() === 200 || $response->status() === 404) {
-            return $this->ok('Connected to Yoco.');
+            return $this->ok(__('Connected to Yoco.'));
         }
 
         $error = $response->json('displayMessage') ?? $response->json('message') ?? $response->body();
@@ -270,7 +270,7 @@ class GatewayConnectionChecker
         ])->timeout(10)->get("{$base}/accounts/");
 
         if ($response->successful() && $response->json('success')) {
-            return $this->ok('Connected to Instamojo.');
+            return $this->ok(__('Connected to Instamojo.'));
         }
 
         $error = $response->json('message') ?? $response->body();
@@ -280,7 +280,7 @@ class GatewayConnectionChecker
     private function authorizeNet(array $cfg): array
     {
         if (empty($cfg['login_id']) || empty($cfg['transaction_key'])) {
-            return $this->fail('Login ID or transaction key is missing.');
+            return $this->fail(__('Login ID or transaction key is missing.'));
         }
 
         $base = ($cfg['sandbox'] ?? false)
@@ -299,7 +299,7 @@ class GatewayConnectionChecker
         $resultCode = $response->json('authenticateTestResponse.messages.resultCode') ?? '';
 
         if ($resultCode === 'Ok') {
-            return $this->ok('Connected to Authorize.Net.');
+            return $this->ok(__('Connected to Authorize.Net.'));
         }
 
         $error = $response->json('authenticateTestResponse.messages.message.0.text') ?? $response->body();
@@ -309,7 +309,7 @@ class GatewayConnectionChecker
     private function midtrans(array $cfg): array
     {
         if (empty($cfg['server_key'])) {
-            return $this->fail('Server key is missing.');
+            return $this->fail(__('Server key is missing.'));
         }
 
         $base = ($cfg['sandbox'] ?? false)
@@ -322,7 +322,7 @@ class GatewayConnectionChecker
             ->get("{$base}/v2/ping-check-connection/status");
 
         if ($response->status() === 200 || $response->status() === 404) {
-            return $this->ok('Connected to Midtrans.');
+            return $this->ok(__('Connected to Midtrans.'));
         }
 
         $error = $response->json('status_message') ?? $response->body();
@@ -332,7 +332,7 @@ class GatewayConnectionChecker
     private function paytabs(array $cfg): array
     {
         if (empty($cfg['profile_id']) || empty($cfg['server_key']) || empty($cfg['region_url'])) {
-            return $this->fail('Profile ID, server key, or region URL is missing.');
+            return $this->fail(__('Profile ID, server key, or region URL is missing.'));
         }
 
         $endpoint = rtrim($cfg['region_url'], '/') . '/payment/query';
@@ -348,15 +348,15 @@ class GatewayConnectionChecker
         if ($response->status() === 200 || $response->status() === 400) {
             $msg = $response->json('message') ?? '';
             if (str_contains(strtolower($msg), 'invalid') || str_contains(strtolower($msg), 'not found')) {
-                return $this->ok('Connected to PayTabs.');
+                return $this->ok(__('Connected to PayTabs.'));
             }
             if ($response->status() === 200) {
-                return $this->ok('Connected to PayTabs.');
+                return $this->ok(__('Connected to PayTabs.'));
             }
         }
 
         if ($response->status() === 401 || $response->status() === 403) {
-            return $this->fail('PayTabs: Authentication failed — check server key.');
+            return $this->fail(__('PayTabs: Authentication failed — check server key.'));
         }
 
         $error = $response->json('message') ?? $response->body();
@@ -366,7 +366,7 @@ class GatewayConnectionChecker
     private function toyyibpay(array $cfg): array
     {
         if (empty($cfg['secret_key'])) {
-            return $this->fail('Secret key is missing.');
+            return $this->fail(__('Secret key is missing.'));
         }
 
         $base = ($cfg['sandbox'] ?? false)
@@ -382,7 +382,7 @@ class GatewayConnectionChecker
         $body = $response->json();
 
         if (is_array($body) && !empty($body[0]['name'])) {
-            return $this->ok('Connected to ToyyibPay — ' . $body[0]['name'] . '.');
+            return $this->ok(__('Connected to ToyyibPay — :account.', ['account' => $body[0]['name']]));
         }
 
         $error = is_array($body) ? ($body[0]['status'] ?? $response->body()) : $response->body();
@@ -392,7 +392,7 @@ class GatewayConnectionChecker
     private function checkoutCom(array $cfg): array
     {
         if (empty($cfg['secret_key'])) {
-            return $this->fail('Secret key is missing.');
+            return $this->fail(__('Secret key is missing.'));
         }
 
         $base = ($cfg['sandbox'] ?? false)
@@ -404,7 +404,7 @@ class GatewayConnectionChecker
             ->get("{$base}/balances");
 
         if ($response->successful()) {
-            return $this->ok('Connected to Checkout.com.');
+            return $this->ok(__('Connected to Checkout.com.'));
         }
 
         $error = $response->json('error_type') ?? $response->body();
@@ -426,7 +426,7 @@ class GatewayConnectionChecker
             ->post("{$base}/paymentMethods", ['merchantAccount' => $cfg['merchant_account']]);
 
         if ($response->successful()) {
-            return $this->ok('Connected to Adyen.');
+            return $this->ok(__('Connected to Adyen.'));
         }
 
         $error = $response->json('message') ?? $response->body();
@@ -436,7 +436,7 @@ class GatewayConnectionChecker
     private function moyasar(array $cfg): array
     {
         if (empty($cfg['secret_key'])) {
-            return $this->fail('Secret key is missing.');
+            return $this->fail(__('Secret key is missing.'));
         }
 
         $response = Http::withBasicAuth($cfg['secret_key'], '')
@@ -444,7 +444,7 @@ class GatewayConnectionChecker
             ->get('https://api.moyasar.com/v1/payments', ['limit' => 1]);
 
         if ($response->successful()) {
-            return $this->ok('Connected to Moyasar.');
+            return $this->ok(__('Connected to Moyasar.'));
         }
 
         $error = $response->json('message') ?? $response->body();
@@ -454,7 +454,7 @@ class GatewayConnectionChecker
     private function hyperpay(array $cfg): array
     {
         if (empty($cfg['access_token']) || empty($cfg['entity_id'])) {
-            return $this->fail('Access token or entity ID is missing.');
+            return $this->fail(__('Access token or entity ID is missing.'));
         }
 
         $base = ($cfg['sandbox'] ?? false)
@@ -468,7 +468,7 @@ class GatewayConnectionChecker
             ]);
 
         if (is_array($response->json())) {
-            return $this->ok('Connected to HyperPay.');
+            return $this->ok(__('Connected to HyperPay.'));
         }
 
         return $this->fail('HyperPay: ' . $response->body());
@@ -477,7 +477,7 @@ class GatewayConnectionChecker
     private function tap(array $cfg): array
     {
         if (empty($cfg['secret_key'])) {
-            return $this->fail('Secret key is missing.');
+            return $this->fail(__('Secret key is missing.'));
         }
 
         $response = Http::withToken($cfg['secret_key'])
@@ -485,7 +485,7 @@ class GatewayConnectionChecker
             ->get('https://api.tap.company/v2/charges', ['limit' => 1]);
 
         if ($response->successful()) {
-            return $this->ok('Connected to Tap.');
+            return $this->ok(__('Connected to Tap.'));
         }
 
         $error = $response->json('message') ?? $response->body();
@@ -495,10 +495,10 @@ class GatewayConnectionChecker
     private function amazonPaymentServices(array $cfg): array
     {
         if (empty($cfg['merchant_identifier']) || empty($cfg['access_code']) || empty($cfg['sha_request_phrase']) || empty($cfg['sha_response_phrase'])) {
-            return $this->fail('Merchant identifier, access code, or SHA phrases are missing.');
+            return $this->fail(__('Merchant identifier, access code, or SHA phrases are missing.'));
         }
 
-        return $this->ok('All credentials are present. Live verification is not available for this gateway.');
+        return $this->ok(__('All credentials are present. Live verification is not available for this gateway.'));
     }
 
     private function paymob(array $cfg): array
@@ -512,7 +512,7 @@ class GatewayConnectionChecker
         ]);
 
         if ($response->successful() && $response->json('token')) {
-            return $this->ok('Connected to Paymob.');
+            return $this->ok(__('Connected to Paymob.'));
         }
 
         $error = $response->json('message') ?? $response->body();
@@ -522,7 +522,7 @@ class GatewayConnectionChecker
     private function cashfree(array $cfg): array
     {
         if (empty($cfg['app_id']) || empty($cfg['secret_key'])) {
-            return $this->fail('App ID or secret key is missing.');
+            return $this->fail(__('App ID or secret key is missing.'));
         }
 
         $base = ($cfg['sandbox'] ?? false)
@@ -536,7 +536,7 @@ class GatewayConnectionChecker
         ])->timeout(10)->get("{$base}/orders/connection-ping-test");
 
         if ($response->status() === 200 || $response->status() === 404) {
-            return $this->ok('Connected to Cashfree.');
+            return $this->ok(__('Connected to Cashfree.'));
         }
 
         $error = $response->json('message') ?? $response->body();
@@ -553,10 +553,10 @@ class GatewayConnectionChecker
             ->all();
 
         if (empty($missing)) {
-            return $this->ok('All credentials are present. Live verification is not available for this gateway.');
+            return $this->ok(__('All credentials are present. Live verification is not available for this gateway.'));
         }
 
-        return $this->fail('Missing credentials: ' . implode(', ', $missing));
+        return $this->fail(__('Missing credentials: :fields', ['fields' => implode(', ', $missing)]));
     }
 
     // ─── Helpers ─────────────────────────────────────────────────────────────

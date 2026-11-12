@@ -1,1 +1,1 @@
-<span title="{{ $order->customer?->email }}">{{ $order->customer?->full_name ?? 'Guest' }}</span>
+<span title="{{ $order->customer?->email }}">{{ $order->customer?->full_name ?? __('Guest') }}</span>

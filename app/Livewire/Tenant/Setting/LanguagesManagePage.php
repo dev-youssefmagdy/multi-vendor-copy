@@ -37,9 +37,9 @@ class LanguagesManagePage extends TenantPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Languages',
-            'badge' => 'Settings',
-            'description' => 'Manage your storefront languages, set the default locale, and purchase new language add-ons.',
+            'title' => __('Languages'),
+            'badge' => __('Settings'),
+            'description' => __('Manage your storefront languages, set the default locale, and purchase new language add-ons.'),
         ];
     }
 
@@ -65,13 +65,13 @@ class LanguagesManagePage extends TenantPage
         }
 
         $language->update(['is_active' => $activating]);
-        $this->toast('Language state updated successfully.');
+        $this->toast(__('Language state updated successfully.'));
     }
 
     public function makeDefault(int $languageId, TenantPanelService $service): void
     {
         $service->markDefaultLanguage(Language::query()->findOrFail($languageId));
-        $this->toast('Default language updated successfully.');
+        $this->toast(__('Default language updated successfully.'));
     }
 
     // ── Buy-language actions ──────────────────────────────────────────────
@@ -120,7 +120,7 @@ class LanguagesManagePage extends TenantPage
         $tenant = tenant();
 
         if (app(LanguagePurchaseService::class)->tenantHasPurchased($tenant, $language->id)) {
-            $this->toast('You have already purchased this language.', 'error');
+            $this->toast(__('You have already purchased this language.'), 'error');
             $this->closeModal();
             return;
         }
@@ -170,8 +170,8 @@ class LanguagesManagePage extends TenantPage
                 : false;
 
             $typeLabel = $isFree
-                ? '<span class="badge badge-green">Free</span>'
-                : '<span class="badge badge-violet">Purchased</span>';
+                ? '<span class="badge badge-green">' . e(__('Free')) . '</span>'
+                : '<span class="badge badge-violet">' . e(__('Purchased')) . '</span>';
 
             return [
                 'id' => $language->id,
@@ -188,10 +188,10 @@ class LanguagesManagePage extends TenantPage
         })->all();
 
         $statistics = [
-            ['label' => 'Languages', 'value' => number_format($languages->count()), 'caption' => 'Languages in your store', 'dot' => 'dot-cyan'],
-            ['label' => 'Active', 'value' => number_format($languages->where('is_active', true)->count()), 'caption' => 'Locales visible on storefront', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-            ['label' => 'Default', 'value' => e(optional($languages->firstWhere('is_default', true))->code ?? '-'), 'caption' => 'Current default locale', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
-            ['label' => 'Purchased', 'value' => number_format(count($purchasedIds)), 'caption' => 'Paid language add-ons purchased', 'dot' => 'dot-violet'],
+            ['label' => __('Languages'), 'value' => number_format($languages->count()), 'caption' => __('Languages in your store'), 'dot' => 'dot-cyan'],
+            ['label' => __('Active'), 'value' => number_format($languages->where('is_active', true)->count()), 'caption' => __('Locales visible on storefront'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+            ['label' => __('Default'), 'value' => e(optional($languages->firstWhere('is_default', true))->code ?? '-'), 'caption' => __('Current default locale'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+            ['label' => __('Purchased'), 'value' => number_format(count($purchasedIds)), 'caption' => __('Paid language add-ons purchased'), 'dot' => 'dot-violet'],
         ];
 
         // ── Available to purchase (BuyLanguagePage) ───────────────────────

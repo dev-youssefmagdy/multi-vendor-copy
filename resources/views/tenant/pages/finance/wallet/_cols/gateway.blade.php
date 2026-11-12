@@ -1,2 +1,2 @@
-<div class="entity-title">{{ str($subscription->payment_gateway_type->value)->headline()->toString() }}</div>
-<div class="entity-subtitle">Gateway ID {{ $subscription->payment_gateway_id ?: 'N/A' }}</div>
+<div class="entity-title">{{ __((string) str($subscription->payment_gateway_type->value)->headline()) }}</div>
+<div class="entity-subtitle">{{ __('Gateway ID :value', ['value' => $subscription->payment_gateway_id ?: __('N/A')]) }}</div>

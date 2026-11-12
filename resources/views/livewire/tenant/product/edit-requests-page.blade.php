@@ -2,14 +2,13 @@
     <div class="page-head fu d0">
         <div>
             <div class="page-title-row">
-                <h1 class="D page-title">Product Edit Requests</h1>
-                <span class="page-badge">Catalog</span>
+                <h1 class="D page-title">{{ __('Product Edit Requests') }}</h1>
+                <span class="page-badge">{{ __('Catalog') }}</span>
                 @if ($pendingCount > 0)
-                    <span class="badge badge-amber">{{ $pendingCount }} pending</span>
+                    <span class="badge badge-amber">{{ __(':pendingCount pending', ['pendingCount' => $pendingCount]) }}</span>
                 @endif
             </div>
-            <p class="page-copy">When you edit a product name or description, it goes through admin review before going
-                live. Track your requests here.</p>
+            <p class="page-copy">{{ __('When you edit a product name or description, it goes through admin review before going live. Track your requests here.') }}</p>
         </div>
     </div>
 
@@ -17,7 +16,7 @@
         <div class="card card-glow-amber">
             <div class="stat-head">
                 <div>
-                    <div class="eyebrow">Pending</div>
+                    <div class="eyebrow">{{ __('Pending') }}</div>
                     <div class="D stat-value">{{ $pendingCount }}</div>
                 </div>
                 <div class="mini-stat-dot dot-amber"></div>
@@ -26,7 +25,7 @@
         <div class="card card-glow-green">
             <div class="stat-head">
                 <div>
-                    <div class="eyebrow">Approved</div>
+                    <div class="eyebrow">{{ __('Approved') }}</div>
                     <div class="D stat-value">{{ $approvedCount }}</div>
                 </div>
                 <div class="mini-stat-dot dot-green"></div>
@@ -35,7 +34,7 @@
         <div class="card card-glow-red">
             <div class="stat-head">
                 <div>
-                    <div class="eyebrow">Rejected</div>
+                    <div class="eyebrow">{{ __('Rejected') }}</div>
                     <div class="D stat-value">{{ $rejectedCount }}</div>
                 </div>
                 <div class="mini-stat-dot dot-red"></div>
@@ -44,8 +43,8 @@
     </div>
 
     <div class="card fu d2 section-gap" style="padding:14px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <span class="entity-subtitle">Filter:</span>
-        @foreach (['all' => 'All', 'pending' => 'Pending', 'approved' => 'Approved', 'rejected' => 'Rejected'] as $val => $label)
+        <span class="entity-subtitle">{{ __('Filter:') }}</span>
+        @foreach (['all' => __('All'), 'pending' => __('Pending'), 'approved' => __('Approved'), 'rejected' => __('Rejected')] as $val => $label)
             <button type="button" wire:click="$set('statusFilter', '{{ $val }}')"
                 class="btn btn-sm {{ $statusFilter === $val ? 'btn-primary' : 'btn-secondary' }}">
                 {{ $label }}
@@ -59,8 +58,8 @@
                 wire:key="req-{{ $request->id }}">
                 <div style="flex:1;min-width:0">
                     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px">
-                        <div class="entity-title">{{ $request->product_slug ?: 'Product #' . $request->product_id }}</div>
-                        <span class="badge {{ $request->status->badgeClass() }}">{{ $request->status->label() }}</span>
+                        <div class="entity-title">{{ $request->product_slug ?: __('Product #:id', ['id' => $request->product_id]) }}</div>
+                        <span class="badge {{ $request->status->badgeClass() }}">{{ __($request->status->label()) }}</span>
                         <span class="entity-subtitle" style="margin-left:auto">{{ $request->created_at->diffForHumans() }}</span>
                     </div>
 
@@ -69,13 +68,13 @@
                             <span class="entity-subtitle" style="font-size:11px;text-transform:uppercase">{{ $locale }}</span>
                             @if (isset($fields['name']))
                                 <div style="margin-top:4px">
-                                    <span class="entity-subtitle">Name: </span>
+                                    <span class="entity-subtitle">{{ __('Name:') }} </span>
                                     <span style="font-size:12px">{{ \Illuminate\Support\Str::limit($fields['name'], 80) }}</span>
                                 </div>
                             @endif
                             @if (isset($fields['description']))
                                 <div style="margin-top:2px">
-                                    <span class="entity-subtitle">Description: </span>
+                                    <span class="entity-subtitle">{{ __('Description:') }} </span>
                                     <span style="font-size:12px">{{ \Illuminate\Support\Str::limit(strip_tags($fields['description']), 100) }}</span>
                                 </div>
                             @endif
@@ -84,7 +83,7 @@
 
                     @if ($request->status->value === 'rejected' && $request->admin_note)
                         <div style="margin-top:8px;padding:8px 12px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:6px">
-                            <span class="entity-subtitle" style="color:var(--color-red,#ef4444);font-size:11px">Admin note: </span>
+                            <span class="entity-subtitle" style="color:var(--color-red,#ef4444);font-size:11px">{{ __('Admin note:') }} </span>
                             <span style="font-size:12px">{{ $request->admin_note }}</span>
                         </div>
                     @endif
@@ -92,7 +91,7 @@
                     @if ($request->reviewed_at)
                         <div style="margin-top:6px">
                             <span class="entity-subtitle" style="font-size:11px">
-                                Reviewed {{ $request->reviewed_at->diffForHumans() }}
+                                {{ __('Reviewed :diffForHumans', ['diffForHumans' => $request->reviewed_at->diffForHumans()]) }}
                             </span>
                         </div>
                     @endif
@@ -101,15 +100,14 @@
                 @if ($request->status->value === 'rejected')
                     <a href="{{ route('tenant.products.edit', $request->product_id) }}"
                         class="btn btn-secondary btn-sm" style="flex-shrink:0">
-                        Edit Again
+                        {{ __('Edit Again') }}
                     </a>
                 @endif
             </div>
         @empty
             <div class="empty-state">
-                <div class="empty-state-title">No edit requests yet</div>
-                <p class="empty-state-copy">When you change a product name or description, your request will appear here
-                    for admin review.</p>
+                <div class="empty-state-title">{{ __('No edit requests yet') }}</div>
+                <p class="empty-state-copy">{{ __('When you change a product name or description, your request will appear here for admin review.') }}</p>
             </div>
         @endforelse
 

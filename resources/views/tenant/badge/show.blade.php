@@ -6,15 +6,15 @@
     {{-- Page head --}}
     <div class="page-head fu d0">
         <div>
-            <div class="eyebrow">Tenant Catalog</div>
+            <div class="eyebrow">{{ __('Tenant Catalog') }}</div>
             <h1 class="D page-title">{{ $badgeTitle }}</h1>
-            <p class="page-copy">Select which products appear under the
-                <strong>{{ $badge->text }}</strong> badge, then click Save.
+            <p class="page-copy">{{ __('Select which products appear under the') }}
+                <strong>{{ $badge->text }}</strong> {{ __('badge, then click Save.') }}
             </p>
         </div>
         <div class="page-actions">
-            <a href="{{ route('tenant.badges.sort', $badge) }}" class="btn btn-secondary">Sort Order</a>
-            <a href="{{ route('tenant.products.index') }}" class="btn btn-secondary">Back to Products</a>
+            <a href="{{ route('tenant.badges.sort', $badge) }}" class="btn btn-secondary">{{ __('Sort Order') }}</a>
+            <a href="{{ route('tenant.products.index') }}" class="btn btn-secondary">{{ __('Back to Products') }}</a>
         </div>
     </div>
 
@@ -27,7 +27,7 @@
         <div class="card card-glow-cyan">
             <div class="stat-head">
                 <div>
-                    <div class="eyebrow">Selected</div>
+                    <div class="eyebrow">{{ __('Selected') }}</div>
                     <div class="D stat-value" id="stat-assigned">{{ number_format($assignedCount) }}</div>
                 </div>
                 <div class="stat-icon">
@@ -36,17 +36,17 @@
                     </svg>
                 </div>
             </div>
-            <p class="stat-sub">Products currently selected for the <strong>{{ $badge->text }}</strong> badge.</p>
+            <p class="stat-sub">{{ __('Products currently selected for the') }} <strong>{{ $badge->text }}</strong> {{ __('badge.') }}</p>
         </div>
         <div class="card card-glow-green">
             <div class="stat-head">
                 <div>
-                    <div class="eyebrow">Catalog Products</div>
+                    <div class="eyebrow">{{ __('Catalog Products') }}</div>
                     <div class="D stat-value">{{ number_format($catalogCount) }}</div>
                 </div>
                 <div class="mini-stat-dot dot-green"></div>
             </div>
-            <p class="stat-sub">Total products available to assign to this badge.</p>
+            <p class="stat-sub">{{ __('Total products available to assign to this badge.') }}</p>
         </div>
     </div>
 
@@ -55,7 +55,7 @@
         <div style="display:flex;border-bottom:1px solid var(--border-color);overflow-x:auto">
             <a href="{{ route('tenant.badges.show', $badge) }}"
                 style="padding:12px 20px;font-size:13px;font-weight:600;white-space:nowrap;border-bottom:2px solid {{ $activeCountryId === null ? 'var(--primary)' : 'transparent' }};color:{{ $activeCountryId === null ? 'var(--primary)' : 'var(--t2)' }};text-decoration:none">
-                🌍 Default (All Countries)
+                {{ __('🌍 Default (All Countries)') }}
             </a>
             @foreach($countries as $country)
                 <a href="{{ route('tenant.badges.show', ['badge' => $badge, 'country_id' => $country->id]) }}"
@@ -67,13 +67,12 @@
         <div style="padding:16px 20px">
             @if($activeCountryId === null)
                 <p class="panel-copy" style="margin:0">
-                    <strong>Default</strong> products are shown to visitors from countries with no country-specific badge assignment.
+                    <strong>{{ __('Default') }}</strong> {{ __('products are shown to visitors from countries with no country-specific badge assignment.') }}
                 </p>
             @else
                 @php $activeCountry = $countries->firstWhere('id', $activeCountryId); @endphp
                 <p class="panel-copy" style="margin:0">
-                    Products in <strong>{{ $activeCountry?->flag_emoji }} {{ $activeCountry?->name }}</strong> override the Default list for visitors from this country.
-                    Leave empty to inherit the Default assignment.
+                    {{ __('Products in') }} <strong>{{ $activeCountry?->flag_emoji }} {{ $activeCountry?->name }}</strong> {{ __('override the Default list for visitors from this country. Leave empty to inherit the Default assignment.') }}
                 </p>
             @endif
         </div>
@@ -84,23 +83,23 @@
         <div class="table-header-shell" style="margin-bottom:1.25rem">
             <div>
                 <h3 class="panel-title">{{ $badgeTitle }}</h3>
-                <p class="panel-copy">Use the category filter to bulk-merge products, then fine-tune with the search picker below.</p>
+                <p class="panel-copy">{{ __('Use the category filter to bulk-merge products, then fine-tune with the search picker below.') }}</p>
             </div>
         </div>
 
         {{-- Assign by category --}}
         <div class="flex items-end gap-3 flex-wrap mb-5">
             <div style="min-width:260px;flex:1">
-                <label class="field-label mb-1 block">Bulk-assign by category</label>
+                <label class="field-label mb-1 block">{{ __('Bulk-assign by category') }}</label>
                 <select id="category-select" class="field-control">
-                    <option value="">— choose a category —</option>
+                    <option value="">{{ __('— choose a category —') }}</option>
                     @foreach ($categoryTree as $row)
                         <option value="{{ $row['id'] }}">{{ str_repeat('— ', $row['depth']) }}{{ $row['name'] }}</option>
                     @endforeach
                 </select>
             </div>
             <button type="button" id="btn-assign-category" class="btn btn-primary btn-sm" style="display:none">
-                Merge all in category
+                {{ __('Merge all in category') }}
             </button>
             <span id="category-msg" class="text-sm" style="display:none"></span>
         </div>
@@ -110,15 +109,15 @@
             @foreach ($selectedProductLabels as $chipId => $chipName)
                 <span class="badge-chip" data-id="{{ $chipId }}">
                     <span>{{ $chipName }}</span>
-                    <button type="button" class="chip-remove" aria-label="Remove">×</button>
+                    <button type="button" class="chip-remove" aria-label="{{ __('Remove') }}">{{ __('×') }}</button>
                 </span>
             @endforeach
         </div>
 
         {{-- Search input --}}
         <div class="mb-2">
-            <label class="field-label mb-1 block">Assigned products</label>
-            <input type="text" id="product-search" class="field-control" placeholder="Search products by name or SKU…" autocomplete="off">
+            <label class="field-label mb-1 block">{{ __('Assigned products') }}</label>
+            <input type="text" id="product-search" class="field-control" placeholder="{{ __('Search products by name or SKU…') }}" autocomplete="off">
         </div>
 
         {{-- Results list --}}
@@ -133,14 +132,14 @@
             @endforeach
             @if ($initialProducts['has_more'])
                 <div style="padding:6px">
-                    <button type="button" id="btn-load-more" class="btn btn-secondary btn-sm" style="width:100%">Load more</button>
+                    <button type="button" id="btn-load-more" class="btn btn-secondary btn-sm" style="width:100%">{{ __('Load more') }}</button>
                 </div>
             @endif
         </div>
 
         {{-- Save --}}
         <div class="flex justify-end gap-3 mt-5">
-            <button type="button" id="btn-save" class="btn btn-primary">Save assignment</button>
+            <button type="button" id="btn-save" class="btn btn-primary">{{ __('Save assignment') }}</button>
         </div>
     </section>
 
@@ -215,7 +214,7 @@
             const span = document.createElement('span');
             span.className = 'badge-chip';
             span.dataset.id = id;
-            span.innerHTML = `<span>${name}</span><button type="button" class="chip-remove" aria-label="Remove">×</button>`;
+            span.innerHTML = `<span>${name}</span><button type="button" class="chip-remove" aria-label="{{ __('Remove') }}">×</button>`;
             span.querySelector('.chip-remove').addEventListener('click', () => { selected.delete(id); syncListItem(id); renderChips(); updateStatCount(); });
             chipsWrap.appendChild(span);
         });
@@ -274,7 +273,7 @@
             btn.id = 'btn-load-more';
             btn.className = 'btn btn-secondary btn-sm';
             btn.style.width = '100%';
-            btn.textContent = 'Load more';
+            btn.textContent = @js(__('Load more'));
             btn.addEventListener('click', loadMore);
             wrap.appendChild(btn);
             productList.appendChild(wrap);
@@ -304,10 +303,10 @@
 
     btnAssignCat.addEventListener('click', async () => {
         if (categoryLoading) return;
-        if (!confirm('Merge ALL products in the selected category into the current selection?')) return;
+        if (!confirm(@js(__('Merge ALL products in the selected category into the current selection?')))) return;
         categoryLoading = true;
         btnAssignCat.disabled = true;
-        btnAssignCat.textContent = 'Merging…';
+        btnAssignCat.textContent = @js(__('Merging…'));
 
         const res = await fetch(CAT_URL, {
             method: 'POST',
@@ -317,10 +316,10 @@
         const data = await res.json();
 
         if (!res.ok) {
-            categoryMsg.textContent = data.error ?? 'Error';
+            categoryMsg.textContent = data.error ?? @js(__('Error'));
             categoryMsg.style.color = 'var(--danger, red)';
         } else {
-            data.productIds.forEach(id => selected.set(id, data.productLabels[id] ?? 'Product #' + id));
+            data.productIds.forEach(id => selected.set(id, data.productLabels[id] ?? @js(__('Product #:id')).replace(':id', id)));
             renderChips();
             updateStatCount();
             productList.querySelectorAll('[data-id]').forEach(btn => {
@@ -337,7 +336,7 @@
         categoryMsg.style.display = '';
         categoryLoading = false;
         btnAssignCat.disabled = false;
-        btnAssignCat.textContent = 'Merge all in category';
+        btnAssignCat.textContent = @js(__('Merge all in category'));
     });
 
     // ── Search input ──────────────────────────────────────────────────────
@@ -353,7 +352,7 @@
     // ── Save ──────────────────────────────────────────────────────────────
     btnSave.addEventListener('click', () => {
         btnSave.disabled = true;
-        btnSave.textContent = 'Saving…';
+        btnSave.textContent = @js(__('Saving…'));
 
         const form = document.createElement('form');
         form.method = 'POST';

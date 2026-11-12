@@ -2,10 +2,10 @@
     'approved' => 'green',
     'rejected' => 'red',
     default => 'amber',
-}">{{ ucfirst($theme->status) }}</x-tenant::badge>
+}">{{ __(ucfirst($theme->status)) }}</x-tenant::badge>
 @if($theme->status === 'rejected' && $theme->rejection_reason)
     <div class="field-hint">{{ e($theme->rejection_reason) }}</div>
 @endif
 @if($theme->is_active)
-    <x-tenant::badge color="cyan">Active</x-tenant::badge>
+    <x-tenant::badge color="cyan">{{ __('Active') }}</x-tenant::badge>
 @endif

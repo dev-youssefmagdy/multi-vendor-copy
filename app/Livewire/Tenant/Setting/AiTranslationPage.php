@@ -26,9 +26,9 @@ class AiTranslationPage extends TenantPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'AI Translation',
-            'badge' => 'Settings',
-            'description' => 'Purchase brand-aware AI translation for your store. Translations are tailored to your store name, products, and style.',
+            'title' => __('AI Translation'),
+            'badge' => __('Settings'),
+            'description' => __('Purchase brand-aware AI translation for your store. Translations are tailored to your store name, products, and style.'),
         ];
     }
 
@@ -65,7 +65,7 @@ class AiTranslationPage extends TenantPage
         $language = CentralLanguage::query()->find($this->selectedLanguageId);
 
         if (!$language || !$service->isFree($language) || !$service->canPurchase(tenant(), $language)) {
-            $this->toast('This language requires payment or is not enabled on your plan.', 'error');
+            $this->toast(__('This language requires payment or is not enabled on your plan.'), 'error');
             $this->closeModal();
             return;
         }
@@ -97,7 +97,7 @@ class AiTranslationPage extends TenantPage
             ->firstOrFail();
 
         if ((float) $language->ai_translation_price <= 0) {
-            $this->toast('This language is free — no payment required.', 'error');
+            $this->toast(__('This language is free — no payment required.'), 'error');
             $this->closeModal();
             return;
         }

@@ -3,6 +3,7 @@ import { confirm } from './confirm.js';
 import { toast } from './toast.js';
 import { emit } from './events.js';
 import { debounce } from './dom.js';
+import { t } from './i18n.js';
 
 const instances = new WeakMap();
 
@@ -235,7 +236,7 @@ export class TenantForm {
                 const errors = error.errors || {};
                 Object.keys(errors).forEach((key) => this.touched.add(key));
                 this.setErrors(errors);
-                toast.error(error.message || 'Please fix the highlighted fields.');
+                toast.error(error.message || t('Please fix the highlighted fields.'));
                 this.focusFirstInvalid();
             }
             emit('tenant:form:error', { form: this.form, error });

@@ -1,4 +1,4 @@
-@props(['messages' => [], 'empty' => 'No messages yet.', 'id' => null])
+@props(['messages' => [], 'empty' => __('No messages yet.'), 'id' => null])
 
 <div class="t-chat" id="{{ $id }}" data-tenant-chat>
     <div class="t-chat-thread" data-chat-thread>

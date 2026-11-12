@@ -26,8 +26,8 @@ final class PayBrandRequestRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'payment_request_id' => 'payment request',
-            'gateway' => 'payment gateway',
+            'payment_request_id' => __('payment request'),
+            'gateway' => __('payment gateway'),
         ];
     }
 
@@ -46,7 +46,7 @@ final class PayBrandRequestRequest extends TenantFormRequest
                 ->exists();
 
             if (!$exists) {
-                $validator->errors()->add('payment_request_id', 'This payment request could not be found.');
+                $validator->errors()->add('payment_request_id', __('This payment request could not be found.'));
             }
         });
     }

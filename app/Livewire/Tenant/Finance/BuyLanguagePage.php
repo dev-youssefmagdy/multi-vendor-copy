@@ -30,9 +30,9 @@ class BuyLanguagePage extends TenantPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Buy Languages',
-            'badge' => 'Finance',
-            'description' => 'Purchase premium language add-ons to expand your store\'s multilingual reach.',
+            'title' => __('Buy Languages'),
+            'badge' => __('Finance'),
+            'description' => __('Purchase premium language add-ons to expand your store\'s multilingual reach.'),
         ];
     }
 
@@ -80,7 +80,7 @@ class BuyLanguagePage extends TenantPage
         $tenant = tenant();
 
         if (app(LanguagePurchaseService::class)->tenantHasPurchased($tenant, $language->id)) {
-            $this->toast('You have already purchased this language.', 'error');
+            $this->toast(__('You have already purchased this language.'), 'error');
             $this->closeModal();
             return;
         }

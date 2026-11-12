@@ -112,7 +112,7 @@
 
     {{-- Theme switcher --}}
     <div class="pb-switcher fu d1">
-        <p class="pb-switcher-label">Theme</p>
+        <p class="pb-switcher-label">{{ __('Theme') }}</p>
         <div class="appearance-tabs">
             @foreach ($themes as $theme)
                 <button type="button"
@@ -127,7 +127,7 @@
     {{-- Home variant switcher: each variant has its own independent section order --}}
     @if ($availableVariants->isNotEmpty())
         <div class="pb-switcher fu d2">
-            <p class="pb-switcher-label">Home Variant</p>
+            <p class="pb-switcher-label">{{ __('Home Variant') }}</p>
             <div class="appearance-tabs pb-variant-tabs">
                 @foreach ($availableVariants as $variant)
                     <button type="button"
@@ -143,8 +143,8 @@
     <div class="card table-card-shell fu d3">
         <div class="table-header-shell">
             <div>
-                <h3 class="panel-title">Home Page Sections</h3>
-                <p class="panel-copy">Drag to reorder sections. Click the eye icon to show or hide a section on the storefront.</p>
+                <h3 class="panel-title">{{ __('Home Page Sections') }}</h3>
+                <p class="panel-copy">{{ __('Drag to reorder sections. Click the eye icon to show or hide a section on the storefront.') }}</p>
             </div>
         </div>
 
@@ -156,10 +156,10 @@
                         <line x1="4" y1="8" x2="20" y2="8" />
                         <line x1="4" y1="16" x2="20" y2="16" />
                     </svg>
-                    <span class="pb-section-label">{{ $section['label'] }}</span>
+                    <span class="pb-section-label">{{ __($section['label']) }}</span>
                     <button type="button" class="pb-visibility-btn"
                         wire:click="toggleVisibility('{{ $section['section_key'] }}')"
-                        title="{{ $section['is_visible'] ? 'Hide section' : 'Show section' }}">
+                        title="{{ $section['is_visible'] ? __('Hide section') : __('Show section') }}">
                         @if ($section['is_visible'])
                             <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
@@ -175,8 +175,8 @@
                 </div>
             @empty
                 <div class="empty-state">
-                    <div class="empty-state-title">No sections available</div>
-                    <p class="empty-state-copy">This theme has no registered Home page sections yet.</p>
+                    <div class="empty-state-title">{{ __('No sections available') }}</div>
+                    <p class="empty-state-copy">{{ __('This theme has no registered Home page sections yet.') }}</p>
                 </div>
             @endforelse
         </div>

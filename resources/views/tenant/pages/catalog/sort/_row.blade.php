@@ -8,7 +8,7 @@
         </svg>
     </span>
     <div>
-        <div class="entity-title">{{ $item->translationValue('name') ?? $item->slug ?? 'Item #' . $item->id }}</div>
+        <div class="entity-title">{{ $item->translationValue('name') ?? $item->slug ?? __('Item #:id', ['id' => $item->id]) }}</div>
         <div class="entity-subtitle">/{{ $item->slug }}</div>
     </div>
 </div>

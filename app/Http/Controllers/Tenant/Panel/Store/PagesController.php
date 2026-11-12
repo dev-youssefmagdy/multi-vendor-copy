@@ -46,16 +46,16 @@ final class PagesController extends PanelController
 
         return view('tenant.pages.store.pages.index', [
             'stats' => Metric::cards([
-                ['label' => 'Pages', 'value' => $stats['total'], 'format' => 'number', 'caption' => 'Tenant storefront pages', 'dot' => 'dot-cyan'],
-                ['label' => 'Active', 'value' => $stats['active'], 'format' => 'number', 'caption' => 'Visible published pages', 'dot' => 'dot-green'],
-                ['label' => 'Draft', 'value' => $stats['draft'], 'format' => 'number', 'caption' => 'Pages hidden from storefront', 'dot' => 'dot-amber'],
+                ['label' => __('Pages'), 'value' => $stats['total'], 'format' => 'number', 'caption' => __('Tenant storefront pages'), 'dot' => 'dot-cyan'],
+                ['label' => __('Active'), 'value' => $stats['active'], 'format' => 'number', 'caption' => __('Visible published pages'), 'dot' => 'dot-green'],
+                ['label' => __('Draft'), 'value' => $stats['draft'], 'format' => 'number', 'caption' => __('Pages hidden from storefront'), 'dot' => 'dot-amber'],
             ]),
             'columns' => [
                 TableColumn::index(),
-                TableColumn::make('page', 'Page')->orderable(false),
-                TableColumn::make('slug', 'Slug'),
-                TableColumn::make('status', 'Status')->orderable(false),
-                TableColumn::make('updated_at', 'Updated At'),
+                TableColumn::make('page', __('Page'))->orderable(false),
+                TableColumn::make('slug', __('Slug')),
+                TableColumn::make('status', __('Status'))->orderable(false),
+                TableColumn::make('updated_at', __('Updated At')),
                 TableColumn::actions(),
             ],
         ]);
@@ -80,6 +80,6 @@ final class PagesController extends PanelController
     {
         $this->service->deleteModel($page);
 
-        return $this->success('Page deleted successfully.');
+        return $this->success(__('Page deleted successfully.'));
     }
 }

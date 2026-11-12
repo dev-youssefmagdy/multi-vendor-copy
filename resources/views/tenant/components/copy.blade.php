@@ -1,4 +1,4 @@
-@props(['value' => null, 'label' => 'Copy', 'copiedLabel' => 'Copied'])
+@props(['value' => null, 'label' => __('Copy'), 'copiedLabel' => __('Copied')])
 
 {{-- Extra attributes (e.g. data-share-copy, used by JS to set data-copy-value later) are passed through to the button. --}}
 <button type="button" {{ $attributes->except(['data-tenant-copy', 'data-copy-value'])->merge(['class' => 't-copy-btn']) }} data-tenant-copy data-copy-value="{{ $value }}" data-copied-label="{{ __($copiedLabel) }}">

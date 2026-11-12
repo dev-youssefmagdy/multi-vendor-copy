@@ -7,7 +7,7 @@
 --}}
 
 @php
-    $label = $product->translationValue('name') ?? $product->slug ?? ('Product #'.$product->id);
+    $label = $product->translationValue('name') ?? $product->slug ?? (__('Product #:id', ['id' => $product->id]));
     $description = \Illuminate\Support\Str::limit(trim(strip_tags((string) $product->translationValue('description'))), 140);
     $imageUrl = $product->primary_image_url;
     $price = (float) ($product->default_price ?? 0);
@@ -24,14 +24,14 @@
     <div class="db-opp-body">
         <div>
             <h3 class="db-opp-title pm-card-title" title="{{ $label }}">{{ $label }}</h3>
-            <p class="db-opp-desc pm-card-desc">{{ $description !== '' ? $description : 'No description yet.' }}</p>
+            <p class="db-opp-desc pm-card-desc">{{ $description !== '' ? $description : __('No description yet.') }}</p>
         </div>
 
         <div class="db-opp-stats pm-card-stats is-single">
             <div class="db-opp-stat is-dark is-half">
-                <span class="db-opp-stat-label">Cost to your customer's door</span>
+                <span class="db-opp-stat-label">{{ __('Cost to your customer\'s door') }}</span>
                 <strong>${{ number_format($price, 2) }}</strong>
-                <small>Product + International Shipping</small>
+                <small>{{ __('Product + International Shipping') }}</small>
             </div>
         </div>
 
@@ -40,38 +40,38 @@
                 <x-tenant::status-toggle
                     :checked="$product->active"
                     :action-url="route('tenant.products.toggle-active', $product)"
-                    on-label="Active"
-                    off-label="Inactive"
-                    title="Toggle active"
+                    :on-label="__('Active')"
+                    :off-label="__('Inactive')"
+                    :title="__('Toggle active')"
                     data-success="reload-page"
                 />
                 <x-tenant::status-toggle
                     :checked="$product->featured"
                     :action-url="route('tenant.products.toggle-featured', $product)"
-                    on-label="Featured"
-                    off-label="Not featured"
-                    title="Toggle featured"
+                    :on-label="__('Featured')"
+                    :off-label="__('Not featured')"
+                    :title="__('Toggle featured')"
                     data-success="reload-page"
                 />
             </div>
             <div class="pm-card-actions">
-                <a href="{{ route('tenant.own-products.edit', $product) }}" class="t-icon-btn" title="Edit product" aria-label="Edit {{ $label }}">
+                <a href="{{ route('tenant.own-products.edit', $product) }}" class="t-icon-btn" title="{{ __('Edit product') }}" aria-label="{{ __('Edit :label', ['label' => $label]) }}">
                     <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M11 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/><path stroke-linecap="round" stroke-linejoin="round" d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                 </a>
                 <x-tenant::dropdown align="end">
                     <x-tenant::dropdown-item danger
                         data-action-url="{{ route('tenant.own-products.destroy', $product) }}"
                         data-action-method="DELETE"
-                        data-confirm="Delete this product permanently?"
+                        :data-confirm="__('Delete this product permanently?')"
                         data-confirm-danger
-                        data-success="reload-page">Delete</x-tenant::dropdown-item>
+                        data-success="reload-page">{{ __('Delete') }}</x-tenant::dropdown-item>
                 </x-tenant::dropdown>
             </div>
         </div>
 
         <button type="button" class="btn btn-lg db-opp-cta is-added" data-modal-open="product-video-ad-modal" data-product-id="{{ $product->id }}">
             {!! $idea !!}
-            Create your Ad
+            {{ __('Create your Ad') }}
         </button>
     </div>
 </article>

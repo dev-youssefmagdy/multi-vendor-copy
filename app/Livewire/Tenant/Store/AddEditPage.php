@@ -56,7 +56,7 @@ class AddEditPage extends Component
             'translations' => $validated['translations'],
         ], $this->pageId ? Page::query()->findOrFail($this->pageId) : null);
 
-        session()->flash('status', $this->pageId ? 'Page updated successfully.' : 'Page created successfully.');
+        session()->flash('status', $this->pageId ? __('Page updated successfully.') : __('Page created successfully.'));
 
         return redirect()->route('tenant.store.pages.edit', $page);
     }
@@ -91,10 +91,10 @@ class AddEditPage extends Component
         $repository = app(TenantPanelRepository::class);
 
         return view('livewire.tenant.store.add-edit-page', [
-            'pageTitle' => $this->pageId ? 'Edit Page' : 'Add Page',
+            'pageTitle' => $this->pageId ? __('Edit Page') : __('Add Page'),
             'pageDescription' => $this->pageId
-                ? 'Update storefront page settings and translated content.'
-                : 'Create a new storefront page with translated content for tenant languages.',
+                ? __('Update storefront page settings and translated content.')
+                : __('Create a new storefront page with translated content for tenant languages.'),
             'languages' => $repository->activeLanguages(),
             'bodyContent' => data_get($this->translations, $this->activeLocale . '.body', ''),
         ]);

@@ -94,7 +94,7 @@
         </div>
         @if ($previewUrl)
             <a href="{{ $previewUrl }}" target="_blank" rel="noopener" class="btn btn-secondary">
-                Preview
+                {{ __('Preview') }}
             </a>
         @endif
     </div>
@@ -102,11 +102,11 @@
     {{-- Tabs --}}
     <div class="appearance-tabs fu d1 section-gap">
         @foreach ([
-            'general'      => 'General',
-            'colors'       => 'Colors',
-            'social_links' => 'Social Links',
-            'promo_banner' => 'Promo Banner',
-            'footer'       => 'Footer',
+            'general'      => __('General'),
+            'colors'       => __('Colors'),
+            'social_links' => __('Social Links'),
+            'promo_banner' => __('Promo Banner'),
+            'footer'       => __('Footer'),
         ] as $key => $label)
             <button type="button"
                 class="appearance-tab {{ $activeTab === $key ? 'act' : '' }}"
@@ -123,10 +123,10 @@
                 <section class="card form-card">
                     <div class="panel-head mb-5">
                         <div>
-                            <h3 class="panel-title">Store Identity</h3>
-                            <p class="panel-copy">Set the display name and logo for the storefront.</p>
+                            <h3 class="panel-title">{{ __('Store Identity') }}</h3>
+                            <p class="panel-copy">{{ __('Set the display name and logo for the storefront.') }}</p>
                         </div>
-                        <x-btn type="submit">Save General</x-btn>
+                        <x-btn type="submit">{{ __('Save General') }}</x-btn>
                     </div>
 
                     <div class="form-grid form-grid-2">
@@ -148,10 +148,10 @@
                             <h3 class="panel-title">
                                 {{ $themeSection['name'] }}
                                 @if ($themeSection['is_active'])
-                                    <span class="badge badge-cyan" style="margin-inline-start:8px;">Active Theme</span>
+                                    <span class="badge badge-cyan" style="margin-inline-start:8px;">{{ __('Active Theme') }}</span>
                                 @endif
                             </h3>
-                            <p class="panel-copy">{{ count($themeSection['variants']) }} variant(s) with customizable colors.</p>
+                            <p class="panel-copy">{{ __(':variantsCount variant(s) with customizable colors.', ['variantsCount' => count($themeSection['variants'])]) }}</p>
                         </div>
                     </summary>
 
@@ -163,21 +163,21 @@
                                         <h4 class="panel-title" style="font-size:14px;">
                                             {{ $section['name'] }}
                                             @if ($section['is_active'])
-                                                <span class="badge badge-green" style="margin-inline-start:8px;">Active Variant</span>
+                                                <span class="badge badge-green" style="margin-inline-start:8px;">{{ __('Active Variant') }}</span>
                                             @endif
                                         </h4>
-                                        <p class="panel-copy">Changes apply site-wide whenever this variant is active.</p>
+                                        <p class="panel-copy">{{ __('Changes apply site-wide whenever this variant is active.') }}</p>
                                     </div>
                                     <div class="flex gap-2">
-                                        <x-btn type="button" variant="secondary" wire:click="resetColors({{ $themeId }}, {{ $variantId }})">Reset to Default</x-btn>
-                                        <x-btn type="button" wire:click="saveColors({{ $themeId }}, {{ $variantId }})">Save Colors</x-btn>
+                                        <x-btn type="button" variant="secondary" wire:click="resetColors({{ $themeId }}, {{ $variantId }})">{{ __('Reset to Default') }}</x-btn>
+                                        <x-btn type="button" wire:click="saveColors({{ $themeId }}, {{ $variantId }})">{{ __('Save Colors') }}</x-btn>
                                     </div>
                                 </div>
 
                                 <div class="form-grid form-grid-2">
                                     @foreach ($section['defaults'] as $property => $default)
                                         <div>
-                                            <label class="field-label">{{ \Illuminate\Support\Str::headline(str_replace('--color-', '', $property)) }}</label>
+                                            <label class="field-label">{{ __((string) \Illuminate\Support\Str::headline(str_replace('--color-', '', $property))) }}</label>
                                             <div class="flex items-center gap-3">
                                                 <input type="color"
                                                     wire:model.live="colorThemes.{{ $themeId }}.variants.{{ $variantId }}.values.{{ $property }}"
@@ -196,8 +196,8 @@
             @empty
                 <div class="card form-card">
                     <div class="empty-state">
-                        <div class="empty-state-title">No customizable colors yet</div>
-                        <p class="empty-state-copy">None of your storefront themes expose variants with color customization.</p>
+                        <div class="empty-state-title">{{ __('No customizable colors yet') }}</div>
+                        <p class="empty-state-copy">{{ __('None of your storefront themes expose variants with color customization.') }}</p>
                     </div>
                 </div>
             @endforelse
@@ -210,15 +210,15 @@
             <div class="card table-card-shell">
                 <div class="table-header-shell">
                     <div>
-                        <h3 class="panel-title">Social Links</h3>
-                        <p class="panel-copy">Social media profile links displayed in the storefront.</p>
+                        <h3 class="panel-title">{{ __('Social Links') }}</h3>
+                        <p class="panel-copy">{{ __('Social media profile links displayed in the storefront.') }}</p>
                     </div>
                     <div class="table-header-actions">
-                        <x-btn type="button" wire:click="openSocialModal()">Add Social Link</x-btn>
+                        <x-btn type="button" wire:click="openSocialModal()">{{ __('Add Social Link') }}</x-btn>
                     </div>
                 </div>
 
-                <x-table :headers="['Icon', 'URL', 'Order', 'Actions']">
+                <x-table :headers="[__('Icon'), 'URL', __('Order'), __('Actions')]">
                     @forelse ($socialLinks as $link)
                         <tr>
                             <td>
@@ -236,9 +236,9 @@
                             <td>
                                 <div class="flex gap-2">
                                     <x-btn type="button" variant="secondary" class="btn-sm"
-                                        wire:click="openSocialModal({{ $link->id }})">Edit</x-btn>
+                                        wire:click="openSocialModal({{ $link->id }})">{{ __('Edit') }}</x-btn>
                                     <x-btn type="button" variant="secondary" class="btn-sm"
-                                        wire:click="confirmDeleteSocial({{ $link->id }})">Delete</x-btn>
+                                        wire:click="confirmDeleteSocial({{ $link->id }})">{{ __('Delete') }}</x-btn>
                                 </div>
                             </td>
                         </tr>
@@ -246,8 +246,8 @@
                         <tr>
                             <td colspan="4">
                                 <div class="empty-state">
-                                    <div class="empty-state-title">No social links yet</div>
-                                    <p class="empty-state-copy">Add social media links to display in your storefront.</p>
+                                    <div class="empty-state-title">{{ __('No social links yet') }}</div>
+                                    <p class="empty-state-copy">{{ __('Add social media links to display in your storefront.') }}</p>
                                 </div>
                             </td>
                         </tr>
@@ -258,25 +258,25 @@
 
         {{-- Social link modal --}}
         <x-modal wire:model="socialModalOpen"
-            title="{{ $socialId ? 'Edit Social Link' : 'Add Social Link' }}"
+            title="{{ $socialId ? __('Edit Social Link') : __('Add Social Link') }}"
             maxWidth="2xl"
             closeAction="closeSocialModal">
             <form wire:submit="saveSocialLink" class="page-stack">
                 <div class="form-grid form-grid-2">
                     <div>
-                        <label class="field-label">Icon / Platform</label>
+                        <label class="field-label">{{ __('Icon / Platform') }}</label>
                         <x-select wire:model.defer="socialIcon" class="{{ $errors->has('socialIcon') ? 'is-invalid' : '' }}">
                             @foreach ([
-                                'facebook'  => 'Facebook',
-                                'instagram' => 'Instagram',
-                                'twitter'   => 'Twitter / X',
+                                'facebook'  => __('Facebook'),
+                                'instagram' => __('Instagram'),
+                                'twitter'   => __('Twitter / X'),
                                 'youtube'   => 'YouTube',
                                 'tiktok'    => 'TikTok',
                                 'linkedin'  => 'LinkedIn',
-                                'pinterest' => 'Pinterest',
-                                'snapchat'  => 'Snapchat',
+                                'pinterest' => __('Pinterest'),
+                                'snapchat'  => __('Snapchat'),
                                 'whatsapp'  => 'WhatsApp',
-                                'telegram'  => 'Telegram',
+                                'telegram'  => __('Telegram'),
                             ] as $value => $label)
                                 <option value="{{ $value }}">{{ $label }}</option>
                             @endforeach
@@ -284,7 +284,7 @@
                         @error('socialIcon')<div class="field-error">{{ $message }}</div>@enderror
                     </div>
                     <div class="span-2">
-                        <label class="field-label">Profile URL</label>
+                        <label class="field-label">{{ __('Profile URL') }}</label>
                         <x-input type="url" wire:model.defer="socialUrl"
                             placeholder="https://..."
                             :error="$errors->has('socialUrl')" />
@@ -293,9 +293,9 @@
                 </div>
 
                 <div class="page-actions compact-actions justify-end">
-                    <x-btn type="button" variant="secondary" wire:click="closeSocialModal">Cancel</x-btn>
+                    <x-btn type="button" variant="secondary" wire:click="closeSocialModal">{{ __('Cancel') }}</x-btn>
                     <x-btn type="submit">
-                        {{ $socialId ? 'Update Link' : 'Add Link' }}
+                        {{ $socialId ? __('Update Link') : __('Add Link') }}
                     </x-btn>
                 </div>
             </form>
@@ -309,48 +309,48 @@
                 <section class="card form-card">
                     <div class="panel-head mb-5">
                         <div>
-                            <h3 class="panel-title">Promotional Banner</h3>
-                            <p class="panel-copy">Configure the promotional banner shown on your homepage. Leave the image and title empty to hide it.</p>
+                            <h3 class="panel-title">{{ __('Promotional Banner') }}</h3>
+                            <p class="panel-copy">{{ __('Configure the promotional banner shown on your homepage. Leave the image and title empty to hide it.') }}</p>
                         </div>
-                        <x-btn type="submit">Save Promo Banner</x-btn>
+                        <x-btn type="submit">{{ __('Save Promo Banner') }}</x-btn>
                     </div>
 
                     <div class="form-grid form-grid-2">
                         <div>
-                            <label class="field-label">Title</label>
+                            <label class="field-label">{{ __('Title') }}</label>
                             <x-input type="text" wire:model.defer="promoBannerTitle"
-                                placeholder="Summer Sale" :error="$errors->has('promoBannerTitle')" />
+                                :placeholder="__('Summer Sale')" :error="$errors->has('promoBannerTitle')" />
                             @error('promoBannerTitle')<div class="field-error">{{ $message }}</div>@enderror
                         </div>
                         <div>
-                            <label class="field-label">Call-to-Action Text</label>
+                            <label class="field-label">{{ __('Call-to-Action Text') }}</label>
                             <x-input type="text" wire:model.defer="promoBannerCtaText"
-                                placeholder="Shop Now" :error="$errors->has('promoBannerCtaText')" />
+                                :placeholder="__('Shop Now')" :error="$errors->has('promoBannerCtaText')" />
                             @error('promoBannerCtaText')<div class="field-error">{{ $message }}</div>@enderror
                         </div>
                         <div class="span-2">
-                            <label class="field-label">Subtitle</label>
+                            <label class="field-label">{{ __('Subtitle') }}</label>
                             <x-input type="text" wire:model.defer="promoBannerSubtitle"
-                                placeholder="Up to 50% off selected items" :error="$errors->has('promoBannerSubtitle')" />
+                                :placeholder="__('Up to 50% off selected items')" :error="$errors->has('promoBannerSubtitle')" />
                             @error('promoBannerSubtitle')<div class="field-error">{{ $message }}</div>@enderror
                         </div>
                         <div>
-                            <label class="field-label">Link URL</label>
+                            <label class="field-label">{{ __('Link URL') }}</label>
                             <x-input type="url" wire:model.defer="promoBannerLink"
                                 placeholder="https://" :error="$errors->has('promoBannerLink')" />
                             @error('promoBannerLink')<div class="field-error">{{ $message }}</div>@enderror
                         </div>
                         <div>
-                            <label class="field-label">Image URL</label>
+                            <label class="field-label">{{ __('Image URL') }}</label>
                             <x-input type="url" wire:model.defer="promoBannerImageUrl"
                                 placeholder="https://" :error="$errors->has('promoBannerImageUrl')" />
                             @error('promoBannerImageUrl')<div class="field-error">{{ $message }}</div>@enderror
                         </div>
                         <div class="span-2">
-                            <label class="field-label">Featured Products Card Image (Souqify)</label>
+                            <label class="field-label">{{ __('Featured Products Card Image (Souqify)') }}</label>
                             <x-input type="url" wire:model.defer="souqifyFeaturedPromoImageUrl"
                                 placeholder="https://" :error="$errors->has('souqifyFeaturedPromoImageUrl')" />
-                            <p class="panel-copy">Background of the discount card beside Featured Products on the Souqify home page. Leave empty to use the default.</p>
+                            <p class="panel-copy">{{ __('Background of the discount card beside Featured Products on the Souqify home page. Leave empty to use the default.') }}</p>
                             @error('souqifyFeaturedPromoImageUrl')<div class="field-error">{{ $message }}</div>@enderror
                         </div>
                     </div>
@@ -366,10 +366,10 @@
                 <section class="card form-card">
                     <div class="panel-head mb-5">
                         <div>
-                            <h3 class="panel-title">Footer Settings</h3>
-                            <p class="panel-copy">Manage the text and copyright notice displayed in the storefront footer. Provide a translation for each enabled language.</p>
+                            <h3 class="panel-title">{{ __('Footer Settings') }}</h3>
+                            <p class="panel-copy">{{ __('Manage the text and copyright notice displayed in the storefront footer. Provide a translation for each enabled language.') }}</p>
                         </div>
-                        <x-btn type="submit">Save Footer</x-btn>
+                        <x-btn type="submit">{{ __('Save Footer') }}</x-btn>
                     </div>
 
                     @foreach ($languages as $language)
@@ -377,7 +377,7 @@
                             <div class="locale-badge">{{ $language->native_name ?? $language->name }} ({{ $language->code }})</div>
                             <div class="form-grid">
                                 <div>
-                                    <label class="field-label">Footer Text</label>
+                                    <label class="field-label">{{ __('Footer Text') }}</label>
                                     <x-textarea rows="4"
                                         wire:model.defer="footerTranslations.{{ $language->code }}.footer_text"
                                         :error="$errors->has('footerTranslations.' . $language->code . '.footer_text')" />
@@ -386,10 +386,10 @@
                                     @enderror
                                 </div>
                                 <div>
-                                    <label class="field-label">Copyright</label>
+                                    <label class="field-label">{{ __('Copyright') }}</label>
                                     <x-input type="text"
                                         wire:model.defer="footerTranslations.{{ $language->code }}.footer_copyright"
-                                        placeholder="© {{ date('Y') }} Your Store. All rights reserved."
+                                        :placeholder="__('© :date Your Store. All rights reserved.', ['date' => date('Y')])"
                                         :error="$errors->has('footerTranslations.' . $language->code . '.footer_copyright')" />
                                     @error('footerTranslations.' . $language->code . '.footer_copyright')
                                         <div class="field-error">{{ $message }}</div>

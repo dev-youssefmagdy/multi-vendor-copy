@@ -33,9 +33,9 @@ class WalletPage extends ListPage
     protected function pageMeta(): array
     {
         return [
-            'title'       => 'Subscriptions & Balance',
-            'badge'       => 'Finance',
-            'description' => 'Review tenant subscription records, the current subscription-backed balance, and tenant transaction history in one place.',
+            'title'       => __('Subscriptions & Balance'),
+            'badge'       => __('Finance'),
+            'description' => __('Review tenant subscription records, the current subscription-backed balance, and tenant transaction history in one place.'),
         ];
     }
 

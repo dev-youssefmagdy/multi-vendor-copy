@@ -2,6 +2,7 @@
 // While a video plays, the card slideshow's autoplay is paused so the slide
 // doesn't move away mid-watch; it resumes when the video ends.
 
+import { t } from '../../core/i18n.js';
 function sliderOf(el) {
     return el.closest('[data-opp-slider]')?.swiper;
 }
@@ -24,7 +25,7 @@ function play(button) {
         video.src = src;
         video.controls = true;
         video.playsInline = true;
-        video.setAttribute('aria-label', button.getAttribute('aria-label') || 'Ad video');
+        video.setAttribute('aria-label', button.getAttribute('aria-label') || t('Ad video'));
         video.addEventListener('play', () => {
             stopOthers(video);
             sliderOf(media)?.autoplay?.stop();

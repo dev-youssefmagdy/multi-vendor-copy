@@ -4,8 +4,8 @@
 
 <aside id="sb">
     <div class="logo-row">
-        <img src="{{ asset('tenant-panel/logo.svg') }}" alt="NOGRGR" class="sb-logo" width="152" height="40">
-        <button type="button" class="close-sb" data-action="close-mobile" aria-label="Close sidebar">
+        <img src="{{ asset('tenant-panel/logo.svg') }}" alt="{{ __('NOGRGR') }}" class="sb-logo" width="152" height="40">
+        <button type="button" class="close-sb" data-action="close-mobile" aria-label="{{ __('Close sidebar') }}">
             <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                 <line x1="18" y1="6" x2="6" y2="18" />
                 <line x1="6" y1="6" x2="18" y2="18" />
@@ -80,9 +80,9 @@
 
     <div class="sb-user">
         <div class="su-inner">
-            <x-tenant::avatar :name="$shell['tenantName'] ?? 'Tenant Owner'" :seed="$shell['tenantId']" size="48" />
+            <x-tenant::avatar :name="$shell['tenantName'] ?? __('Tenant Owner')" :seed="$shell['tenantId']" size="48" />
             <div class="user-meta">
-                <div class="user-name">{{ $shell['tenantName'] ?? 'Tenant Owner' }}</div>
+                <div class="user-name">{{ $shell['tenantName'] ?? __('Tenant Owner') }}</div>
                 <div class="user-role">{{ __('Vendor Workspace') }}</div>
             </div>
             <button type="button" class="su-logout" aria-label="{{ __('Logout') }}" title="{{ __('Logout') }}"

@@ -3,13 +3,13 @@
         <div class="page-head fu d0">
             <div>
                 <div class="page-title-row">
-                    <h1 class="D page-title">{{ $pageTitle }}</h1><span class="page-badge">Storefront</span>
+                    <h1 class="D page-title">{{ $pageTitle }}</h1><span class="page-badge">{{ __('Storefront') }}</span>
                 </div>
                 <p class="page-copy">{{ $pageDescription }}</p>
             </div>
             <div class="page-actions">
-                <a href="{{ route('tenant.store.pages') }}" class="btn btn-secondary">Back to Pages</a>
-                <x-btn type="submit">Save Page</x-btn>
+                <a href="{{ route('tenant.store.pages') }}" class="btn btn-secondary">{{ __('Back to Pages') }}</a>
+                <x-btn type="submit">{{ __('Save Page') }}</x-btn>
             </div>
         </div>
 
@@ -17,26 +17,25 @@
             <div class="card section-gap notice-success">{{ session('status') }}</div>
         @endif
 
-        <x-card-collapse title="Page Settings" subtitle="Slug, visibility, and title translation."
+        <x-card-collapse :title="__('Page Settings')" :subtitle="__('Slug, visibility, and title translation.')"
             class="form-card section-gap" :start-open="true">
             <div class="form-grid form-grid-2">
                 <div>
-                    <label class="field-label">Slug</label>
+                    <label class="field-label">{{ __('Slug') }}</label>
                     <x-input type="text" wire:model.defer="slug"
                         class="{{ $errors->has('slug') ? 'is-invalid' : '' }}" />
                     @error('slug')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
-                    <label class="field-label">Status</label>
-                    <label class="toggle-field"><input type="checkbox" wire:model.defer="active"><span>Page is
-                            active</span></label>
+                    <label class="field-label">{{ __('Status') }}</label>
+                    <label class="toggle-field"><input type="checkbox" wire:model.defer="active"><span>{{ __('Page is active') }}</span></label>
                     @error('active')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
             </div>
         </x-card-collapse>
 
-        <x-card-collapse title="Translations"
-            subtitle="Switch locale tabs to manage translated page titles and content." class="form-card section-gap"
+        <x-card-collapse :title="__('Translations')"
+            :subtitle="__('Switch locale tabs to manage translated page titles and content.')" class="form-card section-gap"
             :start-open="true">
             @if ($languages->count())
                 <div wire:ignore.self x-data="{ activeLocale: '{{ $activeLocale }}' }">
@@ -51,7 +50,7 @@
                     @foreach ($languages as $language)
                         <div x-show="activeLocale === '{{ $language->code }}'" x-cloak class="form-grid">
                             <div>
-                                <label class="field-label">Title</label>
+                                <label class="field-label">{{ __('Title') }}</label>
                                 <x-input type="text" wire:model.defer="translations.{{ $language->code }}.title"
                                     class="{{ $errors->has('translations.' . $language->code . '.title') ? 'is-invalid' : '' }}" />
                                 @error('translations.' . $language->code . '.title')
@@ -60,7 +59,7 @@
                             </div>
 
                             <div wire:key="page-editor-{{ $language->code }}">
-                                <label class="field-label">Content</label>
+                                <label class="field-label">{{ __('Content') }}</label>
                                 <x-editor model="translations.{{ $language->code }}.body"
                                     :value="$translations[$language->code]['body'] ?? ''" :height="520" />
                                 @error('translations.' . $language->code . '.body')
@@ -72,17 +71,16 @@
                 </div>
             @else
                 <div class="empty-state">
-                    <div class="empty-state-title">No active languages</div>
-                    <p class="empty-state-copy">Enable at least one tenant language before creating translated storefront
-                        pages.</p>
+                    <div class="empty-state-title">{{ __('No active languages') }}</div>
+                    <p class="empty-state-copy">{{ __('Enable at least one tenant language before creating translated storefront pages.') }}</p>
                 </div>
             @endif
         </x-card-collapse>
 
         {{-- ── Bottom Actions ───────────────────────────────────────────────── --}}
         <div class="page-actions" style="display:flex;justify-content:flex-end;gap:8px;padding-top:8px">
-            <a href="{{ route('tenant.store.pages') }}" class="btn btn-secondary">Back to Pages</a>
-            <x-btn type="submit">Save Page</x-btn>
+            <a href="{{ route('tenant.store.pages') }}" class="btn btn-secondary">{{ __('Back to Pages') }}</a>
+            <x-btn type="submit">{{ __('Save Page') }}</x-btn>
         </div>
     </form>
 </main>

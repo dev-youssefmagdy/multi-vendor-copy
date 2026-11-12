@@ -7,26 +7,26 @@
     <div class="pm-page">
         @include('tenant.pages.catalog._module-nav', ['activeTab' => 'products'])
 
-        <p style="margin:8px 0 0"><a href="{{ route('tenant.products.new') }}">&larr; Back to new products</a></p>
+        <p style="margin:8px 0 0"><a href="{{ route('tenant.products.new') }}">{{ __('← Back to new products') }}</a></p>
 
         <div class="pm-preview fu d1">
             <div class="pm-preview-gallery">
                 @forelse($images as $src)
-                    <img src="{{ $src }}" alt="{{ $card['title'] }}" loading="lazy">
+                    <img src="{{ $src }}" alt="{{ __($card['title']) }}" loading="lazy">
                 @empty
-                    <p class="db-welcome-sub">No images yet.</p>
+                    <p class="db-welcome-sub">{{ __('No images yet.') }}</p>
                 @endforelse
             </div>
             <div class="pm-preview-info">
-                <h1>{{ $card['title'] }}</h1>
-                <p class="pm-preview-price">{{ $card['cost'] }}<small>Platform price, before your profit margin</small></p>
+                <h1>{{ __($card['title']) }}</h1>
+                <p class="pm-preview-price">{{ $card['cost'] }}<small>{{ __('Platform price, before your profit margin') }}</small></p>
                 @if(!empty($categories))
                     <p class="pm-preview-cats">@foreach($categories as $cat)<span class="badge">{{ $cat }}</span> @endforeach</p>
                 @endif
                 @if($summary !== '')
                     <p class="pm-preview-desc"><strong>{{ $summary }}</strong></p>
                 @endif
-                <p class="pm-preview-desc">{{ $fullDescription !== '' ? $fullDescription : 'No description yet.' }}</p>
+                <p class="pm-preview-desc">{{ $fullDescription !== '' ? $fullDescription : __('No description yet.') }}</p>
                 @if(!empty($details))
                     <dl class="pm-preview-details">
                         @foreach($details as $label => $value)
@@ -35,9 +35,9 @@
                     </dl>
                 @endif
                 @if(!empty($variants))
-                    <h3 style="margin:0 0 8px">Variants ({{ count($variants) }})</h3>
+                    <h3 style="margin:0 0 8px">{{ __('Variants (:variantsCount)', ['variantsCount' => count($variants)]) }}</h3>
                     <table class="pm-preview-variants">
-                        <thead><tr><th>Option</th><th>SKU</th><th>Platform price</th><th>Stock</th></tr></thead>
+                        <thead><tr><th>{{ __('Option') }}</th><th>{{ __('SKU') }}</th><th>{{ __('Platform price') }}</th><th>{{ __('Stock') }}</th></tr></thead>
                         <tbody>
                             @foreach($variants as $v)
                                 <tr><td>{{ $v['options'] ?: '—' }}</td><td>{{ $v['sku'] ?: '—' }}</td><td>{{ $v['price'] }}</td><td>{{ $v['stock'] }}</td></tr>
@@ -48,7 +48,7 @@
                 <form method="POST" action="{{ route('tenant.products.sync-new') }}">
                     @csrf
                     <input type="hidden" name="product_ids[]" value="{{ $card['id'] }}">
-                    <button type="submit" class="btn btn-primary btn-lg" style="width:100%">Add to my store</button>
+                    <button type="submit" class="btn btn-primary btn-lg" style="width:100%">{{ __('Add to my store') }}</button>
                 </form>
             </div>
         </div>

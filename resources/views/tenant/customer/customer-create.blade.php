@@ -7,13 +7,13 @@
     <div class="page-head fu d0">
         <div>
             <div class="page-title-row">
-                <h1 class="D page-title">Add Customer</h1>
-                <span class="page-badge">CRM</span>
+                <h1 class="D page-title">{{ __('Add Customer') }}</h1>
+                <span class="page-badge">{{ __('CRM') }}</span>
             </div>
-            <p class="page-copy">Create a new customer record for this tenant workspace.</p>
+            <p class="page-copy">{{ __('Create a new customer record for this tenant workspace.') }}</p>
         </div>
         <div class="page-actions">
-            <a class="btn btn-secondary" href="{{ route('tenant.customers.index') }}">← Customers</a>
+            <a class="btn btn-secondary" href="{{ route('tenant.customers.index') }}">{{ __('← Customers') }}</a>
         </div>
     </div>
 
@@ -21,7 +21,7 @@
         <form method="POST" action="{{ route('tenant.customers.store') }}">
             @csrf
 
-            <x-card-collapse title="Customer Details" subtitle="Name, contact info, status and password." :start-open="true">
+            <x-card-collapse :title="__('Customer Details')" :subtitle="__('Name, contact info, status and password.')" :start-open="true">
                 <div class="form-grid form-grid-2"
                      x-data="{
                          countryId: '{{ old('countryId') }}',
@@ -35,24 +35,24 @@
                          }
                      }">
                     <div>
-                        <label class="field-label">Full Name <span class="field-required">*</span></label>
-                        <x-input name="fullName" value="{{ old('fullName') }}" placeholder="Full name" />
+                        <label class="field-label">{{ __('Full Name') }} <span class="field-required">*</span></label>
+                        <x-input name="fullName" value="{{ old('fullName') }}" :placeholder="__('Full name')" />
                         @error('fullName') <p class="field-error">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="field-label">Email <span class="field-required">*</span></label>
+                        <label class="field-label">{{ __('Email') }} <span class="field-required">*</span></label>
                         <x-input type="email" name="email" value="{{ old('email') }}" placeholder="customer@example.com" />
                         @error('email') <p class="field-error">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="field-label">Phone</label>
+                        <label class="field-label">{{ __('Phone') }}</label>
                         <x-input type="tel" name="phone" data-phone-input value="{{ old('phone') }}" placeholder="+1 555 000 0000" />
                         @error('phone') <p class="field-error">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="field-label">Country</label>
+                        <label class="field-label">{{ __('Country') }}</label>
                         <select class="field-control" name="countryId" @change="onCountryChange($event.target.value)">
-                            <option value="">— select country —</option>
+                            <option value="">{{ __('— select country —') }}</option>
                             @foreach ($countries as $cId => $cName)
                                 <option value="{{ $cId }}" :selected="countryId == '{{ $cId }}'">{{ $cName }}</option>
                             @endforeach
@@ -60,9 +60,9 @@
                         @error('countryId') <p class="field-error">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="field-label">City</label>
+                        <label class="field-label">{{ __('City') }}</label>
                         <select class="field-control" name="cityId" :disabled="!countryId">
-                            <option value="">— select city —</option>
+                            <option value="">{{ __('— select city —') }}</option>
                             <template x-for="city in cities" :key="city.id">
                                 <option :value="city.id"
                                     :selected="city.id == '{{ old('cityId') }}'"
@@ -70,35 +70,35 @@
                             </template>
                         </select>
                         @error('cityId') <p class="field-error">{{ $message }}</p> @enderror
-                        <p x-show="!countryId" style="font-size:11px; color:var(--t3); margin-top:3px;">Select a country first</p>
-                        <p x-show="countryId && cities.length === 0" x-cloak style="font-size:11px; color:var(--t3); margin-top:3px;">No cities for this country yet</p>
+                        <p x-show="!countryId" style="font-size:11px; color:var(--t3); margin-top:3px;">{{ __('Select a country first') }}</p>
+                        <p x-show="countryId && cities.length === 0" x-cloak style="font-size:11px; color:var(--t3); margin-top:3px;">{{ __('No cities for this country yet') }}</p>
                     </div>
                     <div class="form-grid-full">
-                        <label class="field-label">Default Address</label>
-                        <x-input name="address" value="{{ old('address') }}" placeholder="Short freeform address" />
+                        <label class="field-label">{{ __('Default Address') }}</label>
+                        <x-input name="address" value="{{ old('address') }}" :placeholder="__('Short freeform address')" />
                         @error('address') <p class="field-error">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="field-label">Password <span class="field-required">*</span></label>
-                        <x-input type="password" name="password" placeholder="Min 6 characters" autocomplete="new-password" />
+                        <label class="field-label">{{ __('Password') }} <span class="field-required">*</span></label>
+                        <x-input type="password" name="password" :placeholder="__('Min 6 characters')" autocomplete="new-password" />
                         @error('password') <p class="field-error">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="field-label">Confirm Password</label>
-                        <x-input type="password" name="passwordConfirmation" placeholder="Repeat password" autocomplete="new-password" />
+                        <label class="field-label">{{ __('Confirm Password') }}</label>
+                        <x-input type="password" name="passwordConfirmation" :placeholder="__('Repeat password')" autocomplete="new-password" />
                         @error('passwordConfirmation') <p class="field-error">{{ $message }}</p> @enderror
                     </div>
                     <div style="display:flex; align-items:flex-end; padding-bottom:4px;">
                         <label class="toggle-field" style="cursor:pointer; display:flex; align-items:center; gap:10px;">
                             <input type="checkbox" name="active" value="1" {{ old('active', true) ? 'checked' : '' }}>
-                            <span class="field-label" style="margin:0;">Active account</span>
+                            <span class="field-label" style="margin:0;">{{ __('Active account') }}</span>
                         </label>
                     </div>
                 </div>
 
                 <div class="page-actions compact-actions justify-end" style="margin-top:16px;">
-                    <a href="{{ route('tenant.customers.index') }}" class="btn btn-secondary">Cancel</a>
-                    <button type="submit" class="btn btn-primary">Create Customer</button>
+                    <a href="{{ route('tenant.customers.index') }}" class="btn btn-secondary">{{ __('Cancel') }}</a>
+                    <button type="submit" class="btn btn-primary">{{ __('Create Customer') }}</button>
                 </div>
             </x-card-collapse>
         </form>

@@ -29,8 +29,8 @@ final class SavePromoBannerRequest extends TenantFormRequest
             'promo_banner_subtitle'     => 'subtitle',
             'promo_banner_link'         => 'link URL',
             'promo_banner_cta_text'     => 'call-to-action text',
-            'promo_banner_image'        => 'banner image',
-            'promo_banner_mobile_image' => 'mobile banner image',
+            'promo_banner_image'        => __('banner image'),
+            'promo_banner_mobile_image' => __('mobile banner image'),
         ];
     }
 }

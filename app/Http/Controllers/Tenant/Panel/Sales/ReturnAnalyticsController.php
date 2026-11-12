@@ -27,27 +27,27 @@ final class ReturnAnalyticsController extends PanelController
         $overview = $this->overview();
 
         return view('tenant.pages.insights._layout', [
-            'title' => 'Return Analytics',
-            'badge' => 'Store',
-            'description' => 'Return-request trends, reasons, and processing time for your store.',
-            'contentIntro' => 'Approval rates, rejection rates, and processing time are aggregated directly from your store\'s return requests.',
+            'title' => __('Return Analytics'),
+            'badge' => __('Store'),
+            'description' => __('Return-request trends, reasons, and processing time for your store.'),
+            'contentIntro' => __('Approval rates, rejection rates, and processing time are aggregated directly from your store\'s return requests.'),
             'cardsGridClass' => 'g-stats4',
             'cards' => Metric::cards($overview['cards']),
             'bullets' => [
-                'Approval rate counts approved and refunded requests together.',
-                'Processing time is measured from submission to the final status update.',
-                'Top reasons and products reflect all-time return requests for this store.',
+                __('Approval rate counts approved and refunded requests together.'),
+                __('Processing time is measured from submission to the final status update.'),
+                __('Top reasons and products reflect all-time return requests for this store.'),
             ],
             'chartSections' => [
                 [
                     'layoutClass' => 'g-r2',
                     'cards' => [
                         [
-                            'title' => 'Top 5 Return Reasons',
+                            'title' => __('Top 5 Return Reasons'),
                             'metrics' => $overview['top_reasons'],
                         ],
                         [
-                            'title' => 'Top 5 Most Returned Products',
+                            'title' => __('Top 5 Most Returned Products'),
                             'metrics' => $overview['top_products'],
                         ],
                     ],
@@ -57,11 +57,11 @@ final class ReturnAnalyticsController extends PanelController
                 [
                     'id' => 'return-analytics-monthly',
                     'url' => route('tenant.returns.analytics.data'),
-                    'title' => 'Monthly Trend (Last 6 Months)',
-                    'description' => 'Return requests submitted per month.',
+                    'title' => __('Monthly Trend (Last 6 Months)'),
+                    'description' => __('Return requests submitted per month.'),
                     'columns' => [
-                        ['data' => 'label', 'title' => 'Month', 'orderable' => false],
-                        ['data' => 'count', 'title' => 'Return Requests', 'orderable' => false],
+                        ['data' => 'label', 'title' => __('Month'), 'orderable' => false],
+                        ['data' => 'count', 'title' => __('Return Requests'), 'orderable' => false],
                     ],
                     'order' => [],
                 ],

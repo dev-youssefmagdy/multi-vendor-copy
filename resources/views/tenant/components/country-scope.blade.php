@@ -1,8 +1,8 @@
 @props([
     'name' => 'country_ids',
-    'label' => 'Countries',
+    'label' => __('Countries'),
     'options' => [],
-    'help' => 'Choose "All countries" or pick the countries this applies to.',
+    'help' => __('Choose "All countries" or pick the countries this applies to.'),
 ])
 
 {{-- Searchable multi-select of countries. "All countries" (value "all") is exclusive:
@@ -17,7 +17,7 @@
     required
     :allow-clear="false"
     :close-on-select="false"
-    placeholder="Search countries…"
+    :placeholder="__('Search countries…')"
     data-exclusive-value="all"
     {{ $attributes }}
 />

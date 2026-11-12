@@ -11,7 +11,7 @@
         {!! $summarySlot !!}
     @endif
 
-    <x-tenant::radio-group name="gateway" label="Payment Gateway" variant="cards" :columns="1" :options="$gatewayOptions" :value="$selectedCode" data-payment-gateway-select />
+    <x-tenant::radio-group name="gateway" :label="__('Payment Gateway')" variant="cards" :columns="1" :options="$gatewayOptions" :value="$selectedCode" data-payment-gateway-select />
     <div data-payment-ready hidden></div>
 
     @foreach($presented['gateways'] as $gateway)
@@ -32,19 +32,19 @@
                 data-2co-seller="{{ $gateway['creds']['seller_id'] ?? '' }}"
             @endif
         >
-            <div class="t-card-form-badge">Secure card details</div>
+            <div class="t-card-form-badge">{{ __('Secure card details') }}</div>
 
             @if($gateway['code'] === 'stripe')
-                <label class="field-label">Card</label>
+                <label class="field-label">{{ __('Card') }}</label>
                 <div id="sp-stripe-card-element-{{ $id }}" class="t-stripe-card-element"></div>
                 <p id="sp-stripe-card-errors-{{ $id }}" class="field-error" hidden></p>
                 <input type="hidden" name="stripe_token" data-token-field="stripe_token">
             @else
                 <div class="form-grid form-grid-1">
-                    <x-tenant::input type="text" id="sp-card-number-{{ $id }}" label="Card number" inputmode="numeric" autocomplete="cc-number" placeholder="1234 5678 9012 3456" />
+                    <x-tenant::input type="text" id="sp-card-number-{{ $id }}" :label="__('Card number')" inputmode="numeric" autocomplete="cc-number" placeholder="1234 5678 9012 3456" />
                     <div class="form-grid form-grid-2">
-                        <x-tenant::input type="text" id="sp-card-expiry-{{ $id }}" label="Expiry" inputmode="numeric" autocomplete="cc-exp" placeholder="MM / YY" maxlength="7" />
-                        <x-tenant::input type="text" id="sp-card-cvc-{{ $id }}" label="CVC" inputmode="numeric" autocomplete="cc-csc" placeholder="&bull;&bull;&bull;" maxlength="4" />
+                        <x-tenant::input type="text" id="sp-card-expiry-{{ $id }}" :label="__('Expiry')" inputmode="numeric" autocomplete="cc-exp" :placeholder="__('MM / YY')" maxlength="7" />
+                        <x-tenant::input type="text" id="sp-card-cvc-{{ $id }}" label="CVC" inputmode="numeric" autocomplete="cc-csc" :placeholder="__('•••')" maxlength="4" />
                     </div>
                 </div>
                 @if($gateway['code'] === 'authorize_net')
@@ -64,7 +64,7 @@
 
     <div class="page-actions compact-actions justify-end">
         @unless($inline)
-            <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
+            <button type="button" class="btn btn-secondary" data-modal-close>{{ __('Cancel') }}</button>
         @endunless
         <button type="submit" class="btn btn-primary" data-payment-submit>{{ $submitLabel }}</button>
     </div>

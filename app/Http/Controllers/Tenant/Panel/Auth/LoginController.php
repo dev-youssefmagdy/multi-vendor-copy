@@ -50,19 +50,19 @@ final class LoginController extends PanelController
 
         if (!$tenant || !$admin || !Hash::check($validated['password'], (string) $admin->password)) {
             throw ValidationException::withMessages([
-                'email' => 'The provided tenant admin credentials are invalid for this domain.',
+                'email' => __('The provided tenant admin credentials are invalid for this domain.'),
             ]);
         }
 
         if (!in_array($tenant->status, [TenantStatus::Active, TenantStatus::Onboarding], true)) {
             throw ValidationException::withMessages([
-                'email' => 'This tenant account is not allowed to access the vendor panel.',
+                'email' => __('This tenant account is not allowed to access the vendor panel.'),
             ]);
         }
 
         if ($admin->status !== ActivationStatus::Active) {
             throw ValidationException::withMessages([
-                'email' => 'This tenant admin account is inactive.',
+                'email' => __('This tenant admin account is inactive.'),
             ]);
         }
 
@@ -71,7 +71,7 @@ final class LoginController extends PanelController
         $request->session()->regenerate();
 
         return $this->success(
-            'Welcome back, '.$admin->name.'.',
+            __('Welcome back, :name.', ['name' => $admin->name]),
             redirect: redirect()->intended(route('tenant.dashboard'))->getTargetUrl(),
         );
     }
@@ -82,6 +82,6 @@ final class LoginController extends PanelController
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return $this->success('You have been signed out.', redirect: route('tenant.login'));
+        return $this->success(__('You have been signed out.'), redirect: route('tenant.login'));
     }
 }

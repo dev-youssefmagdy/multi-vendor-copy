@@ -15,11 +15,11 @@ abstract class ContentPage extends TenantPage
 
         return array_merge([
             'badge' => null,
-            'contentIntro' => 'This tenant page is wired and ready for vendor-facing workflows.',
+            'contentIntro' => __('This tenant page is wired and ready for vendor-facing workflows.'),
             'bullets' => [
-                'Keep all data scoped to the current tenant database.',
-                'Use repository-backed widgets and service-backed saves.',
-                'Support both dark and light themes with the shared shell.',
+                __('Keep all data scoped to the current tenant database.'),
+                __('Use repository-backed widgets and service-backed saves.'),
+                __('Support both dark and light themes with the shared shell.'),
             ],
         ], $meta);
     }

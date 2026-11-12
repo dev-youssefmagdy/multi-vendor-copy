@@ -21,11 +21,11 @@ class BillingPage extends ListPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Billing',
-            'badge' => 'Finance',
-            'description' => 'Review order billing records, payment states, gateway routing, and nested gateway payloads for the current tenant.',
-            'tableTitle' => 'Order Billing Ledger',
-            'headers' => ['Order', 'Customer', 'Totals', 'Payment', 'Gateway', 'Placed At', 'Payment Details', 'Actions'],
+            'title' => __('Billing'),
+            'badge' => __('Finance'),
+            'description' => __('Review order billing records, payment states, gateway routing, and nested gateway payloads for the current tenant.'),
+            'tableTitle' => __('Order Billing Ledger'),
+            'headers' => [__('Order'), __('Customer'), __('Totals'), __('Payment'), __('Gateway'), __('Placed At'), __('Payment Details'), __('Actions')],
         ];
     }
 
@@ -43,35 +43,35 @@ class BillingPage extends ListPage
             'actionLabel' => null,
             'records' => $records,
             'filterFields' => [
-                ['label' => 'Search', 'model' => 'search', 'placeholder' => 'Order UUID, customer, or gateway'],
-                ['label' => 'Payment State', 'model' => 'paidFilter', 'type' => 'select', 'options' => ['' => 'All', 'paid' => 'Paid', 'unpaid' => 'Unpaid']],
-                ['label' => 'Gateway', 'model' => 'gatewayFilter', 'type' => 'select', 'options' => ['' => 'All'] + $repository->paymentMethodOptions()],
+                ['label' => __('Search'), 'model' => 'search', 'placeholder' => __('Order UUID, customer, or gateway')],
+                ['label' => __('Payment State'), 'model' => 'paidFilter', 'type' => 'select', 'options' => ['' => __('All'), 'paid' => __('Paid'), 'unpaid' => __('Unpaid')]],
+                ['label' => __('Gateway'), 'model' => 'gatewayFilter', 'type' => 'select', 'options' => ['' => __('All')] + $repository->paymentMethodOptions()],
             ],
             'statisticsGridClass' => 'g-stats4',
             'statistics' => $this->presentMetricCards([
-                ['label' => 'Orders', 'value' => $stats['orders'], 'format' => 'number', 'caption' => 'Order billing rows stored for this tenant.', 'dot' => 'dot-cyan'],
-                ['label' => 'Collected', 'value' => $stats['collected'], 'format' => 'currency', 'caption' => 'Paid order value with confirmed collection.', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Outstanding', 'value' => $stats['outstanding'], 'format' => 'currency', 'caption' => 'Unpaid order value still awaiting settlement.', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
-                ['label' => 'Gateways', 'value' => $stats['gateways'], 'format' => 'number', 'caption' => 'Distinct payment methods seen in tenant orders.', 'dot' => 'dot-violet'],
+                ['label' => __('Orders'), 'value' => $stats['orders'], 'format' => 'number', 'caption' => __('Order billing rows stored for this tenant.'), 'dot' => 'dot-cyan'],
+                ['label' => __('Collected'), 'value' => $stats['collected'], 'format' => 'currency', 'caption' => __('Paid order value with confirmed collection.'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Outstanding'), 'value' => $stats['outstanding'], 'format' => 'currency', 'caption' => __('Unpaid order value still awaiting settlement.'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Gateways'), 'value' => $stats['gateways'], 'format' => 'number', 'caption' => __('Distinct payment methods seen in tenant orders.'), 'dot' => 'dot-violet'],
                 ...$this->planUsageCards(),
             ]),
             'rows' => collect($records->items())->map(function (Order $order) {
-                $gatewayName = str((string) $order->payment_method)->replace(['_', '-'], ' ')->headline()->toString() ?? $order->paymentGateway?->name ?? 'Unknown';
+                $gatewayName = __((string) str((string) $order->payment_method)->replace(['_', '-'], ' ')->headline()) ?? $order->paymentGateway?->name ?? __('Unknown');
                 $transactionId = data_get($order->payment_details, 'transaction_id');
 
                 return [
-                    '<div class="entity-title">' . e($order->uuid) . '</div><div class="entity-subtitle">' . e($order->items_count) . ' items</div>',
-                    '<div class="entity-title">' . e($order->customer?->full_name ?? 'Guest') . '</div><div class="entity-subtitle">' . e($order->customer?->email ?? 'No email') . '</div>',
-                    '<div class="entity-title">$' . e(number_format($order->grand_total, 2)) . '</div><div class="entity-subtitle">Ship $' . e(number_format($order->resolved_shipping_charge, 2)) . ' · Profit $' . e(number_format(\App\Support\OrderProfitCalculator::effectiveTenantProfitForOrder($order), 2)) . '</div>',
-                    '<span class="badge ' . ($order->paid ? 'badge-green' : 'badge-amber') . '">' . e($order->paid ? 'Paid' : 'Unpaid') . '</span><div class="entity-subtitle">' . e($transactionId ?: 'No transaction id') . '</div>',
-                    '<div class="entity-title">' . e($gatewayName ?: '-') . '</div><div class="entity-subtitle">' . e($order->payment_method ?: 'No method') . '</div>',
+                    '<div class="entity-title">' . e($order->uuid) . '</div><div class="entity-subtitle">' . e(trans_choice(':count item|:count items', (int) $order->items_count, ['count' => $order->items_count])) . '</div>',
+                    '<div class="entity-title">' . e($order->customer?->full_name ?? __('Guest')) . '</div><div class="entity-subtitle">' . e($order->customer?->email ?? __('No email')) . '</div>',
+                    '<div class="entity-title">$' . e(number_format($order->grand_total, 2)) . '</div><div class="entity-subtitle">' . e(__('Shipping $:resolvedshippingcharge · Your profit $:profit', ['resolvedshippingcharge' => number_format($order->resolved_shipping_charge, 2), 'profit' => number_format(\App\Support\OrderProfitCalculator::effectiveTenantProfitForOrder($order), 2)])) . '</div>',
+                    '<span class="badge ' . ($order->paid ? 'badge-green' : 'badge-amber') . '">' . e($order->paid ? __('Paid') : __('Unpaid')) . '</span><div class="entity-subtitle">' . e($transactionId ?: __('No transaction id')) . '</div>',
+                    '<div class="entity-title">' . e($gatewayName ?: '-') . '</div><div class="entity-subtitle">' . e($order->payment_method ?: __('No method')) . '</div>',
                     e($order->created_at?->format('M d, Y H:i')),
                     view('components.json-collapse', [
-                        'title' => 'Gateway payload',
-                        'summary' => $transactionId ? ('Transaction ' . $transactionId) : 'Open nested gateway response',
+                        'title' => __('Gateway payload'),
+                        'summary' => $transactionId ? __('Transaction :id', ['id' => $transactionId]) : __('Open nested gateway response'),
                         'data' => $order->payment_details,
                     ])->render(),
-                    '<a href="' . route('tenant.finance.billing.detail', $order->id) . '" class="btn btn-secondary btn-sm">Inspect</a>',
+                    '<a href="' . route('tenant.finance.billing.detail', $order->id) . '" class="btn btn-secondary btn-sm">' . e(__('Inspect')) . '</a>',
                 ];
             })->all(),
             'tableDescription' => $records->total() . ' billing records matched the current payment filters.',
@@ -87,13 +87,13 @@ class BillingPage extends ListPage
         $tenant = tenant();
 
         $features = [
-            PlanLimitService::FEATURE_PRODUCTS => ['label' => 'Products', 'dot' => 'dot-cyan'],
-            PlanLimitService::FEATURE_CATEGORIES => ['label' => 'Categories', 'dot' => 'dot-green'],
-            PlanLimitService::FEATURE_BANNERS => ['label' => 'Banners', 'dot' => 'dot-amber'],
-            PlanLimitService::FEATURE_LANGUAGES => ['label' => 'Languages', 'dot' => 'dot-violet'],
-            PlanLimitService::FEATURE_ORDERS_PER_MONTH => ['label' => 'Orders this month', 'dot' => 'dot-cyan'],
+            PlanLimitService::FEATURE_PRODUCTS => ['label' => __('Products'), 'dot' => 'dot-cyan'],
+            PlanLimitService::FEATURE_CATEGORIES => ['label' => __('Categories'), 'dot' => 'dot-green'],
+            PlanLimitService::FEATURE_BANNERS => ['label' => __('Banners'), 'dot' => 'dot-amber'],
+            PlanLimitService::FEATURE_LANGUAGES => ['label' => __('Languages'), 'dot' => 'dot-violet'],
+            PlanLimitService::FEATURE_ORDERS_PER_MONTH => ['label' => __('Orders this month'), 'dot' => 'dot-cyan'],
             PlanLimitService::FEATURE_AI_CALLS => ['label' => 'AI calls', 'dot' => 'dot-violet'],
-            PlanLimitService::FEATURE_IMAGE_SEARCHES => ['label' => 'Image searches', 'dot' => 'dot-amber'],
+            PlanLimitService::FEATURE_IMAGE_SEARCHES => ['label' => __('Image searches'), 'dot' => 'dot-amber'],
         ];
 
         return $this->presentMetricCards(collect($features)->map(function (array $meta, string $feature) use ($limitService, $tenant) {
@@ -105,7 +105,7 @@ class BillingPage extends ListPage
             return [
                 'label' => $meta['label'],
                 'value' => $value,
-                'caption' => 'Plan usage for ' . strtolower($meta['label']) . '.',
+                'caption' => __('Plan usage for :feature.', ['feature' => mb_strtolower($meta['label'])]),
                 'dot' => $meta['dot'],
             ];
         })->values()->all());

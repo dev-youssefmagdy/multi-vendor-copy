@@ -44,9 +44,9 @@ class ManufacturingRequestDetail extends TenantPage
     protected function pageMeta(): array
     {
         return [
-            'pageTitle' => 'Manufacturing Request',
-            'badge' => 'Manufacturing',
-            'pageDescription' => 'View details, pay outstanding invoices, and communicate with the admin team.',
+            'pageTitle' => __('Manufacturing Request'),
+            'badge' => __('Manufacturing'),
+            'pageDescription' => __('View details, pay outstanding invoices, and communicate with the admin team.'),
         ];
     }
 
@@ -71,7 +71,7 @@ class ManufacturingRequestDetail extends TenantPage
         $this->validate(['chatMessage' => 'required|string|max:2000']);
 
         $tenantUser = auth('tenant')->user();
-        $senderName = $tenantUser?->name ?? tenant('name') ?? 'Vendor';
+        $senderName = $tenantUser?->name ?? tenant('name') ?? __('Vendor');
         $body = trim($this->chatMessage);
 
         ManufacturingRequestMessage::create([

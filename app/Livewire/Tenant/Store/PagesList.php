@@ -26,13 +26,13 @@ class PagesList extends ListPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Pages',
-            'badge' => 'Storefront',
-            'description' => 'Maintain storefront static pages for this tenant workspace.',
-            'actionLabel' => 'Add Page',
+            'title' => __('Pages'),
+            'badge' => __('Storefront'),
+            'description' => __('Maintain storefront static pages for this tenant workspace.'),
+            'actionLabel' => __('Add Page'),
             'actionUrl' => route('tenant.store.pages.create'),
-            'tableTitle' => 'Store Pages',
-            'headers' => ['Page', 'Slug', 'Status', 'Updated At', 'Actions'],
+            'tableTitle' => __('Store Pages'),
+            'headers' => [__('Page'), __('Slug'), __('Status'), __('Updated At'), __('Actions')],
         ];
     }
 
@@ -45,29 +45,29 @@ class PagesList extends ListPage
         return array_merge(parent::pageData(), [
             'records' => $records,
             'statistics' => [
-                ['label' => 'Pages', 'value' => number_format($stats['total']), 'caption' => 'Tenant storefront pages', 'dot' => 'dot-cyan'],
-                ['label' => 'Active', 'value' => number_format($stats['active']), 'caption' => 'Visible published pages', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Draft', 'value' => number_format($stats['draft']), 'caption' => 'Pages hidden from storefront', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Pages'), 'value' => number_format($stats['total']), 'caption' => __('Tenant storefront pages'), 'dot' => 'dot-cyan'],
+                ['label' => __('Active'), 'value' => number_format($stats['active']), 'caption' => __('Visible published pages'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Draft'), 'value' => number_format($stats['draft']), 'caption' => __('Pages hidden from storefront'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
             ],
             'rows' => collect($records->items())->map(fn(Page $page) => [
                 e($page->title ?? $page->slug),
                 e($page->slug),
-                '<span class="badge ' . ($page->active ? 'badge-green' : 'badge-amber') . '">' . e($page->active ? 'Active' : 'Draft') . '</span>',
+                '<span class="badge ' . ($page->active ? 'badge-green' : 'badge-amber') . '">' . e($page->active ? __('Active') : __('Draft')) . '</span>',
                 e($page->updated_at?->format('M d, Y')),
-                '<div class="flex gap-2"><a href="' . route('tenant.store.pages.edit', $page) . '"  class="btn btn-secondary btn-sm">Edit</a><button type="button" class="btn btn-secondary btn-sm" wire:click="confirmDelete(' . $page->id . ')">Delete</button></div>',
+                '<div class="flex gap-2"><a href="' . route('tenant.store.pages.edit', $page) . '"  class="btn btn-secondary btn-sm">' . e(__('Edit')) . '</a><button type="button" class="btn btn-secondary btn-sm" wire:click="confirmDelete(' . $page->id . ')">' . e(__('Delete')) . '</button></div>',
             ])->all(),
         ]);
     }
 
     public function confirmDelete(int $pageId): void
     {
-        $this->confirmAction('deletePage', [$pageId], ['title' => 'Delete page?', 'confirmButtonText' => 'Delete page']);
+        $this->confirmAction('deletePage', [$pageId], ['title' => __('Delete page?'), 'confirmButtonText' => __('Delete page')]);
     }
 
     public function deletePage(int $pageId, TenantPanelService $service): void
     {
         $service->deleteModel(Page::query()->findOrFail($pageId));
-        $this->toast('Page deleted successfully.');
+        $this->toast(__('Page deleted successfully.'));
     }
 
     public function clearFilters(): void

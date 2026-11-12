@@ -7,7 +7,7 @@
 
     if ($status instanceof \BackedEnum) {
         if (method_exists($status, 'label')) {
-            $label = $status->label();
+            $label = __($status->label());
         }
         if (method_exists($status, 'color')) {
             $color = $status->color();
@@ -17,7 +17,7 @@
         }
     }
 
-    $label ??= str((string) $rawValue)->headline()->toString();
+    $label ??= __((string) str((string) $rawValue)->headline());
     $key = str((string) $rawValue)->lower()->toString();
 
     $genericMap = $map ?? [

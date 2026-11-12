@@ -24,32 +24,32 @@
     data-logo-shape="{{ $footerLogoShape }}"
     data-logo-font-ar="{{ $footerLogoFontAr }}"
     data-logo-font-en="{{ $footerLogoFontEn }}">
-    <label class="field-label">Footer Logo</label>
-    <p class="panel-copy" style="margin-top:-0.25rem;margin-bottom:0.75rem">Override the logo shown in the storefront footer. Leave empty to use the same logo as the header.</p>
+    <label class="field-label">{{ __('Footer Logo') }}</label>
+    <p class="panel-copy" style="margin-top:-0.25rem;margin-bottom:0.75rem">{{ __('Override the logo shown in the storefront footer. Leave empty to use the same logo as the header.') }}</p>
 
     <input type="hidden" name="footer_logo_mode" value="{{ $footerLogoMode }}" data-logo-mode-input>
 
     <div class="logo-builder-modes">
-        <button type="button" class="logo-builder-mode {{ $footerLogoMode === 'text' ? 'act' : '' }}" data-logo-mode-btn="text">Text Logo</button>
-        <button type="button" class="logo-builder-mode {{ $footerLogoMode === 'image' ? 'act' : '' }}" data-logo-mode-btn="image">Image Logo</button>
+        <button type="button" class="logo-builder-mode {{ $footerLogoMode === 'text' ? 'act' : '' }}" data-logo-mode-btn="text">{{ __('Text Logo') }}</button>
+        <button type="button" class="logo-builder-mode {{ $footerLogoMode === 'image' ? 'act' : '' }}" data-logo-mode-btn="image">{{ __('Image Logo') }}</button>
     </div>
 
     {{-- ─── Text mode ─── --}}
     <div data-logo-mode-panel="text" @if($footerLogoMode !== 'text') hidden @endif>
         <div class="logo-builder-colors">
-            <x-tenant::color name="footer_logo_color" label="Text Color" :value="$footerLogoColor" wrapper-class="logo-builder-color-field" />
-            <x-tenant::color name="footer_logo_bg_color" label="Background Color" :value="$footerLogoBgColor" allow-transparent wrapper-class="logo-builder-color-field" />
-            <x-tenant::select name="footer_logo_shape" label="Shape" :value="$footerLogoShape" :options="['rectangle' => 'Rectangle', 'rounded' => 'Rounded']" wrapper-class="logo-builder-shape-field" />
+            <x-tenant::color name="footer_logo_color" :label="__('Text Color')" :value="$footerLogoColor" wrapper-class="logo-builder-color-field" />
+            <x-tenant::color name="footer_logo_bg_color" :label="__('Background Color')" :value="$footerLogoBgColor" allow-transparent wrapper-class="logo-builder-color-field" />
+            <x-tenant::select name="footer_logo_shape" :label="__('Shape')" :value="$footerLogoShape" :options="['rectangle' => __('Rectangle'), 'rounded' => __('Rounded')]" wrapper-class="logo-builder-shape-field" />
         </div>
 
         <div class="logo-builder-grid">
             {{-- Arabic --}}
             <div class="locale-fields-group">
-                <span class="locale-badge">Arabic</span>
+                <span class="locale-badge">{{ __('Arabic') }}</span>
 
-                <x-tenant::input type="text" dir="rtl" name="footer_logo_text_ar" label="Logo Text" :value="$footerLogoTextAr" data-logo-text="ar" />
+                <x-tenant::input type="text" dir="rtl" name="footer_logo_text_ar" :label="__('Logo Text')" :value="$footerLogoTextAr" data-logo-text="ar" />
 
-                <x-tenant::field label="Font">
+                <x-tenant::field :label="__('Font')">
                     <select class="field-control" name="footer_logo_font_ar" data-logo-font="ar">
                         @foreach($logoFonts['ar'] as $key => $font)
                             <option value="{{ $key }}" data-font-family="{{ $font['family'] }}" style="font-family:{{ $font['family'] }}" @selected($key === $footerLogoFontAr)>{{ $font['label'] }}</option>
@@ -64,11 +64,11 @@
 
             {{-- English --}}
             <div class="locale-fields-group">
-                <span class="locale-badge">English</span>
+                <span class="locale-badge">{{ __('English') }}</span>
 
-                <x-tenant::input type="text" name="footer_logo_text_en" label="Logo Text" :value="$footerLogoTextEn" data-logo-text="en" />
+                <x-tenant::input type="text" name="footer_logo_text_en" :label="__('Logo Text')" :value="$footerLogoTextEn" data-logo-text="en" />
 
-                <x-tenant::field label="Font">
+                <x-tenant::field :label="__('Font')">
                     <select class="field-control" name="footer_logo_font_en" data-logo-font="en">
                         @foreach($logoFonts['en'] as $key => $font)
                             <option value="{{ $key }}" data-font-family="{{ $font['family'] }}" style="font-family:{{ $font['family'] }}" @selected($key === $footerLogoFontEn)>{{ $font['label'] }}</option>
@@ -77,7 +77,7 @@
                 </x-tenant::field>
 
                 <div class="logo-builder-preview">
-                    <span data-logo-preview="en">{{ $footerLogoTextEn !== '' ? $footerLogoTextEn : 'Store Name' }}</span>
+                    <span data-logo-preview="en">{{ $footerLogoTextEn !== '' ? $footerLogoTextEn : __('Store Name') }}</span>
                 </div>
             </div>
         </div>
@@ -88,28 +88,28 @@
         <div class="logo-builder-grid">
             {{-- Arabic --}}
             <div class="locale-fields-group">
-                <span class="locale-badge">Arabic</span>
-                <x-tenant::image-upload name="footer_logo_upload_ar" label="Upload Arabic footer logo" :current="$footerLogoPathAr" data-logo-image-input="ar" />
+                <span class="locale-badge">{{ __('Arabic') }}</span>
+                <x-tenant::image-upload name="footer_logo_upload_ar" :label="__('Upload Arabic footer logo')" :current="$footerLogoPathAr" data-logo-image-input="ar" />
                 <div class="logo-builder-preview">
                     @if($footerLogoPathAr)
-                        <img src="{{ $footerLogoPathAr }}" alt="Arabic footer logo" class="logo-preview-img" data-logo-image-preview="ar">
+                        <img src="{{ $footerLogoPathAr }}" alt="{{ __('Arabic footer logo') }}" class="logo-preview-img" data-logo-image-preview="ar">
                     @else
-                        <img src="" alt="Arabic footer logo" class="logo-preview-img" data-logo-image-preview="ar" hidden>
-                        <span class="panel-copy t-logo-empty" data-logo-image-empty="ar">No Arabic logo uploaded.</span>
+                        <img src="" alt="{{ __('Arabic footer logo') }}" class="logo-preview-img" data-logo-image-preview="ar" hidden>
+                        <span class="panel-copy t-logo-empty" data-logo-image-empty="ar">{{ __('No Arabic logo uploaded.') }}</span>
                     @endif
                 </div>
             </div>
 
             {{-- English --}}
             <div class="locale-fields-group">
-                <span class="locale-badge">English</span>
-                <x-tenant::image-upload name="footer_logo_upload_en" label="Upload English footer logo" :current="$footerLogoPathEn" data-logo-image-input="en" />
+                <span class="locale-badge">{{ __('English') }}</span>
+                <x-tenant::image-upload name="footer_logo_upload_en" :label="__('Upload English footer logo')" :current="$footerLogoPathEn" data-logo-image-input="en" />
                 <div class="logo-builder-preview">
                     @if($footerLogoPathEn)
-                        <img src="{{ $footerLogoPathEn }}" alt="English footer logo" class="logo-preview-img" data-logo-image-preview="en">
+                        <img src="{{ $footerLogoPathEn }}" alt="{{ __('English footer logo') }}" class="logo-preview-img" data-logo-image-preview="en">
                     @else
-                        <img src="" alt="English footer logo" class="logo-preview-img" data-logo-image-preview="en" hidden>
-                        <span class="panel-copy t-logo-empty" data-logo-image-empty="en">No English logo uploaded.</span>
+                        <img src="" alt="{{ __('English footer logo') }}" class="logo-preview-img" data-logo-image-preview="en" hidden>
+                        <span class="panel-copy t-logo-empty" data-logo-image-empty="en">{{ __('No English logo uploaded.') }}</span>
                     @endif
                 </div>
             </div>
@@ -119,12 +119,12 @@
             <x-tenant::input
                 type="number"
                 name="footer_logo_width"
-                label="Logo Width (px)"
-                placeholder="e.g. 160"
+                :label="__('Logo Width (px)')"
+                :placeholder="__('e.g. 160')"
                 min="20"
                 max="800"
                 :value="$footerLogoWidth"
-                help="Recommended display width for image logos (e.g. 160). Leave empty to use the theme default." />
+                :help="__('Recommended display width for image logos (e.g. 160). Leave empty to use the theme default.')" />
         </div>
     </div>
 </div>

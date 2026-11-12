@@ -4,15 +4,15 @@
             <div>
                 <div class="page-title-row">
                     <h1 class="D page-title">{{ $pageTitle }}</h1>
-                    <span class="page-badge">Own Catalog</span>
+                    <span class="page-badge">{{ __('Own Catalog') }}</span>
                 </div>
                 <p class="page-copy">{{ $pageDescription }}</p>
             </div>
             <div class="page-actions">
-                <a href="{{ route('tenant.own-products.index') }}" class="btn btn-secondary">Back</a>
+                <a href="{{ route('tenant.own-products.index') }}" class="btn btn-secondary">{{ __('Back') }}</a>
                 <x-btn type="submit" wire:loading.attr="disabled" wire:target="save">
-                    <span wire:loading.remove wire:target="save">Save Product</span>
-                    <span wire:loading wire:target="save">Saving...</span>
+                    <span wire:loading.remove wire:target="save">{{ __('Save Product') }}</span>
+                    <span wire:loading wire:target="save">{{ __('Saving...') }}</span>
                 </x-btn>
             </div>
         </div>
@@ -22,25 +22,24 @@
         @endif
 
         {{-- ── Core Details ──────────────────────────────────────────────── --}}
-        <x-card-collapse title="Core Details" :start-open="true">
+        <x-card-collapse :title="__('Core Details')" :start-open="true">
             <div class="form-grid form-grid-2">
                 <div>
-                    <label class="field-label">Slug <span class="field-optional">(auto-generated from
-                            name)</span></label>
+                    <label class="field-label">{{ __('Slug') }} <span class="field-optional">{{ __('(auto-generated from name)') }}</span></label>
                     <x-input wire:model.defer="slug" placeholder="leave-blank-to-auto-generate" />
                     @error('slug') <p class="field-error">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="field-label">Price <span class="field-required">*</span></label>
+                    <label class="field-label">{{ __('Price') }} <span class="field-required">*</span></label>
                     <x-input type="number" step="0.01" wire:model.defer="price" />
                     @error('price') <p class="field-error">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="field-label">Stock</label>
+                    <label class="field-label">{{ __('Stock') }}</label>
                     <div style="display:flex;align-items:center;gap:10px">
                         <label class="toggle-field" style="width:auto;white-space:nowrap">
                             <input type="checkbox" wire:model.live="stockUnlimited">
-                            <span>Unlimited</span>
+                            <span>{{ __('Unlimited') }}</span>
                         </label>
                         @if (!$stockUnlimited)
                             <x-input type="number" wire:model.defer="stock" min="0" placeholder="0" />
@@ -49,7 +48,7 @@
                     @error('stock') <p class="field-error">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="field-label">Categories</label>
+                    <label class="field-label">{{ __('Categories') }}</label>
                     <x-select multiple wire:model.defer="categoryIds">
                         @foreach ($categories as $id => $label)
                             <option value="{{ $id }}">{{ $label }}</option>
@@ -59,26 +58,26 @@
                 </div>
                 <label class="toggle-field">
                     <input type="checkbox" wire:model.defer="active">
-                    <span>Product is active</span>
+                    <span>{{ __('Product is active') }}</span>
                 </label>
                 <label class="toggle-field">
                     <input type="checkbox" wire:model.defer="featured">
-                    <span>Product is featured</span>
+                    <span>{{ __('Product is featured') }}</span>
                 </label>
             </div>
         </x-card-collapse>
 
         {{-- ── Image ─────────────────────────────────────────────────────── --}}
-        <x-card-collapse title="Product Image" :start-open="false">
+        <x-card-collapse :title="__('Product Image')" :start-open="false">
             <div data-dimension-check data-expect-w="{{ config('image_dimensions.product.width') }}" data-expect-h="{{ config('image_dimensions.product.height') }}">
-                <label class="field-label">Upload Image <span class="field-optional">(max 5 MB)</span></label>
+                <label class="field-label">{{ __('Upload Image') }} <span class="field-optional">{{ __('(max 5 MB)') }}</span></label>
                 <x-dimension-hint :width="config('image_dimensions.product.width')" :height="config('image_dimensions.product.height')" />
                 <input type="file" wire:model="imageFile" accept="image/*" class="field-control"
                     style="padding-top:6px">
                 @error('imageFile') <p class="field-error">{{ $message }}</p> @enderror
                 @if ($imageFile)
                     <div style="margin-top:10px">
-                        <img src="{{ $imageFile->temporaryUrl() }}" alt="Preview"
+                        <img src="{{ $imageFile->temporaryUrl() }}" alt="{{ __('Preview') }}"
                             style="max-width:200px;border-radius:8px;border:1px solid rgba(255,255,255,.12)">
                     </div>
                 @endif
@@ -87,7 +86,7 @@
         </x-card-collapse>
 
         {{-- ── Translations ──────────────────────────────────────────────── --}}
-        <x-card-collapse title="Translations &amp; Content" :start-open="true">
+        <x-card-collapse :title="__('Translations & Content')" :start-open="true">
             {{-- Locale tabs --}}
             <div class="locale-tabs" style="margin-bottom:16px">
                 @foreach ($languages as $language)
@@ -104,27 +103,27 @@
                     <div class="form-grid form-grid-1">
                         <div>
                             <label class="field-label">
-                                Name
+                                {{ __('Name') }}
                                 @if ($language->is_default) <span class="field-required">*</span> @endif
                             </label>
                             <x-input wire:model.defer="translations.{{ $language->code }}.name"
-                                placeholder="Product name in {{ $language->name }}" />
+                                :placeholder="__('Product name in :name', ['name' => $language->name])" />
                             @error("translations.{$language->code}.name")
                                 <p class="field-error">{{ $message }}</p>
                             @enderror
                         </div>
                         <div>
-                            <label class="field-label">Description</label>
+                            <label class="field-label">{{ __('Description') }}</label>
                             <x-textarea wire:model.defer="translations.{{ $language->code }}.description" rows="5"
-                                placeholder="Product description in {{ $language->name }}" />
+                                :placeholder="__('Product description in :name', ['name' => $language->name])" />
                             @error("translations.{$language->code}.description")
                                 <p class="field-error">{{ $message }}</p>
                             @enderror
                         </div>
                         <div>
-                            <label class="field-label">Meta Keywords</label>
+                            <label class="field-label">{{ __('Meta Keywords') }}</label>
                             <x-input wire:model.defer="translations.{{ $language->code }}.meta_keywords"
-                                placeholder="Comma-separated keywords" />
+                                :placeholder="__('Comma-separated keywords')" />
                             @error("translations.{$language->code}.meta_keywords")
                                 <p class="field-error">{{ $message }}</p>
                             @enderror
@@ -135,14 +134,13 @@
         </x-card-collapse>
 
         {{-- ── Variants ──────────────────────────────────────────────────── --}}
-        <x-card-collapse title="Product Variants"
-            subtitle="Optional: define variants (e.g. Size: Small + Color: Red) with their own price, stock and image. When variants are present, per-variant stock replaces the product-level Stock field above."
+        <x-card-collapse :title="__('Product Variants')"
+            :subtitle="__('Optional: define variants (e.g. Size: Small + Color: Red) with their own price, stock and image. When variants are present, per-variant stock replaces the product-level Stock field above.')"
             :start-open="true">
 
             <div class="notice-muted" style="margin-bottom:14px">
-                <strong>How it works:</strong> Click <em>Add Variant</em>, choose a variation group (Size, Color, …) and
-                an option value. Use <em>+ Add another group</em> within a variant to combine groups (e.g. Size
-                <strong>Small</strong> + Color <strong>Red</strong>). Add another variant for each combination you sell.
+                <strong>{{ __('How it works:') }}</strong> {{ __('Click') }} <em>{{ __('Add Variant') }}</em>{{ __(', choose a variation group (Size, Color, …) and an option value. Use') }} <em>{{ __('+ Add another group') }}</em> {{ __('within a variant to combine groups (e.g. Size') }}
+                <strong>{{ __('Small') }}</strong> {{ __('+ Color') }} <strong>{{ __('Red') }}</strong>{{ __('). Add another variant for each combination you sell.') }}
             </div>
 
             <div class="vgroup-list">
@@ -156,15 +154,15 @@
                     @endphp
                     <div class="vgroup-card" wire:key="own-variant-{{ $vIdx }}-{{ $variant['id'] ?? 'new' }}">
                         <div class="vgroup-header">
-                            <span class="vgroup-title">Variant #{{ $vIdx + 1 }}</span>
+                            <span class="vgroup-title">{{ __('Variant #:vIdx', ['vIdx' => $vIdx + 1]) }}</span>
                             <button type="button" class="btn btn-secondary btn-sm btn-danger"
-                                wire:click="removeVariant({{ $vIdx }})">Remove</button>
+                                wire:click="removeVariant({{ $vIdx }})">{{ __('Remove') }}</button>
                         </div>
 
                         <div class="vgroup-body">
                             <div class="form-grid form-grid-2" style="margin-bottom:12px">
                                 <div>
-                                    <label class="field-label">Variant Image</label>
+                                    <label class="field-label">{{ __('Variant Image') }}</label>
                                     <x-dimension-hint :width="config('image_dimensions.product.width')" :height="config('image_dimensions.product.height')" />
                                     <div data-dimension-check data-expect-w="{{ config('image_dimensions.product.width') }}" data-expect-h="{{ config('image_dimensions.product.height') }}" style="display:flex; align-items:center; gap:12px; flex-wrap:wrap">
                                         @if (!empty($variant['image']))
@@ -177,7 +175,7 @@
                                         <input type="file" wire:model="variants.{{ $vIdx }}.image" accept="image/*" />
                                         @if (!empty($variant['image']) || !empty($variant['thumbnail_url']))
                                             <button type="button" class="btn btn-secondary btn-sm btn-danger"
-                                                wire:click="removeVariantImage({{ $vIdx }})">Remove image</button>
+                                                wire:click="removeVariantImage({{ $vIdx }})">{{ __('Remove image') }}</button>
                                         @endif
                                         <x-dimension-feedback :width="config('image_dimensions.product.width')" :height="config('image_dimensions.product.height')" />
                                     </div>
@@ -185,7 +183,7 @@
                                 </div>
                             </div>
 
-                            <label class="field-label">Variant Composition <span class="field-required">*</span></label>
+                            <label class="field-label">{{ __('Variant Composition') }} <span class="field-required">*</span></label>
                             <div style="display:flex; flex-direction:column; gap:8px">
                                 @foreach ($variant['pairs'] as $pIdx => $pair)
                                     @php
@@ -203,7 +201,7 @@
                                         wire:key="own-variant-{{ $vIdx }}-pair-{{ $pIdx }}">
                                         <div>
                                             <x-select wire:model.live="variants.{{ $vIdx }}.pairs.{{ $pIdx }}.variation_id">
-                                                <option value="">Select variation group</option>
+                                                <option value="">{{ __('Select variation group') }}</option>
                                                 @foreach ($variations as $variation)
                                                     @php
                                                         $isCurrent = (int) ($pair['variation_id'] ?? 0) === $variation->id;
@@ -220,7 +218,7 @@
                                         <div style="display:flex; gap:6px; align-items:center">
                                             <div style="flex:1">
                                                 <x-select wire:model.defer="variants.{{ $vIdx }}.pairs.{{ $pIdx }}.option_id">
-                                                    <option value="">Select option value</option>
+                                                    <option value="">{{ __('Select option value') }}</option>
                                                     @if ($selectedVariation)
                                                         @foreach ($selectedVariation->options as $option)
                                                             <option value="{{ $option->id }}" @selected((int) ($pair['option_id'] ?? 0) === $option->id)>
@@ -232,7 +230,7 @@
                                             </div>
                                             @if ($pIdx > 0)
                                                 <button type="button" class="btn btn-secondary btn-sm btn-danger"
-                                                    wire:click="removeOptionPair({{ $vIdx }}, {{ $pIdx }})">×</button>
+                                                    wire:click="removeOptionPair({{ $vIdx }}, {{ $pIdx }})">{{ __('×') }}</button>
                                             @endif
                                         </div>
                                     </div>
@@ -242,27 +240,27 @@
                             @if (count($usedVariationIds) < $variations->count())
                                 <div style="margin-top:8px">
                                     <button type="button" class="btn btn-secondary btn-sm"
-                                        wire:click="addOptionPair({{ $vIdx }})">+ Add another group</button>
+                                        wire:click="addOptionPair({{ $vIdx }})">{{ __('+ Add another group') }}</button>
                                 </div>
                             @endif
 
                             <div class="form-grid form-grid-3" style="margin-top:14px">
                                 <div>
-                                    <label class="field-label">Price <span class="field-required">*</span></label>
+                                    <label class="field-label">{{ __('Price') }} <span class="field-required">*</span></label>
                                     <x-input type="number" step="0.01" min="0"
                                         wire:model.defer="variants.{{ $vIdx }}.price" />
                                     @error("variants.{$vIdx}.price") <p class="field-error">{{ $message }}</p> @enderror
                                 </div>
                                 <div>
-                                    <label class="field-label">Stock</label>
+                                    <label class="field-label">{{ __('Stock') }}</label>
                                     <x-input type="number" min="0" step="1" wire:model.defer="variants.{{ $vIdx }}.stock" />
                                     @error("variants.{$vIdx}.stock") <p class="field-error">{{ $message }}</p> @enderror
                                 </div>
                                 <div>
-                                    <label class="field-label">Status</label>
+                                    <label class="field-label">{{ __('Status') }}</label>
                                     <label class="toggle-field">
                                         <input type="checkbox" wire:model.defer="variants.{{ $vIdx }}.active">
-                                        <span>Active</span>
+                                        <span>{{ __('Active') }}</span>
                                     </label>
                                 </div>
                             </div>
@@ -275,62 +273,61 @@
             </div>
 
             <div style="margin-top:14px">
-                <button type="button" class="btn btn-secondary" wire:click="addVariant">+ Add Variant</button>
+                <button type="button" class="btn btn-secondary" wire:click="addVariant">{{ __('+ Add Variant') }}</button>
             </div>
         </x-card-collapse>
 
         {{-- ── Return & Refund Policy ───────────────────────────────────────── --}}
-        <x-card-collapse title="Return &amp; Refund Policy"
-            subtitle="Override the store-wide return policy for this specific product. When disabled, your store's default policy applies."
+        <x-card-collapse :title="__('Return & Refund Policy')"
+            :subtitle="__('Override the store-wide return policy for this specific product. When disabled, your store\'s default policy applies.')"
             :start-open="false">
 
             <label class="toggle-field">
                 <input type="checkbox" wire:model.live="returnPolicyOverride">
-                <span>Enable product-specific return policy</span>
+                <span>{{ __('Enable product-specific return policy') }}</span>
             </label>
 
             @if ($returnPolicyOverride)
                 <div class="form-grid form-grid-2" style="margin-top:14px">
                     <label class="toggle-field" style="grid-column:1 / -1">
                         <input type="checkbox" wire:model.live="isReturnable">
-                        <span>This product is eligible for returns</span>
+                        <span>{{ __('This product is eligible for returns') }}</span>
                     </label>
 
                     @if ($isReturnable)
                         <div>
-                            <label class="field-label">Return Window (days) <span class="field-optional">(leave blank to inherit)</span></label>
+                            <label class="field-label">{{ __('Return Window (days)') }} <span class="field-optional">{{ __('(leave blank to inherit)') }}</span></label>
                             <x-input type="number" min="1" max="365" wire:model.defer="returnWindowDays" />
                             @error('returnWindowDays') <p class="field-error">{{ $message }}</p> @enderror
                         </div>
                         <div>
-                            <label class="field-label">Return Fee <span class="field-optional">(leave blank to inherit)</span></label>
+                            <label class="field-label">{{ __('Return Fee') }} <span class="field-optional">{{ __('(leave blank to inherit)') }}</span></label>
                             <x-input type="number" step="0.01" min="0" wire:model.defer="returnFee" />
                             @error('returnFee') <p class="field-error">{{ $message }}</p> @enderror
                         </div>
                         <label class="toggle-field" style="grid-column:1 / -1">
                             <input type="checkbox" wire:model.defer="returnVideoRequired">
-                            <span>Always require video evidence for return requests on this product</span>
+                            <span>{{ __('Always require video evidence for return requests on this product') }}</span>
                         </label>
                         <div style="grid-column:1 / -1">
-                            <label class="field-label">Return Conditions <span class="field-optional">(shown to customer)</span></label>
+                            <label class="field-label">{{ __('Return Conditions') }} <span class="field-optional">{{ __('(shown to customer)') }}</span></label>
                             <x-textarea wire:model.defer="returnConditions" rows="3"
-                                placeholder="e.g. Product must be unused and in original packaging..." />
+                                :placeholder="__('e.g. Product must be unused and in original packaging...')" />
                             @error('returnConditions') <p class="field-error">{{ $message }}</p> @enderror
                         </div>
                     @else
                         <div class="notice-muted" style="grid-column:1 / -1">
-                            This product is marked as <strong>non-returnable</strong>. Customers will not be able to submit return requests for it.
+                            {{ __('This product is marked as') }} <strong>{{ __('non-returnable') }}</strong>{{ __('. Customers will not be able to submit return requests for it.') }}
                         </div>
                     @endif
                 </div>
             @else
-                <p class="page-copy" style="margin-top:10px">Using store-wide return policy.</p>
+                <p class="page-copy" style="margin-top:10px">{{ __('Using store-wide return policy.') }}</p>
             @endif
         </x-card-collapse>
 
         <div class="notice-muted">
-            <strong>Note:</strong> Own products are not shipped from our central inventory. They are managed entirely by
-            you and excluded from central fulfillment flows.
+            <strong>{{ __('Note:') }}</strong> {{ __('Own products are not shipped from our central inventory. They are managed entirely by you and excluded from central fulfillment flows.') }}
         </div>
 
     </form>

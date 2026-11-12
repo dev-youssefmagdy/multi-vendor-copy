@@ -7,6 +7,7 @@
 // a translation job is actually running — patching the progress bar in
 // place instead of reloading the page.
 import { get, post, put } from '../../core/http.js';
+import { t } from '../../core/i18n.js';
 
 const POLL_INTERVAL = 3000;
 
@@ -165,7 +166,7 @@ function patchStatus(data) {
     if (completedBadge) {
         completedBadge.hidden = data.translation_status !== 'completed';
         if (data.translation_status === 'completed') {
-            completedBadge.textContent = `Completed — ${data.items_translated ?? 0} items translated`;
+            completedBadge.textContent = t('Completed — :count items translated', { count: data.items_translated ?? 0 });
         }
     }
     if (failedBadge) {

@@ -23,12 +23,12 @@ class CustomersList extends ListPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Customers',
+            'title' => __('Customers'),
             'badge' => 'CRM',
-            'description' => 'Manage tenant customers with live order counts, lifetime value, and repeat-buyer context alongside the edit workflow.',
-            'actionLabel' => 'Add Customer',
-            'tableTitle' => 'Customer List',
-            'headers' => ['ID', 'Customer', 'Contact', 'Orders', 'Lifetime Value', 'Last Order', 'Status', 'Actions'],
+            'description' => __('Manage tenant customers with live order counts, lifetime value, and repeat-buyer context alongside the edit workflow.'),
+            'actionLabel' => __('Add Customer'),
+            'tableTitle' => __('Customer List'),
+            'headers' => ['ID', __('Customer'), __('Contact'), __('Orders'), __('Lifetime Value'), __('Last Order'), __('Status'), __('Actions')],
         ];
     }
 
@@ -43,25 +43,25 @@ class CustomersList extends ListPage
             'actionUrl' => route('tenant.customers.create'),
             'records' => $records,
             'filterFields' => [
-                ['label' => 'Search', 'model' => 'search', 'placeholder' => 'Name, email, or phone'],
-                ['label' => 'Status', 'model' => 'statusFilter', 'type' => 'select', 'options' => ['' => 'All', 'active' => 'Active', 'inactive' => 'Inactive']],
+                ['label' => __('Search'), 'model' => 'search', 'placeholder' => __('Name, email, or phone')],
+                ['label' => __('Status'), 'model' => 'statusFilter', 'type' => 'select', 'options' => ['' => __('All'), 'active' => __('Active'), 'inactive' => __('Inactive')]],
             ],
             'statisticsGridClass' => 'g-stats4',
             'statistics' => $this->presentMetricCards([
-                ['label' => 'Customers', 'value' => $stats['total'], 'format' => 'number', 'caption' => 'Tenant customer records.', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
-                ['label' => 'Active', 'value' => $stats['active'], 'format' => 'number', 'caption' => 'Customers currently allowed to order.', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Buyers', 'value' => $stats['buyers'], 'format' => 'number', 'caption' => 'Profiles that have already converted into orders.', 'dot' => 'dot-violet'],
-                ['label' => 'Avg Lifetime', 'value' => $stats['avg_lifetime'], 'format' => 'currency', 'caption' => 'Average customer lifetime spend for ordering customers.', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Customers'), 'value' => $stats['total'], 'format' => 'number', 'caption' => __('Tenant customer records.'), 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
+                ['label' => __('Active'), 'value' => $stats['active'], 'format' => 'number', 'caption' => __('Customers currently allowed to order.'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Buyers'), 'value' => $stats['buyers'], 'format' => 'number', 'caption' => __('Profiles that have already converted into orders.'), 'dot' => 'dot-violet'],
+                ['label' => __('Avg Lifetime'), 'value' => $stats['avg_lifetime'], 'format' => 'currency', 'caption' => __('Average customer lifetime spend for ordering customers.'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
             ]),
             'rows' => $customers->map(fn(Customer $customer) => [
                 '<span class="entity-subtitle" style="font-family:monospace;">#' . $customer->id . '</span>',
                 '<div class="entity-title">' . e($customer->full_name) . '</div><div class="entity-subtitle">' . e($customer->email) . '</div>',
-                '<div class="entity-title">' . e($customer->phone ?: '-') . '</div><div class="entity-subtitle">' . e($customer->address ?: 'No saved address') . '</div>',
-                '<div class="entity-title">' . e((string) $customer->orders_count) . '</div><div class="entity-subtitle">' . e((string) $customer->paid_orders_count) . ' paid</div>',
-                '$' . e(number_format((float) $customer->orders->sum(fn($order) => $order->grand_total), 2)) . '<div class="entity-subtitle">Avg $' . e(number_format($customer->orders_count > 0 ? ((float) $customer->orders->sum(fn($order) => $order->grand_total) / $customer->orders_count) : 0, 2)) . '</div>',
+                '<div class="entity-title">' . e($customer->phone ?: '-') . '</div><div class="entity-subtitle">' . e($customer->address ?: __('No saved address')) . '</div>',
+                '<div class="entity-title">' . e((string) $customer->orders_count) . '</div><div class="entity-subtitle">' . e(__(':count paid', ['count' => $customer->paid_orders_count])) . '</div>',
+                '$' . e(number_format((float) $customer->orders->sum(fn($order) => $order->grand_total), 2)) . '<div class="entity-subtitle">' . e(__('Avg $:avg', ['avg' => number_format($customer->orders_count > 0 ? ((float) $customer->orders->sum(fn($order) => $order->grand_total) / $customer->orders_count) : 0, 2)])) . '</div>',
                 e(optional($customer->orders->sortByDesc('created_at')->first()?->created_at)->format('M d, Y') ?: 'N/A'),
-                '<span class="badge ' . ($customer->active ? 'badge-green' : 'badge-amber') . '">' . e($customer->active ? 'Active' : 'Inactive') . '</span>',
-                '<div class="flex gap-2"><a href="' . route('tenant.customers.show', $customer->id) . '" class="btn btn-primary btn-sm">Edit</a><button type="button" class="btn btn-secondary btn-sm" wire:click="confirmDelete(' . $customer->id . ')">Delete</button></div>',
+                '<span class="badge ' . ($customer->active ? 'badge-green' : 'badge-amber') . '">' . e($customer->active ? __('Active') : __('Inactive')) . '</span>',
+                '<div class="flex gap-2"><a href="' . route('tenant.customers.show', $customer->id) . '" class="btn btn-primary btn-sm">' . e(__('Edit')) . '</a><button type="button" class="btn btn-secondary btn-sm" wire:click="confirmDelete(' . $customer->id . ')">' . e(__('Delete')) . '</button></div>',
             ])->all(),
             'tableDescription' => $records->total() . ' customers matched the current CRM filters.',
         ]);
@@ -70,16 +70,16 @@ class CustomersList extends ListPage
     public function confirmDelete(int $customerId): void
     {
         $this->confirmAction('deleteCustomer', [$customerId], [
-            'title' => 'Delete customer?',
-            'text' => 'This customer record will be removed from the tenant workspace.',
-            'confirmButtonText' => 'Delete customer',
+            'title' => __('Delete customer?'),
+            'text' => __('This customer record will be removed from the tenant workspace.'),
+            'confirmButtonText' => __('Delete customer'),
         ]);
     }
 
     public function deleteCustomer(int $customerId, TenantPanelService $service): void
     {
         $service->deleteModel(Customer::query()->findOrFail($customerId));
-        $this->toast('Customer deleted successfully.');
+        $this->toast(__('Customer deleted successfully.'));
         $this->resetPage();
     }
 
@@ -106,7 +106,7 @@ class CustomersList extends ListPage
 
     protected function exportHeaders(): array
     {
-        return ['ID', 'Name', 'Email', 'Phone', 'Address', 'Orders', 'Paid Orders', 'Status', 'Registered At'];
+        return ['ID', __('Name'), __('Email'), __('Phone'), __('Address'), __('Orders'), __('Paid Orders'), __('Status'), __('Registered At')];
     }
 
     protected function exportRows(): array
@@ -121,7 +121,7 @@ class CustomersList extends ListPage
                 $customer->address ?: '',
                 $customer->orders_count,
                 $customer->paid_orders_count,
-                $customer->active ? 'Active' : 'Inactive',
+                $customer->active ? __('Active') : __('Inactive'),
                 $customer->created_at?->format('Y-m-d') ?? '',
             ])->all();
     }

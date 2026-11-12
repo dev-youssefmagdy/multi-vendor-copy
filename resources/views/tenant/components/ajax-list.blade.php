@@ -1,7 +1,7 @@
 @props([
     'id' => null,
     'url' => null,
-    'empty' => 'No records found.',
+    'empty' => __('No records found.'),
 ])
 
 <div id="{{ $id }}" class="t-ajax-list" data-tenant-ajax-list data-url="{{ $url }}" data-empty="{{ $empty }}">

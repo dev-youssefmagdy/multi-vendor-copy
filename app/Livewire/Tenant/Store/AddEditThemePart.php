@@ -58,11 +58,11 @@ class AddEditThemePart extends TenantPage
     protected function pageMeta(): array
     {
         return [
-            'title' => $this->partId ? 'Edit Theme Part' : 'New Theme Part',
-            'badge' => 'Storefront',
+            'title' => $this->partId ? __('Edit Theme Part') : __('New Theme Part'),
+            'badge' => __('Storefront'),
             'description' => $this->partId
-                ? 'Update the theme part content and image.'
-                : 'Add a new header or footer to your storefront theme.',
+                ? __('Update the theme part content and image.')
+                : __('Add a new header or footer to your storefront theme.'),
         ];
     }
 
@@ -138,7 +138,7 @@ class AddEditThemePart extends TenantPage
             $part->forceFill(['is_default' => true, 'is_active' => true])->save();
         }
 
-        session()->flash('status', $this->partId ? 'Theme part updated.' : 'Theme part created.');
+        session()->flash('status', $this->partId ? __('Theme part updated.') : __('Theme part created.'));
 
         return redirect()->route('tenant.store.theme-parts', ['theme' => $this->themeId]);
     }

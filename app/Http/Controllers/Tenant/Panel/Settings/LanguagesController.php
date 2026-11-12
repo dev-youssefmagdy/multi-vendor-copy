@@ -26,10 +26,10 @@ final class LanguagesController extends PanelController
     {
         return view('tenant.pages.settings.languages.index', [
             'columns' => [
-                TableColumn::make('language', 'Language')->orderable(false),
-                TableColumn::make('direction', 'Direction')->orderable(false),
-                TableColumn::make('type', 'Type')->orderable(false),
-                TableColumn::make('status', 'Status')->orderable(false),
+                TableColumn::make('language', __('Language'))->orderable(false),
+                TableColumn::make('direction', __('Direction'))->orderable(false),
+                TableColumn::make('type', __('Type'))->orderable(false),
+                TableColumn::make('status', __('Status'))->orderable(false),
                 TableColumn::actions(),
             ],
         ]);
@@ -56,12 +56,12 @@ final class LanguagesController extends PanelController
                     : false;
 
                 return $isFree
-                    ? '<span class="badge badge-green">Free</span>'
-                    : '<span class="badge badge-violet">Purchased</span>';
+                    ? '<span class="badge badge-green">' . e(__('Free')) . '</span>'
+                    : '<span class="badge badge-violet">' . e(__('Purchased')) . '</span>';
             })
             ->editColumn('status', fn (Language $language) => $language->is_default
-                ? '<span class="badge badge-green">Default</span>'
-                : ($language->is_active ? '<span class="badge badge-cyan">Active</span>' : '<span class="badge badge-amber">Inactive</span>'))
+                ? '<span class="badge badge-green">' . e(__('Default')) . '</span>'
+                : ($language->is_active ? '<span class="badge badge-cyan">' . e(__('Active')) . '</span>' : '<span class="badge badge-amber">' . e(__('Inactive')) . '</span>'))
             ->addColumn('actions', fn (Language $language) => view('tenant.pages.settings.languages._cols.actions', ['language' => $language])->render())
             ->rawColumns(['language', 'type', 'status', 'actions'])
             ->toJson();

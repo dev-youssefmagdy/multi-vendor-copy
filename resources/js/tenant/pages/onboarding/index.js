@@ -3,6 +3,7 @@ import '@tenant/modules/logo-builder.js';
 import { post } from '@tenant/core/http.js';
 import { on, emit, EVENTS } from '@tenant/core/events.js';
 import { qs, qsa, readJson, setBusy } from '@tenant/core/dom.js';
+import { t } from '../../core/i18n.js';
 
 const STORAGE_KEY = 'tenant:onboarding:tour-step';
 
@@ -43,7 +44,7 @@ function initTour(root) {
         const isLast = current === total - 1;
 
         progressFill.style.width = `${((current + 1) / total) * 100}%`;
-        stepPill.textContent = `Step ${current + 1} of ${total}`;
+        stepPill.textContent = t('Step :current of :total', { current: current + 1, total });
 
         iconWrap.className = `ob-icon-wrap ob-icon-${step.color || 'cyan'}`;
         iconWrap.innerHTML = iconMarkup(isLast ? 'done' : step.icon);
@@ -56,7 +57,7 @@ function initTour(root) {
             dot.classList.toggle('ob-dot-done', index < current);
         });
 
-        nextLabel.textContent = isLast ? 'Finish' : 'Next';
+        nextLabel.textContent = isLast ? t('Finish') : t('Next');
         nextIconMid.hidden = isLast;
         nextIconLast.hidden = !isLast;
 
@@ -119,7 +120,7 @@ function renderSetupItem(itemEl, item) {
     if (trailing) {
         if (item.done) {
             trailing.outerHTML =
-                '<div class="ob-setup-item-done-flag"><svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12" /></svg>Done</div>';
+                '<div class="ob-setup-item-done-flag"><svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12" /></svg>' + t('Done') + '</div>';
         } else {
             trailing.outerHTML = `<a href="${item.action_url}" class="ob-setup-action">${item.action_label}<svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6" /></svg></a>`;
         }
@@ -189,7 +190,7 @@ function applySetupProgress(root, setup, logo) {
 
     const progressText = qs('[data-setup-progress-text]', root);
     if (progressText) {
-        progressText.textContent = `Setup ${pct}% complete — ${remaining} ${remaining === 1 ? 'step' : 'steps'} remaining`;
+        progressText.textContent = (remaining === 1 ? t('Setup :pct% complete — :remaining step remaining', { pct, remaining }) : t('Setup :pct% complete — :remaining steps remaining', { pct, remaining }));
     }
 
     const progressFill = qs('[data-setup-progress-fill]', root);

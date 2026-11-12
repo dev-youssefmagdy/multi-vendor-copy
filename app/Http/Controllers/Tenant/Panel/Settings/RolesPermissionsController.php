@@ -31,16 +31,16 @@ final class RolesPermissionsController extends PanelController
 
         return view('tenant.pages.settings.roles-permissions.index', [
             'stats' => Metric::cards([
-                ['label' => 'Roles', 'value' => $stats['total'], 'format' => 'number', 'caption' => 'Tenant access groups', 'dot' => 'dot-cyan'],
-                ['label' => 'Permissions', 'value' => $stats['permissions'], 'format' => 'number', 'caption' => 'Granted tenant capabilities count', 'dot' => 'dot-green'],
-                ['label' => 'Assignments', 'value' => $stats['assigned'], 'format' => 'number', 'caption' => 'Tenant admins mapped to roles', 'dot' => 'dot-amber'],
+                ['label' => __('Roles'), 'value' => $stats['total'], 'format' => 'number', 'caption' => __('Tenant access groups'), 'dot' => 'dot-cyan'],
+                ['label' => __('Permissions'), 'value' => $stats['permissions'], 'format' => 'number', 'caption' => __('Granted tenant capabilities count'), 'dot' => 'dot-green'],
+                ['label' => __('Assignments'), 'value' => $stats['assigned'], 'format' => 'number', 'caption' => __('Tenant admins mapped to roles'), 'dot' => 'dot-amber'],
             ]),
             'permissionGroups' => $this->groupedPermissions(),
             'columns' => [
-                TableColumn::make('name', 'Role'),
-                TableColumn::make('permissions', 'Permissions')->orderable(false),
-                TableColumn::make('admins_count', 'Admins Assigned'),
-                TableColumn::make('updated_at', 'Updated At'),
+                TableColumn::make('name', __('Role')),
+                TableColumn::make('permissions', __('Permissions'))->orderable(false),
+                TableColumn::make('admins_count', __('Admins Assigned')),
+                TableColumn::make('updated_at', __('Updated At')),
                 TableColumn::actions(),
             ],
         ]);
@@ -58,7 +58,7 @@ final class RolesPermissionsController extends PanelController
                 $count = count($role->permissions ?? []);
                 $preview = collect($role->permissions ?? [])->take(3)->map(fn ($permission) => $labels[$permission] ?? $permission)->implode(', ');
 
-                return '<div class="entity-title">'.e($count).' permissions</div><div class="entity-subtitle">'.e($preview).'</div>';
+                return '<div class="entity-title">'.e(__(':count permissions', ['count' => $count])).'</div><div class="entity-subtitle">'.e($preview).'</div>';
             })
             ->editColumn('admins_count', fn (AdminRole $role) => e((string) $role->admins_count))
             ->editColumn('updated_at', fn (AdminRole $role) => $role->updated_at?->format('M d, Y'))
@@ -94,7 +94,7 @@ final class RolesPermissionsController extends PanelController
             'permissions' => $validated['permissions'] ?? [],
         ], $role);
 
-        return $this->success($role ? 'Tenant role updated successfully.' : 'Tenant role created successfully.');
+        return $this->success($role ? __('Tenant role updated successfully.') : __('Tenant role created successfully.'));
     }
 
     public function validateStore(SaveAdminRoleRequest $request): JsonResponse
@@ -111,7 +111,7 @@ final class RolesPermissionsController extends PanelController
     {
         $this->service->deleteAdminRole($role);
 
-        return $this->success('Tenant role deleted successfully.');
+        return $this->success(__('Tenant role deleted successfully.'));
     }
 
     /**
@@ -133,7 +133,7 @@ final class RolesPermissionsController extends PanelController
 
         return collect($groups)
             ->map(fn (array $options, string $module) => [
-                'label' => Str::headline($module),
+                'label' => __((string) Str::headline($module)),
                 'options' => $options,
             ])
             ->values()

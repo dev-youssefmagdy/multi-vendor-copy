@@ -6,6 +6,7 @@
 // loader injects its `<script src>` at most once (memoised) and times out
 // after 15s so a slow/blocked network doesn't hang the payment form forever.
 
+import { t } from '../core/i18n.js';
 const cache = new Map();
 
 function loadScript(url, { timeout = 15000 } = {}) {
@@ -20,7 +21,7 @@ function loadScript(url, { timeout = 15000 } = {}) {
         script.crossOrigin = 'anonymous';
 
         const timer = setTimeout(() => {
-            reject(new Error(`Timed out loading ${url}`));
+            reject(new Error(t('Timed out loading :url', { url })));
         }, timeout);
 
         script.addEventListener('load', () => {
@@ -29,7 +30,7 @@ function loadScript(url, { timeout = 15000 } = {}) {
         });
         script.addEventListener('error', () => {
             clearTimeout(timer);
-            reject(new Error(`Failed to load ${url}`));
+            reject(new Error(t('Failed to load :url', { url })));
         });
 
         document.head.appendChild(script);

@@ -44,6 +44,6 @@ final class ProductSortController extends PanelController
 
         CacheVersion::bump('Product');
 
-        return $this->success('Product order saved.');
+        return $this->success(__('Product order saved.'));
     }
 }

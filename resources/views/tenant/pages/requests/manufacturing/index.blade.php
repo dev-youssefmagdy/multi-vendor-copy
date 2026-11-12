@@ -1,6 +1,6 @@
 @extends('tenant.layouts.app')
 
-@section('title', 'Manufacturing Requests')
+@section('title', __('Manufacturing Requests'))
 
 @php
     // Columns in the design order: Product, Qty, Admin Notes, Status, Submitted, Actions.
@@ -25,8 +25,8 @@
         'exportUrl' => route('tenant.manufacturing.export'),
         'exportId' => 'manufacturing-export-link',
         'search' => true,
-        'emptyTitle' => 'No manufacturing requests',
-        'emptyCopy' => 'Submit your first manufacturing request using the Add Request button.',
+        'emptyTitle' => __('No manufacturing requests'),
+        'emptyCopy' => __('Submit your first manufacturing request using the Add Request button.'),
     ])
 @endsection
 

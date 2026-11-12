@@ -64,7 +64,7 @@ class OnboardingTour extends Component
     public function acceptCompliance(): void
     {
         if (!$this->complianceChecked) {
-            $this->dispatch('admin-toast', message: 'Please confirm you have read and accept the compliance documents.', type: 'error');
+            $this->dispatch('admin-toast', message: __('Please confirm you have read and accept the compliance documents.'), type: 'error');
             return;
         }
 

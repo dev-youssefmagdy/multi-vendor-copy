@@ -23,7 +23,7 @@
 
     @if (!$canUseAi)
         <div class="card section-gap notice-warning">
-            AI translation is not enabled on your current plan. Upgrade to access this feature.
+            {{ __('AI translation is not enabled on your current plan. Upgrade to access this feature.') }}
         </div>
     @else
         <div class="section-gap" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px" @if($polling) wire:poll.3s="$refresh" @endif>
@@ -36,29 +36,28 @@
                             <div class="entity-subtitle" style="font-size:11px">{{ $card['native_name'] }}</div>
                         </div>
                         @if (!$card['is_active'])
-                            <span class="badge badge-gray" style="margin-left:auto;font-size:10px">Not active</span>
+                            <span class="badge badge-gray" style="margin-left:auto;font-size:10px">{{ __('Not active') }}</span>
                         @endif
                     </div>
 
                     <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
                         @if ($card['is_free'])
-                            <span class="badge badge-green">Free</span>
+                            <span class="badge badge-green">{{ __('Free') }}</span>
                         @else
                             <span class="badge badge-violet">${{ number_format((float) $card['price'], 2) }}</span>
                         @endif
 
                         @if ($card['last_status'] === 'completed')
-                            <span class="badge badge-blue" style="font-size:10px">Last run: {{ $card['last_run'] }}</span>
+                            <span class="badge badge-blue" style="font-size:10px">{{ __('Last run: :lastrun', ['lastrun' => $card['last_run']]) }}</span>
                         @elseif ($card['last_status'] === 'pending')
-                            <span class="badge badge-amber" style="font-size:10px">Running…</span>
+                            <span class="badge badge-amber" style="font-size:10px">{{ __('Running…') }}</span>
                         @elseif ($card['last_status'] === 'failed')
-                            <span class="badge badge-red" style="font-size:10px">Last run failed</span>
+                            <span class="badge badge-red" style="font-size:10px">{{ __('Last run failed') }}</span>
                         @endif
                     </div>
 
                     <p class="panel-copy" style="font-size:11px;margin:0">
-                        Translates all products, categories, banners and UI strings into {{ $card['name'] }},
-                        adapted to your store brand.
+                        {{ __('Translates all products, categories, banners and UI strings into :name, adapted to your store brand.', ['name' => $card['name']]) }}
                     </p>
 
                     @if (in_array($card['translation_status'], ['queued', 'running']))
@@ -67,24 +66,24 @@
                                 <div style="height:100%;width:{{ $card['translation_progress'] }}%;background:var(--primary,#FF4B2B);transition:width .3s;"></div>
                             </div>
                             <p class="panel-copy" style="margin:4px 0 0;font-size:11px;">
-                                {{ ucfirst($card['translation_status']) }} — {{ $card['translation_progress'] }}%
+                                {{ __(ucfirst($card['translation_status'])) }} — {{ $card['translation_progress'] }}%
                             </p>
                         </div>
                     @elseif ($card['translation_status'] === 'completed')
                         @php $summary = json_decode((string) $card['translation_summary'], true); @endphp
-                        <span class="badge badge-green" style="font-size:10px">Completed — {{ $summary['items_translated'] ?? 0 }} items translated</span>
+                        <span class="badge badge-green" style="font-size:10px">{{ __('Completed — :itemstranslated items translated', ['itemstranslated' => $summary['items_translated'] ?? 0]) }}</span>
                     @elseif ($card['translation_status'] === 'failed')
-                        <span class="badge badge-red" style="font-size:10px">Translation failed</span>
+                        <span class="badge badge-red" style="font-size:10px">{{ __('Translation failed') }}</span>
                     @endif
 
                     <x-btn type="button" wire:click="openModal({{ $card['id'] }})"
                            :disabled="!$card['is_active'] || in_array($card['translation_status'], ['queued', 'running'])">
                         @if (in_array($card['translation_status'], ['queued', 'running']))
-                            Translating…
+                            {{ __('Translating…') }}
                         @elseif ($card['is_free'])
-                            Run AI Translation
+                            {{ __('Run AI Translation') }}
                         @else
-                            Buy AI Translation (${{ number_format((float) $card['price'], 2) }})
+                            {{ __('Buy AI Translation ($:price)', ['price' => number_format((float) $card['price'], 2)]) }}
                         @endif
                     </x-btn>
                 </div>
@@ -93,8 +92,8 @@
             @if ($cards->isEmpty())
                 <div class="card fu d2" style="grid-column:1/-1">
                     <div class="empty-state">
-                        <div class="empty-state-title">No AI translation available</div>
-                        <p class="empty-state-copy">The platform admin has not configured AI translation pricing for any language yet.</p>
+                        <div class="empty-state-title">{{ __('No AI translation available') }}</div>
+                        <p class="empty-state-copy">{{ __('The platform admin has not configured AI translation pricing for any language yet.') }}</p>
                     </div>
                 </div>
             @endif
@@ -109,23 +108,23 @@
 
                 <div class="page-stack">
                     <p class="panel-copy">
-                        This will translate your entire store (products, categories, banners, UI strings) into
-                        <strong>{{ $selectedCard['name'] }}</strong>, customized to your brand and product categories.
+                        {{ __('This will translate your entire store (products, categories, banners, UI strings) into') }}
+                        <strong>{{ $selectedCard['name'] }}</strong>{{ __(', customized to your brand and product categories.') }}
                     </p>
 
                     @if ($selectedCard['is_free'])
                         <div class="card" style="padding:12px 16px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:8px;">
                             <span style="font-size:13px;color:var(--green)">
-                                This AI translation is included in your plan — no charge.
+                                {{ __('This AI translation is included in your plan — no charge.') }}
                             </span>
                         </div>
 
                         <div class="page-actions compact-actions justify-end">
-                            <x-btn type="button" variant="secondary" wire:click="closeModal">Cancel</x-btn>
+                            <x-btn type="button" variant="secondary" wire:click="closeModal">{{ __('Cancel') }}</x-btn>
                             <x-btn type="button" wire:click="runFree"
                                    wire:loading.attr="disabled" wire:target="runFree">
-                                <span wire:loading.remove wire:target="runFree">Start AI Translation</span>
-                                <span wire:loading wire:target="runFree">Starting…</span>
+                                <span wire:loading.remove wire:target="runFree">{{ __('Start AI Translation') }}</span>
+                                <span wire:loading wire:target="runFree">{{ __('Starting…') }}</span>
                             </x-btn>
                         </div>
                     @else
@@ -135,7 +134,7 @@
                                     <div class="entity-title">{{ $selectedCard['name'] }}
                                         <span class="badge badge-violet" style="margin-left:6px;vertical-align:middle;">{{ strtoupper($selectedCard['code']) }}</span>
                                     </div>
-                                    <div class="entity-subtitle">One-time payment · {{ $selectedCard['native_name'] }}</div>
+                                    <div class="entity-subtitle">{{ __('One-time payment · :nativename', ['nativename' => $selectedCard['native_name']]) }}</div>
                                 </div>
                                 <div style="font-size:18px;font-weight:700;color:var(--accent);white-space:nowrap;">
                                     ${{ number_format((float) $selectedCard['price'], 2) }}
@@ -144,7 +143,7 @@
                         </div>
 
                         <div>
-                            <label class="field-label">Payment Gateway</label>
+                            <label class="field-label">{{ __('Payment Gateway') }}</label>
                             @if ($gateways->isNotEmpty())
                                 <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
                                     @foreach ($gateways as $gateway)
@@ -170,8 +169,8 @@
                                 @enderror
                             @else
                                 <div class="empty-state" style="padding:16px 0;">
-                                    <div class="empty-state-title">No payment gateways configured</div>
-                                    <p class="empty-state-copy">Please contact the platform administrator.</p>
+                                    <div class="empty-state-title">{{ __('No payment gateways configured') }}</div>
+                                    <p class="empty-state-copy">{{ __('Please contact the platform administrator.') }}</p>
                                 </div>
                             @endif
                         </div>
@@ -193,7 +192,7 @@
                             >
                                 @if ($activeInlineGateway['code'] === 'stripe')
                                     <div>
-                                        <label class="field-label">Card</label>
+                                        <label class="field-label">{{ __('Card') }}</label>
                                         <div id="ai-stripe-card-element"
                                              style="border:1.5px solid var(--border);border-radius:8px;padding:11px 14px;background:var(--input-bg,var(--card));min-height:42px;">
                                         </div>
@@ -203,18 +202,18 @@
                                 @else
                                     <div class="form-grid form-grid-1" style="gap:10px;">
                                         <div>
-                                            <label class="field-label">Card number</label>
+                                            <label class="field-label">{{ __('Card number') }}</label>
                                             <x-input type="text" id="ai-card-number" inputmode="numeric" autocomplete="cc-number"
                                                      placeholder="1234  5678  9012  3456" />
                                         </div>
                                         <div class="form-grid form-grid-2" style="gap:10px;">
                                             <div>
-                                                <label class="field-label">Expiry</label>
+                                                <label class="field-label">{{ __('Expiry') }}</label>
                                                 <x-input type="text" id="ai-card-expiry" inputmode="numeric" autocomplete="cc-exp"
-                                                         placeholder="MM / YY" maxlength="7" />
+                                                         :placeholder="__('MM / YY')" maxlength="7" />
                                             </div>
                                             <div>
-                                                <label class="field-label">CVC</label>
+                                                <label class="field-label">{{ __('CVC') }}</label>
                                                 <x-input type="text" id="ai-card-cvc" inputmode="numeric" autocomplete="cc-csc"
                                                          placeholder="•••" maxlength="4" />
                                             </div>
@@ -232,13 +231,13 @@
                         @endif
 
                         <div class="page-actions compact-actions justify-end">
-                            <x-btn type="button" variant="secondary" wire:click="closeModal">Cancel</x-btn>
+                            <x-btn type="button" variant="secondary" wire:click="closeModal">{{ __('Cancel') }}</x-btn>
                             @if ($gateways->isNotEmpty())
                                 <x-btn type="button" id="ai-pay-btn"
                                        wire:loading.attr="disabled"
                                        wire:target="initiatePayment">
-                                    <span wire:loading.remove wire:target="initiatePayment">Proceed to Payment</span>
-                                    <span wire:loading wire:target="initiatePayment">Processing…</span>
+                                    <span wire:loading.remove wire:target="initiatePayment">{{ __('Proceed to Payment') }}</span>
+                                    <span wire:loading wire:target="initiatePayment">{{ __('Processing…') }}</span>
                                 </x-btn>
                             @endif
                         </div>
@@ -251,22 +250,22 @@
         @if ($history->isNotEmpty())
             <div class="card fu d2 table-card-shell section-gap">
                 <div class="table-header-shell">
-                    <h3 class="panel-title">Translation History</h3>
+                    <h3 class="panel-title">{{ __('Translation History') }}</h3>
                 </div>
                 @foreach ($history as $run)
                     <div class="details-kv" style="padding:12px 20px;border-bottom:1px solid rgba(255,255,255,.06)">
                         <div>
-                            <div class="entity-title">{{ $run->language->name ?? 'Unknown' }}</div>
+                            <div class="entity-title">{{ $run->language->name ?? __('Unknown') }}</div>
                             <div class="entity-subtitle">{{ $run->created_at->format('M d, Y H:i') }}</div>
                         </div>
                         <div style="display:flex;align-items:center;gap:10px">
                             @if ($run->amount > 0)
                                 <span class="entity-subtitle">${{ number_format((float) $run->amount, 2) }}</span>
                             @else
-                                <span class="entity-subtitle">Free</span>
+                                <span class="entity-subtitle">{{ __('Free') }}</span>
                             @endif
                             <span class="badge {{ match($run->status) { 'completed' => 'badge-green', 'pending' => 'badge-amber', 'failed' => 'badge-red', default => 'badge-gray' } }}">
-                                {{ ucfirst($run->status) }}
+                                {{ __(ucfirst($run->status)) }}
                             </span>
                         </div>
                     </div>
@@ -373,7 +372,7 @@
 
                 if (gateway === 'stripe') {
                     if (!_aiStripe || !_aiStripeCard) {
-                        alert('Stripe.js is still loading. Please try again in a moment.');
+                        alert(@js(__('Stripe.js is still loading. Please try again in a moment.')));
                         button.disabled = false;
                         return;
                     }
@@ -391,7 +390,7 @@
 
                 if (gateway === 'authorize_net') {
                     if (typeof Accept === 'undefined') {
-                        alert('Accept.js is still loading. Please try again.');
+                        alert(@js(__('Accept.js is still loading. Please try again.')));
                         button.disabled = false;
                         return;
                     }
@@ -412,7 +411,7 @@
                     Accept.dispatchData(secureData, async (response) => {
                         if (response.messages.resultCode === 'Error') {
                             const errEl = document.getElementById('ai-card-errors');
-                            if (errEl) { errEl.textContent = response.messages.message?.[0]?.text ?? 'Card error'; errEl.style.display = ''; }
+                            if (errEl) { errEl.textContent = response.messages.message?.[0]?.text ?? @js(__('Card error')); errEl.style.display = ''; }
                             button.disabled = false;
                             return;
                         }
@@ -425,7 +424,7 @@
 
                 if (gateway === '2checkout') {
                     if (typeof TCO === 'undefined') {
-                        alert('2Pay.js is still loading. Please try again.');
+                        alert(@js(__('2Pay.js is still loading. Please try again.')));
                         button.disabled = false;
                         return;
                     }
@@ -441,7 +440,7 @@
                     }, async (data) => {
                         if (data.errorCode > 0) {
                             const errEl = document.getElementById('ai-card-errors');
-                            if (errEl) { errEl.textContent = data.errorMsg ?? 'Card error'; errEl.style.display = ''; }
+                            if (errEl) { errEl.textContent = data.errorMsg ?? @js(__('Card error')); errEl.style.display = ''; }
                             button.disabled = false;
                             return;
                         }

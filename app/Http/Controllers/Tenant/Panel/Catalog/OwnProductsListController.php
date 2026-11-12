@@ -46,7 +46,7 @@ final class OwnProductsListController extends PanelController
             ->addIndexColumn()
             ->editColumn('product', fn (Product $product) => view('tenant.pages.catalog.own-products._cols.product', ['product' => $product])->render())
             ->editColumn('price', fn (Product $product) => '$'.number_format((float) $product->default_price, 2))
-            ->editColumn('stock', fn (Product $product) => $product->stock !== null ? (string) $product->stock : 'Unlimited')
+            ->editColumn('stock', fn (Product $product) => $product->stock !== null ? (string) $product->stock : __('Unlimited'))
             ->editColumn('status', fn (Product $product) => view('tenant.pages.catalog.own-products._cols.status', ['product' => $product])->render())
             ->editColumn('added', fn (Product $product) => $product->created_at?->format('M d, Y'))
             ->addColumn('actions', fn (Product $product) => view('tenant.pages.catalog.own-products._cols.actions', ['product' => $product])->render())
@@ -60,6 +60,6 @@ final class OwnProductsListController extends PanelController
 
         $product->delete();
 
-        return $this->success('Product deleted.');
+        return $this->success(__('Product deleted.'));
     }
 }

@@ -9,24 +9,24 @@
             </div>
             <p class="page-copy">
                 @if ($country)
-                    Banners shown to visitors from {{ $country->flag_emoji }} {{ $country->name }}.
+                    {{ __('Banners shown to visitors from :flag :name.', ['flag' => $country->flag_emoji, 'name' => $country->name]) }}
                 @else
-                    Default banners, shown when no country-specific banners exist.
+                    {{ __('Default banners, shown when no country-specific banners exist.') }}
                 @endif
             </p>
         </div>
-        <a href="{{ route('tenant.store.banners.index') }}" class="btn btn-secondary">Back to countries</a>
+        <a href="{{ route('tenant.store.banners.index') }}" class="btn btn-secondary">{{ __('Back to countries') }}</a>
     </div>
 
     <div class="appearance-tab-panel fu d1">
         <div class="card table-card-shell">
             <div class="table-header-shell">
                 <div>
-                    <h3 class="panel-title">Banners</h3>
-                    <p class="panel-copy">Homepage and promotional banners with multi-language content.</p>
+                    <h3 class="panel-title">{{ __('Banners') }}</h3>
+                    <p class="panel-copy">{{ __('Homepage and promotional banners with multi-language content.') }}</p>
                 </div>
                 <div class="table-header-actions">
-                    <x-btn type="button" wire:click="openBannerModal()">Add Banner</x-btn>
+                    <x-btn type="button" wire:click="openBannerModal()">{{ __('Add Banner') }}</x-btn>
                 </div>
             </div>
 
@@ -35,11 +35,11 @@
                     <thead>
                         <tr>
                             <th style="width:32px"></th>
-                            <th>Title</th>
-                            <th>URL</th>
-                            <th>Image</th>
-                            <th>Order</th>
-                            <th>Actions</th>
+                            <th>{{ __('Title') }}</th>
+                            <th>{{ __('URL') }}</th>
+                            <th>{{ __('Image') }}</th>
+                            <th>{{ __('Order') }}</th>
+                            <th>{{ __('Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody id="tenant-banners-sortable">
@@ -74,9 +74,9 @@
                                 <td>
                                     <div class="flex gap-2">
                                         <x-btn type="button" variant="secondary" class="btn-sm"
-                                            wire:click="openBannerModal({{ $banner->id }})">Edit</x-btn>
+                                            wire:click="openBannerModal({{ $banner->id }})">{{ __('Edit') }}</x-btn>
                                         <x-btn type="button" variant="secondary" class="btn-sm"
-                                            wire:click="confirmDeleteBanner({{ $banner->id }})">Delete</x-btn>
+                                            wire:click="confirmDeleteBanner({{ $banner->id }})">{{ __('Delete') }}</x-btn>
                                     </div>
                                 </td>
                             </tr>
@@ -84,8 +84,8 @@
                             <tr>
                                 <td colspan="6">
                                     <div class="empty-state">
-                                        <div class="empty-state-title">No banners yet</div>
-                                        <p class="empty-state-copy">Add your first banner to display on the storefront.</p>
+                                        <div class="empty-state-title">{{ __('No banners yet') }}</div>
+                                        <p class="empty-state-copy">{{ __('Add your first banner to display on the storefront.') }}</p>
                                     </div>
                                 </td>
                             </tr>
@@ -121,33 +121,33 @@
 
     {{-- Banner modal --}}
     <x-modal wire:model="bannerModalOpen"
-        title="{{ $bannerId ? 'Edit Banner' : 'Add Banner' }}"
+        title="{{ $bannerId ? __('Edit Banner') : __('Add Banner') }}"
         maxWidth="2xl"
         closeAction="closeBannerModal">
         <form wire:submit="saveBanner" class="page-stack">
             <div class="form-grid form-grid-2">
                 <div>
-                    <label class="field-label">URL</label>
+                    <label class="field-label">{{ __('URL') }}</label>
                     <x-input type="url" wire:model.defer="bannerUrl" :error="$errors->has('bannerUrl')" />
                     @error('bannerUrl')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div>
-                    <label class="field-label">Sort Order</label>
+                    <label class="field-label">{{ __('Sort Order') }}</label>
                     <x-input type="number" wire:model.defer="bannerSerial" :error="$errors->has('bannerSerial')" />
                     @error('bannerSerial')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
                 <div class="span-2">
-                    <label class="field-label">Image</label>
+                    <label class="field-label">{{ __('Image') }}</label>
                     <p class="panel-copy" style="margin-bottom:6px;">
-                        This banner is displayed on the <strong>{{ $activeThemeLabel }}</strong> theme.
+                        {{ __('This banner is displayed on the') }} <strong>{{ $activeThemeLabel }}</strong> {{ __('theme.') }}
                     </p>
                     <x-dropzone id="banner-image" model="bannerImage" :multiple="false" accept="image/*"
-                        label="Upload banner image"
-                        sublabel="PNG, JPG, WEBP up to 2MB"
+                        :label="__('Upload banner image')"
+                        :sublabel="__('PNG, JPG, WEBP up to 2MB')"
                         :expected-width="$bannerWidth"
                         :expected-height="$bannerHeight"
                         :dimension-label="$activeThemeLabel" />
-                    <p class="panel-copy" style="margin-top:4px;">Max 2 MB. Leave empty to keep existing image.</p>
+                    <p class="panel-copy" style="margin-top:4px;">{{ __('Max 2 MB. Leave empty to keep existing image.') }}</p>
                     @error('bannerImage')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
             </div>
@@ -158,7 +158,7 @@
                     <div class="locale-badge">{{ $language->native_name ?? $language->name }} ({{ $language->code }})</div>
                     <div class="form-grid form-grid-2">
                         <div>
-                            <label class="field-label">Title</label>
+                            <label class="field-label">{{ __('Title') }}</label>
                             <x-input type="text"
                                 wire:model.defer="bannerTranslations.{{ $language->code }}.title"
                                 :error="$errors->has('bannerTranslations.' . $language->code . '.title')" />
@@ -167,7 +167,7 @@
                             @enderror
                         </div>
                         <div>
-                            <label class="field-label">Button Text</label>
+                            <label class="field-label">{{ __('Button Text') }}</label>
                             <x-input type="text"
                                 wire:model.defer="bannerTranslations.{{ $language->code }}.button_text"
                                 :error="$errors->has('bannerTranslations.' . $language->code . '.button_text')" />
@@ -176,7 +176,7 @@
                             @enderror
                         </div>
                         <div class="span-2">
-                            <label class="field-label">Subtitle</label>
+                            <label class="field-label">{{ __('Subtitle') }}</label>
                             <x-input type="text"
                                 wire:model.defer="bannerTranslations.{{ $language->code }}.subtitle"
                                 :error="$errors->has('bannerTranslations.' . $language->code . '.subtitle')" />
@@ -189,9 +189,9 @@
             @endforeach
 
             <div class="page-actions compact-actions justify-end">
-                <x-btn type="button" variant="secondary" wire:click="closeBannerModal">Cancel</x-btn>
+                <x-btn type="button" variant="secondary" wire:click="closeBannerModal">{{ __('Cancel') }}</x-btn>
                 <x-btn type="submit">
-                    {{ $bannerId ? 'Update Banner' : 'Create Banner' }}
+                    {{ $bannerId ? __('Update Banner') : __('Create Banner') }}
                 </x-btn>
             </div>
         </form>

@@ -42,20 +42,20 @@
 @endphp
 
 @if($paginator && $paginator->hasPages())
-    <nav class="app-pagination" role="navigation" aria-label="Pagination Navigation" @if($mode === 'ajax') data-ajax-target="{{ $target }}" @endif>
+    <nav class="app-pagination" role="navigation" aria-label="{{ __('Pagination Navigation') }}" @if($mode === 'ajax') data-ajax-target="{{ $target }}" @endif>
         <div class="app-pagination-mobile">
             @if($paginator->onFirstPage())
-                <span class="pagination-chip pagination-chip-nav is-disabled">Previous</span>
+                <span class="pagination-chip pagination-chip-nav is-disabled">{{ __('Previous') }}</span>
             @else
-                <a href="{{ $urlFor($currentPage - 1) }}" rel="prev" class="pagination-chip pagination-chip-nav" @if($mode === 'ajax') data-ajax-page @endif>Previous</a>
+                <a href="{{ $urlFor($currentPage - 1) }}" rel="prev" class="pagination-chip pagination-chip-nav" @if($mode === 'ajax') data-ajax-page @endif>{{ __('Previous') }}</a>
             @endif
 
             <span class="pagination-chip pagination-chip-status">{{ $currentPage }} / {{ $lastPage }}</span>
 
             @if($paginator->hasMorePages())
-                <a href="{{ $urlFor($currentPage + 1) }}" rel="next" class="pagination-chip pagination-chip-nav" @if($mode === 'ajax') data-ajax-page @endif>Next</a>
+                <a href="{{ $urlFor($currentPage + 1) }}" rel="next" class="pagination-chip pagination-chip-nav" @if($mode === 'ajax') data-ajax-page @endif>{{ __('Next') }}</a>
             @else
-                <span class="pagination-chip pagination-chip-nav is-disabled">Next</span>
+                <span class="pagination-chip pagination-chip-nav is-disabled">{{ __('Next') }}</span>
             @endif
         </div>
 
@@ -73,7 +73,7 @@
                     @elseif($page === $currentPage)
                         <span class="pagination-chip active" aria-current="page">{{ $page }}</span>
                     @else
-                        <a href="{{ $urlFor($page) }}" class="pagination-chip" aria-label="Go to page {{ $page }}" @if($mode === 'ajax') data-ajax-page @endif>{{ $page }}</a>
+                        <a href="{{ $urlFor($page) }}" class="pagination-chip" aria-label="{{ __('Go to page :page', ['page' => $page]) }}" @if($mode === 'ajax') data-ajax-page @endif>{{ $page }}</a>
                     @endif
                 @endforeach
             </div>
@@ -85,6 +85,6 @@
             @endif
         </div>
 
-        <p class="t-pagination-info">Showing {{ $paginator->firstItem() ?? 0 }}–{{ $paginator->lastItem() ?? 0 }} of {{ $paginator->total() }}</p>
+        <p class="t-pagination-info">{{ __('Showing :firstItem–:lastItem of :total', ['firstItem' => $paginator->firstItem() ?? 0, 'lastItem' => $paginator->lastItem() ?? 0, 'total' => $paginator->total()]) }}</p>
     </nav>
 @endif

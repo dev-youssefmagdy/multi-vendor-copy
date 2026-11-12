@@ -5,7 +5,7 @@
         <h1 class="D page-title">{{ $request['title'] }}</h1>
         <span class="badge {{ $request['status_badge'] }}">{{ $request['status_label'] }}</span>
       </div>
-      <p class="page-copy">Request {{ $request['code'] }} &middot; Submitted {{ $request['created_at'] }}</p>
+      <p class="page-copy">{{ __('Request :code · Submitted :createdat', ['code' => $request['code'], 'createdat' => $request['created_at']]) }}</p>
       @if (!empty($request['product_url']))
         <a href="{{ $request['product_url'] }}" target="_blank" rel="noopener"
            class="badge badge-secondary" style="margin-top:8px;display:inline-flex;align-items:center;gap:5px;text-decoration:none;">
@@ -14,17 +14,17 @@
             <polyline points="15 3 21 3 21 9"/>
             <line x1="10" y1="14" x2="21" y2="3"/>
           </svg>
-          View Product Link
+          {{ __('View Product Link') }}
         </a>
       @endif
     </div>
-    <a href="{{ route('tenant.product-requests.index') }}" class="btn btn-secondary">&larr; All Requests</a>
+    <a href="{{ route('tenant.product-requests.index') }}" class="btn btn-secondary">{{ __('← All Requests') }}</a>
   </div>
 
   @if ($request['status'] !== 'rejected')
   <div class="card fu d1" style="padding:20px 24px;">
     <div style="display:flex;align-items:center;gap:0;width:100%;">
-      @foreach (['pending' => 'Submitted', 'reviewing' => 'Under Review', 'in_production' => 'In Production', 'completed' => 'Completed'] as $s => $label)
+      @foreach (['pending' => __('Submitted'), 'reviewing' => __('Under Review'), 'in_production' => __('In Production'), 'completed' => __('Completed')] as $s => $label)
         @php $step = ['pending'=>1,'reviewing'=>2,'in_production'=>3,'completed'=>4][$s]; @endphp
         <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;">
           <div style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;
@@ -44,7 +44,7 @@
 
   @if (!empty($request['attachments']))
     <div class="card fu d1" style="padding:16px 20px;">
-      <p class="panel-title" style="margin-bottom:8px;">Request attachments</p>
+      <p class="panel-title" style="margin-bottom:8px;">{{ __('Request attachments') }}</p>
       @include('livewire.partials.product-request-attachments', ['files' => $request['attachments']])
     </div>
   @endif
@@ -73,9 +73,9 @@
 
   @if (!in_array($request['status'], ['completed', 'rejected']))
   <div class="card fu d3" style="padding:20px 24px;">
-    <label class="field-label">Add a message</label>
+    <label class="field-label">{{ __('Add a message') }}</label>
     <textarea class="field-control" rows="4" wire:model.defer="reply"
-              placeholder="Type your message&hellip;"></textarea>
+              placeholder="{{ __('Type your message…') }}"></textarea>
     @error('reply') <p class="field-error">{{ $message }}</p> @enderror
 
     <div style="margin-top:10px;">
@@ -84,8 +84,8 @@
     </div>
 
     <button type="button" class="btn btn-primary" style="margin-top:12px;" wire:click="sendReply">
-      <span wire:loading.remove wire:target="sendReply">Send Reply</span>
-      <span wire:loading wire:target="sendReply">Sending&hellip;</span>
+      <span wire:loading.remove wire:target="sendReply">{{ __('Send Reply') }}</span>
+      <span wire:loading wire:target="sendReply">{{ __('Sending…') }}</span>
     </button>
   </div>
   @endif

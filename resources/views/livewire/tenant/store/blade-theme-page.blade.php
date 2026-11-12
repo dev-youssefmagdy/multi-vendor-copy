@@ -3,50 +3,45 @@
     <div class="page-head fu d0">
         <div>
             <div class="page-title-row">
-                <h1 class="D page-title">Blade Theme</h1>
-                <span class="page-badge">Storefront</span>
+                <h1 class="D page-title">{{ __('Blade Theme') }}</h1>
+                <span class="page-badge">{{ __('Storefront') }}</span>
             </div>
-            <p class="page-copy">Upload your own Blade storefront theme instead of using a system theme.</p>
+            <p class="page-copy">{{ __('Upload your own Blade storefront theme instead of using a system theme.') }}</p>
         </div>
     </div>
 
     <div class="card section-gap" style="padding:16px;display:flex;align-items:center;justify-content:space-between;gap:16px">
         <div>
-            <h3 class="panel-title" style="font-size:14px;margin-bottom:4px">New to Blade themes?</h3>
+            <h3 class="panel-title" style="font-size:14px;margin-bottom:4px">{{ __('New to Blade themes?') }}</h3>
             <p class="panel-copy" style="font-size:13px">
-                Download the starter kit — a working theme with header, footer, and all
-                home sections wired to real store data — and customize it as your own.
+                {{ __('Download the starter kit — a working theme with header, footer, and all home sections wired to real store data — and customize it as your own.') }}
             </p>
         </div>
         <a href="{{ route('tenant.store.blade-theme.starter-kit') }}" class="btn btn-secondary" style="flex-shrink:0">
-            Download Starter Kit
+            {{ __('Download Starter Kit') }}
         </a>
     </div>
 
     <section class="card form-card fu d1 ct-card">
         <div class="gs-section-head">
-            <h3 class="panel-title">Upload a Theme ZIP</h3>
+            <h3 class="panel-title">{{ __('Upload a Theme ZIP') }}</h3>
             <p class="panel-copy">
-                The ZIP must contain <code>layout/app.blade.php</code> and
-                <code>pages/home/index.blade.php</code>. Blade (<code>.blade.php</code>),
-                CSS, JS, and common image/font files are allowed. Obvious PHP-execution
-                patterns are rejected up front, but this is only a first pass — every
-                upload is queued for admin review, and your theme cannot go live on your
-                storefront until it is approved.
+                {{ __('The ZIP must contain') }} <code>layout/app.blade.php</code> {{ __('and') }}
+                <code>pages/home/index.blade.php</code>{{ __('. Blade (') }}<code>.blade.php</code>{{ __('), CSS, JS, and common image/font files are allowed. Obvious PHP-execution patterns are rejected up front, but this is only a first pass — every upload is queued for admin review, and your theme cannot go live on your storefront until it is approved.') }}
             </p>
         </div>
 
         <div class="form-grid gs-grid">
             <div>
-                <label class="field-label">Theme ZIP</label>
+                <label class="field-label">{{ __('Theme ZIP') }}</label>
                 <input type="file" wire:model="themeZip" accept=".zip" class="ct-file-input" />
                 @error('themeZip')<div class="field-error">{{ $message }}</div>@enderror
-                <div wire:loading wire:target="themeZip" class="field-hint">Uploading…</div>
+                <div wire:loading wire:target="themeZip" class="field-hint">{{ __('Uploading…') }}</div>
             </div>
 
             <div class="gs-actions">
                 <x-btn type="button" wire:click="submitUpload" wire:loading.attr="disabled" wire:target="submitUpload">
-                    Upload theme
+                    {{ __('Upload theme') }}
                 </x-btn>
             </div>
         </div>
@@ -54,21 +49,21 @@
 
     <section class="card form-card fu d2 ct-card">
         <div class="gs-section-head">
-            <h3 class="panel-title">Uploaded Themes</h3>
-            <p class="panel-copy">Approved themes are activated from Storefront → Online Store → Themes, alongside your other storefront theme options.</p>
+            <h3 class="panel-title">{{ __('Uploaded Themes') }}</h3>
+            <p class="panel-copy">{{ __('Approved themes are activated from Storefront → Online Store → Themes, alongside your other storefront theme options.') }}</p>
         </div>
 
         @if($themes->isEmpty())
-            <p class="panel-copy">No themes uploaded yet.</p>
+            <p class="panel-copy">{{ __('No themes uploaded yet.') }}</p>
         @else
             <div class="ct-table-wrap">
                 <table class="ct-table">
                     <thead>
                         <tr>
-                            <th>Version</th>
-                            <th>Uploaded</th>
-                            <th>Status</th>
-                            <th>Active</th>
+                            <th>{{ __('Version') }}</th>
+                            <th>{{ __('Uploaded') }}</th>
+                            <th>{{ __('Status') }}</th>
+                            <th>{{ __('Active') }}</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -78,19 +73,19 @@
                                 <td>{{ $theme->version }}</td>
                                 <td>{{ $theme->uploaded_at?->diffForHumans() ?? $theme->created_at->diffForHumans() }}</td>
                                 <td>
-                                    <span class="ct-status ct-status-{{ $theme->status }}">{{ ucfirst($theme->status) }}</span>
+                                    <span class="ct-status ct-status-{{ $theme->status }}">{{ __(ucfirst($theme->status)) }}</span>
                                     @if($theme->status === 'rejected' && $theme->rejection_reason)
                                         <div class="field-hint">{{ $theme->rejection_reason }}</div>
                                     @endif
                                 </td>
-                                <td>{{ $theme->is_active ? 'Yes' : 'No' }}</td>
+                                <td>{{ $theme->is_active ? __('Yes') : __('No') }}</td>
                                 <td class="ct-actions">
                                     @if($theme->is_active)
-                                        <button type="button" wire:click="deactivate" class="ct-link">Deactivate</button>
+                                        <button type="button" wire:click="deactivate" class="ct-link">{{ __('Deactivate') }}</button>
                                     @endif
 
                                     @if(!$theme->is_active)
-                                        <button type="button" wire:click="delete({{ $theme->id }})" wire:confirm="Delete this theme?" class="ct-link ct-link-danger">Delete</button>
+                                        <button type="button" wire:click="delete({{ $theme->id }})" wire:confirm="{{ __('Delete this theme?') }}" class="ct-link ct-link-danger">{{ __('Delete') }}</button>
                                     @endif
                                 </td>
                             </tr>

@@ -6,6 +6,7 @@ import { openModal, closeModal } from '../../core/modals.js';
 import { on, emit } from '../../core/events.js';
 import { computePrices, renderPriceTable } from './products-price-list.js';
 import { mountProductModals } from '../../components/product-modals.js';
+import { t } from '../../core/i18n.js';
 
 mountProductModals();
 
@@ -37,7 +38,7 @@ function renderPriceFinderResults(root, priceData) {
     if (!hits.length || !sampleSize) {
         resultsEl.hidden = true;
         emptyEl.hidden = false;
-        root.querySelector('[data-price-finder-hint]').textContent = 'Click Fetch to discover current market prices for this product from the web.';
+        root.querySelector('[data-price-finder-hint]').textContent = t('Click Fetch to discover current market prices for this product from the web.');
         return;
     }
 
@@ -48,10 +49,10 @@ function renderPriceFinderResults(root, priceData) {
     const statsEl = root.querySelector('[data-price-finder-stats]');
     statsEl.innerHTML = '';
     [
-        ['Average', priceData.average_price],
-        ['Median', priceData.median_price],
-        ['Min', priceData.min_price],
-        ['Max', priceData.max_price],
+        [t('Average'), priceData.average_price],
+        [t('Median'), priceData.median_price],
+        [t('Min'), priceData.min_price],
+        [t('Max'), priceData.max_price],
     ].forEach(([label, value]) => {
         const div = document.createElement('div');
         div.className = 'price-finder-stat';
@@ -71,7 +72,7 @@ function renderPriceFinderResults(root, priceData) {
         table.appendChild(tr);
     });
 
-    root.querySelector('[data-price-finder-query]').textContent = `Query used: ${priceData.query || ''}`;
+    root.querySelector('[data-price-finder-query]').textContent = t('Query used: :query', { query: priceData.query || '' });
 }
 
 async function openPriceFinderModal(productId) {
@@ -88,7 +89,7 @@ async function openPriceFinderModal(productId) {
     }
 
     const variantSelect = root.querySelector('[data-price-finder-variant]');
-    variantSelect.innerHTML = '<option value="">Main product image</option>';
+    variantSelect.innerHTML = `<option value="">${t('Main product image')}</option>`;
     Object.entries(data.priceVariants || {}).forEach(([id, label]) => {
         const opt = document.createElement('option');
         opt.value = id;
@@ -121,7 +122,7 @@ async function fetchAiPrice() {
         });
         renderPriceFinderResults(root, response.data.priceData);
     } catch (e) {
-        errorEl.textContent = e.message || 'Fetch failed.';
+        errorEl.textContent = e.message || t('Fetch failed.');
         errorEl.hidden = false;
     } finally {
         loading.hidden = true;
@@ -163,8 +164,8 @@ async function openShareModal(productId) {
     }
 
     root.querySelector('[data-share-note]').textContent = data.has_ai_content
-        ? 'Caption sourced from AI-generated social posts.'
-        : 'Using default product details (no AI post generated yet).';
+        ? t('Caption sourced from AI-generated social posts.')
+        : t('Using default product details (no AI post generated yet).');
 
     const url = data.url || '';
     const shortCaption = (data.caption || '').split('\n')[0].slice(0, 120);
@@ -239,8 +240,8 @@ async function openPriceListModal(productId) {
         const block = document.createElement('div');
         block.className = 'price-list-variant-block';
         block.innerHTML = `
-            <div class="entity-subtitle price-list-variant-label">${variant.label} <span>cost: $${Number(variant.real_price).toFixed(2)}</span></div>
-            <div class="tw"><table class="tb"><thead><tr><th>Country</th><th>Cost Price</th><th>Profit</th><th>Fixed Cost</th><th>Your Price</th></tr></thead><tbody></tbody></table></div>
+            <div class="entity-subtitle price-list-variant-label">${variant.label} <span>${t('cost: :price', { price: `$${Number(variant.real_price).toFixed(2)}` })}</span></div>
+            <div class="tw"><table class="tb"><thead><tr><th>${t('Country')}</th><th>${t('Cost Price')}</th><th>${t('Profit')}</th><th>${t('Fixed Cost')}</th><th>${t('Your Price')}</th></tr></thead><tbody></tbody></table></div>
         `;
         const tbody = block.querySelector('tbody');
         renderPriceTable(tbody, {
@@ -294,8 +295,8 @@ function updateImageSearchChip(ids) {
         status.hidden = false;
         status.innerHTML = `
             <span class="products-image-search-chip">
-                Visual match &mdash; ${ids.length} results
-                <button type="button" data-clear-image-search aria-label="Clear">
+                ${t('Visual match — :count results', { count: ids.length })}
+                <button type="button" data-clear-image-search aria-label="${t('Clear')}">
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
                 </button>
             </span>

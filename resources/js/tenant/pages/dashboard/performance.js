@@ -5,6 +5,7 @@ import Chart from 'chart.js/auto';
 import Swiper from 'swiper';
 import 'swiper/css';
 import { on } from '@tenant/core/events.js';
+import { t } from '../../core/i18n.js';
 
 const GROSS = '#3B82F6';
 const COLLECTED = '#10B981';
@@ -80,7 +81,7 @@ function buildGross(data) {
         type: 'line',
         data: {
             labels: data.revenueLabels ?? [],
-            datasets: [lineDataset('Gross sales', gross, GROSS), lineDataset('Collected', collected, COLLECTED)],
+            datasets: [lineDataset(t('Gross sales'), gross, GROSS), lineDataset(t('Collected'), collected, COLLECTED)],
         },
         options: {
             responsive: true,
@@ -117,7 +118,7 @@ function buildStatus() {
     charts.push(new Chart(canvas, {
         type: 'doughnut',
         data: {
-            labels: hasData ? JSON.parse(canvas.dataset.labels || '[]') : ['No orders'],
+            labels: hasData ? JSON.parse(canvas.dataset.labels || '[]') : [t('No orders')],
             datasets: [{
                 data: hasData ? values : [1],
                 backgroundColor: hasData ? JSON.parse(canvas.dataset.colors || '[]') : [isDark() ? '#2a2a2d' : '#F3F4F6'],

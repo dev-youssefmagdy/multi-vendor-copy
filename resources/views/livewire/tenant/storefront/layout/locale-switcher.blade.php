@@ -25,7 +25,7 @@
         wire:click="openModal('currency')"
         class="lg:hidden lang-currency-trigger flex flex-col items-center justify-center leading-[1] text-gray-darkest cursor-pointer">
         <div class="flex items-end gap-[1px]">
-            <span class="text-[11px] font-bold">{{ strtoupper($currentLanguage?->code ?? 'En') }}/</span>
+            <span class="text-[11px] font-bold">{{ strtoupper($currentLanguage?->code ?? __('En')) }}/</span>
         </div>
         <div class="flex items-center gap-[2px]">
             <span class="text-[11px] font-bold">{{ $currentCurrency?->code ?? 'USD' }}</span>

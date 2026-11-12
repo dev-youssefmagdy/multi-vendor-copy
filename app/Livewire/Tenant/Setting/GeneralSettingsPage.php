@@ -38,9 +38,9 @@ class GeneralSettingsPage extends ContentPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'General Settings',
-            'badge' => 'Settings',
-            'description' => 'Store-wide defaults used across the vendor control panel.',
+            'title' => __('General Settings'),
+            'badge' => __('Settings'),
+            'description' => __('Store-wide defaults used across the vendor control panel.'),
         ];
     }
 
@@ -108,7 +108,7 @@ class GeneralSettingsPage extends ContentPage
 
         ApplyTenantProfitPercentageJob::dispatch($tenant->id);
 
-        $this->toast('General settings updated. Prices are being recalculated for all products and variants.');
+        $this->toast(__('General settings updated. Prices are being recalculated for all products and variants.'));
     }
 
     public function openCountryRequestModal(): void
@@ -143,7 +143,7 @@ class GeneralSettingsPage extends ContentPage
     {
         $this->validate([
             'requestedCountryIds' => ['required', 'array', 'min:1'],
-        ], [], ['requestedCountryIds' => 'target countries']);
+        ], [], ['requestedCountryIds' => __('target countries')]);
 
         $tenantId = tenant()->id;
 
@@ -186,7 +186,7 @@ class GeneralSettingsPage extends ContentPage
         );
 
         $this->closeCountryRequestModal();
-        $this->toast('Request sent to admin for review.');
+        $this->toast(__('Request sent to admin for review.'));
     }
 
     public function submitCategoryChangeRequest(): void
@@ -229,6 +229,6 @@ class GeneralSettingsPage extends ContentPage
         );
 
         $this->closeCategoryRequestModal();
-        $this->toast('Request sent to admin for review.');
+        $this->toast(__('Request sent to admin for review.'));
     }
 }

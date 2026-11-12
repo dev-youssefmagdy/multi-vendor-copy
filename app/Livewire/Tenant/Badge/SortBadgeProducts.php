@@ -34,7 +34,7 @@ class SortBadgeProducts extends Component
 
         CacheVersion::bumpMany(['ProductBadge', 'Product']);
 
-        $this->toast('Product order saved.');
+        $this->toast(__('Product order saved.'));
     }
 
     public function render()

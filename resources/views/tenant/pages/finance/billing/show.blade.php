@@ -1,11 +1,11 @@
 @extends('tenant.layouts.app')
 
-@section('title', $order['uuid'] ?? 'Billing Details')
+@section('title', $order['uuid'] ?? __('Billing Details'))
 
 @section('content')
-    <x-tenant::page-header :title="$order['uuid'] ?? 'Billing Details'" badge="Finance" description="Full billing detail — payment state, gateway payload, financials, and order line items.">
+    <x-tenant::page-header :title="$order['uuid'] ?? __('Billing Details')" :badge="__('Finance')" :description="__('Full billing detail — payment state, gateway payload, financials, and order line items.')">
         <x-slot:actions>
-            <a class="btn btn-secondary" href="{{ route('tenant.finance.billing') }}">← Billing</a>
+            <a class="btn btn-secondary" href="{{ route('tenant.finance.billing') }}">{{ __('← Billing') }}</a>
         </x-slot:actions>
     </x-tenant::page-header>
 

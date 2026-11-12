@@ -19,13 +19,13 @@ class OwnProductsList extends ListPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'My Products',
-            'badge' => 'Own Catalog',
-            'description' => 'Manage products you have added directly — these are not shipped from central inventory.',
-            'actionLabel' => 'Add Product',
+            'title' => __('My Products'),
+            'badge' => __('Own Catalog'),
+            'description' => __('Manage products you have added directly — these are not shipped from central inventory.'),
+            'actionLabel' => __('Add Product'),
             'actionUrl' => route('tenant.own-products.create'),
-            'tableTitle' => 'Own Products',
-            'headers' => ['Product', 'Price', 'Stock', 'Status', 'Added', 'Actions'],
+            'tableTitle' => __('Own Products'),
+            'headers' => [__('Product'), __('Price'), __('Stock'), __('Status'), __('Added'), __('Actions')],
         ];
     }
 
@@ -69,14 +69,14 @@ class OwnProductsList extends ListPage
         return array_merge(parent::pageData(), [
             'records' => $records,
             'filterFields' => [
-                ['label' => 'Search', 'model' => 'search', 'placeholder' => 'Search by name...'],
-                ['label' => 'Status', 'model' => 'statusFilter', 'type' => 'select', 'options' => ['' => 'All', 'active' => 'Active', 'inactive' => 'Inactive']],
-                ['label' => 'Stock', 'model' => 'stockFilter', 'type' => 'select', 'options' => ['' => 'All', 'in' => 'In Stock', 'partial' => 'Partially Out of Stock', 'out' => 'Out of Stock']],
+                ['label' => __('Search'), 'model' => 'search', 'placeholder' => __('Search by name...')],
+                ['label' => __('Status'), 'model' => 'statusFilter', 'type' => 'select', 'options' => ['' => __('All'), 'active' => __('Active'), 'inactive' => __('Inactive')]],
+                ['label' => __('Stock'), 'model' => 'stockFilter', 'type' => 'select', 'options' => ['' => __('All'), 'in' => __('In Stock'), 'partial' => __('Partially Out of Stock'), 'out' => __('Out of Stock')]],
             ],
             'statistics' => [
-                ['label' => 'Total Own Products', 'value' => $stats['total'], 'caption' => 'Products you added directly.', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
-                ['label' => 'Active', 'value' => $stats['active'], 'caption' => 'Currently visible in your store.', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Inactive', 'value' => $stats['total'] - $stats['active'], 'caption' => 'Disabled from your storefront.', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Total Own Products'), 'value' => $stats['total'], 'caption' => __('Products you added directly.'), 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
+                ['label' => __('Active'), 'value' => $stats['active'], 'caption' => __('Currently visible in your store.'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Inactive'), 'value' => $stats['total'] - $stats['active'], 'caption' => __('Disabled from your storefront.'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
             ],
             'rowClasses' => collect($records->items())->map(fn(Product $product) => match ($product->stockStatus()) {
                 'out_of_stock' => 'row-out-of-stock',
@@ -90,31 +90,31 @@ class OwnProductsList extends ListPage
                     'best-selling' => 'badge-amber',
                     'new-in' => 'badge-cyan',
                 ];
-                $badgePills = $product->badges->map(fn($badge) => '<span class="badge ' . ($badgeTones[$badge->text] ?? 'badge-amber') . '" style="font-size:10px;">' . e(ucfirst(str_replace('-', ' ', $badge->text))) . '</span>')->implode(' ');
+                $badgePills = $product->badges->map(fn($badge) => '<span class="badge ' . ($badgeTones[$badge->text] ?? 'badge-amber') . '" style="font-size:10px;">' . e(__(ucfirst(str_replace('-', ' ', $badge->text)))) . '</span>')->implode(' ');
                 $badgeCell = $badgePills !== '' ? '<div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:4px;">' . $badgePills . '</div>' : '';
 
                 $stockStatus = $product->stockStatus();
                 $titleStockBadge = match ($stockStatus) {
-                    'out_of_stock' => '<span class="badge badge-red" style="font-size:10px;margin-top:4px;display:inline-block;">Out of Stock</span>',
-                    'partial' => '<span class="badge badge-amber" style="font-size:10px;margin-top:4px;display:inline-block;">Partial</span>',
+                    'out_of_stock' => '<span class="badge badge-red" style="font-size:10px;margin-top:4px;display:inline-block;">' . e(__('Out of Stock')) . '</span>',
+                    'partial' => '<span class="badge badge-amber" style="font-size:10px;margin-top:4px;display:inline-block;">' . e(__('Partial')) . '</span>',
                     default => '',
                 };
 
                 return [
-                '<div class="entity-title">' . e($product->translationValue('name') ?? $product->slug ?? 'Product #' . $product->id) . '</div>'
-                . '<div class="entity-subtitle">Own product · No central shipping</div>' . $titleStockBadge . $badgeCell,
+                '<div class="entity-title">' . e($product->translationValue('name') ?? $product->slug ?? __('Product #:id', ['id' => $product->id])) . '</div>'
+                . '<div class="entity-subtitle">' . e(__('Own product · No central shipping')) . '</div>' . $titleStockBadge . $badgeCell,
                 '<div class="entity-title">$' . e(number_format((float) $product->default_price, 2)) . '</div>',
-                '<div class="entity-title">' . ($product->stock !== null ? e($product->stock) : '<span class="entity-subtitle">Unlimited</span>') . '</div>',
-                '<span class="badge ' . ($product->active ? 'badge-green' : 'badge-amber') . '">' . e($product->active ? 'Active' : 'Inactive') . '</span>',
+                '<div class="entity-title">' . ($product->stock !== null ? e($product->stock) : '<span class="entity-subtitle">' . e(__('Unlimited')) . '</span>') . '</div>',
+                '<span class="badge ' . ($product->active ? 'badge-green' : 'badge-amber') . '">' . e($product->active ? __('Active') : __('Inactive')) . '</span>',
                 e($product->created_at?->format('M d, Y')),
                 '<div class="flex gap-2 flex-wrap">'
-                . '<a href="' . route('tenant.own-products.edit', $product) . '"  class="btn btn-secondary btn-sm">Edit</a>'
-                . '<button type="button" class="btn btn-secondary btn-sm btn-danger" wire:click="deleteProduct(' . $product->id . ')" wire:confirm="Delete this product permanently?">Delete</button>'
+                . '<a href="' . route('tenant.own-products.edit', $product) . '"  class="btn btn-secondary btn-sm">' . e(__('Edit')) . '</a>'
+                . '<button type="button" class="btn btn-secondary btn-sm btn-danger" wire:click="deleteProduct(' . $product->id . ')" wire:confirm="Delete this product permanently?">' . e(__('Delete')) . '</button>'
                 . '</div>',
                 ];
             })->all(),
-            'emptyTitle' => 'No own products yet',
-            'emptyCopy' => 'Click "Add Product" to create your first own product.',
+            'emptyTitle' => __('No own products yet'),
+            'emptyCopy' => __('Click "Add Product" to create your first own product.'),
             'tableDescription' => $records->total() . ' own products found.',
         ]);
     }
@@ -128,7 +128,7 @@ class OwnProductsList extends ListPage
     {
         $product = Product::where('id', $id)->where('is_own_product', true)->firstOrFail();
         $product->delete();
-        $this->toast('Product deleted.');
+        $this->toast(__('Product deleted.'));
     }
 
     public function updatedSearch(): void

@@ -20,10 +20,10 @@
     data-toggle-featured-url="{{ !empty($opp['id']) ? route('tenant.products.toggle-featured', ['product' => '__PROD__']) : '' }}">
     <div class="db-opp-media" @if(!empty($opp['image'])) style="background-image:url('{{ $opp['image'] }}')" @endif>
         @if($opp['added'])
-            <span class="db-opp-added">Already added</span>
+            <span class="db-opp-added">{{ __('Already added') }}</span>
         @endif
         <span class="db-opp-cheaper">
-            <small >Cheaper than market by</small>
+            <small >{{ __('Cheaper than market by') }}</small>
             <strong>{{ $opp['below_market'] }}</strong>
         </span>
     </div>
@@ -36,12 +36,12 @@
         </div>
 
         <div>
-            <h3 class="db-opp-title">{{ $opp['title'] }}</h3>
-            <p class="db-opp-desc">{{ $opp['description'] }}</p>
+            <h3 class="db-opp-title">{{ __($opp['title']) }}</h3>
+            <p class="db-opp-desc">{{ __($opp['description']) }}</p>
         </div>
 
         <div class="db-opp-markets">
-            <h4>The best markets for this opportunity</h4>
+            <h4>{{ __('The best markets for this opportunity') }}</h4>
             {{-- Auto-scrolling ticker; the list is rendered twice so the loop never runs short. --}}
             <div class="db-opp-flags swiper" data-flag-ticker>
                 <div class="swiper-wrapper">
@@ -58,16 +58,16 @@
 
         <div class="db-opp-gauges">
             @foreach([
-                ['Opp. Score', $opp['score'], $opp['score_pct'], '#FF522C'],
-                ['Est. Profit', $opp['profit'], $opp['profit_pct'], '#03AA00'],
-                ['competition', $opp['competition_level'], $opp['competition_pct'], '#F0C800'],
-                ['Product status', $opp['status'], $opp['status_pct'], '#F85223'],
+                [__('Opp. Score'), $opp['score'], $opp['score_pct'], '#FF522C'],
+                [__('Est. Profit'), $opp['profit'], $opp['profit_pct'], '#03AA00'],
+                [__('competition'), $opp['competition_level'], $opp['competition_pct'], '#F0C800'],
+                [__('Product status'), $opp['status'], $opp['status_pct'], '#F85223'],
             ] as [$gLabel, $gValue, $gPct, $gColor])
                 <div class="db-gauge">
                     <span class="db-gauge-label">{{ $gLabel }}</span>
                     <span class="db-gauge-ring" style="--p: {{ $gPct }}; --c: {{ $gColor }}">
                         <span class="db-gauge-value {{ is_numeric(str_replace(['+', '%'], '', $gValue)) ? '' : 'is-text' }}">
-                            {{ $gValue }}@if($gLabel === 'Product status' && $gValue === 'Hot') <span aria-hidden="true">🔥</span>@endif
+                            {{ __((string) $gValue) }}@if($gLabel === __('Product status') && $gValue === 'Hot') <span aria-hidden="true">🔥</span>@endif
                         </span>
                     </span>
                 </div>
@@ -76,35 +76,35 @@
 
         <div class="db-opp-stats">
             <div class="db-opp-stat">
-                <span class="db-opp-stat-label">YOUR COST
-                    <x-tenant::tooltip label="What is your cost?" text="The total you pay for one unit: the product price plus delivery to your customer." />
+                <span class="db-opp-stat-label">{{ __('YOUR COST') }}
+                    <x-tenant::tooltip :label="__('What is your cost?')" :text="__('The total you pay for one unit: the product price plus delivery to your customer.')" />
                 </span>
                 <strong>{{ $opp['cost'] }}</strong>
-                <small>Product + Delivery</small>
+                <small>{{ __('Product + Delivery') }}</small>
             </div>
             <div class="db-opp-stat">
-                <span class="db-opp-stat-label">BELOW MARKET</span>
+                <span class="db-opp-stat-label">{{ __('BELOW MARKET') }}</span>
                 <strong>{{ $opp['below_market'] }}</strong>
-                <small>Compared with major stores</small>
+                <small>{{ __('Compared with major stores') }}</small>
             </div>
             <div class="db-opp-stat is-dark">
-                <span class="db-opp-stat-label">RECOMMENDED MARKUP</span>
+                <span class="db-opp-stat-label">{{ __('RECOMMENDED MARKUP') }}</span>
                 <strong>{{ $opp['markup'] }}</strong>
-                <small>Suggested Price {{ $opp['suggested_price'] }} · Potential</small>
+                <small>{{ __('Suggested Price :suggestedprice · Potential', ['suggestedprice' => $opp['suggested_price']]) }}</small>
             </div>
         </div>
 
         <div class="db-opp-actions">
             @if(!empty($opp['id']))
                 <button type="button" class="btn-tile {{ ($opp['in_flash_sale'] ?? false) ? 'is-active' : '' }}" data-opp-flash-sale-btn>
-                    {!! $zap !!} <span>{{ ($opp['in_flash_sale'] ?? false) ? 'In Flash Sale' : 'Add to Flash Sale' }}</span>
+                    {!! $zap !!} <span>{{ ($opp['in_flash_sale'] ?? false) ? __('In Flash Sale') : __('Add to Flash Sale') }}</span>
                 </button>
                 <button type="button" class="btn-tile {{ ($opp['featured'] ?? false) ? 'is-active' : '' }}" data-opp-trending-btn>
-                    {!! $trendUp !!} <span>{{ ($opp['featured'] ?? false) ? 'Trending ✓' : 'Add to trending' }}</span>
+                    {!! $trendUp !!} <span>{{ ($opp['featured'] ?? false) ? __('Trending ✓') : __('Add to trending') }}</span>
                 </button>
             @else
-                <button type="button" class="btn-tile">{!! $zap !!} Add to Flash Sale</button>
-                <button type="button" class="btn-tile">{!! $trendUp !!} Add to trending</button>
+                <button type="button" class="btn-tile">{!! $zap !!} {{ __('Add to Flash Sale') }}</button>
+                <button type="button" class="btn-tile">{!! $trendUp !!} {{ __('Add to trending') }}</button>
             @endif
         </div>
 
@@ -112,11 +112,11 @@
             <button type="button" class="btn btn-lg db-opp-cta is-added"
                 data-modal-open="product-video-ad-modal"
                 data-product-id="{{ $opp['id'] ?? '' }}">
-                {!! $idea !!} Create your Ad
+                {!! $idea !!} {{ __('Create your Ad') }}
             </button>
         @else
             <a href="{{ route('tenant.products.create') }}" class="btn btn-primary btn-lg db-opp-cta">
-                {!! $idea !!} Add to store &amp; create your Ad
+                {!! $idea !!} {{ __('Add to store & create your Ad') }}
             </a>
         @endif
     </div>

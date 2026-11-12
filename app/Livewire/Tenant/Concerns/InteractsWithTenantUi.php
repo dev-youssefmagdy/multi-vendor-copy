@@ -16,10 +16,10 @@ trait InteractsWithTenantUi
             componentId: $this->getId(),
             actionMethod: $method,
             actionParams: array_values($parameters),
-            title: $options['title'] ?? 'Are you sure?',
-            text: $options['text'] ?? 'This action cannot be undone.',
-            confirmButtonText: $options['confirmButtonText'] ?? 'Confirm',
-            cancelButtonText: $options['cancelButtonText'] ?? 'Cancel',
+            title: $options['title'] ?? __('Are you sure?'),
+            text: $options['text'] ?? __('This action cannot be undone.'),
+            confirmButtonText: $options['confirmButtonText'] ?? __('Confirm'),
+            cancelButtonText: $options['cancelButtonText'] ?? __('Cancel'),
             icon: $options['icon'] ?? 'warning'
         );
     }

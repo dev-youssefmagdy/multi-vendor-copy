@@ -2,6 +2,7 @@ import '@tenant-css/pages/help.css';
 
 import { get } from '../../core/http.js';
 import { initComponents } from '../../core/registry.js';
+import { t } from '../../core/i18n.js';
 
 function articleUrlFor(slug) {
     const template = document.querySelector('.docs-sidebar')?.dataset.helpArticlesUrl;
@@ -16,7 +17,7 @@ async function loadArticle(slug, { pushState = true } = {}) {
 
     try {
         const response = await get(articleUrlFor(slug), {}, { toast: false });
-        content.innerHTML = response.html || '<p class="panel-copy">Article not found.</p>';
+        content.innerHTML = response.html || `<p class="panel-copy">${t('Article not found.')}</p>`;
         initComponents(content);
         content.scrollIntoView({ behavior: 'smooth', block: 'start' });
 

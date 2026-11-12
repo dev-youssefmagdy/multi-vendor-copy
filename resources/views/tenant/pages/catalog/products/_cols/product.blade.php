@@ -1,5 +1,5 @@
 @php
-    $label = $product->translationValue('name') ?? $product->slug ?? ('Product #' . $product->id);
+    $label = $product->translationValue('name') ?? $product->slug ?? (__('Product #:id', ['id' => $product->id]));
     $imageUrl = $central['image_url'] ?? $product->primary_image_url;
     $stockStatus = $product->stockStatus();
     $badgeTones = [
@@ -17,16 +17,16 @@
     @endif
     <div>
         <div class="entity-title">{{ $label }}</div>
-        <div class="entity-subtitle">{{ $central['sku'] ?? 'No central SKU' }} &middot; /{{ $product->slug ?? '-' }}</div>
+        <div class="entity-subtitle">{{ $central['sku'] ?? __('No central SKU') }} &middot; /{{ $product->slug ?? '-' }}</div>
         @if($stockStatus === 'out_of_stock')
-            <x-tenant::badge color="red" class="products-title-badge">Out of Stock</x-tenant::badge>
+            <x-tenant::badge color="red" class="products-title-badge">{{ __('Out of Stock') }}</x-tenant::badge>
         @elseif($stockStatus === 'partial')
-            <x-tenant::badge color="amber" class="products-title-badge">Partial</x-tenant::badge>
+            <x-tenant::badge color="amber" class="products-title-badge">{{ __('Partial') }}</x-tenant::badge>
         @endif
         @if($product->badges->isNotEmpty())
             <div class="products-badge-pills">
                 @foreach($product->badges as $badge)
-                    <x-tenant::badge :color="$badgeTones[$badge->text] ?? 'amber'">{{ ucfirst(str_replace('-', ' ', $badge->text)) }}</x-tenant::badge>
+                    <x-tenant::badge :color="$badgeTones[$badge->text] ?? 'amber'">{{ __(ucfirst(str_replace('-', ' ', $badge->text))) }}</x-tenant::badge>
                 @endforeach
             </div>
         @endif

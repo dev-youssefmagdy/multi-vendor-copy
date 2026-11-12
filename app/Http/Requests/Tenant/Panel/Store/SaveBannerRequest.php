@@ -34,8 +34,8 @@ final class SaveBannerRequest extends TenantFormRequest
     {
         return [
             'country_ids' => 'countries',
-            'serial_number' => 'sort order',
-            'banner_image' => 'banner image',
+            'serial_number' => __('sort order'),
+            'banner_image' => __('banner image'),
         ];
     }
 }

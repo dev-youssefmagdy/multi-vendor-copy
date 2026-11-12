@@ -75,7 +75,7 @@ final class MobileAppController extends PanelController
 
         CacheVersion::bump('MobileApp');
 
-        return $this->success('Mobile app settings saved.');
+        return $this->success(__('Mobile app settings saved.'));
     }
 
     public function validateSave(Request $request): JsonResponse
@@ -119,21 +119,21 @@ final class MobileAppController extends PanelController
     {
         $data = ['theme_slug' => $themeSlug, 'variant_key' => $variantKey];
         if (! in_array($themeSlug, MobileSectionCatalog::THEMES, true)) {
-            return $this->failure('Unknown theme variant.', 422);
+            return $this->failure(__('Unknown theme variant.'), 422);
         }
 
         $exists = tenancy()->central(fn () => HomeVariant::query()
             ->forTheme($data['theme_slug'])->where('key', $data['variant_key'])->where('is_active', true)->exists());
 
         if (! $exists) {
-            return $this->failure('Unknown theme variant.', 422);
+            return $this->failure(__('Unknown theme variant.'), 422);
         }
 
         MobileAppTheme::query()->delete();
         MobileAppTheme::query()->create($data);
         CacheVersion::bump('MobileApp');
 
-        return $this->success('App theme activated.');
+        return $this->success(__('App theme activated.'));
     }
 
     public function saveColors(Request $request): JsonResponse
@@ -148,7 +148,7 @@ final class MobileAppController extends PanelController
         MobileAppSetting::query()->updateOrCreate(['key' => 'color_overrides'], ['value' => $colors]);
         CacheVersion::bump('MobileApp');
 
-        return $this->success('Color overrides saved.');
+        return $this->success(__('Color overrides saved.'));
     }
 
     /** @return array<string,string> tokens (primary, secondary, ...) from raw "--color-x" variant colours */

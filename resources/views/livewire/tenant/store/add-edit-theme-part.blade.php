@@ -2,19 +2,18 @@
     <form wire:submit="save" class="page-stack">
         <div class="page-head fu d0">
             <div>
-                <div class="eyebrow">Theme Parts</div>
-                <h1 class="D page-title">{{ $isEditing ? 'Edit Theme Part' : 'New Theme Part' }}</h1>
+                <div class="eyebrow">{{ __('Theme Parts') }}</div>
+                <h1 class="D page-title">{{ $isEditing ? __('Edit Theme Part') : __('New Theme Part') }}</h1>
                 <p class="page-copy">
                     @if ($theme ?? null)
-                        {{ $isEditing ? 'Update this part for' : 'Add a new header or footer to' }}
+                        {{ $isEditing ? __('Update this part for') : __('Add a new header or footer to') }}
                         <strong>{{ $theme->name }}</strong>.
                     @endif
                 </p>
             </div>
             <div class="page-actions">
-                <a href="{{ route('tenant.store.theme-parts', ['theme' => $themeId]) }}" class="btn btn-secondary">←
-                    Back</a>
-                <x-btn type="submit">{{ $isEditing ? 'Save Changes' : 'Create Part' }}</x-btn>
+                <a href="{{ route('tenant.store.theme-parts', ['theme' => $themeId]) }}" class="btn btn-secondary">{{ __('← Back') }}</a>
+                <x-btn type="submit">{{ $isEditing ? __('Save Changes') : __('Create Part') }}</x-btn>
             </div>
         </div>
 
@@ -25,21 +24,20 @@
         @if ($isEditing && $centralPartId)
             <div class="card section-gap" style="border-left:3px solid var(--amber);padding-left:12px;">
                 <p class="panel-copy">
-                    <strong>Central-linked part.</strong> Saving will mark this part as customised — future central
-                    syncs will no longer overwrite it. Use <em>Revert</em> on the list page to undo.
+                    <strong>{{ __('Central-linked part.') }}</strong> {{ __('Saving will mark this part as customised — future central syncs will no longer overwrite it. Use') }} <em>{{ __('Revert') }}</em> {{ __('on the list page to undo.') }}
                 </p>
             </div>
         @endif
 
         <div class="grid gap-2">
             {{-- Part Details --}}
-            <x-card-collapse class="span-4" title="Part Details"
-                subtitle="Set the part type, name, and activation flags." :start-open="true">
+            <x-card-collapse class="span-4" :title="__('Part Details')"
+                :subtitle="__('Set the part type, name, and activation flags.')" :start-open="true">
                 <div class="form-grid">
                     <div class="span-4">
-                        <label class="field-label">Theme</label>
+                        <label class="field-label">{{ __('Theme') }}</label>
                         <x-select wire:model.defer="themeId" :disabled="$isEditing">
-                            <option value="">— Select Theme —</option>
+                            <option value="">{{ __('— Select Theme —') }}</option>
                             @foreach ($themes as $thm)
                                 <option value="{{ $thm->id }}">{{ $thm->name }}</option>
                             @endforeach
@@ -47,7 +45,7 @@
                         @error('themeId')<div class="field-error">{{ $message }}</div>@enderror
                     </div>
                     <div class="span-2">
-                        <label class="field-label">Type</label>
+                        <label class="field-label">{{ __('Type') }}</label>
                         <x-select wire:model.defer="type" :disabled="$isEditing">
                             @foreach ($typeOptions as $value => $label)
                                 <option value="{{ $value }}">{{ $label }}</option>
@@ -56,51 +54,50 @@
                         @error('type')<div class="field-error">{{ $message }}</div>@enderror
                     </div>
                     <div class="span-2">
-                        <label class="field-label">Name</label>
-                        <x-input type="text" wire:model.defer="name" placeholder="e.g. Dark Header" />
+                        <label class="field-label">{{ __('Name') }}</label>
+                        <x-input type="text" wire:model.defer="name" :placeholder="__('e.g. Dark Header')" />
                         @error('name')<div class="field-error">{{ $message }}</div>@enderror
                     </div>
                     <div class="span-2">
                         <label class="toggle-field">
                             <input type="checkbox" wire:model.defer="isActive">
-                            <span>Active — visible to storefront</span>
+                            <span>{{ __('Active — visible to storefront') }}</span>
                         </label>
                     </div>
                     <div class="span-2">
                         <label class="toggle-field">
                             <input type="checkbox" wire:model.defer="isDefault">
-                            <span>Set as default for this type</span>
+                            <span>{{ __('Set as default for this type') }}</span>
                         </label>
                     </div>
                 </div>
             </x-card-collapse>
 
             {{-- Part Image --}}
-            <x-card-collapse class="span-8" title="Part Image"
-                subtitle="Optional image accessible as {{ '$part->image' }} in your part content." :start-open="true">
+            <x-card-collapse class="span-8" :title="__('Part Image')"
+                :subtitle="__('Optional image accessible as :image in your part content.', ['image' => '$part->image'])" :start-open="true">
                 <div class="page-stack">
                     @if ($imagePath && !$imageUpload)
                         <div style="display:flex;align-items:center;gap:12px;">
-                            <img src="{{ $imagePath }}" alt="Current image"
+                            <img src="{{ $imagePath }}" alt="{{ __('Current image') }}"
                                 style="max-height:80px;max-width:200px;object-fit:contain;border-radius:6px;border:1px solid var(--border2)">
                             <button type="button" class="btn btn-secondary btn-sm btn-danger"
-                                wire:click="removeImage">Remove</button>
+                                wire:click="removeImage">{{ __('Remove') }}</button>
                         </div>
                     @endif
                     <x-dropzone id="theme-part-image-upload" model="imageUpload" :multiple="false" accept="image/*"
-                        label="{{ $imagePath && !$imageUpload ? 'Replace image' : 'Upload an image' }}"
-                        sublabel="PNG, JPG, WebP — max 2 MB" />
+                        label="{{ $imagePath && !$imageUpload ? __('Replace image') : __('Upload an image') }}"
+                        :sublabel="__('PNG, JPG, WebP — max 2 MB')" />
                     @if ($imageUpload)
-                        <p class="panel-copy" style="color:var(--green)">New image selected — will be saved on
-                            submit.</p>
+                        <p class="panel-copy" style="color:var(--green)">{{ __('New image selected — will be saved on submit.') }}</p>
                     @endif
                     @error('imageUpload')<div class="field-error">{{ $message }}</div>@enderror
                 </div>
             </x-card-collapse>
 
             {{-- Part Content --}}
-            <x-card-collapse class="span-12" title="Content"
-                subtitle="Full Blade + PHP supported. Use {{ '$part->image' }} to reference the image above."
+            <x-card-collapse class="span-12" :title="__('Content')"
+                :subtitle="__('Full Blade + PHP supported. Use :image to reference the image above.', ['image' => '$part->image'])"
                 :start-open="true">
                 <div>
                     <x-editor model="content" :value="$content" :height="520" />

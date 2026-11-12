@@ -1,6 +1,6 @@
 @extends('tenant.layouts.app')
 
-@section('title', 'Orders')
+@section('title', __('Orders'))
 
 @php
     // KPI icons (design); the Paid card has none in the design.
@@ -23,12 +23,12 @@
     <div class="od-page">
         <div class="db-welcome fu d0">
             <div class="db-welcome-copy">
-                <h1 class="db-welcome-title">Orders</h1>
-                <p class="db-welcome-sub">Track tenant orders, payment collection, fulfillment progress, and full order payload details from one queue.</p>
+                <h1 class="db-welcome-title">{{ __('Orders') }}</h1>
+                <p class="db-welcome-sub">{{ __('Track tenant orders, payment collection, fulfillment progress, and full order payload details from one queue.') }}</p>
             </div>
             <a id="orders-export-link" href="{{ route('tenant.orders.export') }}" class="btn btn-lg od-download">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 14.5V4.5M12 14.5c-.7 0-2-2-2.5-2.5M12 14.5c.7 0 2-2 2.5-2.5"/><path d="M20 16.5c0 2.48-.52 3-3 3H7c-2.48 0-3-.52-3-3"/></svg>
-                download report
+                {{ __('download report') }}
             </a>
         </div>
 
@@ -36,7 +36,7 @@
             @foreach($stats as $stat)
                 <div class="an-kpi">
                     <div class="an-kpi-body">
-                        <span class="an-kpi-label">{{ $stat['label'] }}</span>
+                        <span class="an-kpi-label">{{ __($stat['label']) }}</span>
                         <strong class="an-kpi-value">{{ $stat['value'] }}</strong>
                         @if(!empty($stat['caption']))<p class="an-kpi-caption">{{ rtrim($stat['caption'], '.') }}</p>@endif
                     </div>
@@ -59,17 +59,17 @@
                 :page-length="12"
                 :length-change="false"
                 :responsive="false"
-                title="Order Queue"
-                description=":count orders matched the current queue filters."
-                info-template="Show :count of :total result"
-                :language="['paginate' => ['previous' => $chevronLeft.' Previous', 'next' => 'Next '.$chevronRight]]"
-                search-placeholder="Search"
+                :title="__('Order Queue')"
+                :description="__(':count orders matched the current queue filters.')"
+                :info-template="__('Show :count of :total result')"
+                :language="['paginate' => ['previous' => $chevronLeft.' '.__('Previous'), 'next' => __('Next').' '.$chevronRight]]"
+                :search-placeholder="__('Search')"
                 quick-search
             >
                 <x-slot:toolbar>
                     {{-- Filter button: opens the status filter (same filters as before, applied live). --}}
-                    <x-tenant::filters-card target="orders-table" title="Filters" export-link="#orders-export-link">
-                        <x-tenant::select2 name="status" label="Status" :options="$statusOptions" placeholder="All" />
+                    <x-tenant::filters-card target="orders-table" :title="__('Filters')" export-link="#orders-export-link">
+                        <x-tenant::select2 name="status" :label="__('Status')" :options="$statusOptions" :placeholder="__('All')" />
                     </x-tenant::filters-card>
                 </x-slot:toolbar>
             </x-tenant::datatable>

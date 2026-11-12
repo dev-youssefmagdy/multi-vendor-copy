@@ -12,9 +12,9 @@ class CouponsIndexPage extends TenantPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Coupons',
-            'badge' => 'Storefront',
-            'description' => 'Manage discount codes per country, or set default coupons usable everywhere.',
+            'title' => __('Coupons'),
+            'badge' => __('Storefront'),
+            'description' => __('Manage discount codes per country, or set default coupons usable everywhere.'),
         ];
     }
 

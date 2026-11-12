@@ -24,23 +24,23 @@ final class PayoutsController extends PanelController
     {
         $stats = $this->repo->payoutStats();
 
-        $statusOptions = ['' => 'All Statuses'] + collect($stats['statuses'])
-            ->mapWithKeys(fn (string $status) => [$status => ucwords($status)])
+        $statusOptions = ['' => __('All Statuses')] + collect($stats['statuses'])
+            ->mapWithKeys(fn (string $status) => [$status => __(ucwords($status))])
             ->all();
 
         return view('tenant.pages.finance.payouts.index', [
             'stats' => Metric::cards([
-                ['label' => 'Total Payouts', 'value' => $stats['total'], 'format' => 'number', 'caption' => 'Payouts received from central.', 'dot' => 'dot-cyan'],
-                ['label' => 'Total Received', 'value' => $stats['total_received'], 'format' => 'currency', 'caption' => 'Cumulative amount received from central.', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'This Month', 'value' => $stats['this_month'], 'format' => 'currency', 'caption' => 'Payouts received this calendar month.', 'dot' => 'dot-cyan'],
+                ['label' => __('Total Payouts'), 'value' => $stats['total'], 'format' => 'number', 'caption' => __('Payouts received from central.'), 'dot' => 'dot-cyan'],
+                ['label' => __('Total Received'), 'value' => $stats['total_received'], 'format' => 'currency', 'caption' => __('Cumulative amount received from central.'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('This Month'), 'value' => $stats['this_month'], 'format' => 'currency', 'caption' => __('Payouts received this calendar month.'), 'dot' => 'dot-cyan'],
             ]),
             'statusOptions' => $statusOptions,
             'columns' => [
-                TableColumn::make('invoice_number', 'Invoice')->orderable(false),
-                TableColumn::make('method', 'Method')->orderable(false)->searchable(false),
-                TableColumn::make('amount', 'Amount')->orderable(false)->searchable(false),
-                TableColumn::make('status', 'Status')->orderable(false)->searchable(false),
-                TableColumn::make('paid_at', 'Paid At')->orderable(false)->searchable(false),
+                TableColumn::make('invoice_number', __('Invoice'))->orderable(false),
+                TableColumn::make('method', __('Method'))->orderable(false)->searchable(false),
+                TableColumn::make('amount', __('Amount'))->orderable(false)->searchable(false),
+                TableColumn::make('status', __('Status'))->orderable(false)->searchable(false),
+                TableColumn::make('paid_at', __('Paid At'))->orderable(false)->searchable(false),
             ],
         ]);
     }
@@ -53,7 +53,7 @@ final class PayoutsController extends PanelController
 
         return DataTables::eloquent($query)
             ->editColumn('invoice_number', fn (TenantPayout $p) => view('tenant.pages.finance.payouts._cols.invoice', ['record' => $p])->render())
-            ->editColumn('method', fn (TenantPayout $p) => '<div class="entity-title">' . e(ucwords(str_replace('_', ' ', $p->method ?? '—'))) . '</div>')
+            ->editColumn('method', fn (TenantPayout $p) => '<div class="entity-title">' . e(__(ucwords(str_replace('_', ' ', $p->method ?? '—')))) . '</div>')
             ->editColumn('amount', fn (TenantPayout $p) => '<strong>$' . number_format((float) $p->amount, 2) . '</strong>')
             ->editColumn('status', fn (TenantPayout $p) => view('tenant.pages.finance.payouts._cols.status', ['record' => $p])->render())
             ->editColumn('paid_at', fn (TenantPayout $p) => view('tenant.pages.finance.payouts._cols.paid-at', ['record' => $p])->render())

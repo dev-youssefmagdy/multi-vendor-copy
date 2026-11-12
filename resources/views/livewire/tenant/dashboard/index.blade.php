@@ -23,11 +23,10 @@
   <div class="page-head fu d0">
     <div>
       <div class="page-title-row">
-        <h1 class="D page-title">Vendor Dashboard</h1>
-        <span class="page-badge">Tenant Workspace</span>
+        <h1 class="D page-title">{{ __('Vendor Dashboard') }}</h1>
+        <span class="page-badge">{{ __('Tenant Workspace') }}</span>
       </div>
-      <p class="page-copy">Track store performance, tenant billing health, customer growth, shipping capture, and
-        product profitability from the current tenant database.</p>
+      <p class="page-copy">{{ __('Track store performance, tenant billing health, customer growth, shipping capture, and product profitability from the current tenant database.') }}</p>
     </div>
   </div>
 
@@ -36,12 +35,12 @@
       <div class="card {{ $card['glow'] ?? '' }}">
         <div class="stat-head">
           <div>
-            <div class="eyebrow">{{ $card['label'] }}</div>
+            <div class="eyebrow">{{ __($card['label']) }}</div>
             <div class="D stat-value">{{ $formatCardValue($card) }}</div>
           </div>
           <div class="mini-stat-dot {{ $card['dot'] ?? 'dot-cyan' }}"></div>
         </div>
-        <p class="panel-copy">{{ $card['caption'] }}</p>
+        <p class="panel-copy">{{ __($card['caption']) }}</p>
       </div>
     @endforeach
   </div>
@@ -50,8 +49,8 @@
     <section class="card fu d2">
       <div class="chart-head chart-head-wrap">
         <div>
-          <h3 class="D section-title">Sales vs Collection</h3>
-          <p class="section-copy">Gross sales and collected sales by month for the tenant.</p>
+          <h3 class="D section-title">{{ __('Sales vs Collection') }}</h3>
+          <p class="section-copy">{{ __('Gross sales and collected sales by month for the tenant.') }}</p>
         </div>
       </div>
       <canvas id="revenueChart"></canvas>
@@ -59,8 +58,8 @@
 
     <section class="card fu d3">
       <div class="section-stack-lg">
-        <h3 class="D section-title">Order Status Mix</h3>
-        <p class="section-copy">Current distribution of tenant order statuses.</p>
+        <h3 class="D section-title">{{ __('Order Status Mix') }}</h3>
+        <p class="section-copy">{{ __('Current distribution of tenant order statuses.') }}</p>
       </div>
       <div class="donut-wrap"><canvas id="donutChart"></canvas></div>
       <div class="legend-list">
@@ -68,7 +67,7 @@
           <div class="legend-row">
             <div class="legend-meta">
               <span class="dot {{ ['dot-cyan', 'dot-violet', 'dot-green', 'dot-amber'][$index % 4] }}"></span>
-              <span class="text-t2">{{ $row['label'] }}</span>
+              <span class="text-t2">{{ __($row['label']) }}</span>
             </div>
             <span class="legend-value">{{ number_format($row['count']) }}</span>
           </div>
@@ -81,8 +80,8 @@
     <section class="card fu d2">
       <div class="panel-head">
         <div>
-          <h3 class="D panel-title">Shipping Capture</h3>
-          <p class="panel-copy">Monthly shipping revenue captured from tenant orders.</p>
+          <h3 class="D panel-title">{{ __('Shipping Capture') }}</h3>
+          <p class="panel-copy">{{ __('Monthly shipping revenue captured from tenant orders.') }}</p>
         </div>
       </div>
       <canvas id="barChart"></canvas>
@@ -91,8 +90,8 @@
     <section class="card fu d3">
       <div class="panel-head">
         <div>
-          <h3 class="D panel-title">Customer Momentum</h3>
-          <p class="panel-copy">New customers compared with repeat buying activity.</p>
+          <h3 class="D panel-title">{{ __('Customer Momentum') }}</h3>
+          <p class="panel-copy">{{ __('New customers compared with repeat buying activity.') }}</p>
         </div>
       </div>
       <canvas id="lineChart"></canvas>
@@ -101,8 +100,8 @@
     <section class="card fu d4">
       <div class="panel-head">
         <div>
-          <h3 class="D panel-title">Performance Radar</h3>
-          <p class="panel-copy">Operational score snapshot across sales, catalog, and subscriptions.</p>
+          <h3 class="D panel-title">{{ __('Performance Radar') }}</h3>
+          <p class="panel-copy">{{ __('Operational score snapshot across sales, catalog, and subscriptions.') }}</p>
         </div>
       </div>
       <canvas id="radarChart"></canvas>
@@ -113,18 +112,18 @@
     <section class="card table-card-shell">
       <div class="table-header-shell">
         <div>
-          <h3 class="panel-title">Latest Orders</h3>
-          <p class="panel-copy">Most recent order activity in the tenant storefront.</p>
+          <h3 class="panel-title">{{ __('Latest Orders') }}</h3>
+          <p class="panel-copy">{{ __('Most recent order activity in the tenant storefront.') }}</p>
         </div>
       </div>
-      <x-table :headers="['Order', 'Customer', 'Total', 'Gateway', 'Created']">
+      <x-table :headers="[__('Order'), __('Customer'), __('Total'), __('Gateway'), __('Created')]">
         @forelse ($latestOrders as $order)
           <tr>
             <td>{{ $order->uuid }}</td>
-            <td>{{ $order->customer?->full_name ?? 'Guest' }}</td>
+            <td>{{ $order->customer?->full_name ?? __('Guest') }}</td>
             <td>${{ number_format((float) $order->grand_total, 2) }}</td>
             <td>
-              {{ $order->paymentGateway?->name ?? str((string) $order->payment_method)->replace(['_', '-'], ' ')->headline()->toString() }}
+              {{ $order->paymentGateway?->name ?? __((string) str((string) $order->payment_method)->replace(['_', '-'], ' ')->headline()) }}
             </td>
             <td>{{ $order->created_at?->format('M d, Y H:i') }}</td>
           </tr>
@@ -132,8 +131,8 @@
           <tr>
             <td colspan="5">
               <div class="empty-state">
-                <div class="empty-state-title">No order activity yet</div>
-                <p class="empty-state-copy">Tenant order data will appear here as soon as storefront orders are created.
+                <div class="empty-state-title">{{ __('No order activity yet') }}</div>
+                <p class="empty-state-copy">{{ __('Tenant order data will appear here as soon as storefront orders are created.') }}
                 </p>
               </div>
             </td>
@@ -145,11 +144,11 @@
     <section class="card table-card-shell">
       <div class="table-header-shell">
         <div>
-          <h3 class="panel-title">Top Customers</h3>
-          <p class="panel-copy">Highest lifetime spend customers in the current tenant.</p>
+          <h3 class="panel-title">{{ __('Top Customers') }}</h3>
+          <p class="panel-copy">{{ __('Highest lifetime spend customers in the current tenant.') }}</p>
         </div>
       </div>
-      <x-table :headers="['Customer', 'Orders', 'Total Spend', 'Last Order']">
+      <x-table :headers="[__('Customer'), __('Orders'), __('Total Spend'), __('Last Order')]">
         @forelse ($topCustomers as $row)
           <tr>
             <td>
@@ -158,14 +157,14 @@
             </td>
             <td>{{ $row['orders'] }}</td>
             <td>${{ number_format((float) $row['total'], 2) }}</td>
-            <td>{{ optional($row['last_order'])->format('M d, Y') ?? 'N/A' }}</td>
+            <td>{{ optional($row['last_order'])->format('M d, Y') ?? __('N/A') }}</td>
           </tr>
         @empty
           <tr>
             <td colspan="4">
               <div class="empty-state">
-                <div class="empty-state-title">No customer order history yet</div>
-                <p class="empty-state-copy">Top customers appear once the tenant has customer orders.</p>
+                <div class="empty-state-title">{{ __('No customer order history yet') }}</div>
+                <p class="empty-state-copy">{{ __('Top customers appear once the tenant has customer orders.') }}</p>
               </div>
             </td>
           </tr>
@@ -177,11 +176,11 @@
   <section class="card table-card-shell section-gap">
     <div class="table-header-shell">
       <div>
-        <h3 class="panel-title">Top Products</h3>
-        <p class="panel-copy">Most profitable tracked items based on realized revenue and cost.</p>
+        <h3 class="panel-title">{{ __('Top Products') }}</h3>
+        <p class="panel-copy">{{ __('Most profitable tracked items based on realized revenue and cost.') }}</p>
       </div>
     </div>
-    <x-table :headers="['Product', 'Units', 'Revenue', 'Gross Profit', 'Margin']">
+    <x-table :headers="[__('Product'), __('Units'), __('Revenue'), __('Gross Profit'), __('Margin')]">
       @forelse ($topProducts as $row)
         <tr>
           <td>{{ $row['name'] }}</td>
@@ -194,9 +193,8 @@
         <tr>
           <td colspan="5">
             <div class="empty-state">
-              <div class="empty-state-title">No profitability data yet</div>
-              <p class="empty-state-copy">Product profitability will populate as soon as tenant orders include tracked
-                items.</p>
+              <div class="empty-state-title">{{ __('No profitability data yet') }}</div>
+              <p class="empty-state-copy">{{ __('Product profitability will populate as soon as tenant orders include tracked items.') }}</p>
             </div>
           </td>
         </tr>

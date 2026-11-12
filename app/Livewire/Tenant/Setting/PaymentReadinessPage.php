@@ -18,9 +18,9 @@ class PaymentReadinessPage extends TenantPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Payment Readiness',
-            'badge' => 'Settings',
-            'description' => 'Check whether your payment setup is ready to accept orders globally.',
+            'title' => __('Payment Readiness'),
+            'badge' => __('Settings'),
+            'description' => __('Check whether your payment setup is ready to accept orders globally.'),
         ];
     }
 

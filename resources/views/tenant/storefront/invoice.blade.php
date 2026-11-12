@@ -488,7 +488,7 @@
                         <img src="{{ $logo['image_url'] }}" alt="{{ $storeName }}">
                     @else
                         <span class="logo-text"
-                            style="font-family:{{ $logo['font_family'] }};color:{{ $logo['color'] }}">{{ $logo['text'] }}</span>
+                            style="font-family:{{ $logo['font_family'] }};color:{{ $logo['color'] }}">{{ __($logo['text']) }}</span>
                     @endif
                 </div>
                 <div class="store-name">{{ $storeName }}</div>

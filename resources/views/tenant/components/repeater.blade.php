@@ -3,7 +3,7 @@
     'min' => 0,
     'max' => null,
     'sortable' => false,
-    'addLabel' => 'Add row',
+    'addLabel' => __('Add row'),
     'items' => [],
     'indexToken' => '__INDEX__',
 ])

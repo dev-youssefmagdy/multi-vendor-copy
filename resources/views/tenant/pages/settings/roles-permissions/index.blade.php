@@ -1,22 +1,22 @@
 @extends('tenant.layouts.app')
 
-@section('title', 'Roles & Permissions')
+@section('title', __('Roles & Permissions'))
 
 @section('content')
-    <x-tenant::page-header title="Roles & Permissions" badge="Tenant Access Matrix" description="Manage tenant-local role definitions and the permission slugs assigned to vendor admins.">
+    <x-tenant::page-header :title="__('Roles & Permissions')" :badge="__('Tenant Access Matrix')" :description="__('Manage tenant-local role definitions and the permission slugs assigned to vendor admins.')">
         <x-slot:actions>
-            <button type="button" class="btn btn-primary" data-modal-open="role-modal">Add Role</button>
+            <button type="button" class="btn btn-primary" data-modal-open="role-modal">{{ __('Add Role') }}</button>
         </x-slot:actions>
     </x-tenant::page-header>
 
     <x-tenant::stats-grid :stats="$stats" />
 
-    <x-tenant::datatable id="roles-table" :url="route('tenant.settings.roles-permissions.data')" :columns="$columns" title="Tenant Roles & Permission Sets" quick-search search-placeholder="Role name" />
+    <x-tenant::datatable id="roles-table" :url="route('tenant.settings.roles-permissions.data')" :columns="$columns" :title="__('Tenant Roles & Permission Sets')" quick-search :search-placeholder="__('Role name')" />
 
-    <x-tenant::modal id="role-modal" title="Add / Edit Role" size="lg">
+    <x-tenant::modal id="role-modal" :title="__('Add / Edit Role')" size="lg">
         <x-tenant::form id="role-form" :action="route('tenant.settings.roles-permissions.store')" method="POST" :validate="route('tenant.settings.roles-permissions.validate')" success="close-modal reload-table:#roles-table">
             <div class="form-grid form-grid-2">
-                <x-tenant::input name="name" label="Role Name" required maxlength="255" wrapper-class="span-2" />
+                <x-tenant::input name="name" :label="__('Role Name')" required maxlength="255" wrapper-class="span-2" />
 
                 @foreach($permissionGroups as $group)
                     <x-tenant::checkbox-group
@@ -30,8 +30,8 @@
             </div>
 
             <div class="page-actions compact-actions justify-end">
-                <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
-                <button type="submit" class="btn btn-primary">Save Role</button>
+                <button type="button" class="btn btn-secondary" data-modal-close>{{ __('Cancel') }}</button>
+                <button type="submit" class="btn btn-primary">{{ __('Save Role') }}</button>
             </div>
         </x-tenant::form>
     </x-tenant::modal>

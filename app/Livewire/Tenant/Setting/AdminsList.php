@@ -29,12 +29,12 @@ class AdminsList extends ListPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Tenant Admins',
-            'badge' => 'Tenant Access',
-            'description' => 'Manage vendor workspace administrators, role assignments, and access state inside this tenant.',
-            'actionLabel' => 'Add Tenant Admin',
-            'tableTitle' => 'Tenant Admin Users',
-            'headers' => ['Admin', 'Email', 'Role', 'Status', 'Last Login', 'Actions'],
+            'title' => __('Tenant Admins'),
+            'badge' => __('Tenant Access'),
+            'description' => __('Manage vendor workspace administrators, role assignments, and access state inside this tenant.'),
+            'actionLabel' => __('Add Tenant Admin'),
+            'tableTitle' => __('Tenant Admin Users'),
+            'headers' => [__('Admin'), __('Email'), __('Role'), __('Status'), __('Last Login'), __('Actions')],
         ];
     }
 
@@ -51,36 +51,36 @@ class AdminsList extends ListPage
             'actionMethod' => 'openCreateModal',
             'records' => $records,
             'filterFields' => [
-                ['label' => 'Search', 'model' => 'search', 'placeholder' => 'Name or email'],
-                ['label' => 'Status', 'model' => 'statusFilter', 'type' => 'select', 'options' => ['' => 'All statuses', 'active' => 'Active', 'inactive' => 'Inactive']],
+                ['label' => __('Search'), 'model' => 'search', 'placeholder' => __('Name or email')],
+                ['label' => __('Status'), 'model' => 'statusFilter', 'type' => 'select', 'options' => ['' => __('All statuses'), 'active' => __('Active'), 'inactive' => __('Inactive')]],
             ],
             'statistics' => [
-                ['label' => 'Admins', 'value' => number_format($stats['total']), 'caption' => 'Tenant admin accounts', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
-                ['label' => 'Active', 'value' => number_format($stats['active']), 'caption' => 'Currently enabled tenant admins', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Roles', 'value' => number_format($stats['roles']), 'caption' => 'Available tenant role definitions', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Admins'), 'value' => number_format($stats['total']), 'caption' => __('Tenant admin accounts'), 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
+                ['label' => __('Active'), 'value' => number_format($stats['active']), 'caption' => __('Currently enabled tenant admins'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Roles'), 'value' => number_format($stats['roles']), 'caption' => __('Available tenant role definitions'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
             ],
             'rows' => collect($records->items())->map(fn (AdminUser $admin) => [
                 '<div class="entity-title">'.e($admin->name).'</div><div class="entity-subtitle">'.e($admin->email).'</div>',
                 e($admin->email),
-                e($admin->role?->name ?? 'No role'),
-                '<span class="badge '.($admin->status === ActivationStatus::Active ? 'badge-green' : 'badge-amber').'">'.e($admin->status->label()).'</span>',
-                e($admin->last_login_at?->diffForHumans() ?? 'Never'),
-                '<div class="flex gap-2 flex-wrap"><button type="button" class="btn btn-secondary btn-sm" wire:click="editAdmin('.$admin->id.')">Edit</button>'.($admin->status === ActivationStatus::Active ? '<button type="button" class="btn btn-secondary btn-sm" wire:click="deactivateAdmin('.$admin->id.')">Disable</button>' : '<button type="button" class="btn btn-secondary btn-sm" wire:click="activateAdmin('.$admin->id.')">Enable</button>').'<button type="button" class="btn btn-secondary btn-sm" wire:click="confirmDelete('.$admin->id.')">Delete</button></div>',
+                e($admin->role?->name ?? __('No role')),
+                '<span class="badge '.($admin->status === ActivationStatus::Active ? 'badge-green' : 'badge-amber').'">'.e(__($admin->status->label())).'</span>',
+                e($admin->last_login_at?->diffForHumans() ?? __('Never')),
+                '<div class="flex gap-2 flex-wrap"><button type="button" class="btn btn-secondary btn-sm" wire:click="editAdmin('.$admin->id.')">' . e(__('Edit')) . '</button>'.($admin->status === ActivationStatus::Active ? '<button type="button" class="btn btn-secondary btn-sm" wire:click="deactivateAdmin('.$admin->id.')">' . e(__('Disable')) . '</button>' : '<button type="button" class="btn btn-secondary btn-sm" wire:click="activateAdmin('.$admin->id.')">' . e(__('Enable')) . '</button>').'<button type="button" class="btn btn-secondary btn-sm" wire:click="confirmDelete('.$admin->id.')">' . e(__('Delete')) . '</button></div>',
             ])->all(),
             'tableDescription' => $records->total().' tenant admin users matched the current access filters.',
             'modalModel' => 'showFormModal',
-            'modalTitle' => $this->adminId ? 'Edit Tenant Admin' : 'Add Tenant Admin',
+            'modalTitle' => $this->adminId ? __('Edit Tenant Admin') : __('Add Tenant Admin'),
             'modalCloseAction' => 'closeModal',
             'modalSubmitAction' => 'save',
-            'modalSubmitLabel' => $this->adminId ? 'Update Admin' : 'Create Admin',
+            'modalSubmitLabel' => $this->adminId ? __('Update Admin') : __('Create Admin'),
             'modalFieldGroups' => [[
                 'gridClass' => 'form-grid-2',
                 'fields' => [
-                    ['label' => 'Name', 'model' => 'name', 'wrapperClass' => 'span-2'],
-                    ['label' => 'Email', 'model' => 'email', 'type' => 'email', 'wrapperClass' => 'span-2'],
-                    ['label' => 'Role', 'model' => 'roleId', 'wrapperClass' => 'span-2', 'type' => 'select', 'options' => ['' => 'No role'] + $repository->roleOptions()],
-                    ['label' => 'Status', 'model' => 'status', 'wrapperClass' => 'span-2', 'type' => 'select', 'options' => ['active' => 'Active', 'inactive' => 'Inactive']],
-                    ['label' => 'Password', 'model' => 'password', 'type' => 'password', 'wrapperClass' => 'span-2'],
+                    ['label' => __('Name'), 'model' => 'name', 'wrapperClass' => 'span-2'],
+                    ['label' => __('Email'), 'model' => 'email', 'type' => 'email', 'wrapperClass' => 'span-2'],
+                    ['label' => __('Role'), 'model' => 'roleId', 'wrapperClass' => 'span-2', 'type' => 'select', 'options' => ['' => __('No role')] + $repository->roleOptions()],
+                    ['label' => __('Status'), 'model' => 'status', 'wrapperClass' => 'span-2', 'type' => 'select', 'options' => ['active' => __('Active'), 'inactive' => __('Inactive')]],
+                    ['label' => __('Password'), 'model' => 'password', 'type' => 'password', 'wrapperClass' => 'span-2'],
                 ],
             ]],
         ]);
@@ -132,7 +132,7 @@ class AdminsList extends ListPage
 
         $this->closeModal();
         $this->resetForm();
-        $this->toast($adminId ? 'Tenant admin updated successfully.' : 'Tenant admin created successfully.');
+        $this->toast($adminId ? __('Tenant admin updated successfully.') : __('Tenant admin created successfully.'));
         $this->resetPage();
     }
 
@@ -148,7 +148,7 @@ class AdminsList extends ListPage
             'last_login_at' => $admin->last_login_at,
         ], $admin);
 
-        $this->toast('Tenant admin enabled successfully.');
+        $this->toast(__('Tenant admin enabled successfully.'));
     }
 
     public function deactivateAdmin(int $adminId, TenantPanelService $service): void
@@ -163,34 +163,34 @@ class AdminsList extends ListPage
             'last_login_at' => $admin->last_login_at,
         ], $admin);
 
-        $this->toast('Tenant admin disabled successfully.');
+        $this->toast(__('Tenant admin disabled successfully.'));
     }
 
     public function confirmDelete(int $adminId): void
     {
         if ((int) auth('tenant')->id() === $adminId) {
-            $this->toast('You cannot delete the currently signed-in tenant admin.', 'warning');
+            $this->toast(__('You cannot delete the currently signed-in tenant admin.'), 'warning');
 
             return;
         }
 
         $this->confirmAction('deleteAdmin', [$adminId], [
-            'title' => 'Delete tenant admin?',
-            'text' => 'This tenant admin record will be removed from this workspace.',
-            'confirmButtonText' => 'Delete admin',
+            'title' => __('Delete tenant admin?'),
+            'text' => __('This tenant admin record will be removed from this workspace.'),
+            'confirmButtonText' => __('Delete admin'),
         ]);
     }
 
     public function deleteAdmin(int $adminId, TenantPanelService $service): void
     {
         if ((int) auth('tenant')->id() === $adminId) {
-            $this->toast('You cannot delete the currently signed-in tenant admin.', 'warning');
+            $this->toast(__('You cannot delete the currently signed-in tenant admin.'), 'warning');
 
             return;
         }
 
         $service->deleteModel(AdminUser::query()->findOrFail($adminId));
-        $this->toast('Tenant admin deleted successfully.');
+        $this->toast(__('Tenant admin deleted successfully.'));
         $this->resetPage();
     }
 

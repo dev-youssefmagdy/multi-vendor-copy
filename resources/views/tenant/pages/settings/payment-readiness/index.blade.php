@@ -1,11 +1,11 @@
 @extends('tenant.layouts.app')
 
-@section('title', 'Payment Readiness')
+@section('title', __('Payment Readiness'))
 
 @section('content')
-    <x-tenant::page-header title="Payment Readiness" badge="Settings" description="A real-time checklist of your payment gateway setup — see exactly what's ready and what needs attention before you sell globally.">
+    <x-tenant::page-header :title="__('Payment Readiness')" :badge="__('Settings')" :description="__('A real-time checklist of your payment gateway setup — see exactly what\'s ready and what needs attention before you sell globally.')">
         <x-slot:actions>
-            <a href="{{ route('tenant.settings.payment-gateways') }}" class="btn btn-secondary">Manage Gateways</a>
+            <a href="{{ route('tenant.settings.payment-gateways') }}" class="btn btn-secondary">{{ __('Manage Gateways') }}</a>
         </x-slot:actions>
     </x-tenant::page-header>
 
@@ -27,23 +27,23 @@
         </div>
 
         <div style="flex:1;min-width:200px;">
-            <div class="entity-title" style="font-size:17px;margin-bottom:6px;">{{ $report['score'] }} of {{ $report['max_score'] }} checks passed</div>
+            <div class="entity-title" style="font-size:17px;margin-bottom:6px;">{{ __(':score of :maxscore checks passed', ['score' => $report['score'], 'maxscore' => $report['max_score']]) }}</div>
             <p class="panel-copy" style="margin-bottom:12px;">
-                {{ $report['active_gateways'] }} gateway(s) active, {{ $report['connected_gateways'] }} verified.
+                {{ __(':activegateways gateway(s) active, :connectedgateways verified.', ['activegateways' => $report['active_gateways'], 'connectedgateways' => $report['connected_gateways']]) }}
                 @if($report['score'] === $report['max_score'])
-                    Your store is fully ready to accept payments.
+                    {{ __('Your store is fully ready to accept payments.') }}
                 @else
-                    Complete the checks below to ensure customers can pay.
+                    {{ __('Complete the checks below to ensure customers can pay.') }}
                 @endif
             </p>
 
             <div class="t-readiness-chips">
                 @foreach([
-                    ['label' => 'Card', 'ok' => $report['supports_card']],
-                    ['label' => 'Apple Pay', 'ok' => $report['supports_apple_pay']],
-                    ['label' => 'Google Pay', 'ok' => $report['supports_google_pay']],
-                    ['label' => 'International', 'ok' => $report['supports_international']],
-                    ['label' => 'Wallets', 'ok' => $report['supports_wallets']],
+                    ['label' => __('Card'), 'ok' => $report['supports_card']],
+                    ['label' => __('Apple Pay'), 'ok' => $report['supports_apple_pay']],
+                    ['label' => __('Google Pay'), 'ok' => $report['supports_google_pay']],
+                    ['label' => __('International'), 'ok' => $report['supports_international']],
+                    ['label' => __('Wallets'), 'ok' => $report['supports_wallets']],
                 ] as $cap)
                     <span class="t-readiness-chip {{ $cap['ok'] ? 'is-ok' : 'is-pending' }}">
                         @if($cap['ok'])
@@ -51,7 +51,7 @@
                         @else
                             <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
                         @endif
-                        {{ $cap['label'] }}
+                        {{ __($cap['label']) }}
                     </span>
                 @endforeach
             </div>
@@ -59,7 +59,7 @@
     </section>
 
     <section class="card fu d2 section-gap" style="padding:24px 28px;">
-        <h3 class="panel-title" style="margin-bottom:16px;">Readiness Checklist</h3>
+        <h3 class="panel-title" style="margin-bottom:16px;">{{ __('Readiness Checklist') }}</h3>
         <div class="t-readiness-checklist">
             @foreach($report['checks'] as $check)
                 <div class="t-readiness-check {{ $check['passed'] ? 'is-passed' : 'is-pending' }}">
@@ -71,8 +71,8 @@
                         @endif
                     </div>
                     <div class="t-readiness-check-body">
-                        <div class="t-readiness-check-title">{{ $check['label'] }}</div>
-                        <div class="panel-copy">{{ $check['detail'] }}</div>
+                        <div class="t-readiness-check-title">{{ __($check['label']) }}</div>
+                        <div class="panel-copy">{{ __($check['detail']) }}</div>
                     </div>
                 </div>
             @endforeach
@@ -81,7 +81,7 @@
 
     <div class="g-stats2 section-gap">
         <section class="card fu d3" style="padding:20px 24px;">
-            <h3 class="panel-title" style="margin-bottom:12px;">Supported Currencies</h3>
+            <h3 class="panel-title" style="margin-bottom:12px;">{{ __('Supported Currencies') }}</h3>
             @if(!empty($report['supported_currencies']))
                 <div class="t-readiness-tag-group">
                     @foreach($report['supported_currencies'] as $currency)
@@ -89,20 +89,20 @@
                     @endforeach
                 </div>
             @else
-                <p class="panel-copy">No gateways active yet.</p>
+                <p class="panel-copy">{{ __('No gateways active yet.') }}</p>
             @endif
         </section>
 
         <section class="card fu d4" style="padding:20px 24px;">
-            <h3 class="panel-title" style="margin-bottom:12px;">Target Country Coverage</h3>
+            <h3 class="panel-title" style="margin-bottom:12px;">{{ __('Target Country Coverage') }}</h3>
             @if(empty($report['target_countries']))
                 <p class="panel-copy">
-                    You haven't set target countries yet.
-                    <a href="{{ route('tenant.settings.general') }}" class="link">Request target countries →</a>
+                    {{ __('You haven\'t set target countries yet.') }}
+                    <a href="{{ route('tenant.settings.general') }}" class="link">{{ __('Request target countries →') }}</a>
                 </p>
             @else
                 @if(!empty($report['covered_countries']))
-                    <p class="panel-copy" style="margin-bottom:8px;color:#15803d;font-weight:600;">✓ Covered ({{ count($report['covered_countries']) }})</p>
+                    <p class="panel-copy" style="margin-bottom:8px;color:#15803d;font-weight:600;">{{ __('✓ Covered (:coveredcountriesCount)', ['coveredcountriesCount' => count($report['covered_countries'])]) }}</p>
                     <div class="t-readiness-tag-group" style="margin-bottom:12px;">
                         @foreach($report['covered_countries'] as $iso)
                             <span class="t-readiness-tag is-covered">{{ $iso }}</span>
@@ -110,7 +110,7 @@
                     </div>
                 @endif
                 @if(!empty($report['uncovered_countries']))
-                    <p class="panel-copy" style="margin-bottom:8px;color:#b45309;font-weight:600;">✗ Not covered ({{ count($report['uncovered_countries']) }})</p>
+                    <p class="panel-copy" style="margin-bottom:8px;color:#b45309;font-weight:600;">{{ __('✗ Not covered (:uncoveredcountriesCount)', ['uncoveredcountriesCount' => count($report['uncovered_countries'])]) }}</p>
                     <div class="t-readiness-tag-group">
                         @foreach($report['uncovered_countries'] as $iso)
                             <span class="t-readiness-tag is-uncovered">{{ $iso }}</span>
@@ -123,13 +123,13 @@
 
     @if(!empty($report['recommendations']))
         <section class="card fu d5 section-gap" style="padding:20px 24px;">
-            <h3 class="panel-title" style="margin-bottom:4px;">Recommended Gateways for Your Target Markets</h3>
-            <p class="panel-copy" style="margin-bottom:14px;">Based on your target countries, these gateways would maximize your customer coverage.</p>
+            <h3 class="panel-title" style="margin-bottom:4px;">{{ __('Recommended Gateways for Your Target Markets') }}</h3>
+            <p class="panel-copy" style="margin-bottom:14px;">{{ __('Based on your target countries, these gateways would maximize your customer coverage.') }}</p>
             <div class="t-recommendation-grid">
                 @foreach($report['recommendations'] as $rec)
                     <div class="t-recommendation-card">
                         <div class="entity-title">{{ $rec['name'] }}</div>
-                        <div class="entity-subtitle" style="margin-bottom:8px;">Covers {{ $rec['score'] }} of your target countries</div>
+                        <div class="entity-subtitle" style="margin-bottom:8px;">{{ __('Covers :score of your target countries', ['score' => $rec['score']]) }}</div>
                         @if(!empty($rec['meta']['payment_methods']))
                             <x-payment-method-badges :methods="$rec['meta']['payment_methods']" size="xs" />
                         @endif

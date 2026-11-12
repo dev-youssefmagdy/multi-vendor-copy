@@ -6,9 +6,9 @@
     <span class="od-thumb od-thumb-empty rq-thumb" aria-hidden="true">{{ strtoupper(mb_substr((string) $request->title, 0, 1)) }}</span>
     <span class="rq-item-text">
         <span>
-            <span class="rq-name" title="#{{ $request->id }} · Submitted {{ $request->created_at->diffForHumans() }}">{{ $request->title }}</span>
+            <span class="rq-name" title="{{ __('#:id · Submitted :diffForHumans', ['id' => $request->id, 'diffForHumans' => $request->created_at->diffForHumans()]) }}">{{ $request->title }}</span>
             @if($request->tenant_has_unread)
-                <span class="rq-new">New reply</span>
+                <span class="rq-new">{{ __('New reply') }}</span>
             @endif
         </span>
         <span class="rq-id">#{{ $request->id }}</span>

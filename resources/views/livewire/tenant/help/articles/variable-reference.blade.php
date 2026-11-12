@@ -268,26 +268,23 @@
     ];
 @endphp
 
-<h2>Theme Variable Reference</h2>
+<h2>{{ __('Theme Variable Reference') }}</h2>
 <p>
-    Every variable available in each storefront page view, with type and shape — rendered as an
-    explorable tree. Click any row with a chevron to expand it and see the shape of that value.
-    All pages also receive the <a href="#shared">shared layout variables</a> below via the
-    platform's view composer — you don't need to pass these yourself.
+    {{ __('Every variable available in each storefront page view, with type and shape — rendered as an explorable tree. Click any row with a chevron to expand it and see the shape of that value. All pages also receive the') }} <a href="#shared">{{ __('shared layout variables') }}</a> {{ __('below via the platform\'s view composer — you don\'t need to pass these yourself.') }}
 </p>
 
 <div class="jt-legend">
     <span class="jt-type-badge jt-type-string">string</span>
-    <span class="jt-type-badge jt-type-number">int / float</span>
+    <span class="jt-type-badge jt-type-number">{{ __('int / float') }}</span>
     <span class="jt-type-badge jt-type-bool">bool</span>
-    <span class="jt-type-badge jt-type-collection">Collection</span>
-    <span class="jt-type-badge jt-type-model">Model / object</span>
-    <span class="jt-type-badge jt-type-method">method()</span>
+    <span class="jt-type-badge jt-type-collection">{{ __('Collection') }}</span>
+    <span class="jt-type-badge jt-type-model">{{ __('Model / object') }}</span>
+    <span class="jt-type-badge jt-type-method">{{ __('method()') }}</span>
     <span class="jt-type-badge jt-type-array">array</span>
     <span class="jt-type-badge jt-type-generic jt-nullable">nullable</span>
 </div>
 
-<h3 id="shared">Shared on every page <span class="docs-badge">layout + all pages</span></h3>
+<h3 id="shared">{{ __('Shared on every page') }} <span class="docs-badge">{{ __('layout + all pages') }}</span></h3>
 <div class="jt-panel">
     <x-json-tree :nodes="$sharedVars" />
 </div>
@@ -327,10 +324,8 @@
     <x-json-tree :nodes="$checkoutVars" />
 </div>
 <p><em>
-    Checkout fields use Livewire's dotted binding — form inputs use
-    <code>wire:model="data.shipping.name"</code> etc. if you keep it as a Livewire-driven page.
-    A pure Blade/JS checkout requires wiring your own POST submission — contact support if you
-    need a documented checkout POST endpoint outside Livewire.
+    {{ __('Checkout fields use Livewire\'s dotted binding — form inputs use') }}
+    <code>wire:model="data.shipping.name"</code> {{ __('etc. if you keep it as a Livewire-driven page. A pure Blade/JS checkout requires wiring your own POST submission — contact support if you need a documented checkout POST endpoint outside Livewire.') }}
 </em></p>
 
 <hr class="docs-hr">
@@ -356,28 +351,28 @@
 
 <hr class="docs-hr">
 
-<h3>order-status <code>pages/order-status.blade.php</code></h3>
+<h3>{{ __('order-status') }} <code>pages/order-status.blade.php</code></h3>
 <div class="jt-panel">
     <x-json-tree :nodes="$orderStatusVars" />
 </div>
 
 <hr class="docs-hr">
 
-<h3>order-tracking <code>pages/order-tracking.blade.php</code></h3>
+<h3>{{ __('order-tracking') }} <code>pages/order-tracking.blade.php</code></h3>
 <div class="jt-panel">
     <x-json-tree :nodes="$orderTrackingVars" />
 </div>
 
 <hr class="docs-hr">
 
-<h3>order-return <code>pages/order-return.blade.php</code></h3>
+<h3>{{ __('order-return') }} <code>pages/order-return.blade.php</code></h3>
 <div class="jt-panel">
     <x-json-tree :nodes="$orderReturnVars" />
 </div>
 
 <hr class="docs-hr">
 
-<h3>page <code>pages/page.blade.php</code> <span class="docs-badge">static CMS pages</span></h3>
+<h3>page <code>pages/page.blade.php</code> <span class="docs-badge">{{ __('static CMS pages') }}</span></h3>
 <div class="jt-panel">
     <x-json-tree :nodes="$pageVars" />
 </div>
@@ -392,7 +387,7 @@
 <hr class="docs-hr">
 
 <h3>404 <code>pages/404.blade.php</code></h3>
-<p>No page-specific variables — only the shared layout variables above.</p>
+<p>{{ __('No page-specific variables — only the shared layout variables above.') }}</p>
 
 <style>
 .docs-hr { border: none; border-top: 1px solid var(--border2); margin: 28px 0; }

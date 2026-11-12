@@ -45,7 +45,7 @@ final class SocialLinkController extends PanelController
     {
         $this->service->saveSocialLink($request->validated());
 
-        return $this->success('Social link saved successfully.');
+        return $this->success(__('Social link saved successfully.'));
     }
 
     public function validateStore(SaveSocialLinkRequest $request): JsonResponse
@@ -57,7 +57,7 @@ final class SocialLinkController extends PanelController
     {
         $this->service->saveSocialLink($request->validated(), $link);
 
-        return $this->success('Social link saved successfully.');
+        return $this->success(__('Social link saved successfully.'));
     }
 
     public function validateUpdate(SaveSocialLinkRequest $request, SocialLink $link): JsonResponse
@@ -69,6 +69,6 @@ final class SocialLinkController extends PanelController
     {
         $link->delete();
 
-        return $this->success('Social link deleted.');
+        return $this->success(__('Social link deleted.'));
     }
 }

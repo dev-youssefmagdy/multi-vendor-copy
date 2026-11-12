@@ -46,10 +46,10 @@ final class AiTranslationController extends PanelController
             'cards' => $cards,
             'presented' => $this->presenter->present($gateways),
             'columns' => [
-                TableColumn::make('language', 'Language')->orderable(false),
-                TableColumn::make('date', 'Date')->orderable(false),
-                TableColumn::make('amount', 'Amount')->orderable(false),
-                TableColumn::make('status', 'Status')->orderable(false),
+                TableColumn::make('language', __('Language'))->orderable(false),
+                TableColumn::make('date', __('Date'))->orderable(false),
+                TableColumn::make('amount', __('Amount'))->orderable(false),
+                TableColumn::make('status', __('Status'))->orderable(false),
             ],
         ]);
     }
@@ -60,9 +60,9 @@ final class AiTranslationController extends PanelController
 
         return DataTables::collection($history)
             ->addIndexColumn()
-            ->editColumn('language', fn (TenantAiTranslationPurchase $run) => e($run->language->name ?? 'Unknown'))
+            ->editColumn('language', fn (TenantAiTranslationPurchase $run) => e($run->language->name ?? __('Unknown')))
             ->editColumn('date', fn (TenantAiTranslationPurchase $run) => $run->created_at->format('M d, Y H:i'))
-            ->editColumn('amount', fn (TenantAiTranslationPurchase $run) => $run->amount > 0 ? '$' . number_format((float) $run->amount, 2) : 'Free')
+            ->editColumn('amount', fn (TenantAiTranslationPurchase $run) => $run->amount > 0 ? '$' . number_format((float) $run->amount, 2) : __('Free'))
             ->addColumn('status', fn (TenantAiTranslationPurchase $run) => view('tenant.pages.settings.ai-translation._cols.status', ['run' => $run])->render())
             ->rawColumns(['status'])
             ->toJson();
@@ -73,7 +73,7 @@ final class AiTranslationController extends PanelController
         $centralLanguage = CentralLanguage::query()->find($language);
 
         if (!$centralLanguage || !$this->service->isFree($centralLanguage) || !$this->service->canPurchase(tenant(), $centralLanguage)) {
-            throw new PanelActionException('This language requires payment or is not enabled on your plan.', 422);
+            throw new PanelActionException(__('This language requires payment or is not enabled on your plan.'), 422);
         }
 
         if (!$this->limitService->canPerform(tenant(), PlanLimitService::FEATURE_AI_CALLS)) {
@@ -97,7 +97,7 @@ final class AiTranslationController extends PanelController
             ->firstOrFail();
 
         if ((float) $centralLanguage->ai_translation_price <= 0) {
-            throw new PanelActionException('This language is free — no payment required.', 422);
+            throw new PanelActionException(__('This language is free — no payment required.'), 422);
         }
 
         if (!$this->limitService->canPerform(tenant(), PlanLimitService::FEATURE_AI_CALLS)) {
@@ -113,7 +113,7 @@ final class AiTranslationController extends PanelController
             ],
         ]);
 
-        return $this->success('Redirecting to payment…', redirect: route('tenant.ai-translation-purchase.charge', [
+        return $this->success(__('Redirecting to payment…'), redirect: route('tenant.ai-translation-purchase.charge', [
             'gateway' => $validated['gateway'],
             'languageId' => $centralLanguage->id,
         ]));

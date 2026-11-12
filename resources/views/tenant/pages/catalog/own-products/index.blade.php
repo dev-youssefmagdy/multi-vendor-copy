@@ -1,6 +1,6 @@
 @extends('tenant.layouts.app')
 
-@section('title', 'Own products')
+@section('title', __('Own products'))
 
 @php
     $page = $products->currentPage();
@@ -17,31 +17,31 @@
         {{-- Stat cards: mobile design only (hidden on larger screens, products-module.css). --}}
         <div class="op-stats fu d1">
             <div class="op-stat is-brand">
-                <span class="op-stat-label">Products</span>
+                <span class="op-stat-label">{{ __('Products') }}</span>
                 <strong class="op-stat-value">{{ number_format($ownProductStats['total']) }}</strong>
-                <span class="op-stat-caption">Products in this tenant catalog</span>
+                <span class="op-stat-caption">{{ __('Products in this tenant catalog') }}</span>
             </div>
             <div class="op-stat">
                 <div class="op-stat-body">
-                    <span class="op-stat-label">Active</span>
+                    <span class="op-stat-label">{{ __('Active') }}</span>
                     <strong class="op-stat-value">{{ number_format($ownProductStats['active']) }}</strong>
-                    <span class="op-stat-caption">Currently saleable products</span>
+                    <span class="op-stat-caption">{{ __('Currently saleable products') }}</span>
                 </div>
-                <span class="op-stat-live" aria-hidden="true"><i></i><b>Active</b></span>
+                <span class="op-stat-live" aria-hidden="true"><i></i><b>{{ __('Active') }}</b></span>
             </div>
             <div class="op-stat">
                 <div class="op-stat-body">
-                    <span class="op-stat-label">Featured</span>
+                    <span class="op-stat-label">{{ __('Featured') }}</span>
                     <strong class="op-stat-value">{{ number_format($ownProductStats['featured']) }}</strong>
-                    <span class="op-stat-caption">Homepage promoted products</span>
+                    <span class="op-stat-caption">{{ __('Homepage promoted products') }}</span>
                 </div>
             </div>
         </div>
 
         @if($products->total() === 0)
             <div class="pm-empty fu d1">
-                <h3>No own products yet</h3>
-                <p>Create your first product using the button above.</p>
+                <h3>{{ __('No own products yet') }}</h3>
+                <p>{{ __('Create your first product using the button above.') }}</p>
             </div>
         @else
             <div class="pm-grid fu d1">
@@ -50,13 +50,13 @@
                 @endforeach
             </div>
 
-            <nav class="tc-pagination" aria-label="Own products pages">
-                <p>Show <strong>{{ $products->count() }}</strong> of {{ $products->total() }} result</p>
+            <nav class="tc-pagination" aria-label="{{ __('Own products pages') }}">
+                <p>{{ __('Show') }} <strong>{{ $products->count() }}</strong> {{ __('of :total result', ['total' => $products->total()]) }}</p>
                 <div class="tc-pages">
                     @if($products->onFirstPage())
-                        <span class="tc-page-btn is-text is-disabled" aria-disabled="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg> Previous</span>
+                        <span class="tc-page-btn is-text is-disabled" aria-disabled="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg> {{ __('Previous') }}</span>
                     @else
-                        <a href="{{ $products->previousPageUrl() }}" class="tc-page-btn is-text" rel="prev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg> Previous</a>
+                        <a href="{{ $products->previousPageUrl() }}" class="tc-page-btn is-text" rel="prev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg> {{ __('Previous') }}</a>
                     @endif
 
                     @foreach($pages as $i => $n)
@@ -69,9 +69,9 @@
                     @endforeach
 
                     @if($products->hasMorePages())
-                        <a href="{{ $products->nextPageUrl() }}" class="tc-page-btn is-next" rel="next">Next <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+                        <a href="{{ $products->nextPageUrl() }}" class="tc-page-btn is-next" rel="next">{{ __('Next') }} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
                     @else
-                        <span class="tc-page-btn is-next is-disabled" aria-disabled="true">Next <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span>
+                        <span class="tc-page-btn is-next is-disabled" aria-disabled="true">{{ __('Next') }} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span>
                     @endif
                 </div>
             </nav>

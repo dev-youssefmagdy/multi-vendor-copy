@@ -60,13 +60,13 @@ class NotificationsController extends PanelController
     {
         TenantNotification::unread()->update(['is_read' => true]);
 
-        return $this->success('All notifications marked as read.');
+        return $this->success(__('All notifications marked as read.'));
     }
 
     public function markRead(int $id): JsonResponse
     {
         TenantNotification::find($id)?->markAsRead();
 
-        return $this->success('Notification marked as read.');
+        return $this->success(__('Notification marked as read.'));
     }
 }

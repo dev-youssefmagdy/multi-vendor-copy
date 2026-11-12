@@ -6,14 +6,14 @@
     'pageLength' => 10,
     'title' => null,
     'description' => null,
-    'emptyTitle' => 'No records found',
-    'emptyCopy' => 'No tenant records match the current filters yet.',
+    'emptyTitle' => __('No records found'),
+    'emptyCopy' => __('No tenant records match the current filters yet.'),
     'quickSearch' => false,
     'filters' => null,
     'selectable' => false,
     'bulkUrl' => null,
     'bulkMethod' => 'DELETE',
-    'bulkConfirm' => 'Delete the selected records?',
+    'bulkConfirm' => __('Delete the selected records?'),
     'rows' => null,
     'mode' => 'server',
     'paging' => true,
@@ -41,13 +41,13 @@
     $mobileCards ??= $design;
     $responsive ??= ! $mobileCards; // card rows need every column in the DOM
     $lengthChange ??= ! $design;
-    $searchPlaceholder ??= $design ? 'Search' : 'Quick search';
+    $searchPlaceholder ??= $design ? __('Search') : __('Quick search');
 
     if ($design) {
         $chevronLeft = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>';
         $chevronRight = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
-        $infoTemplate ??= 'Show :count of :total result';
-        $language ??= ['paginate' => ['previous' => $chevronLeft.' Previous', 'next' => 'Next '.$chevronRight]];
+        $infoTemplate ??= __('Show :count of :total result');
+        $language ??= ['paginate' => ['previous' => $chevronLeft.' '.__('Previous'), 'next' => __('Next').' '.$chevronRight]];
     }
 
     $columnsArray = array_map(fn ($col) => $col instanceof \App\Support\Tenant\TableColumn ? $col->toArray() : $col, $columns);
@@ -104,8 +104,8 @@
 
     @if($selectable)
         <div class="t-bulk-bar" data-bulk-bar hidden>
-            <span data-bulk-count>0 selected</span>
-            <button type="button" class="btn btn-danger btn-sm" data-bulk-action>Delete selected</button>
+            <span data-bulk-count>{{ __('0 selected') }}</span>
+            <button type="button" class="btn btn-danger btn-sm" data-bulk-action>{{ __('Delete selected') }}</button>
         </div>
     @endif
 

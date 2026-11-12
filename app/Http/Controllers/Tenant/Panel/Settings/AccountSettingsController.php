@@ -62,7 +62,7 @@ final class AccountSettingsController extends PanelController
             ? route('tenant.onboarding', ['tab' => 'setup'])
             : route('tenant.settings.account');
 
-        return $this->success('Account settings updated successfully.', [], $redirect);
+        return $this->success(__('Account settings updated successfully.'), [], $redirect);
     }
 
     public function validateUpdate(UpdateAccountRequest $request): JsonResponse

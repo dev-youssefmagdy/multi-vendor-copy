@@ -3,7 +3,7 @@
 @section('title', $request['title'])
 
 @section('content')
-    <x-tenant::page-header :title="$request['title']" description="{{ 'Request #'.$request['id'].' · Submitted '.$request['created_at'] }}">
+    <x-tenant::page-header :title="$request['title']" :description="__('Request #:id · Submitted :date', ['id' => $request['id'], 'date' => $request['created_at']])">
         <x-slot:meta>
             <span class="badge {{ $request['status_badge'] }}">{{ $request['status_label'] }}</span>
             @if(!empty($request['product_url']))
@@ -14,18 +14,18 @@
                         <polyline points="15 3 21 3 21 9"/>
                         <line x1="10" y1="14" x2="21" y2="3"/>
                     </svg>
-                    View Product Link
+                    {{ __('View Product Link') }}
                 </a>
             @endif
         </x-slot:meta>
         <x-slot:actions>
-            <a href="{{ route('tenant.product-requests.index') }}" class="btn btn-secondary">&larr; All Requests</a>
+            <a href="{{ route('tenant.product-requests.index') }}" class="btn btn-secondary">{{ __('← All Requests') }}</a>
         </x-slot:actions>
     </x-tenant::page-header>
 
     @if($request['status'] !== 'rejected')
         <div class="card form-card fu d1 t-request-progress">
-            @foreach(['pending' => 'Submitted', 'reviewing' => 'Under Review', 'in_production' => 'In Production', 'completed' => 'Completed'] as $s => $label)
+            @foreach(['pending' => __('Submitted'), 'reviewing' => __('Under Review'), 'in_production' => __('In Production'), 'completed' => __('Completed')] as $s => $label)
                 @php $step = ['pending' => 1, 'reviewing' => 2, 'in_production' => 3, 'completed' => 4][$s]; @endphp
                 <div class="t-request-progress-step {{ $request['status_step'] >= $step ? 'is-done' : '' }}">
                     <div class="t-request-progress-dot">{{ $step }}</div>
@@ -41,7 +41,7 @@
     <div class="card form-card fu d2">
         <x-tenant::chat
             id="product-request-chat"
-            empty="No messages yet."
+            :empty="__('No messages yet.')"
             :messages="$request['messages']"
         >
             @if(!in_array($request['status'], ['completed', 'rejected']))
@@ -53,17 +53,17 @@
                         success="none"
                         files
                     >
-                        <x-tenant::textarea name="reply" label="Add a message" rows="4" required placeholder="Type your message…" />
+                        <x-tenant::textarea name="reply" :label="__('Add a message')" rows="4" required :placeholder="__('Type your message…')" />
                         <x-tenant::dropzone
                             name="attachments"
-                            label="Attach a file"
-                            sublabel="Images, PDFs or documents, max 5 files"
+                            :label="__('Attach a file')"
+                            :sublabel="__('Images, PDFs or documents, max 5 files')"
                             accept=".jpg,.jpeg,.png,.webp,.gif,.pdf,.doc,.docx"
                             max-files="5"
                             max-kb="10240"
                         />
                         <div style="margin-top:12px;">
-                            <button type="submit" class="btn btn-primary">Send Reply</button>
+                            <button type="submit" class="btn btn-primary">{{ __('Send Reply') }}</button>
                         </div>
                     </x-tenant::form>
                 </x-slot:composer>

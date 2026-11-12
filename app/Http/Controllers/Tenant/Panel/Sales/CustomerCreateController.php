@@ -49,7 +49,7 @@ final class CustomerCreateController extends PanelController
         ]);
 
         return $this->success(
-            'Customer created successfully.',
+            __('Customer created successfully.'),
             redirect: route('tenant.customers.show', $customer->id),
         );
     }

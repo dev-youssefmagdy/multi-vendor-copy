@@ -24,12 +24,12 @@ class RolesPermissionsList extends ListPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Roles & Permissions',
-            'badge' => 'Tenant Access Matrix',
-            'description' => 'Manage tenant-local role definitions and the permission slugs assigned to vendor admins.',
-            'actionLabel' => 'Add Role',
-            'tableTitle' => 'Tenant Roles & Permission Sets',
-            'headers' => ['Role', 'Permissions', 'Admins Assigned', 'Updated At', 'Actions'],
+            'title' => __('Roles & Permissions'),
+            'badge' => __('Tenant Access Matrix'),
+            'description' => __('Manage tenant-local role definitions and the permission slugs assigned to vendor admins.'),
+            'actionLabel' => __('Add Role'),
+            'tableTitle' => __('Tenant Roles & Permission Sets'),
+            'headers' => [__('Role'), __('Permissions'), __('Admins Assigned'), __('Updated At'), __('Actions')],
         ];
     }
 
@@ -45,31 +45,31 @@ class RolesPermissionsList extends ListPage
             'actionMethod' => 'openCreateModal',
             'records' => $records,
             'filterFields' => [
-                ['label' => 'Search', 'model' => 'search', 'placeholder' => 'Role name'],
+                ['label' => __('Search'), 'model' => 'search', 'placeholder' => __('Role name')],
             ],
             'statistics' => [
-                ['label' => 'Roles', 'value' => number_format($stats['total']), 'caption' => 'Tenant access groups', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
-                ['label' => 'Permissions', 'value' => number_format($stats['permissions']), 'caption' => 'Granted tenant capabilities count', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Assignments', 'value' => number_format($stats['assigned']), 'caption' => 'Tenant admins mapped to roles', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Roles'), 'value' => number_format($stats['total']), 'caption' => __('Tenant access groups'), 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
+                ['label' => __('Permissions'), 'value' => number_format($stats['permissions']), 'caption' => __('Granted tenant capabilities count'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Assignments'), 'value' => number_format($stats['assigned']), 'caption' => __('Tenant admins mapped to roles'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
             ],
             'rows' => collect($records->items())->map(fn (AdminRole $role) => [
                 e($role->name),
-                '<div class="entity-title">'.e((string) $role->permissions_count).' permissions</div><div class="entity-subtitle">'.e(collect($role->permissions ?? [])->take(3)->map(fn ($permission) => $repository->availableAdminPermissions()[$permission] ?? $permission)->implode(', ')).'</div>',
+                '<div class="entity-title">'.e(__(':count permissions', ['count' => $role->permissions_count])).'</div><div class="entity-subtitle">'.e(collect($role->permissions ?? [])->take(3)->map(fn ($permission) => $repository->availableAdminPermissions()[$permission] ?? $permission)->implode(', ')).'</div>',
                 e((string) $role->admins_count),
                 e($role->updated_at?->format('M d, Y')),
-                '<div class="flex gap-2 flex-wrap"><button type="button" class="btn btn-secondary btn-sm" wire:click="editRole('.$role->id.')">Edit</button><button type="button" class="btn btn-secondary btn-sm" wire:click="confirmDelete('.$role->id.')">Delete</button></div>',
+                '<div class="flex gap-2 flex-wrap"><button type="button" class="btn btn-secondary btn-sm" wire:click="editRole('.$role->id.')">' . e(__('Edit')) . '</button><button type="button" class="btn btn-secondary btn-sm" wire:click="confirmDelete('.$role->id.')">' . e(__('Delete')) . '</button></div>',
             ])->all(),
             'tableDescription' => $records->total().' tenant roles matched the current search input.',
             'modalModel' => 'showFormModal',
-            'modalTitle' => $this->roleId ? 'Edit Role' : 'Add Role',
+            'modalTitle' => $this->roleId ? __('Edit Role') : __('Add Role'),
             'modalCloseAction' => 'closeModal',
             'modalSubmitAction' => 'save',
-            'modalSubmitLabel' => $this->roleId ? 'Update Role' : 'Create Role',
+            'modalSubmitLabel' => $this->roleId ? __('Update Role') : __('Create Role'),
             'modalFieldGroups' => [[
                 'gridClass' => 'form-grid-2',
                 'fields' => [
-                    ['label' => 'Role Name', 'model' => 'name'],
-                    ['label' => 'Permissions', 'model' => 'permissions', 'type' => 'checkbox-group', 'options' => $repository->availableAdminPermissions(), 'wrapperClass' => 'span-2'],
+                    ['label' => __('Role Name'), 'model' => 'name'],
+                    ['label' => __('Permissions'), 'model' => 'permissions', 'type' => 'checkbox-group', 'options' => $repository->availableAdminPermissions(), 'wrapperClass' => 'span-2'],
                 ],
             ]],
         ]);
@@ -114,7 +114,7 @@ class RolesPermissionsList extends ListPage
 
         $this->closeModal();
         $this->resetForm();
-        $this->toast($roleId ? 'Tenant role updated successfully.' : 'Tenant role created successfully.');
+        $this->toast($roleId ? __('Tenant role updated successfully.') : __('Tenant role created successfully.'));
         $this->resetPage();
     }
 
@@ -126,16 +126,16 @@ class RolesPermissionsList extends ListPage
     public function confirmDelete(int $roleId): void
     {
         $this->confirmAction('deleteRole', [$roleId], [
-            'title' => 'Delete tenant role?',
-            'text' => 'Admins assigned to this role will become unassigned.',
-            'confirmButtonText' => 'Delete role',
+            'title' => __('Delete tenant role?'),
+            'text' => __('Admins assigned to this role will become unassigned.'),
+            'confirmButtonText' => __('Delete role'),
         ]);
     }
 
     public function deleteRole(int $roleId, TenantPanelService $service): void
     {
         $service->deleteAdminRole(AdminRole::query()->findOrFail($roleId));
-        $this->toast('Tenant role deleted successfully.');
+        $this->toast(__('Tenant role deleted successfully.'));
         $this->resetPage();
     }
 

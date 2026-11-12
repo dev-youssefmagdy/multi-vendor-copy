@@ -22,16 +22,16 @@ abstract class ListPage extends TenantPage
         return array_merge([
             'badge' => null,
             'exportable' => $this->exportable,
-            'actionLabel' => 'Add New',
-            'filtersTitle' => 'Vendor Filters',
-            'filtersDescription' => 'Refine the tenant records visible in this workspace.',
-            'tableTitle' => 'Records Table',
-            'tableDescription' => 'Tenant records currently visible in this module.',
-            'headers' => ['Name', 'Status', 'Updated At', 'Actions'],
+            'actionLabel' => __('Add New'),
+            'filtersTitle' => __('Vendor Filters'),
+            'filtersDescription' => __('Refine the tenant records visible in this workspace.'),
+            'tableTitle' => __('Records Table'),
+            'tableDescription' => __('Tenant records currently visible in this module.'),
+            'headers' => [__('Name'), __('Status'), __('Updated At'), __('Actions')],
             'statistics' => [
-                ['label' => 'Total Records', 'value' => '0', 'caption' => 'Tenant scoped records', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
-                ['label' => 'Active Records', 'value' => '0', 'caption' => 'Visible and available entries', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Needs Review', 'value' => '0', 'caption' => 'Items that need attention', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Total Records'), 'value' => '0', 'caption' => __('Tenant scoped records'), 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
+                ['label' => __('Active Records'), 'value' => '0', 'caption' => __('Visible and available entries'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Needs Review'), 'value' => '0', 'caption' => __('Items that need attention'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
             ],
         ], $meta);
     }

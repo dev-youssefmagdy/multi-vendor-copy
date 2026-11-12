@@ -2,12 +2,13 @@
 // where available, otherwise copies the invite link.
 import { toast } from '@tenant/core/toast.js';
 import { copyText } from '@tenant/core/clipboard.js';
+import { t } from '../../core/i18n.js';
 
 export function mountPartnerInvite(root = document) {
     root.querySelectorAll('[data-partner-invite]').forEach((button) => {
         button.addEventListener('click', async () => {
             const url = button.dataset.inviteLink || '';
-            const text = 'Join me as a merchant on NO GRGR';
+            const text = t('Join me as a merchant on NO GRGR');
 
             if (navigator.share) {
                 try {
@@ -19,9 +20,9 @@ export function mountPartnerInvite(root = document) {
             }
 
             if (await copyText(url)) {
-                toast.success('Invite link copied');
+                toast.success(t('Invite link copied'));
             } else {
-                toast.error('Could not copy the invite link.');
+                toast.error(t('Could not copy the invite link.'));
             }
         });
     });

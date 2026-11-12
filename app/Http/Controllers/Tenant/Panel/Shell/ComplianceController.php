@@ -28,7 +28,7 @@ final class ComplianceController extends PanelController
             ? route('tenant.onboarding', ['tab' => 'tour'])
             : url()->previous();
 
-        return $this->success('Compliance documents accepted.', redirect: $redirect);
+        return $this->success(__('Compliance documents accepted.'), redirect: $redirect);
     }
 
     public function validateAccept(AcceptComplianceRequest $request): JsonResponse

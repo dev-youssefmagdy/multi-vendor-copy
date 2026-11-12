@@ -21,11 +21,11 @@ class OrdersList extends ListPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Orders',
-            'badge' => 'Sales',
-            'description' => 'Track tenant orders, payment collection, fulfillment progress, and full order payload details from one queue.',
-'tableTitle' => 'Order Queue',
-            'headers' => ['Order', 'Customer', 'Value', 'Commission', 'Status', 'Gateway', 'Placed At', 'Actions'],
+            'title' => __('Orders'),
+            'badge' => __('Sales'),
+            'description' => __('Track tenant orders, payment collection, fulfillment progress, and full order payload details from one queue.'),
+'tableTitle' => __('Order Queue'),
+            'headers' => [__('Order'), __('Customer'), __('Value'), __('Commission'), __('Status'), __('Gateway'), __('Placed At'), __('Actions')],
         ];
     }
 
@@ -39,30 +39,30 @@ class OrdersList extends ListPage
             'actionLabel' => null,
             'records' => $records,
             'filterFields' => [
-                ['label' => 'Search', 'model' => 'search', 'placeholder' => 'Order UUID or customer'],
-                ['label' => 'Status', 'model' => 'statusFilter', 'type' => 'select', 'options' => ['' => 'All'] + collect(OrderStatus::cases())->mapWithKeys(fn($status) => [$status->value => $status->label()])->all()],
+                ['label' => __('Search'), 'model' => 'search', 'placeholder' => __('Order UUID or customer')],
+                ['label' => __('Status'), 'model' => 'statusFilter', 'type' => 'select', 'options' => ['' => __('All')] + collect(OrderStatus::cases())->mapWithKeys(fn($status) => [$status->value => __($status->label())])->all()],
             ],
             'statisticsGridClass' => 'g-stats4',
             'statistics' => $this->presentMetricCards([
-                ['label' => 'Orders', 'value' => $stats['total'], 'format' => 'number', 'caption' => 'Orders in this tenant database.', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
-                ['label' => 'Paid', 'value' => $stats['paid'], 'format' => 'number', 'caption' => 'Orders with successful payment capture.', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Processing', 'value' => $stats['processing'], 'format' => 'number', 'caption' => 'Orders currently moving through fulfillment.', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
-                ['label' => 'Collected', 'value' => $stats['collected'], 'format' => 'currency', 'caption' => 'Paid order value collected by the tenant.', 'dot' => 'dot-violet'],
+                ['label' => __('Orders'), 'value' => $stats['total'], 'format' => 'number', 'caption' => __('Orders in this tenant database.'), 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
+                ['label' => __('Paid'), 'value' => $stats['paid'], 'format' => 'number', 'caption' => __('Orders with successful payment capture.'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Processing'), 'value' => $stats['processing'], 'format' => 'number', 'caption' => __('Orders currently moving through fulfillment.'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Collected'), 'value' => $stats['collected'], 'format' => 'currency', 'caption' => __('Paid order value collected by the tenant.'), 'dot' => 'dot-violet'],
             ]),
             'rows' => collect($records->items())->map(fn(Order $order) => [
-                '<div class="entity-title">' . e($order->uuid) . '</div><div class="entity-subtitle">' . e($order->items_count) . ' items · ' . e($order->items->sum('qty')) . ' units</div>',
-                '<div class="entity-title">' . e($order->customer?->full_name ?? 'Guest') . '</div><div class="entity-subtitle">' . e($order->customer?->email ?? 'No email') . '</div>',
+                '<div class="entity-title">' . e($order->uuid) . '</div><div class="entity-subtitle">' . e(__(':items items · :units units', ['items' => $order->items_count, 'units' => $order->items->sum('qty')])) . '</div>',
+                '<div class="entity-title">' . e($order->customer?->full_name ?? __('Guest')) . '</div><div class="entity-subtitle">' . e($order->customer?->email ?? __('No email')) . '</div>',
                 '<div class="entity-title">' . number_format($order->grand_total, 2) . '</div>'
                 . '<div class="entity-subtitle">'
-                . ((float) $order->discount_percentage > 0 ? e(number_format((float) $order->discount_percentage, 1)) . '% off · ' : '')
-                . 'ship ' . e(number_format($order->resolved_shipping_charge, 2))
+                . ((float) $order->discount_percentage > 0 ? e(__(':percent% off', ['percent' => number_format((float) $order->discount_percentage, 1)])) . ' · ' : '')
+                . e(__('ship :amount', ['amount' => number_format($order->resolved_shipping_charge, 2)]))
                 . '</div>',
                 '<div class="entity-title">' . number_format(OrderProfitCalculator::effectiveTenantProfitForOrder($order), 2) . '</div>'
-                . '<div class="entity-subtitle">platform ' . number_format(OrderProfitCalculator::effectiveOwnerProfitForOrder($order), 2) . '</div>',
-                '<span class="badge badge-cyan">' . e($order->status->label()) . '</span>',
-                '<div class="entity-title">' . e(/*$order->paymentGateway?->name ?? */ str((string) $order->payment_method)->replace(['_', '-'], ' ')->headline()->toString()) . '</div><div class="entity-subtitle">' . e($order->paid ? 'Paid' : 'Unpaid') . '</div>',
+                . '<div class="entity-subtitle">' . e(__('platform :amount', ['amount' => number_format(OrderProfitCalculator::effectiveOwnerProfitForOrder($order), 2)])) . '</div>',
+                '<span class="badge badge-cyan">' . e(__($order->status->label())) . '</span>',
+                '<div class="entity-title">' . e(/*$order->paymentGateway?->name ?? */ __((string) str((string) $order->payment_method)->replace(['_', '-'], ' ')->headline())) . '</div><div class="entity-subtitle">' . e($order->paid ? __('Paid') : __('Unpaid')) . '</div>',
                 e($order->created_at?->format('M d, Y H:i')),
-                '<a href="' . route('tenant.orders.show', $order->id) . '" class="btn btn-secondary btn-sm">View</a>',
+                '<a href="' . route('tenant.orders.show', $order->id) . '" class="btn btn-secondary btn-sm">' . e(__('View')) . '</a>',
             ])->all(),
             'tableDescription' => $records->total() . ' orders matched the current queue filters.',
         ]);
@@ -91,7 +91,7 @@ class OrdersList extends ListPage
 
     protected function exportHeaders(): array
     {
-        return ['Order UUID', 'Customer', 'Customer Email', 'Items', 'Grand Total', 'Discount %', 'Shipping', 'Vendor Commission', 'Status', 'Payment Method', 'Paid', 'Placed At'];
+        return [__('Order UUID'), __('Customer'), __('Customer Email'), __('Items'), __('Grand Total'), __('Discount %'), __('Shipping'), __('Vendor Commission'), __('Status'), __('Payment Method'), __('Paid'), __('Placed At')];
     }
 
     protected function exportRows(): array
@@ -100,16 +100,16 @@ class OrdersList extends ListPage
         return $repository->exportOrders(['search' => $this->search, 'status' => $this->statusFilter])
             ->map(fn(Order $order) => [
                 $order->uuid,
-                $order->customer?->full_name ?? 'Guest',
+                $order->customer?->full_name ?? __('Guest'),
                 $order->customer?->email ?? '',
                 $order->items_count,
                 number_format((float) $order->grand_total, 2),
                 number_format((float) $order->discount_percentage, 2),
                 number_format((float) $order->resolved_shipping_charge, 2),
                 number_format(OrderProfitCalculator::effectiveTenantProfitForOrder($order), 2),
-                $order->status->label(),
-                str((string) $order->payment_method)->replace(['_', '-'], ' ')->headline()->toString(),
-                $order->paid ? 'Paid' : 'Unpaid',
+                __($order->status->label()),
+                __((string) str((string) $order->payment_method)->replace(['_', '-'], ' ')->headline()),
+                $order->paid ? __('Paid') : __('Unpaid'),
                 $order->created_at?->format('Y-m-d H:i') ?? '',
             ])->all();
     }

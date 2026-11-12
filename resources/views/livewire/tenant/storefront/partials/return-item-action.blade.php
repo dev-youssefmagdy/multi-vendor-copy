@@ -53,7 +53,7 @@
                 class="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full hover:opacity-80 transition-opacity"
                 style="background:{{ $__badge['bg'] }};color:{{ $__badge['text'] }}"
                 title="{{ __('View return request #:id', ['id' => $__existing->id]) }}">
-                {{ $__existing->type === \App\Enums\ReturnType::Exchange ? __('Exchange') : __('Return') }}: {{ $__existing->status?->label() }}
+                {{ $__existing->type === \App\Enums\ReturnType::Exchange ? __('Exchange') : __('Return') }}: {{ __($__existing->status?->label()) }}
             </a>
         @endif
         @if ($__canRequest)

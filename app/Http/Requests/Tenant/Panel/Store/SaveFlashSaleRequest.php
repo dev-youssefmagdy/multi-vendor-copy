@@ -33,10 +33,10 @@ final class SaveFlashSaleRequest extends TenantFormRequest
         return [
             'country_ids' => 'countries',
             'product_ids' => 'products',
-            'discount_percentage' => 'discount percentage',
-            'start_date' => 'start date',
-            'end_date' => 'end date',
-            'banner_image' => 'banner image',
+            'discount_percentage' => __('discount percentage'),
+            'start_date' => __('start date'),
+            'end_date' => __('end date'),
+            'banner_image' => __('banner image'),
         ];
     }
 }

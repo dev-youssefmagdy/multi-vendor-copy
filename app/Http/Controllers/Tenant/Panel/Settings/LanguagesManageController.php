@@ -41,19 +41,19 @@ final class LanguagesManageController extends PanelController
         return view('tenant.pages.settings.languages-manage.index', [
             'presented' => $this->presenter->present($gateways),
             'installedColumns' => [
-                TableColumn::make('language', 'Language')->orderable(false),
-                TableColumn::make('direction', 'Direction')->orderable(false),
-                TableColumn::make('countries', 'Countries')->orderable(false),
-                TableColumn::make('type', 'Type')->orderable(false),
-                TableColumn::make('status', 'Status')->orderable(false),
+                TableColumn::make('language', __('Language'))->orderable(false),
+                TableColumn::make('direction', __('Direction'))->orderable(false),
+                TableColumn::make('countries', __('Countries'))->orderable(false),
+                TableColumn::make('type', __('Type'))->orderable(false),
+                TableColumn::make('status', __('Status'))->orderable(false),
                 TableColumn::actions(),
             ],
             'availableColumns' => [
-                TableColumn::make('language', 'Language')->orderable(false),
-                TableColumn::make('direction', 'Direction')->orderable(false),
-                TableColumn::make('countries', 'Countries')->orderable(false),
-                TableColumn::make('price', 'Price')->orderable(false),
-                TableColumn::actions('Action'),
+                TableColumn::make('language', __('Language'))->orderable(false),
+                TableColumn::make('direction', __('Direction'))->orderable(false),
+                TableColumn::make('countries', __('Countries'))->orderable(false),
+                TableColumn::make('price', __('Price'))->orderable(false),
+                TableColumn::actions(__('Action')),
             ],
         ]);
     }
@@ -82,12 +82,12 @@ final class LanguagesManageController extends PanelController
                     : false;
 
                 return $isFree
-                    ? '<span class="badge badge-green">Free</span>'
-                    : '<span class="badge badge-violet">Purchased</span>';
+                    ? '<span class="badge badge-green">' . e(__('Free')) . '</span>'
+                    : '<span class="badge badge-violet">' . e(__('Purchased')) . '</span>';
             })
             ->editColumn('status', fn (Language $language) => $language->is_default
-                ? '<span class="badge badge-green">Default</span>'
-                : ($language->is_active ? '<span class="badge badge-cyan">Active</span>' : '<span class="badge badge-amber">Inactive</span>'))
+                ? '<span class="badge badge-green">' . e(__('Default')) . '</span>'
+                : ($language->is_active ? '<span class="badge badge-cyan">' . e(__('Active')) . '</span>' : '<span class="badge badge-amber">' . e(__('Inactive')) . '</span>'))
             ->addColumn('actions', fn (Language $language) => view('tenant.pages.settings.languages-manage._cols.actions', ['language' => $language])->render())
             ->rawColumns(['language', 'countries', 'type', 'status', 'actions'])
             ->toJson();
@@ -148,7 +148,7 @@ final class LanguagesManageController extends PanelController
         $tenant = tenant();
 
         if ($this->purchaseService->tenantHasPurchased($tenant, $language->id)) {
-            throw new PanelActionException('You have already purchased this language.', 422);
+            throw new PanelActionException(__('You have already purchased this language.'), 422);
         }
 
         $this->stashInlineTokens($request, $validated['gateway']);
@@ -160,7 +160,7 @@ final class LanguagesManageController extends PanelController
             ],
         ]);
 
-        return $this->success('Redirecting to payment…', redirect: route('tenant.language-purchase.charge', [
+        return $this->success(__('Redirecting to payment…'), redirect: route('tenant.language-purchase.charge', [
             'gateway' => $validated['gateway'],
             'languageId' => $language->id,
         ]));

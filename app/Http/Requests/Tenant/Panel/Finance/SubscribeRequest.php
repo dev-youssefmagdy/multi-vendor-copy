@@ -30,7 +30,7 @@ final class SubscribeRequest extends TenantFormRequest
     {
         return [
             'package_id' => 'plan',
-            'gateway' => 'payment gateway',
+            'gateway' => __('payment gateway'),
         ];
     }
 }

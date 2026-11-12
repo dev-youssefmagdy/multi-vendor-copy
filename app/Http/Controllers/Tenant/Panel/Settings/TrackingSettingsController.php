@@ -51,7 +51,7 @@ final class TrackingSettingsController extends PanelController
             );
         }
 
-        return $this->success('Tracking settings saved successfully.');
+        return $this->success(__('Tracking settings saved successfully.'));
     }
 
     public function validateUpdate(SaveTrackingSettingsRequest $request): JsonResponse

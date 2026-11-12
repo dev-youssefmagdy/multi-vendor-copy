@@ -29,23 +29,23 @@ final class BillingController extends PanelController
 
         return view('tenant.pages.finance.billing.index', [
             'stats' => Metric::cards([
-                ['label' => 'Total billed', 'value' => $stats['revenue'], 'format' => 'currency', 'caption' => 'Net value of all valid orders.', 'dot' => 'dot-cyan'],
-                ['label' => 'Collected', 'value' => $stats['collected'], 'format' => 'currency', 'caption' => 'Paid order value with confirmed collection.', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Outstanding', 'value' => $stats['outstanding'], 'format' => 'currency', 'caption' => 'Unpaid order value still awaiting payment.', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
-                ['label' => 'Orders', 'value' => $stats['orders'], 'format' => 'number', 'caption' => $stats['paid'].' paid · '.$stats['unpaid'].' unpaid', 'dot' => 'dot-cyan'],
-                ['label' => 'Payment methods', 'value' => $stats['gateways'], 'format' => 'number', 'caption' => 'Distinct payment methods used in orders.', 'dot' => 'dot-violet'],
+                ['label' => __('Total billed'), 'value' => $stats['revenue'], 'format' => 'currency', 'caption' => __('Net value of all valid orders.'), 'dot' => 'dot-cyan'],
+                ['label' => __('Collected'), 'value' => $stats['collected'], 'format' => 'currency', 'caption' => __('Paid order value with confirmed collection.'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Outstanding'), 'value' => $stats['outstanding'], 'format' => 'currency', 'caption' => __('Unpaid order value still awaiting payment.'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Orders'), 'value' => $stats['orders'], 'format' => 'number', 'caption' => $stats['paid'].' paid · '.$stats['unpaid'].' unpaid', 'dot' => 'dot-cyan'],
+                ['label' => __('Payment methods'), 'value' => $stats['gateways'], 'format' => 'number', 'caption' => __('Distinct payment methods used in orders.'), 'dot' => 'dot-violet'],
             ]),
             'planUsage' => $this->planUsage(),
             'gatewayOptions' => $this->repo->paymentMethodOptions(),
             'columns' => [
                 TableColumn::index(),
-                TableColumn::make('uuid', 'Order'),
-                TableColumn::make('customer', 'Customer')->orderable(false),
-                TableColumn::make('totals', 'Totals')->name('grand_total'),
-                TableColumn::make('payment', 'Payment')->orderable(false),
-                TableColumn::make('gateway', 'Gateway')->name('payment_method'),
-                TableColumn::make('placed_at', 'Placed At')->name('created_at'),
-                TableColumn::make('payment_details', 'Payment Details')->orderable(false)->searchable(false),
+                TableColumn::make('uuid', __('Order')),
+                TableColumn::make('customer', __('Customer'))->orderable(false),
+                TableColumn::make('totals', __('Totals'))->name('grand_total'),
+                TableColumn::make('payment', __('Payment'))->orderable(false),
+                TableColumn::make('gateway', __('Gateway'))->name('payment_method'),
+                TableColumn::make('placed_at', __('Placed At'))->name('created_at'),
+                TableColumn::make('payment_details', __('Payment Details'))->orderable(false)->searchable(false),
                 TableColumn::actions(),
             ],
         ]);
@@ -93,13 +93,13 @@ final class BillingController extends PanelController
         $tenant = tenant();
 
         $features = [
-            PlanLimitService::FEATURE_PRODUCTS => 'Products',
-            PlanLimitService::FEATURE_CATEGORIES => 'Categories',
-            PlanLimitService::FEATURE_BANNERS => 'Banners',
-            PlanLimitService::FEATURE_LANGUAGES => 'Languages',
-            PlanLimitService::FEATURE_ORDERS_PER_MONTH => 'Orders this month',
+            PlanLimitService::FEATURE_PRODUCTS => __('Products'),
+            PlanLimitService::FEATURE_CATEGORIES => __('Categories'),
+            PlanLimitService::FEATURE_BANNERS => __('Banners'),
+            PlanLimitService::FEATURE_LANGUAGES => __('Languages'),
+            PlanLimitService::FEATURE_ORDERS_PER_MONTH => __('Orders this month'),
             PlanLimitService::FEATURE_AI_CALLS => 'AI calls',
-            PlanLimitService::FEATURE_IMAGE_SEARCHES => 'Image searches',
+            PlanLimitService::FEATURE_IMAGE_SEARCHES => __('Image searches'),
         ];
 
         return collect($features)->map(function (string $label, string $feature) use ($limitService, $tenant): array {

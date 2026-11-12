@@ -32,17 +32,17 @@ final class AdminsController extends PanelController
 
         return view('tenant.pages.settings.admins.index', [
             'stats' => Metric::cards([
-                ['label' => 'Admins', 'value' => $stats['total'], 'format' => 'number', 'caption' => 'Tenant admin accounts', 'dot' => 'dot-cyan'],
-                ['label' => 'Active', 'value' => $stats['active'], 'format' => 'number', 'caption' => 'Currently enabled tenant admins', 'dot' => 'dot-green'],
-                ['label' => 'Roles', 'value' => $stats['roles'], 'format' => 'number', 'caption' => 'Available tenant role definitions', 'dot' => 'dot-amber'],
+                ['label' => __('Admins'), 'value' => $stats['total'], 'format' => 'number', 'caption' => __('Tenant admin accounts'), 'dot' => 'dot-cyan'],
+                ['label' => __('Active'), 'value' => $stats['active'], 'format' => 'number', 'caption' => __('Currently enabled tenant admins'), 'dot' => 'dot-green'],
+                ['label' => __('Roles'), 'value' => $stats['roles'], 'format' => 'number', 'caption' => __('Available tenant role definitions'), 'dot' => 'dot-amber'],
             ]),
             'roleOptions' => $this->repo->roleOptions(),
             'columns' => [
-                TableColumn::make('admin', 'Admin')->orderable(false),
-                TableColumn::make('email', 'Email'),
-                TableColumn::make('role', 'Role')->orderable(false),
-                TableColumn::make('status', 'Status')->orderable(false),
-                TableColumn::make('last_login_at', 'Last Login'),
+                TableColumn::make('admin', __('Admin'))->orderable(false),
+                TableColumn::make('email', __('Email')),
+                TableColumn::make('role', __('Role'))->orderable(false),
+                TableColumn::make('status', __('Status'))->orderable(false),
+                TableColumn::make('last_login_at', __('Last Login')),
                 TableColumn::actions(),
             ],
         ]);
@@ -57,9 +57,9 @@ final class AdminsController extends PanelController
             ->addIndexColumn()
             ->editColumn('admin', fn (AdminUser $admin) => view('tenant.pages.settings.admins._cols.admin', ['admin' => $admin])->render())
             ->editColumn('email', fn (AdminUser $admin) => e($admin->email))
-            ->editColumn('role', fn (AdminUser $admin) => e($admin->role?->name ?? 'No role'))
+            ->editColumn('role', fn (AdminUser $admin) => e($admin->role?->name ?? __('No role')))
             ->editColumn('status', fn (AdminUser $admin) => view('tenant::components.status-badge', ['status' => $admin->status])->render())
-            ->editColumn('last_login_at', fn (AdminUser $admin) => $admin->last_login_at?->diffForHumans() ?? 'Never')
+            ->editColumn('last_login_at', fn (AdminUser $admin) => $admin->last_login_at?->diffForHumans() ?? __('Never'))
             ->addColumn('actions', fn (AdminUser $admin) => view('tenant.pages.settings.admins._cols.actions', ['admin' => $admin, 'currentId' => $currentId])->render())
             ->rawColumns(['admin', 'status', 'actions'])
             ->toJson();
@@ -98,7 +98,7 @@ final class AdminsController extends PanelController
             'status' => $validated['status'],
         ], $admin);
 
-        return $this->success($admin ? 'Tenant admin updated successfully.' : 'Tenant admin created successfully.');
+        return $this->success($admin ? __('Tenant admin updated successfully.') : __('Tenant admin created successfully.'));
     }
 
     public function validateStore(SaveAdminRequest $request): JsonResponse
@@ -121,7 +121,7 @@ final class AdminsController extends PanelController
             'last_login_at' => $admin->last_login_at,
         ], $admin);
 
-        return $this->success('Tenant admin enabled successfully.');
+        return $this->success(__('Tenant admin enabled successfully.'));
     }
 
     public function deactivate(AdminUser $admin): JsonResponse
@@ -134,17 +134,17 @@ final class AdminsController extends PanelController
             'last_login_at' => $admin->last_login_at,
         ], $admin);
 
-        return $this->success('Tenant admin disabled successfully.');
+        return $this->success(__('Tenant admin disabled successfully.'));
     }
 
     public function destroy(AdminUser $admin): JsonResponse
     {
         if ((int) Auth::guard('tenant')->id() === $admin->id) {
-            return $this->failure('You cannot delete the currently signed-in tenant admin.', 422, [], null, 'warning');
+            return $this->failure(__('You cannot delete the currently signed-in tenant admin.'), 422, [], null, 'warning');
         }
 
         $this->service->deleteModel($admin);
 
-        return $this->success('Tenant admin deleted successfully.');
+        return $this->success(__('Tenant admin deleted successfully.'));
     }
 }

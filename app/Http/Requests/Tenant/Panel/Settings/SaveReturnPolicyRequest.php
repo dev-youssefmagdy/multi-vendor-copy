@@ -32,9 +32,9 @@ final class SaveReturnPolicyRequest extends TenantFormRequest
         return [
             'window_days' => 'return window (days)',
             'non_returnable_ids' => 'non-returnable product IDs',
-            'fee' => 'return fee',
-            'conditions' => 'accepted conditions',
-            'video_required_reasons' => 'reasons requiring video',
+            'fee' => __('return fee'),
+            'conditions' => __('accepted conditions'),
+            'video_required_reasons' => __('reasons requiring video'),
             OrderPolicyService::CANCELLATION_WINDOW_HOURS => 'cancellation window (hours)',
         ];
     }

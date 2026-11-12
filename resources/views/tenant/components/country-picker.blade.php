@@ -1,6 +1,6 @@
 @props([
     'triggerClass' => '',
-    'label' => 'Select your country',
+    'label' => __('Select your country'),
 ])
 
 {{--
@@ -35,7 +35,7 @@
     <div class="t-country-panel" data-country-panel hidden>
         <label class="t-country-search">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="8.75"/><path d="M17.5 17.5l4.25 4.25"/></svg>
-            <input type="search" placeholder="Search country" aria-label="Search country" data-country-search>
+            <input type="search" placeholder="{{ __('Search country') }}" aria-label="{{ __('Search country') }}" data-country-search>
         </label>
         <ul class="t-country-list" id="{{ $listId }}" role="listbox" aria-label="{{ $label }}">
             @foreach($countries as $code => $name)
@@ -45,7 +45,7 @@
                     <svg class="t-country-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
                 </li>
             @endforeach
-            <li class="t-country-empty" data-country-empty hidden>No countries found.</li>
+            <li class="t-country-empty" data-country-empty hidden>{{ __('No countries found.') }}</li>
         </ul>
     </div>
 </div>

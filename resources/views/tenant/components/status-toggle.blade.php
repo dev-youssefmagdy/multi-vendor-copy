@@ -2,8 +2,8 @@
     'checked' => false,
     'actionUrl' => null,
     'actionMethod' => 'PATCH',
-    'onLabel' => 'Active',
-    'offLabel' => 'Inactive',
+    'onLabel' => __('Active'),
+    'offLabel' => __('Inactive'),
     'confirm' => null,
     'wrapperClass' => '',
 ])

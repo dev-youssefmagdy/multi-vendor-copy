@@ -307,7 +307,7 @@ class TenantPanelRepository
                 ->orderBy('id')
                 ->forPage($page, $perPage)
                 ->get()
-                ->mapWithKeys(fn (CentralProduct $product) => [$product->id => $product->translationValue('name') ?? $product->sku ?? ('Product #'.$product->id)])
+                ->mapWithKeys(fn (CentralProduct $product) => [$product->id => $product->translationValue('name') ?? $product->sku ?? __('Product #:id', ['id' => $product->id])])
                 ->all();
 
             return ['items' => $items, 'has_more' => ($page * $perPage) < $total];
@@ -355,7 +355,7 @@ class TenantPanelRepository
 
         return [
             'id' => $product->id,
-            'name' => $product->translationValue('name') ?? $product->sku ?? 'Product #'.$product->id,
+            'name' => $product->translationValue('name') ?? $product->sku ?? __('Product #:id', ['id' => $product->id]),
             'slug' => $product->slug,
             'sku' => $product->sku,
             'status' => $product->status?->label() ?? (string) $product->status,
@@ -379,7 +379,7 @@ class TenantPanelRepository
                 ->values()
                 ->map(function ($variant) use ($product) {
                     $options = $variant->options
-                        ->map(fn ($option) => $option->translationValue('name') ?? 'Option #'.$option->id)
+                        ->map(fn ($option) => $option->translationValue('name') ?? __('Option #:id', ['id' => $option->id]))
                         ->filter()
                         ->values()
                         ->all();
@@ -387,7 +387,7 @@ class TenantPanelRepository
                     return [
                         'id' => $variant->id,
                         'sku' => $variant->sku,
-                        'title' => $variant->title ?: (implode(' / ', $options) ?: 'Variant #'.$variant->id),
+                        'title' => $variant->title ?: (implode(' / ', $options) ?: __('Variant #:id', ['id' => $variant->id])),
                         'options' => $options,
                         'price' => (float) ($variant->price ?? $product->sale_price ?? $product->base_price),
                         'weight_grams' => $variant->weight_grams,
@@ -439,7 +439,7 @@ class TenantPanelRepository
     {
         return [
             'id' => $category->id,
-            'name' => $category->translationValue('name') ?? $category->slug ?? 'Category #'.$category->id,
+            'name' => $category->translationValue('name') ?? $category->slug ?? __('Category #:id', ['id' => $category->id]),
             'slug' => $category->slug,
             'status' => $category->status?->label() ?? (string) $category->status,
             'parent_name' => $category->parent?->translationValue('name') ?? $category->parent?->slug,
@@ -961,35 +961,36 @@ class TenantPanelRepository
 
         return [
             [
-                'label' => 'Gateway connected',
+                'label' => __('Gateway connected'),
                 'ready' => $connected,
                 'caption' => $connected
                     ? $activeGateways->count().' active gateway(s)'
-                    : 'Connect a payment gateway to start accepting orders.',
+                    : __('Connect a payment gateway to start accepting orders.'),
             ],
             [
-                'label' => 'Supports international sales',
+                'label' => __('Supports international sales'),
                 'ready' => $supportsInternational,
                 'caption' => $supportsInternational
-                    ? 'Your connected gateways can onboard from multiple countries.'
-                    : 'Connect a gateway with broader merchant country coverage.',
+                    ? __('Your connected gateways can onboard from multiple countries.')
+                    : __('Connect a gateway with broader merchant country coverage.'),
             ],
             [
-                'label' => 'Supports Apple Pay',
+                'label' => __('Supports Apple Pay'),
                 'ready' => $supportsApplePay,
-                'caption' => $supportsApplePay ? 'Available at checkout.' : 'No connected gateway offers Apple Pay.',
+                'caption' => $supportsApplePay ? __('Available at checkout.') : __('No connected gateway offers Apple Pay.'),
             ],
             [
-                'label' => 'Supports Google Pay',
+                'label' => __('Supports Google Pay'),
                 'ready' => $supportsGooglePay,
-                'caption' => $supportsGooglePay ? 'Available at checkout.' : 'No connected gateway offers Google Pay.',
+                'caption' => $supportsGooglePay ? __('Available at checkout.') : __('No connected gateway offers Google Pay.'),
             ],
             [
-                'label' => 'Supports your target currencies',
+                'key' => 'target_currencies',
+                'label' => __('Supports your target currencies'),
                 'ready' => $supportsTargetCurrencies,
                 'caption' => $targetCurrencyCodes->isEmpty()
-                    ? 'No active currencies configured yet.'
-                    : ($supportsTargetCurrencies ? 'All your active currencies are supported.' : 'Some of your active currencies are not supported by connected gateways.'),
+                    ? __('No active currencies configured yet.')
+                    : ($supportsTargetCurrencies ? __('All your active currencies are supported.') : __('Some of your active currencies are not supported by connected gateways.')),
             ],
         ];
     }
@@ -1390,7 +1391,7 @@ class TenantPanelRepository
 
             $rows->push([
                 'id' => $v->id,
-                'name' => $product?->translationValue('name') ?? $product?->slug ?? ('Variant #'.$v->id),
+                'name' => $product?->translationValue('name') ?? $product?->slug ?? __('Variant #:id', ['id' => $v->id]),
                 'real_price' => (float) $v->real_price,
                 'sell_price' => (float) $v->sell_price,
                 'sold_qty' => $soldQty,
@@ -1399,7 +1400,7 @@ class TenantPanelRepository
                 'cost' => $cost,
                 'profit' => $profit,
                 'margin' => $revenue > 0 ? round(($profit / $revenue) * 100, 2) : (float) $v->margin_percentage,
-                'status' => $v->active ? 'Active' : 'Inactive',
+                'status' => $v->active ? __('Active') : __('Inactive'),
                 'active' => (bool) $v->active,
                 'last_sale' => $v->last_sale,
             ]);
@@ -1413,7 +1414,7 @@ class TenantPanelRepository
 
             $rows->push([
                 'id' => 'product-'.$p->product_id,
-                'name' => $product?->translationValue('name') ?? $product?->slug ?? ('Product #'.$p->product_id),
+                'name' => $product?->translationValue('name') ?? $product?->slug ?? __('Product #:id', ['id' => $p->product_id]),
                 'real_price' => 0.0,
                 'sell_price' => 0.0,
                 'sold_qty' => $soldQty,
@@ -1454,17 +1455,17 @@ class TenantPanelRepository
 
         return [
             'cards' => [
-                ['label' => 'Collected Sales', 'value' => $stats['revenue'], 'format' => 'currency', 'caption' => 'Paid order value captured in this tenant.', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
-                ['label' => 'Gross Sales', 'value' => $stats['gross_sales'], 'format' => 'currency', 'caption' => 'All order value including unpaid orders.', 'dot' => 'dot-violet', 'glow' => 'card-glow-violet'],
-                ['label' => 'Tenant Balance', 'value' => $stats['balance'], 'format' => 'currency', 'caption' => 'Subscription transaction balance for the tenant.', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Outstanding', 'value' => $stats['outstanding'], 'format' => 'currency', 'caption' => 'Open unpaid order value still pending collection.', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
-                ['label' => 'Orders', 'value' => $stats['orders'], 'format' => 'number', 'caption' => 'Orders recorded in the tenant storefront.', 'dot' => 'dot-cyan'],
-                ['label' => 'Customers', 'value' => $stats['customers'], 'format' => 'number', 'caption' => 'Customers with tenant-scoped profiles.', 'dot' => 'dot-green'],
-                ['label' => 'Active Subs', 'value' => $stats['active_subscriptions'], 'format' => 'number', 'caption' => 'Currently active tenant subscription records.', 'dot' => 'dot-amber'],
-                ['label' => 'Average Order', 'value' => $stats['avg_order'], 'format' => 'currency', 'caption' => 'Average gross value per order.', 'dot' => 'dot-violet'],
-                ['label' => 'My Net Profit from Platform Products', 'value' => $stats['central_products_profit'], 'format' => 'currency', 'caption' => 'Your net profit share from orders of admin/central catalog products (not the admin\'s cut).', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
-                ['label' => 'My Net Profit from Own Products', 'value' => $stats['own_products_profit'], 'format' => 'currency', 'caption' => 'Net profit from orders of your own listed products.', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'My Total Net Profit', 'value' => $stats['vendor_net'], 'format' => 'currency', 'caption' => 'Sum of your net profit from platform products and your own products.', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
+                ['label' => __('Collected Sales'), 'value' => $stats['revenue'], 'format' => 'currency', 'caption' => __('Paid order value captured in this tenant.'), 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
+                ['label' => __('Gross Sales'), 'value' => $stats['gross_sales'], 'format' => 'currency', 'caption' => __('All order value including unpaid orders.'), 'dot' => 'dot-violet', 'glow' => 'card-glow-violet'],
+                ['label' => __('Tenant Balance'), 'value' => $stats['balance'], 'format' => 'currency', 'caption' => __('Subscription transaction balance for the tenant.'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Outstanding'), 'value' => $stats['outstanding'], 'format' => 'currency', 'caption' => __('Open unpaid order value still pending collection.'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Orders'), 'value' => $stats['orders'], 'format' => 'number', 'caption' => __('Orders recorded in the tenant storefront.'), 'dot' => 'dot-cyan'],
+                ['label' => __('Customers'), 'value' => $stats['customers'], 'format' => 'number', 'caption' => __('Customers with tenant-scoped profiles.'), 'dot' => 'dot-green'],
+                ['label' => __('Active Subs'), 'value' => $stats['active_subscriptions'], 'format' => 'number', 'caption' => __('Currently active tenant subscription records.'), 'dot' => 'dot-amber'],
+                ['label' => __('Average Order'), 'value' => $stats['avg_order'], 'format' => 'currency', 'caption' => __('Average gross value per order.'), 'dot' => 'dot-violet'],
+                ['label' => __('My Net Profit from Platform Products'), 'value' => $stats['central_products_profit'], 'format' => 'currency', 'caption' => __('Your net profit share from orders of admin/central catalog products (not the admin\'s cut).'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('My Net Profit from Own Products'), 'value' => $stats['own_products_profit'], 'format' => 'currency', 'caption' => __('Net profit from orders of your own listed products.'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('My Total Net Profit'), 'value' => $stats['vendor_net'], 'format' => 'currency', 'caption' => __('Sum of your net profit from platform products and your own products.'), 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
             ],
             'status_rows' => $statusRows,
             'top_customers' => $topCustomers,
@@ -1473,24 +1474,24 @@ class TenantPanelRepository
             'chart_payload' => [
                 'revenueLabels' => $series->pluck('label')->values()->all(),
                 'revenueDatasets' => [
-                    ['label' => 'Gross sales', 'data' => $series->pluck('gross')->values()->all(), 'color' => 'cyan', 'fill' => true, 'format' => 'currency'],
-                    ['label' => 'Collected sales', 'data' => $series->pluck('revenue')->values()->all(), 'color' => 'violet', 'fill' => true, 'format' => 'currency'],
+                    ['label' => __('Gross sales'), 'data' => $series->pluck('gross')->values()->all(), 'color' => 'cyan', 'fill' => true, 'format' => 'currency'],
+                    ['label' => __('Collected sales'), 'data' => $series->pluck('revenue')->values()->all(), 'color' => 'violet', 'fill' => true, 'format' => 'currency'],
                 ],
                 'donutLabels' => collect($statusRows)->pluck('label')->values()->all(),
                 'donutData' => collect($statusRows)->pluck('count')->values()->all(),
                 'barLabels' => $series->pluck('label')->values()->all(),
                 'barDatasets' => [
-                    ['label' => 'Shipping revenue', 'data' => $series->pluck('shipping')->values()->all(), 'color' => 'green', 'format' => 'currency'],
+                    ['label' => __('Shipping revenue'), 'data' => $series->pluck('shipping')->values()->all(), 'color' => 'green', 'format' => 'currency'],
                 ],
                 'lineLabels' => $series->pluck('label')->values()->all(),
                 'lineDatasets' => [
-                    ['label' => 'New customers', 'data' => $series->pluck('customers')->values()->all(), 'color' => 'amber', 'format' => 'number'],
-                    ['label' => 'Repeat buyers', 'data' => $series->pluck('repeat_buyers')->values()->all(), 'color' => 'cyan', 'format' => 'number', 'dashed' => true],
+                    ['label' => __('New customers'), 'data' => $series->pluck('customers')->values()->all(), 'color' => 'amber', 'format' => 'number'],
+                    ['label' => __('Repeat buyers'), 'data' => $series->pluck('repeat_buyers')->values()->all(), 'color' => 'cyan', 'format' => 'number', 'dashed' => true],
                 ],
                 'radarLabels' => array_keys($radarMetrics),
                 'radarDatasets' => [
-                    ['label' => 'Current', 'data' => array_values($radarMetrics), 'color' => 'cyan'],
-                    ['label' => 'Target', 'data' => array_fill(0, count($radarMetrics), 75), 'color' => 'violet'],
+                    ['label' => __('Current'), 'data' => array_values($radarMetrics), 'color' => 'cyan'],
+                    ['label' => __('Target'), 'data' => array_fill(0, count($radarMetrics), 75), 'color' => 'violet'],
                 ],
             ],
         ];
@@ -1504,10 +1505,10 @@ class TenantPanelRepository
 
         return [
             'cards' => [
-                ['label' => 'Gross Sales', 'value' => $stats['gross'], 'format' => 'currency', 'caption' => 'Total order value before payment collection.', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
-                ['label' => 'Collected', 'value' => $stats['collected'], 'format' => 'currency', 'caption' => 'Paid orders already captured.', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Outstanding', 'value' => $stats['outstanding'], 'format' => 'currency', 'caption' => 'Unpaid open order value still pending.', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
-                ['label' => 'Average Order', 'value' => $stats['avg_order'], 'format' => 'currency', 'caption' => 'Average gross order value across the tenant.', 'dot' => 'dot-violet'],
+                ['label' => __('Gross Sales'), 'value' => $stats['gross'], 'format' => 'currency', 'caption' => __('Total order value before payment collection.'), 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
+                ['label' => __('Collected'), 'value' => $stats['collected'], 'format' => 'currency', 'caption' => __('Paid orders already captured.'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Outstanding'), 'value' => $stats['outstanding'], 'format' => 'currency', 'caption' => __('Unpaid open order value still pending.'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Average Order'), 'value' => $stats['avg_order'], 'format' => 'currency', 'caption' => __('Average gross order value across the tenant.'), 'dot' => 'dot-violet'],
             ],
             'status_rows' => $statusRows,
             'monthly_rows' => $series->map(fn (array $row) => [
@@ -1521,20 +1522,20 @@ class TenantPanelRepository
             'chart_payload' => [
                 'revenueLabels' => $series->pluck('label')->values()->all(),
                 'revenueDatasets' => [
-                    ['label' => 'Gross sales', 'data' => $series->pluck('gross')->values()->all(), 'color' => 'cyan', 'fill' => true, 'format' => 'currency'],
-                    ['label' => 'Collected', 'data' => $series->pluck('revenue')->values()->all(), 'color' => 'violet', 'fill' => true, 'format' => 'currency'],
+                    ['label' => __('Gross sales'), 'data' => $series->pluck('gross')->values()->all(), 'color' => 'cyan', 'fill' => true, 'format' => 'currency'],
+                    ['label' => __('Collected'), 'data' => $series->pluck('revenue')->values()->all(), 'color' => 'violet', 'fill' => true, 'format' => 'currency'],
                 ],
                 'donutLabels' => collect($statusRows)->pluck('label')->values()->all(),
                 'donutData' => collect($statusRows)->pluck('count')->values()->all(),
                 'barLabels' => $series->pluck('label')->values()->all(),
                 'barDatasets' => [
-                    ['label' => 'Orders', 'data' => $series->pluck('orders')->values()->all(), 'color' => 'green', 'format' => 'number'],
-                    ['label' => 'Paid orders', 'data' => $series->pluck('paid_orders')->values()->all(), 'color' => 'amber', 'format' => 'number'],
+                    ['label' => __('Orders'), 'data' => $series->pluck('orders')->values()->all(), 'color' => 'green', 'format' => 'number'],
+                    ['label' => __('Paid orders'), 'data' => $series->pluck('paid_orders')->values()->all(), 'color' => 'amber', 'format' => 'number'],
                 ],
                 'lineLabels' => $series->pluck('label')->values()->all(),
                 'lineDatasets' => [
-                    ['label' => 'New customers', 'data' => $series->pluck('customers')->values()->all(), 'color' => 'violet', 'format' => 'number'],
-                    ['label' => 'Repeat buyers', 'data' => $series->pluck('repeat_buyers')->values()->all(), 'color' => 'cyan', 'format' => 'number', 'dashed' => true],
+                    ['label' => __('New customers'), 'data' => $series->pluck('customers')->values()->all(), 'color' => 'violet', 'format' => 'number'],
+                    ['label' => __('Repeat buyers'), 'data' => $series->pluck('repeat_buyers')->values()->all(), 'color' => 'cyan', 'format' => 'number', 'dashed' => true],
                 ],
             ],
         ];
@@ -1549,23 +1550,23 @@ class TenantPanelRepository
 
         return [
             'cards' => [
-                ['label' => 'Customers', 'value' => $stats['total'], 'format' => 'number', 'caption' => 'Total customer records synced for this tenant.', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
-                ['label' => 'Buyers', 'value' => $stats['buyers'], 'format' => 'number', 'caption' => 'Customers who have already placed at least one order.', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Repeat Buyers', 'value' => $stats['repeat'], 'format' => 'number', 'caption' => 'Customers with more than one historical order.', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
-                ['label' => 'Average Lifetime', 'value' => $stats['avg_lifetime'], 'format' => 'currency', 'caption' => 'Average lifetime spend among customers with orders.', 'dot' => 'dot-violet'],
+                ['label' => __('Customers'), 'value' => $stats['total'], 'format' => 'number', 'caption' => __('Total customer records synced for this tenant.'), 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
+                ['label' => __('Buyers'), 'value' => $stats['buyers'], 'format' => 'number', 'caption' => __('Customers who have already placed at least one order.'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Repeat Buyers'), 'value' => $stats['repeat'], 'format' => 'number', 'caption' => __('Customers with more than one historical order.'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Average Lifetime'), 'value' => $stats['avg_lifetime'], 'format' => 'currency', 'caption' => __('Average lifetime spend among customers with orders.'), 'dot' => 'dot-violet'],
             ],
             'rows' => $rows->all(),
             'chart_payload' => [
                 'barLabels' => $topRows->pluck('name')->values()->all(),
                 'barDatasets' => [
-                    ['label' => 'Lifetime spend', 'data' => $topRows->pluck('total')->values()->all(), 'color' => 'cyan', 'format' => 'currency'],
+                    ['label' => __('Lifetime spend'), 'data' => $topRows->pluck('total')->values()->all(), 'color' => 'cyan', 'format' => 'currency'],
                 ],
                 'lineLabels' => $series->pluck('label')->values()->all(),
                 'lineDatasets' => [
-                    ['label' => 'New customers', 'data' => $series->pluck('customers')->values()->all(), 'color' => 'violet', 'format' => 'number'],
-                    ['label' => 'Repeat buyers', 'data' => $series->pluck('repeat_buyers')->values()->all(), 'color' => 'green', 'format' => 'number', 'dashed' => true],
+                    ['label' => __('New customers'), 'data' => $series->pluck('customers')->values()->all(), 'color' => 'violet', 'format' => 'number'],
+                    ['label' => __('Repeat buyers'), 'data' => $series->pluck('repeat_buyers')->values()->all(), 'color' => 'green', 'format' => 'number', 'dashed' => true],
                 ],
-                'donutLabels' => ['Active', 'Inactive', 'One-time', 'Repeat'],
+                'donutLabels' => [__('Active'), __('Inactive'), __('One-time'), __('Repeat')],
                 'donutData' => [$stats['active'], max(0, $stats['total'] - $stats['active']), max(0, $stats['buyers'] - $stats['repeat']), $stats['repeat']],
             ],
         ];
@@ -1582,10 +1583,10 @@ class TenantPanelRepository
 
         return [
             'cards' => [
-                ['label' => 'Shipping Revenue', 'value' => round($shippingRevenue, 2), 'format' => 'currency', 'caption' => 'Shipping collected across all tenant orders.', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
-                ['label' => 'Avg Shipping', 'value' => $orders->isNotEmpty() ? round($shippingRevenue / $orders->count(), 2) : 0.0, 'format' => 'currency', 'caption' => 'Average shipping captured per order.', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Fulfilled Orders', 'value' => $fulfilledOrders->count(), 'format' => 'number', 'caption' => 'Orders already shipped, delivered, or completed.', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
-                ['label' => 'Ship Weight', 'value' => round($weight, 2), 'format' => 'number', 'suffix' => 'kg', 'caption' => 'Combined recorded shipping weight across order items.', 'dot' => 'dot-violet'],
+                ['label' => __('Shipping Revenue'), 'value' => round($shippingRevenue, 2), 'format' => 'currency', 'caption' => __('Shipping collected across all tenant orders.'), 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
+                ['label' => __('Avg Shipping'), 'value' => $orders->isNotEmpty() ? round($shippingRevenue / $orders->count(), 2) : 0.0, 'format' => 'currency', 'caption' => __('Average shipping captured per order.'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Fulfilled Orders'), 'value' => $fulfilledOrders->count(), 'format' => 'number', 'caption' => __('Orders already shipped, delivered, or completed.'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Ship Weight'), 'value' => round($weight, 2), 'format' => 'number', 'suffix' => 'kg', 'caption' => __('Combined recorded shipping weight across order items.'), 'dot' => 'dot-violet'],
             ],
             'status_rows' => $statusRows,
             'monthly_rows' => $series->map(fn (array $row) => [
@@ -1598,12 +1599,12 @@ class TenantPanelRepository
             'chart_payload' => [
                 'barLabels' => $series->pluck('label')->values()->all(),
                 'barDatasets' => [
-                    ['label' => 'Shipping revenue', 'data' => $series->pluck('shipping')->values()->all(), 'color' => 'green', 'format' => 'currency'],
+                    ['label' => __('Shipping revenue'), 'data' => $series->pluck('shipping')->values()->all(), 'color' => 'green', 'format' => 'currency'],
                 ],
                 'lineLabels' => $series->pluck('label')->values()->all(),
                 'lineDatasets' => [
-                    ['label' => 'Orders', 'data' => $series->pluck('orders')->values()->all(), 'color' => 'violet', 'format' => 'number'],
-                    ['label' => 'Fulfilled orders', 'data' => $series->pluck('fulfilled_orders')->values()->all(), 'color' => 'cyan', 'format' => 'number', 'dashed' => true],
+                    ['label' => __('Orders'), 'data' => $series->pluck('orders')->values()->all(), 'color' => 'violet', 'format' => 'number'],
+                    ['label' => __('Fulfilled orders'), 'data' => $series->pluck('fulfilled_orders')->values()->all(), 'color' => 'cyan', 'format' => 'number', 'dashed' => true],
                 ],
                 'donutLabels' => collect($statusRows)->pluck('label')->values()->all(),
                 'donutData' => collect($statusRows)->pluck('count')->values()->all(),
@@ -1683,7 +1684,7 @@ class TenantPanelRepository
                 'cost' => $cost,
                 'profit' => $profit,
                 'margin' => $revenue > 0 ? round(($profit / $revenue) * 100, 2) : (float) $v->margin_percentage,
-                'status' => $v->active ? 'Active' : 'Inactive',
+                'status' => $v->active ? __('Active') : __('Inactive'),
                 'active' => (bool) $v->active,
                 'last_sale' => $v->last_sale,
             ]);
@@ -1704,7 +1705,7 @@ class TenantPanelRepository
                 'cost' => 0.0,
                 'profit' => round($revenue, 2),
                 'margin' => $revenue > 0 ? 100.0 : 0.0,
-                'status' => $p->active ? 'Active' : 'Inactive',
+                'status' => $p->active ? __('Active') : __('Inactive'),
                 'active' => (bool) $p->active,
                 'last_sale' => $p->last_sale,
             ]);
@@ -1758,20 +1759,20 @@ class TenantPanelRepository
 
         return [
             'cards' => [
-                ['label' => 'Tracked Items', 'value' => $rows->count(), 'format' => 'number', 'caption' => 'Products or variants tracked for profitability.', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
-                ['label' => 'Sold Units', 'value' => $rows->sum('sold_qty'), 'format' => 'number', 'caption' => 'Units sold across tracked variants and products.', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Revenue', 'value' => round((float) $rows->sum('revenue'), 2), 'format' => 'currency', 'caption' => 'Revenue attributable to product-level sales.', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
-                ['label' => 'Gross Profit', 'value' => round((float) $rows->sum('profit'), 2), 'format' => 'currency', 'caption' => 'Revenue minus recorded item costs.', 'dot' => 'dot-violet'],
+                ['label' => __('Tracked Items'), 'value' => $rows->count(), 'format' => 'number', 'caption' => __('Products or variants tracked for profitability.'), 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
+                ['label' => __('Sold Units'), 'value' => $rows->sum('sold_qty'), 'format' => 'number', 'caption' => __('Units sold across tracked variants and products.'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Revenue'), 'value' => round((float) $rows->sum('revenue'), 2), 'format' => 'currency', 'caption' => __('Revenue attributable to product-level sales.'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Gross Profit'), 'value' => round((float) $rows->sum('profit'), 2), 'format' => 'currency', 'caption' => __('Revenue minus recorded item costs.'), 'dot' => 'dot-violet'],
             ],
             'chart_payload' => [
                 'barLabels' => $topRows->pluck('name')->values()->all(),
                 'barDatasets' => [
-                    ['label' => 'Gross profit', 'data' => $topRows->pluck('profit')->values()->all(), 'color' => 'cyan', 'format' => 'currency'],
+                    ['label' => __('Gross profit'), 'data' => $topRows->pluck('profit')->values()->all(), 'color' => 'cyan', 'format' => 'currency'],
                 ],
                 'lineLabels' => $series->pluck('label')->values()->all(),
                 'lineDatasets' => [
-                    ['label' => 'Revenue', 'data' => $series->pluck('revenue')->values()->all(), 'color' => 'violet', 'format' => 'currency'],
-                    ['label' => 'Profit', 'data' => $series->pluck('profit')->values()->all(), 'color' => 'green', 'format' => 'currency', 'dashed' => true],
+                    ['label' => __('Revenue'), 'data' => $series->pluck('revenue')->values()->all(), 'color' => 'violet', 'format' => 'currency'],
+                    ['label' => __('Profit'), 'data' => $series->pluck('profit')->values()->all(), 'color' => 'green', 'format' => 'currency', 'dashed' => true],
                 ],
                 'donutLabels' => array_keys($marginBands),
                 'donutData' => array_values($marginBands),
@@ -1811,7 +1812,7 @@ class TenantPanelRepository
                 : ($order->paymentGateway?->name ?? '-'),
             'created_at' => $order->created_at,
             'customer' => [
-                'name' => $order->customer?->full_name ?? 'Guest',
+                'name' => $order->customer?->full_name ?? __('Guest'),
                 'email' => $order->customer?->email,
                 'phone' => $order->customer?->phone,
             ],
@@ -1827,8 +1828,8 @@ class TenantPanelRepository
                         ?? $item->product?->slug
                         ?? $item->variant?->product?->translationValue('name')
                         ?? $item->variant?->product?->slug
-                        ?? ('Item #'.$item->id),
-                    'variant' => $item->variant?->display_label ?? ($item->variant?->id ? 'Variant #'.$item->variant->id : null),
+                        ?? __('Item #:id', ['id' => $item->id]),
+                    'variant' => $item->variant?->display_label ?? ($item->variant?->id ? __('Variant #:id', ['id' => $item->variant->id]) : null),
                     'qty' => (int) $item->qty,
                     'cost' => (float) $item->cost,
                     'profit_amount' => (float) $item->profit_amount,
@@ -1856,10 +1857,10 @@ class TenantPanelRepository
 
         return [
             'cards' => [
-                ['label' => 'Tenant Balance', 'value' => $stats['balance'], 'format' => 'currency', 'caption' => 'Credits minus debits from subscription transaction records.', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
-                ['label' => 'Subscription Revenue', 'value' => $stats['revenue'], 'format' => 'currency', 'caption' => 'Total stored price across tenant subscriptions.', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Active Subs', 'value' => $stats['active_subscriptions'], 'format' => 'number', 'caption' => 'Subscriptions currently in active status.', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
-                ['label' => 'Transactions', 'value' => $stats['transactions'], 'format' => 'number', 'caption' => 'Subscription transaction records stored for this tenant.', 'dot' => 'dot-violet'],
+                ['label' => __('Tenant Balance'), 'value' => $stats['balance'], 'format' => 'currency', 'caption' => __('Credits minus debits from subscription transaction records.'), 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
+                ['label' => __('Subscription Revenue'), 'value' => $stats['revenue'], 'format' => 'currency', 'caption' => __('Total stored price across tenant subscriptions.'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Active Subs'), 'value' => $stats['active_subscriptions'], 'format' => 'number', 'caption' => __('Subscriptions currently in active status.'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Transactions'), 'value' => $stats['transactions'], 'format' => 'number', 'caption' => __('Subscription transaction records stored for this tenant.'), 'dot' => 'dot-violet'],
             ],
         ];
     }
@@ -1958,11 +1959,11 @@ class TenantPanelRepository
     protected function shippingStatusBreakdown(Collection $orders): array
     {
         return [
-            ['label' => 'Pending', 'count' => $orders->filter(fn (Order $order) => $order->status === OrderStatus::Pending)->count()],
-            ['label' => 'Processing', 'count' => $orders->filter(fn (Order $order) => $order->status === OrderStatus::Processing)->count()],
-            ['label' => 'Shipped', 'count' => $orders->filter(fn (Order $order) => $order->status === OrderStatus::Shipped)->count()],
-            ['label' => 'Delivered', 'count' => $orders->filter(fn (Order $order) => in_array($order->status, [OrderStatus::Delivered, OrderStatus::Completed], true))->count()],
-            ['label' => 'Cancelled', 'count' => $orders->filter(fn (Order $order) => in_array($order->status, [OrderStatus::Cancelled, OrderStatus::Rejected], true))->count()],
+            ['label' => __('Pending'), 'count' => $orders->filter(fn (Order $order) => $order->status === OrderStatus::Pending)->count()],
+            ['label' => __('Processing'), 'count' => $orders->filter(fn (Order $order) => $order->status === OrderStatus::Processing)->count()],
+            ['label' => __('Shipped'), 'count' => $orders->filter(fn (Order $order) => $order->status === OrderStatus::Shipped)->count()],
+            ['label' => __('Delivered'), 'count' => $orders->filter(fn (Order $order) => in_array($order->status, [OrderStatus::Delivered, OrderStatus::Completed], true))->count()],
+            ['label' => __('Cancelled'), 'count' => $orders->filter(fn (Order $order) => in_array($order->status, [OrderStatus::Cancelled, OrderStatus::Rejected], true))->count()],
         ];
     }
 
@@ -2600,18 +2601,18 @@ class TenantPanelRepository
 
         return [
             'cards' => [
-                ['label' => 'Total Returns', 'value' => $total, 'format' => 'number', 'caption' => 'All-time return requests', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
-                ['label' => 'Last 30 Days', 'value' => $last30, 'format' => 'number', 'caption' => 'Returns submitted this month', 'dot' => 'dot-blue', 'glow' => 'card-glow-blue'],
-                ['label' => 'Approval Rate', 'value' => $approvalRate, 'format' => 'percent', 'caption' => 'Approved or refunded', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Rejection Rate', 'value' => $rejectionRate, 'format' => 'percent', 'caption' => 'Rejected requests', 'dot' => 'dot-red', 'glow' => 'card-glow-violet'],
-                ['label' => 'Avg Processing Time', 'value' => $avgProcessingHours, 'format' => 'number', 'suffix' => 'hrs', 'caption' => 'From submission to resolution', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Total Returns'), 'value' => $total, 'format' => 'number', 'caption' => __('All-time return requests'), 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
+                ['label' => __('Last 30 Days'), 'value' => $last30, 'format' => 'number', 'caption' => __('Returns submitted this month'), 'dot' => 'dot-blue', 'glow' => 'card-glow-blue'],
+                ['label' => __('Approval Rate'), 'value' => $approvalRate, 'format' => 'percent', 'caption' => __('Approved or refunded'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Rejection Rate'), 'value' => $rejectionRate, 'format' => 'percent', 'caption' => __('Rejected requests'), 'dot' => 'dot-red', 'glow' => 'card-glow-violet'],
+                ['label' => __('Avg Processing Time'), 'value' => $avgProcessingHours, 'format' => 'number', 'suffix' => 'hrs', 'caption' => __('From submission to resolution'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
             ],
             'top_reasons' => $topReasons->map(fn ($row) => [
                 'label' => $row->reason->label(),
                 'value' => (int) $row->total,
             ])->all(),
             'top_products' => $topProductRows->map(fn ($row) => [
-                'label' => $productNames[$row->product_id] ?? "Product #{$row->product_id}",
+                'label' => $productNames[$row->product_id] ?? __('Product #:id', ['id' => $row->product_id]),
                 'value' => (int) $row->total,
             ])->all(),
             'monthly_rows' => $monthlyRows,
@@ -2818,7 +2819,7 @@ class TenantPanelRepository
      */
     public function buildOpportunityArray(Product $product, ?array $context = null, array $countryMap = []): array
     {
-        $label = $product->translationValue('name') ?? $product->slug ?? ('Product #'.$product->id);
+        $label = $product->translationValue('name') ?? $product->slug ?? __('Product #:id', ['id' => $product->id]);
         $description = Str::limit(trim(strip_tags((string) $product->translationValue('description'))), 140);
         $imageUrl = $product->primary_image_url;
         $cost = (float) ($product->cost_price ?? $product->default_price ?? 0);
@@ -2882,15 +2883,15 @@ class TenantPanelRepository
         $competitorCount = $context['category_peers'] ?? 0;
         if ($competitorCount <= 1) {
             $competitionLabel = 'Low';
-            $competitionText = 'Low competition';
+            $competitionText = __('Low competition');
             $competitionPct = 20;
         } elseif ($competitorCount <= 4) {
             $competitionLabel = 'Medium';
-            $competitionText = 'Medium competition';
+            $competitionText = __('Medium competition');
             $competitionPct = 55;
         } else {
             $competitionLabel = 'High';
-            $competitionText = 'High competition';
+            $competitionText = __('High competition');
             $competitionPct = 85;
         }
 
@@ -2917,11 +2918,11 @@ class TenantPanelRepository
             'added' => true,
             'featured' => (bool) $product->featured,
             'in_flash_sale' => $inFlashSale,
-            'category' => $product->categories->first()?->translationValue('name') ?? 'General',
+            'category' => $product->categories->first()?->translationValue('name') ?? __('General'),
             'trend' => $trend,
             'competition' => $competitionText,
             'title' => $label,
-            'description' => $description !== '' ? $description : 'No description yet.',
+            'description' => $description !== '' ? $description : __('No description yet.'),
             'markets' => $markets,
             'below_market' => $belowMarket,
             'score' => $scorePct > 0 ? (string) $scorePct : '—',
@@ -3009,7 +3010,7 @@ class TenantPanelRepository
         return [
             'id' => $product->id,
             'image' => $product->primary_image_url,
-            'title' => $product->translationValue('name') ?? $product->slug ?? ('Product #'.$product->id),
+            'title' => $product->translationValue('name') ?? $product->slug ?? (__('Product #:id', ['id' => $product->id])),
             'description' => Str::limit(trim(strip_tags((string) $product->translationValue('description'))), 140),
             'cost' => '$'.number_format((float) $pricing->centralBasePrice($product), 2),
             'url' => route('tenant.products.new.show', $product->id),
@@ -3040,9 +3041,9 @@ class TenantPanelRepository
     {
         $samples = [
             [
-                'title' => 'Wireless Noise-Cancelling Headphones',
-                'description' => 'Premium over-ear headphones with active noise cancellation, 30-hour battery life, and foldable design for travel.',
-                'category' => 'Electronics',
+                'title' => __('Wireless Noise-Cancelling Headphones'),
+                'description' => __('Premium over-ear headphones with active noise cancellation, 30-hour battery life, and foldable design for travel.'),
+                'category' => __('Electronics'),
                 'cost' => '$24.99',
                 'below_market' => '35% – 42%',
                 'score' => '87',
@@ -3053,9 +3054,9 @@ class TenantPanelRepository
                 'suggested_price' => '$34.99',
             ],
             [
-                'title' => 'Portable Mini Projector 1080p',
-                'description' => 'Compact LED projector with WiFi mirroring, built-in speaker, and 120-inch projection for home cinema on the go.',
-                'category' => 'Home & Living',
+                'title' => __('Portable Mini Projector 1080p'),
+                'description' => __('Compact LED projector with WiFi mirroring, built-in speaker, and 120-inch projection for home cinema on the go.'),
+                'category' => __('Home & Living'),
                 'cost' => '$39.50',
                 'below_market' => '28% – 34%',
                 'score' => '79',
@@ -3066,9 +3067,9 @@ class TenantPanelRepository
                 'suggested_price' => '$52.00',
             ],
             [
-                'title' => 'Smart Fitness Tracker Band',
-                'description' => 'Waterproof fitness band with heart-rate monitor, sleep tracking, step counter, and 7-day battery life.',
-                'category' => 'Sports',
+                'title' => __('Smart Fitness Tracker Band'),
+                'description' => __('Waterproof fitness band with heart-rate monitor, sleep tracking, step counter, and 7-day battery life.'),
+                'category' => __('Sports'),
                 'cost' => '$12.99',
                 'below_market' => '40% – 48%',
                 'score' => '92',
@@ -3079,9 +3080,9 @@ class TenantPanelRepository
                 'suggested_price' => '$19.99',
             ],
             [
-                'title' => 'Electric Posture Corrector',
-                'description' => 'Intelligent posture reminder with vibration alerts, rechargeable battery, and discreet under-clothes design.',
-                'category' => 'Health',
+                'title' => __('Electric Posture Corrector'),
+                'description' => __('Intelligent posture reminder with vibration alerts, rechargeable battery, and discreet under-clothes design.'),
+                'category' => __('Health'),
                 'cost' => '$9.99',
                 'below_market' => '45% – 55%',
                 'score' => '83',
@@ -3092,9 +3093,9 @@ class TenantPanelRepository
                 'suggested_price' => '$15.99',
             ],
             [
-                'title' => 'LED Strip Lights 10m RGB',
-                'description' => 'App-controlled RGB LED strips with music sync, 16 million colors, and easy peel-and-stick installation.',
-                'category' => 'Home & Living',
+                'title' => __('LED Strip Lights 10m RGB'),
+                'description' => __('App-controlled RGB LED strips with music sync, 16 million colors, and easy peel-and-stick installation.'),
+                'category' => __('Home & Living'),
                 'cost' => '$7.49',
                 'below_market' => '38% – 46%',
                 'score' => '76',
@@ -3105,9 +3106,9 @@ class TenantPanelRepository
                 'suggested_price' => '$12.99',
             ],
             [
-                'title' => 'Collapsible Silicone Water Bottle',
+                'title' => __('Collapsible Silicone Water Bottle'),
                 'description' => 'BPA-free foldable bottle with 600ml capacity, leak-proof lid, and heat-resistant material for hot and cold drinks.',
-                'category' => 'Accessories',
+                'category' => __('Accessories'),
                 'cost' => '$4.99',
                 'below_market' => '32% – 40%',
                 'score' => '71',
@@ -3126,7 +3127,7 @@ class TenantPanelRepository
             'image' => null,
             'added' => false,
             'trend' => 'rising',
-            'competition' => 'Low competition',
+            'competition' => __('Low competition'),
             'competition_level' => 'Low',
             'competition_pct' => 20,
             'status' => 'Hot',
@@ -3139,38 +3140,38 @@ class TenantPanelRepository
     {
         $samples = [
             [
-                'title' => 'Magnetic Phone Car Mount',
-                'description' => 'Universal magnetic dashboard mount compatible with all smartphones, 360° rotation, strong magnet, no-scratch surface.',
+                'title' => __('Magnetic Phone Car Mount'),
+                'description' => __('Universal magnetic dashboard mount compatible with all smartphones, 360° rotation, strong magnet, no-scratch surface.'),
                 'below_market' => '30% – 38%',
                 'cost' => '$5.99',
             ],
             [
-                'title' => 'Bamboo Wireless Charging Pad',
-                'description' => 'Eco-friendly 15W fast wireless charger with bamboo surface, LED indicator, and universal Qi compatibility.',
+                'title' => __('Bamboo Wireless Charging Pad'),
+                'description' => __('Eco-friendly 15W fast wireless charger with bamboo surface, LED indicator, and universal Qi compatibility.'),
                 'below_market' => '25% – 32%',
                 'cost' => '$8.49',
             ],
             [
-                'title' => 'Stainless Steel Insulated Tumbler',
-                'description' => 'Double-wall vacuum tumbler keeps drinks cold 24h or hot 12h, sweat-free exterior, spill-proof lid included.',
+                'title' => __('Stainless Steel Insulated Tumbler'),
+                'description' => __('Double-wall vacuum tumbler keeps drinks cold 24h or hot 12h, sweat-free exterior, spill-proof lid included.'),
                 'below_market' => '33% – 40%',
                 'cost' => '$10.99',
             ],
             [
-                'title' => 'Portable Handheld Garment Steamer',
-                'description' => 'Fast heat-up fabric steamer with continuous steam for wrinkle removal, suitable for all fabric types.',
+                'title' => __('Portable Handheld Garment Steamer'),
+                'description' => __('Fast heat-up fabric steamer with continuous steam for wrinkle removal, suitable for all fabric types.'),
                 'below_market' => '28% – 36%',
                 'cost' => '$14.50',
             ],
             [
-                'title' => 'UV Sanitizer Box with Wireless Charger',
-                'description' => 'Multi-function UV sterilization box doubles as a wireless charger, kills 99.9% of bacteria in 5 minutes.',
+                'title' => __('UV Sanitizer Box with Wireless Charger'),
+                'description' => __('Multi-function UV sterilization box doubles as a wireless charger, kills 99.9% of bacteria in 5 minutes.'),
                 'below_market' => '36% – 44%',
                 'cost' => '$18.99',
             ],
             [
-                'title' => 'Adjustable Laptop Stand Aluminium',
-                'description' => 'Portable aluminium laptop riser with 6 height levels, anti-slip pads, foldable for desk and travel use.',
+                'title' => __('Adjustable Laptop Stand Aluminium'),
+                'description' => __('Portable aluminium laptop riser with 6 height levels, anti-slip pads, foldable for desk and travel use.'),
                 'below_market' => '22% – 30%',
                 'cost' => '$16.99',
             ],

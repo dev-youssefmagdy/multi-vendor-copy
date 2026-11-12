@@ -219,7 +219,7 @@ final class OwnProductController extends PanelController
         CacheVersion::bumpMany(['ProductBadge', 'Product', 'File']);
 
         return $this->success(
-            $product ? 'Product updated successfully.' : 'Product created successfully.',
+            $product ? __('Product updated successfully.') : __('Product created successfully.'),
             redirect: route('tenant.own-products.edit', $savedProduct),
         );
     }
@@ -384,10 +384,10 @@ final class OwnProductController extends PanelController
         return [
             'product' => $product,
             'productData' => $productData,
-            'pageTitle' => $product ? 'Edit Own Product' : 'Add Own Product',
+            'pageTitle' => $product ? __('Edit Own Product') : __('Add Own Product'),
             'pageDescription' => $product
-                ? "Update this own-catalog product's details, images, and variants."
-                : 'Create a new product managed entirely by your store.',
+                ? __("Update this own-catalog product's details, images, and variants.")
+                : __('Create a new product managed entirely by your store.'),
             'languages' => $languages,
             'defaultLocale' => $defaultLocale,
             'activeLocale' => $defaultLocale,

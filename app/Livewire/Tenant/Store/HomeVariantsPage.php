@@ -42,7 +42,7 @@ class HomeVariantsPage extends TenantPage
                 ->delete();
             CacheVersion::bumpMany(['TenantHomeVariant', 'TenantThemeColor']);
 
-            $this->toast('Reverted to the theme\'s default variant.');
+            $this->toast(__('Reverted to the theme\'s default variant.'));
             return;
         }
 
@@ -51,7 +51,7 @@ class HomeVariantsPage extends TenantPage
             ['home_variant_id' => $homeVariantId]
         );
 
-        $this->toast('Home page variant saved.');
+        $this->toast(__('Home page variant saved.'));
     }
 
     protected function pageView(): string
@@ -62,9 +62,9 @@ class HomeVariantsPage extends TenantPage
     protected function pageMeta(): array
     {
         return [
-            'title' => 'Home Variants',
-            'badge' => 'Storefront',
-            'description' => 'Pick which home page layout and color palette to use, optionally per country.',
+            'title' => __('Home Variants'),
+            'badge' => __('Storefront'),
+            'description' => __('Pick which home page layout and color palette to use, optionally per country.'),
         ];
     }
 
@@ -99,7 +99,7 @@ class HomeVariantsPage extends TenantPage
             $rowDefs = $countries->map(fn(Country $country) => [
                 'country_id' => $country->id,
                 'label' => trim(($country->flag_emoji ?? '') . ' ' . $country->name),
-            ])->prepend(['country_id' => null, 'label' => 'Default (All Countries)']);
+            ])->prepend(['country_id' => null, 'label' => __('Default (All Countries)')]);
 
             foreach ($rowDefs as $def) {
                 $selection = $selections->get($def['country_id'] ?? 0);

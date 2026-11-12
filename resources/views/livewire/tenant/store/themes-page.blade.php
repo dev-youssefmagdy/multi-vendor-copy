@@ -324,17 +324,15 @@
         <section class="theme-hero fu d1">
             <div class="theme-hero-grid">
                 <div class="theme-hero-copy">
-                    <span class="theme-hero-kicker">Theme Gallery</span>
-                    <h2 class="theme-hero-title">Choose the storefront look that fits your catalog.</h2>
-                    <p>Browse live preview cards, compare visual direction at a glance, and activate the design you want
-                        customers to see right now.</p>
+                    <span class="theme-hero-kicker">{{ __('Theme Gallery') }}</span>
+                    <h2 class="theme-hero-title">{{ __('Choose the storefront look that fits your catalog.') }}</h2>
+                    <p>{{ __('Browse live preview cards, compare visual direction at a glance, and activate the design you want customers to see right now.') }}</p>
                 </div>
 
                 <div class="theme-hero-stat">
-                    <div class="eyebrow">Current Live Theme</div>
+                    <div class="eyebrow">{{ __('Current Live Theme') }}</div>
                     <div class="theme-hero-stat-value">{{ $activeThemeName }}</div>
-                    <p class="panel-copy">Use Preview to inspect the theme asset, then activate it when you are ready to
-                        switch the storefront.</p>
+                    <p class="panel-copy">{{ __('Use Preview to inspect the theme asset, then activate it when you are ready to switch the storefront.') }}</p>
                 </div>
             </div>
         </section>
@@ -344,12 +342,12 @@
                 <div class="card {{ $stat['glow'] ?? '' }} fu d{{ min($loop->iteration, 6) }}">
                     <div class="stat-head">
                         <div>
-                            <div class="eyebrow">{{ $stat['label'] }}</div>
+                            <div class="eyebrow">{{ __($stat['label']) }}</div>
                             <div class="D stat-value">{{ $stat['value'] }}</div>
                         </div>
                         <div class="mini-stat-dot {{ $stat['dot'] ?? 'dot-cyan' }}"></div>
                     </div>
-                    <p class="panel-copy">{{ $stat['caption'] }}</p>
+                    <p class="panel-copy">{{ __($stat['caption']) }}</p>
                 </div>
             @endforeach
         </div>
@@ -365,7 +363,7 @@
                             </div>
 
                             @if ($theme['is_active'])
-                                <div class="theme-card-status">Live Theme</div>
+                                <div class="theme-card-status">{{ __('Live Theme') }}</div>
                             @endif
                         </div>
 
@@ -387,35 +385,35 @@
                                         wire:click="activateVariant({{ $theme['theme_id'] }}, {{ $theme['variant_id'] }})"
                                         wire:loading.attr="disabled"
                                         wire:target="activateVariant({{ $theme['theme_id'] }}, {{ $theme['variant_id'] }})">
-                                        {{ $theme['action_label'] }}
+                                        {{ __($theme['action_label']) }}
                                     </button>
                                 @elseif ($theme['action_method'])
                                     <button type="button" class="{{ $theme['action_class'] }}"
                                         wire:click="{{ $theme['action_method'] }}({{ $theme['theme_id'] }})"
                                         wire:loading.attr="disabled"
                                         wire:target="{{ $theme['action_method'] }}({{ $theme['theme_id'] }})">
-                                        {{ $theme['action_label'] }}
+                                        {{ __($theme['action_label']) }}
                                     </button>
                                 @else
                                     <button type="button" class="{{ $theme['action_class'] }}" disabled>
-                                        {{ $theme['action_label'] }}
+                                        {{ __($theme['action_label']) }}
                                     </button>
                                 @endif
 
                                 <a href="{{ $theme['preview_path'] }}" target="_blank" rel="noopener noreferrer"
-                                    class="theme-pill-btn">Preview</a>
+                                    class="theme-pill-btn">{{ __('Preview') }}</a>
 
                                 @if (!empty($theme['storefront_url']))
                                     <a href="{{ $theme['storefront_url'] }}" target="_blank" rel="noopener noreferrer"
                                         class="theme-pill-btn" style="border-color:var(--color-green,#22c55e);color:var(--color-green,#22c55e)">
-                                        View Live
+                                        {{ __('View Live') }}
                                     </a>
                                 @endif
 
                                 @if ($theme['has_countries'])
                                     <button type="button" class="theme-pill-btn"
                                         wire:click="openCountries({{ $theme['theme_id'] }})">
-                                        Countries
+                                        {{ __('Countries') }}
                                     </button>
                                 @endif
                             </div>
@@ -425,25 +423,24 @@
             </section>
         @else
             <div class="theme-empty-state">
-                <div class="empty-state-title">No variants available</div>
-                <p class="empty-state-copy">Variant cards will appear here after home page variants are published for your themes.</p>
+                <div class="empty-state-title">{{ __('No variants available') }}</div>
+                <p class="empty-state-copy">{{ __('Variant cards will appear here after home page variants are published for your themes.') }}</p>
             </div>
         @endif
     </div>
 
-    <x-modal wire:model="showCountriesModal" title="Theme Countries" maxWidth="2xl" closeAction="closeCountries">
+    <x-modal wire:model="showCountriesModal" :title="__('Theme Countries')" maxWidth="2xl" closeAction="closeCountries">
         <div class="page-stack">
             <p style="margin:0;">
-                Enable or disable countries for
-                <strong>{{ $countriesThemeName }}</strong>.
-                You can only toggle countries allowed by the central template.
+                {{ __('Enable or disable countries for') }}
+                <strong>{{ $countriesThemeName }}</strong>{{ __('. You can only toggle countries allowed by the central template.') }}
             </p>
 
             <div>
-                <label class="field-label">Search</label>
+                <label class="field-label">{{ __('Search') }}</label>
                 <input type="text" class="theme-country-input"
                     wire:model.live.debounce.250ms="countriesSearch"
-                    placeholder="Search by country name or ISO code...">
+                    placeholder="{{ __('Search by country name or ISO code...') }}">
             </div>
 
             <div class="theme-country-list">
@@ -457,17 +454,17 @@
                         <span class="theme-country-iso">{{ $row->iso2 }}</span>
                     </label>
                 @empty
-                    <p class="theme-country-empty">No countries match your search.</p>
+                    <p class="theme-country-empty">{{ __('No countries match your search.') }}</p>
                 @endforelse
             </div>
 
             <p class="theme-country-summary">
-                Enabled: <strong>{{ count($enabledCountryIds) }}</strong>
+                {{ __('Enabled:') }} <strong>{{ count($enabledCountryIds) }}</strong>
             </p>
 
             <div class="theme-modal-actions">
-                <button type="button" class="theme-pill-btn" wire:click="closeCountries">Cancel</button>
-                <button type="button" class="theme-pill-btn is-primary" wire:click="saveCountries">Save</button>
+                <button type="button" class="theme-pill-btn" wire:click="closeCountries">{{ __('Cancel') }}</button>
+                <button type="button" class="theme-pill-btn is-primary" wire:click="saveCountries">{{ __('Save') }}</button>
             </div>
         </div>
     </x-modal>

@@ -30,19 +30,19 @@ final class CustomersController extends PanelController
 
         return view('tenant.pages.sales.customers.index', [
             'stats' => Metric::cards([
-                ['label' => 'Customers', 'value' => $stats['total'], 'format' => 'number', 'caption' => 'Tenant customer records.', 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
-                ['label' => 'Active', 'value' => $stats['active'], 'format' => 'number', 'caption' => 'Customers currently allowed to order.', 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
-                ['label' => 'Buyers', 'value' => $stats['buyers'], 'format' => 'number', 'caption' => 'Profiles that have already converted into orders.', 'dot' => 'dot-violet'],
-                ['label' => 'Avg Lifetime', 'value' => $stats['avg_lifetime'], 'format' => 'currency', 'caption' => 'Average customer lifetime spend for ordering customers.', 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
+                ['label' => __('Customers'), 'value' => $stats['total'], 'format' => 'number', 'caption' => __('Tenant customer records.'), 'dot' => 'dot-cyan', 'glow' => 'card-glow-cyan'],
+                ['label' => __('Active'), 'value' => $stats['active'], 'format' => 'number', 'caption' => __('Customers currently allowed to order.'), 'dot' => 'dot-green', 'glow' => 'card-glow-green'],
+                ['label' => __('Buyers'), 'value' => $stats['buyers'], 'format' => 'number', 'caption' => __('Profiles that have already converted into orders.'), 'dot' => 'dot-violet'],
+                ['label' => __('Avg Lifetime'), 'value' => $stats['avg_lifetime'], 'format' => 'currency', 'caption' => __('Average customer lifetime spend for ordering customers.'), 'dot' => 'dot-amber', 'glow' => 'card-glow-amber'],
             ]),
             'columns' => [
                 TableColumn::index(),
-                TableColumn::make('customer', 'Customer')->orderable(false),
-                TableColumn::make('contact', 'Contact')->orderable(false),
-                TableColumn::make('orders', 'Orders')->orderable(false),
-                TableColumn::make('lifetime_value', 'Lifetime Value')->orderable(false),
-                TableColumn::make('last_order', 'Last Order')->orderable(false),
-                TableColumn::make('status', 'Status')->orderable(false),
+                TableColumn::make('customer', __('Customer'))->orderable(false),
+                TableColumn::make('contact', __('Contact'))->orderable(false),
+                TableColumn::make('orders', __('Orders'))->orderable(false),
+                TableColumn::make('lifetime_value', __('Lifetime Value'))->orderable(false),
+                TableColumn::make('last_order', __('Last Order'))->orderable(false),
+                TableColumn::make('status', __('Status'))->orderable(false),
                 TableColumn::actions(),
             ],
         ]);
@@ -77,13 +77,13 @@ final class CustomersController extends PanelController
             $customer->address ?: '',
             $customer->orders_count,
             $customer->paid_orders_count,
-            $customer->active ? 'Active' : 'Inactive',
+            $customer->active ? __('Active') : __('Inactive'),
             $customer->created_at?->format('Y-m-d') ?? '',
         ]);
 
         return $this->streamCsv(
             'customers-' . now()->format('Y-m-d') . '.csv',
-            ['ID', 'Name', 'Email', 'Phone', 'Address', 'Orders', 'Paid Orders', 'Status', 'Registered At'],
+            ['ID', __('Name'), __('Email'), __('Phone'), __('Address'), __('Orders'), __('Paid Orders'), __('Status'), __('Registered At')],
             $rows,
         );
     }
@@ -92,6 +92,6 @@ final class CustomersController extends PanelController
     {
         $this->service->deleteModel(Customer::query()->findOrFail($customerId));
 
-        return $this->success('Customer deleted successfully.');
+        return $this->success(__('Customer deleted successfully.'));
     }
 }

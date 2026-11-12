@@ -17,25 +17,25 @@
 <section class="db-section fu d2">
     <div class="db-section-head">
         <div class="db-welcome-copy db-opp-intro">
-            <h2 class="db-welcome-title">Successful advertisements</h2>
-            <p class="db-welcome-sub">View the ad, add the product, or complete the entire process with one click.</p>
+            <h2 class="db-welcome-title">{{ __('Successful advertisements') }}</h2>
+            <p class="db-welcome-sub">{{ __('View the ad, add the product, or complete the entire process with one click.') }}</p>
         </div>
         {{-- BACKEND TODO: point at the advertising library once that page exists. --}}
         <a href="#" class="db-see-all">
-            <span class="db-title-full">Advertising Library</span><span class="db-title-short">See all</span>
+            <span class="db-title-full">{{ __('Advertising Library') }}</span><span class="db-title-short">{{ __('See all') }}</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
         </a>
     </div>
 
     <x-tenant::country-picker trigger-class="db-country-select is-ads">
-        <span data-country-label>Select your country</span>
+        <span data-country-label>{{ __('Select your country') }}</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 9l-6 6-6-6"/></svg>
     </x-tenant::country-picker>
 
     @if(empty($ads))
-        <div class="empty-state-sm">No ads generated yet. <a href="{{ route('tenant.products.index') }}">Go to products</a> to generate social posts.</div>
+        <div class="empty-state-sm">{{ __('No ads generated yet.') }} <a href="{{ route('tenant.products.index') }}">{{ __('Go to products') }}</a> {{ __('to generate social posts.') }}</div>
     @else
-    <div class="db-opp-slider is-ads swiper" data-opp-slider data-mobile-view="1" aria-label="Successful advertisements">
+    <div class="db-opp-slider is-ads swiper" data-opp-slider data-mobile-view="1" aria-label="{{ __('Successful advertisements') }}">
         <div class="swiper-wrapper">
             @foreach($ads as $ad)
                 <article class="db-opp db-ad swiper-slide">
@@ -47,22 +47,22 @@
                                 {{ $ad['duration'] }}
                             </span>
                         </div>
-                        <button type="button" class="db-ad-play" data-ad-play data-video="{{ $ad['video'] }}" aria-label="Play ad: {{ $ad['title'] }}">
+                        <button type="button" class="db-ad-play" data-ad-play data-video="{{ $ad['video'] }}" aria-label="{{ __('Play ad: :title', ['title' => __($ad['title'])]) }}">
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.9 12.86c-.36 1.34-2.05 2.3-5.44 4.2-3.27 1.85-4.91 2.77-6.23 2.4a3.3 3.3 0 0 1-1.44-.83C4.75 17.64 4.75 15.76 4.75 12s0-5.64 1.04-6.63a3.3 3.3 0 0 1 1.44-.84c1.32-.36 2.96.56 6.23 2.4 3.39 1.91 5.08 2.87 5.44 4.21a3.1 3.1 0 0 1 0 1.72z" fill="#171717"/></svg>
                         </button>
                     </div>
 
                     <div class="db-opp-body db-ad-body">
                         <div class="db-ad-head">
-                            <h3 class="db-opp-title">{{ $ad['title'] }}</h3>
+                            <h3 class="db-opp-title">{{ __($ad['title']) }}</h3>
                             <div class="db-ad-hook">
-                                <span class="db-ad-hook-tag">Hook</span>
+                                <span class="db-ad-hook-tag">{{ __('Hook') }}</span>
                                 <p>“ {{ $ad['hook'] }} ”</p>
                             </div>
                         </div>
 
                         <div class="db-opp-markets">
-                            <h4>Successful in markets</h4>
+                            <h4>{{ __('Successful in markets') }}</h4>
                             <div class="db-opp-flags swiper" data-flag-ticker>
                                 <div class="swiper-wrapper">
                                     @foreach([1, 2] as $pass)
@@ -78,7 +78,7 @@
 
                         <button type="button" class="btn btn-primary btn-lg db-opp-cta">
                             {!! $idea !!}
-                            Add to store &amp; create your Ad
+                            {{ __('Add to store & create your Ad') }}
                         </button>
                     </div>
                 </article>
