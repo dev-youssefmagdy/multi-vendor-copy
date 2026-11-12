@@ -92,7 +92,7 @@ class BillingPage extends ListPage
             PlanLimitService::FEATURE_BANNERS => ['label' => __('Banners'), 'dot' => 'dot-amber'],
             PlanLimitService::FEATURE_LANGUAGES => ['label' => __('Languages'), 'dot' => 'dot-violet'],
             PlanLimitService::FEATURE_ORDERS_PER_MONTH => ['label' => __('Orders this month'), 'dot' => 'dot-cyan'],
-            PlanLimitService::FEATURE_AI_CALLS => ['label' => 'AI calls', 'dot' => 'dot-violet'],
+            PlanLimitService::FEATURE_AI_CALLS => ['label' => __('AI calls'), 'dot' => 'dot-violet'],
             PlanLimitService::FEATURE_IMAGE_SEARCHES => ['label' => __('Image searches'), 'dot' => 'dot-amber'],
         ];
 

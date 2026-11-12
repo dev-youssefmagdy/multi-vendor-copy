@@ -26,7 +26,7 @@ final class SaveAdminRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'role_id' => 'role',
+            'role_id' => __('role'),
         ];
     }
 }

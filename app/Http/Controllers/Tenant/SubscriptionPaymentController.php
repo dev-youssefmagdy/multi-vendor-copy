@@ -81,7 +81,7 @@ class SubscriptionPaymentController extends Controller
         }
 
         return redirect()->route('tenant.finance.wallet')
-            ->withErrors(['payment' => $result->errorMessage ?? 'Payment initiation failed. Please try again.']);
+            ->withErrors(['payment' => $result->errorMessage ?? __('Payment initiation failed. Please try again.')]);
     }
 
     public function success(Request $request, string $gateway): RedirectResponse
@@ -93,12 +93,12 @@ class SubscriptionPaymentController extends Controller
                 ->withErrors(['payment' => $e->getMessage()]);
         } catch (\Throwable) {
             return redirect()->route('tenant.finance.wallet')
-                ->withErrors(['payment' => 'Payment verification failed. Please contact support.']);
+                ->withErrors(['payment' => __('Payment verification failed. Please contact support.')]);
         }
 
         if (!$result->success) {
             return redirect()->route('tenant.finance.wallet')
-                ->withErrors(['payment' => $result->errorMessage ?? 'Payment was not successful.']);
+                ->withErrors(['payment' => $result->errorMessage ?? __('Payment was not successful.')]);
         }
 
         $pending   = session('tenant_subscription_pending_payment');
@@ -108,14 +108,14 @@ class SubscriptionPaymentController extends Controller
 
         if (!$packageId) {
             return redirect()->route('tenant.finance.wallet')
-                ->withErrors(['payment' => 'Subscription payment reference lost. Please contact support.']);
+                ->withErrors(['payment' => __('Subscription payment reference lost. Please contact support.')]);
         }
 
         $package = Package::query()->find($packageId);
 
         if (!$package) {
             return redirect()->route('tenant.finance.wallet')
-                ->withErrors(['payment' => 'Package no longer available.']);
+                ->withErrors(['payment' => __('Package no longer available.')]);
         }
 
         $tenant = tenant();
@@ -135,7 +135,7 @@ class SubscriptionPaymentController extends Controller
         session()->forget('tenant_subscription_pending_payment');
 
         return redirect()->route('tenant.finance.wallet')
-            ->with('subscription_cancelled', 'Payment was cancelled.');
+            ->with('subscription_cancelled', __('Payment was cancelled.'));
     }
 
     private function handleSuccess(

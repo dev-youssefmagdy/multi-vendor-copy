@@ -76,7 +76,7 @@ class VendorSettlementPaymentController extends Controller
 
         if (! $centralGatewayModel) {
             return redirect()->route('tenant.finance.vendor-purchases')
-                ->withErrors(['payment' => 'Selected payment gateway is not available.']);
+                ->withErrors(['payment' => __('Selected payment gateway is not available.')]);
         }
 
         $breakdown = $this->purchaseService->previewBreakdown($order, $centralGatewayModel);
@@ -111,7 +111,7 @@ class VendorSettlementPaymentController extends Controller
                 ->withErrors(['payment' => $e->getMessage()]);
         } catch (\Throwable $e) {
             return redirect()->route('tenant.finance.vendor-purchases')
-                ->withErrors(['payment' => 'Payment initiation failed. Please try again.']);
+                ->withErrors(['payment' => __('Payment initiation failed. Please try again.')]);
         }
 
         if ($result->needsRedirect) {
@@ -135,7 +135,7 @@ class VendorSettlementPaymentController extends Controller
         }
 
         return redirect()->route('tenant.finance.vendor-purchases')
-            ->withErrors(['payment' => $result->errorMessage ?? 'Payment initiation failed. Please try again.']);
+            ->withErrors(['payment' => $result->errorMessage ?? __('Payment initiation failed. Please try again.')]);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -153,12 +153,12 @@ class VendorSettlementPaymentController extends Controller
                 ->withErrors(['payment' => $e->getMessage()]);
         } catch (\Throwable) {
             return redirect()->route('tenant.finance.vendor-purchases')
-                ->withErrors(['payment' => 'Payment verification failed. Please contact support.']);
+                ->withErrors(['payment' => __('Payment verification failed. Please contact support.')]);
         }
 
         if (! $result->success) {
             return redirect()->route('tenant.finance.vendor-purchases')
-                ->withErrors(['payment' => $result->errorMessage ?? 'Payment was not successful.']);
+                ->withErrors(['payment' => $result->errorMessage ?? __('Payment was not successful.')]);
         }
 
         $orderId = $request->integer('order_id') ?: ($pending['order_id'] ?? null);
@@ -168,7 +168,7 @@ class VendorSettlementPaymentController extends Controller
 
         if (! $orderId) {
             return redirect()->route('tenant.finance.vendor-purchases')
-                ->withErrors(['payment' => 'Settlement reference lost. Please contact support.']);
+                ->withErrors(['payment' => __('Settlement reference lost. Please contact support.')]);
         }
 
         $order = Order::query()
@@ -178,7 +178,7 @@ class VendorSettlementPaymentController extends Controller
 
         if (! $order) {
             return redirect()->route('tenant.finance.vendor-purchases')
-                ->withErrors(['payment' => 'Order not found.']);
+                ->withErrors(['payment' => __('Order not found.')]);
         }
 
         $centralGatewayModel = tenancy()->central(
@@ -222,7 +222,7 @@ class VendorSettlementPaymentController extends Controller
         session()->forget('tenant_vendor_settlement_pending');
 
         return redirect()->route('tenant.finance.vendor-purchases')
-            ->with('vendor_settlement_error', 'Payment was cancelled.');
+            ->with('vendor_settlement_error', __('Payment was cancelled.'));
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -306,6 +306,6 @@ class VendorSettlementPaymentController extends Controller
         }
 
         return redirect()->route('tenant.finance.vendor-purchases')
-            ->with('vendor_settlement_success', "Settlement #{$settlement?->invoice_number} recorded. Payment confirmed.");
+            ->with('vendor_settlement_success', __('Settlement #:number recorded. Payment confirmed.', ['number' => $settlement?->invoice_number]));
     }
 }

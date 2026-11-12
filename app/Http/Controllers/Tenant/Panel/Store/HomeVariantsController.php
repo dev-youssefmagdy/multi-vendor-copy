@@ -99,7 +99,7 @@ final class HomeVariantsController extends PanelController
             : null;
 
         if (!$themeId) {
-            return $this->failure('A theme must be selected.', 422);
+            return $this->failure(__('A theme must be selected.'), 422);
         }
 
         if (!$variantId) {

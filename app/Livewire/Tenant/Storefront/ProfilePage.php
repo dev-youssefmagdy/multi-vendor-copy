@@ -134,6 +134,14 @@ class ProfilePage extends Component
             'addrPhone' => 'nullable|string|max:30',
             'addrState' => 'nullable|string|max:100',
             'addrLabel' => 'nullable|string|max:50',
+        ], [], [
+            'addrFullName' => __('full name'),
+            'addrLine1' => __('street address'),
+            'addrCity' => __('city'),
+            'addrCountryId' => __('country'),
+            'addrPhone' => __('phone'),
+            'addrState' => __('state'),
+            'addrLabel' => __('label'),
         ]);
 
         /** @var Customer $customer */

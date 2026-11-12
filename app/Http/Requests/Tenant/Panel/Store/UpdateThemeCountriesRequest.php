@@ -19,7 +19,7 @@ final class UpdateThemeCountriesRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'country_ids' => 'countries',
+            'country_ids' => __('countries'),
         ];
     }
 }

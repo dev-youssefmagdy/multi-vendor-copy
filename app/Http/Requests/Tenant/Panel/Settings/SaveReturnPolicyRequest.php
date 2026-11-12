@@ -30,12 +30,12 @@ final class SaveReturnPolicyRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'window_days' => 'return window (days)',
-            'non_returnable_ids' => 'non-returnable product IDs',
+            'window_days' => __('return window (days)'),
+            'non_returnable_ids' => __('non-returnable product IDs'),
             'fee' => __('return fee'),
             'conditions' => __('accepted conditions'),
             'video_required_reasons' => __('reasons requiring video'),
-            OrderPolicyService::CANCELLATION_WINDOW_HOURS => 'cancellation window (hours)',
+            OrderPolicyService::CANCELLATION_WINDOW_HOURS => __('cancellation window (hours)'),
         ];
     }
 

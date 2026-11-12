@@ -201,7 +201,7 @@ export function initPaymentModal(root) {
     async function tokenise2Checkout(panel) {
         const TCO = window.TCO;
         if (typeof TCO === 'undefined') {
-            toast.error('2Pay.js is still loading. Please try again.');
+            toast.error(t('2Pay.js is still loading. Please try again.'));
             return false;
         }
 

@@ -29,8 +29,8 @@ final class SaveCouponRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'country_ids' => 'countries',
-            'name_text' => 'name',
+            'country_ids' => __('countries'),
+            'name_text' => __('name'),
             'minimum_spend' => __('minimum spend'),
             'start_date' => __('start date'),
             'end_date' => __('end date'),

@@ -2,6 +2,7 @@ import '@tenant-css/pages/notifications.css';
 
 import { patch, post } from '../../core/http.js';
 import { emit } from '../../core/events.js';
+import { t } from '../../core/i18n.js';
 
 function init() {
     const list = document.getElementById('notifications-list');
@@ -17,7 +18,7 @@ function init() {
         if (!unreadBadge) return;
         const next = Math.max(0, count);
         unreadBadge.dataset.count = String(next);
-        unreadBadge.textContent = `${next} unread`;
+        unreadBadge.textContent = t(':count unread', { count: next });
         unreadBadge.hidden = next === 0;
         if (markAllBtn) markAllBtn.hidden = next === 0;
     };

@@ -83,7 +83,7 @@ final class AiTranslationController extends PanelController
         $this->service->completePurchase(tenant(), $centralLanguage, []);
         $this->limitService->incrementCounter(tenant(), 'ai_calls_count');
 
-        return $this->success('AI translation started. This may take a few minutes.');
+        return $this->success(__('AI translation started. This may take a few minutes.'));
     }
 
     public function purchase(PurchaseAiTranslationRequest $request, int $language): JsonResponse

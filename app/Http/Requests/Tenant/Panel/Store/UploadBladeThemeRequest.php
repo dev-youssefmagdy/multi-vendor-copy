@@ -18,7 +18,7 @@ final class UploadBladeThemeRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'theme_zip' => 'theme ZIP',
+            'theme_zip' => __('theme ZIP'),
         ];
     }
 }

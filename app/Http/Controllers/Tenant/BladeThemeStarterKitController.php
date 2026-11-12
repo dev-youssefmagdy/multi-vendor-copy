@@ -17,7 +17,7 @@ class BladeThemeStarterKitController extends Controller
         $sourceDir = resource_path('blade-theme-starter-kit');
 
         if (!is_dir($sourceDir)) {
-            abort(404, 'Starter kit not found.');
+            abort(404, __('Starter kit not found.'));
         }
 
         $tmpZip = storage_path('app/tmp/blade-theme-starter-kit-' . Str::random(8) . '.zip');

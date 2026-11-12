@@ -105,7 +105,7 @@ class OwnProductStorefrontVisibilityTest extends TestCase
             // For catalog products the column is only a ranking preference: never hidden.
             $catalog->update(['allowed_country_ids' => [$this->russia]]);
 
-            foreach ([$this->morocco, $this->egypt, null] as $countryId) {
+            foreach ([$this->morocco, $this->egypt] as $countryId) {
                 $repo = $this->visitFrom($countryId);
                 $listed = $repo->paginatedSearchProducts([], 50)->getCollection()->modelKeys();
                 $home = app(HomeProductService::class)->getNewIn(50, $countryId)->modelKeys();
@@ -119,6 +119,15 @@ class OwnProductStorefrontVisibilityTest extends TestCase
 
             $this->visitFrom($this->morocco);
             Livewire::test(ProductPage::class, ['slug' => $restricted->slug])->assertStatus(404);
+
+            // Unknown country (first visit from a shared link, nothing picked yet): shown.
+            $repo = $this->visitFrom(null);
+            $this->assertNotNull($repo->productBySlug($restricted->slug), 'product page, unknown country');
+            $this->assertContains($restricted->id, $repo->paginatedSearchProducts([], 50)->getCollection()->modelKeys());
+
+            // A published product with stock 0 opens (shows "Out of Stock") instead of 404.
+            $soldOut = $this->ownProduct(['manage_stock' => true, 'stock' => 0]);
+            $this->assertNotNull($this->visitFrom($this->morocco)->productBySlug($soldOut->slug), 'out-of-stock product page');
 
             $repo = $this->visitFrom($this->russia);
             $this->assertNotNull($repo->productBySlug($restricted->slug));

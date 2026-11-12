@@ -310,23 +310,23 @@ function initFreeShippingModal() {
 
             <div class="flex flex-col items-center font-main">
                 <!-- Title -->
-                <h3 class="text-[20px] font-bold text-[#111] mb-8 tracking-wide">Free shipping</h3>
+                <h3 class="text-[20px] font-bold text-[#111] mb-8 tracking-wide">${window.trans('Free shipping')}</h3>
 
                 <!-- Content Points -->
                 <div class="w-full text-left space-y-4 mb-10 px-2">
                     <div class="flex items-start gap-2.5">
                         <span class="text-[18px] leading-none mt-1.5">•</span>
-                        <p class="text-[15px] text-[#242424] font-medium leading-relaxed">Free standard shipping on all orders.</p>
+                        <p class="text-[15px] text-[#242424] font-medium leading-relaxed">${window.trans('Free standard shipping on all orders.')}</p>
                     </div>
                     <div class="flex items-start gap-2.5">
                         <span class="text-[18px] leading-none mt-1.5">•</span>
-                        <p class="text-[15px] text-[#242424] font-medium leading-relaxed">Manti has order minimums to place your order. The applicable thresholds are detailed before you submit your order.</p>
+                        <p class="text-[15px] text-[#242424] font-medium leading-relaxed">${window.trans('Manti has order minimums to place your order. The applicable thresholds are detailed before you submit your order.')}</p>
                     </div>
                 </div>
 
                 <!-- OK Button -->
                 <button onclick="closeFreeShippingModal(event)" class="w-full max-w-[320px] py-4 bg-[#232323] text-white rounded-full text-[16px] font-bold hover:bg-black transition active:scale-95 cursor-pointer border-none outline-none">
-                    OK
+                    ${window.trans('OK')}
                 </button>
             </div>
         </div>

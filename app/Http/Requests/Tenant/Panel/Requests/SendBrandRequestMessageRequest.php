@@ -18,7 +18,7 @@ final class SendBrandRequestMessageRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'message' => 'message',
+            'message' => __('message'),
         ];
     }
 }

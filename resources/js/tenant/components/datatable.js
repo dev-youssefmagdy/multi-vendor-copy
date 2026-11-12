@@ -29,7 +29,7 @@ function buildLanguage(config) {
         info: t('Showing _START_ to _END_ of _TOTAL_ records'),
         infoEmpty: t('Showing 0 to 0 of 0 records'),
         infoFiltered: '',
-        lengthMenu: '_MENU_ per page',
+        lengthMenu: t('_MENU_ per page'),
         paginate: { previous: '‹', next: '›' },
     };
 
@@ -63,7 +63,7 @@ function updateBulkBar(el) {
     bar.hidden = ids.length === 0;
     const countEl = bar.querySelector('[data-bulk-count]');
     if (countEl) {
-        countEl.textContent = `${ids.length} selected`;
+        countEl.textContent = t(':count selected', { count: ids.length });
     }
 }
 

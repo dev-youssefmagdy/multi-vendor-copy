@@ -32,7 +32,7 @@ final class SaveCustomerAddressRequest extends TenantFormRequest
     {
         return [
             'full_name' => __('recipient name'),
-            'address_line_1' => 'address line 1',
+            'address_line_1' => __('address line 1'),
             'is_default' => __('default address'),
         ];
     }

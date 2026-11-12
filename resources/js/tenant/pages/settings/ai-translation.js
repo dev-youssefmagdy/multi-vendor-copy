@@ -45,7 +45,7 @@ function patchCard(card) {
         progressBar.style.width = `${card.translation_progress ?? 0}%`;
     }
     if (running && progressLabel) {
-        progressLabel.textContent = `${card.translation_status[0].toUpperCase()}${card.translation_status.slice(1)} — ${card.translation_progress ?? 0}%`;
+        progressLabel.textContent = `${t(`${card.translation_status[0].toUpperCase()}${card.translation_status.slice(1)}`)} — ${card.translation_progress ?? 0}%`;
     }
 
     if (completedEl) {

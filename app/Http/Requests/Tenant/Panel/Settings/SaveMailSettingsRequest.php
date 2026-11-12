@@ -67,12 +67,12 @@ final class SaveMailSettingsRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'mail_mailer' => 'mailer',
-            'mail_host' => 'host',
-            'mail_port' => 'port',
-            'mail_username' => 'username',
-            'mail_password' => 'password',
-            'mail_encryption' => 'encryption',
+            'mail_mailer' => __('mailer'),
+            'mail_host' => __('host'),
+            'mail_port' => __('port'),
+            'mail_username' => __('username'),
+            'mail_password' => __('password'),
+            'mail_encryption' => __('encryption'),
             'mail_from_address' => __('from address'),
             'mail_from_name' => __('from name'),
         ];

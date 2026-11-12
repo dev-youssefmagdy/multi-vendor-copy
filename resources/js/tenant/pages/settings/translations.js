@@ -87,7 +87,7 @@ function updateBulkBar() {
     bar.hidden = keys.length === 0;
     const countEl = bar.querySelector('[data-translations-bulk-count]');
     if (countEl) {
-        countEl.textContent = `${keys.length} key(s) selected`;
+        countEl.textContent = t(':count key(s) selected', { count: keys.length });
     }
 }
 
@@ -160,7 +160,7 @@ function patchStatus(data) {
     }
     if (running && label) {
         const status = data.translation_status;
-        label.textContent = `${status[0].toUpperCase()}${status.slice(1)} — ${data.translation_progress ?? 0}%`;
+        label.textContent = `${t(`${status[0].toUpperCase()}${status.slice(1)}`)} — ${data.translation_progress ?? 0}%`;
     }
 
     if (completedBadge) {

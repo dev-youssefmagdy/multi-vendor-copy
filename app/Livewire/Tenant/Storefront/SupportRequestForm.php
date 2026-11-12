@@ -45,6 +45,11 @@ class SupportRequestForm extends Component
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255'],
             'message' => ['required', 'string', 'min:10', 'max:5000'],
+        ], [], [
+            'type' => __('type'),
+            'name' => __('name'),
+            'email' => __('email'),
+            'message' => __('message'),
         ]);
 
         $recipient = AdminUser::query()->whereNotNull('email')->orderBy('id')->value('email');

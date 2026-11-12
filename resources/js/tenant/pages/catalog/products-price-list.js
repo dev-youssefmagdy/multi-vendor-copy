@@ -59,8 +59,8 @@ export function renderPriceTable(tbody, { basePrice, profits, shippingByCountry,
             <td>
                 <div class="price-list-profit-cell">
                     <select class="field-control" data-profit-type>
-                        <option value="percentage" ${row.type !== 'fixed' ? 'selected' : ''}>% of price</option>
-                        <option value="fixed" ${row.type === 'fixed' ? 'selected' : ''}>Fixed ($)</option>
+                        <option value="percentage" ${row.type !== 'fixed' ? 'selected' : ''}>${t('% of price')}</option>
+                        <option value="fixed" ${row.type === 'fixed' ? 'selected' : ''}>${t('Fixed ($)')}</option>
                     </select>
                     <input type="number" step="0.01" min="0" class="field-control" data-profit-value value="${row.value}">
                 </div>

@@ -31,8 +31,8 @@ final class SaveFlashSaleRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'country_ids' => 'countries',
-            'product_ids' => 'products',
+            'country_ids' => __('countries'),
+            'product_ids' => __('products'),
             'discount_percentage' => __('discount percentage'),
             'start_date' => __('start date'),
             'end_date' => __('end date'),

@@ -46,7 +46,7 @@ final class SaveCategoryRequest extends TenantFormRequest
         return [
             'parent_id' => __('parent category'),
             'order_number' => __('order number'),
-            'thumb' => 'image',
+            'thumb' => __('image'),
         ];
     }
 }

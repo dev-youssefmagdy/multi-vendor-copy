@@ -22,9 +22,9 @@ final class StoreBrandRequestRequest extends TenantFormRequest
     {
         return [
             'title' => __('brand title'),
-            'description' => 'description',
-            'files' => 'attachments',
-            'files.*' => 'attachment',
+            'description' => __('description'),
+            'files' => __('attachments'),
+            'files.*' => __('attachment'),
         ];
     }
 }

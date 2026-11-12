@@ -154,7 +154,7 @@ class GeneralSettingsPage extends ContentPage
             ->exists();
 
         if ($hasPending) {
-            $this->toast('A target countries change request is already pending review.', 'warning');
+            $this->toast(__('A target countries change request is already pending review.'), 'warning');
             $this->closeCountryRequestModal();
             return;
         }
@@ -204,7 +204,7 @@ class GeneralSettingsPage extends ContentPage
             ->exists();
 
         if ($hasPending) {
-            $this->toast('A categories change request is already pending review.', 'warning');
+            $this->toast(__('A categories change request is already pending review.'), 'warning');
             $this->closeCategoryRequestModal();
             return;
         }

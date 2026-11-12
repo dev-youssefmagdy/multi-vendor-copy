@@ -13,6 +13,7 @@ use App\Services\Tenant\ProductMarketingService;
 use App\Services\Tenant\ProductPriceListService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 final class ProductModalsController extends PanelController
 {
@@ -39,7 +40,10 @@ final class ProductModalsController extends PanelController
                 (bool) ($validated['include_image'] ?? true),
             );
         } catch (\Throwable $e) {
-            return $this->failure(__('Generation failed: :error', ['error' => $e->getMessage()]));
+            // Technical details (AI service down, missing API key...) are for us, not the vendor.
+            Log::warning('AI social posts generation failed', ['product_id' => $product->id, 'error' => $e->getMessage()]);
+
+            return $this->failure(__('We couldn’t generate posts right now. Please try again in a few minutes. If the problem continues, contact support.'));
         }
 
         return $this->success($result['message'], [
@@ -57,15 +61,19 @@ final class ProductModalsController extends PanelController
     public function fetchAiPrice(FetchAiPriceRequest $request, Product $product): JsonResponse
     {
         $validated = $request->validated();
+        // The form posts the variant id as a string ("1"); the service takes ?int.
+        $variantId = filled($validated['variant_id'] ?? null) ? (int) $validated['variant_id'] : null;
 
         try {
             $priceData = $this->marketing->fetchAiPrice(
                 $product,
                 (bool) ($validated['use_image'] ?? false),
-                $validated['variant_id'] ?? null,
+                $variantId,
             );
         } catch (\Throwable $e) {
-            return $this->failure(__('Fetch failed: :error', ['error' => $e->getMessage()]));
+            Log::warning('AI price fetch failed', ['product_id' => $product->id, 'variant_id' => $variantId, 'error' => $e->getMessage()]);
+
+            return $this->failure(__('We couldn’t fetch market prices right now. Please try again in a few minutes. If the problem continues, contact support.'));
         }
 
         return $this->success(__('Price data fetched and saved successfully.'), ['priceData' => $priceData]);

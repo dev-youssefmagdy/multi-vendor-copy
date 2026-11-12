@@ -29,6 +29,10 @@
         modal.__blob = null;
     }
 
+    function tr(key) {
+        return typeof window.trans === 'function' ? window.trans(key) : key;
+    }
+
     function showError(modal, message) {
         var el = modal.querySelector('.image-search-error');
         el.textContent = message;
@@ -59,7 +63,7 @@
             modal.__stream = stream;
             modal.querySelector('.image-search-video').srcObject = stream;
         } catch (e) {
-            showError(modal, 'Could not access the camera. Please allow camera permission or use Upload Image instead.');
+            showError(modal, tr('Could not access the camera. Please allow camera permission or use Upload Image instead.'));
             modal.querySelector('.image-search-camera').classList.add('hidden');
             modal.querySelector('.image-search-choice').classList.remove('hidden');
         }
@@ -74,7 +78,7 @@
         stopCamera(modal);
         canvas.toBlob(function (blob) {
             if (blob) { showPreview(modal, blob); }
-            else { showError(modal, 'Could not capture the photo. Please try again.'); }
+            else { showError(modal, tr('Could not capture the photo. Please try again.')); }
         }, 'image/jpeg', 0.92);
     }
 
@@ -100,7 +104,7 @@
             if (onResultsName) {
                 var ct = response.headers.get('content-type') || '';
                 if (!response.ok || !ct.includes('application/json')) {
-                    throw new Error('Image search failed. Please try again.');
+                    throw new Error(tr('Image search failed. Please try again.'));
                 }
                 var json = await response.json();
                 closeModal(modal);
@@ -109,11 +113,11 @@
             } else if (response.redirected) {
                 window.location.href = response.url;
             } else if (!response.ok) {
-                throw new Error('Image search failed. Please try again.');
+                throw new Error(tr('Image search failed. Please try again.'));
             }
         } catch (e) {
             modal.querySelector('.image-search-loading').classList.add('hidden');
-            showError(modal, e.message || 'Image search failed. Please try again.');
+            showError(modal, e.message || tr('Image search failed. Please try again.'));
             modal.querySelector('.image-search-preview').classList.remove('hidden');
         }
     }

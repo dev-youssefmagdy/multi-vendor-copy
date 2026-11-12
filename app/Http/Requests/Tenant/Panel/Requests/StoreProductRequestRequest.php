@@ -22,8 +22,8 @@ final class StoreProductRequestRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'product_url' => 'product URL',
-            'files.*' => 'attachment',
+            'product_url' => __('product URL'),
+            'files.*' => __('attachment'),
         ];
     }
 }

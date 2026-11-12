@@ -60,15 +60,6 @@
 
 .t-scope .hd-field svg { width: 24px; height: 24px; }
 
-.t-scope .hd-country {
-    justify-content: space-between;
-    flex: 0 1 261px;
-    min-width: 228px;
-    padding: 8px;
-    cursor: pointer;
-    text-align: start;
-}
-
 .t-scope .hd-field-main {
     display: inline-flex;
     align-items: center;
@@ -102,8 +93,7 @@
 .t-scope .hd-search input::placeholder { color: var(--ds-text-nav); }
 .t-scope .hd-search input::-webkit-search-cancel-button { cursor: pointer; }
 
-.t-scope .hd-field:focus-within,
-.t-scope .hd-country:focus-visible {
+.t-scope .hd-field:focus-within {
     outline: 2px solid var(--ds-brand-500);
     outline-offset: 0;
 }
@@ -283,7 +273,6 @@
 @media (max-width: 1023px) {
     .t-scope #nav { padding: 12px 16px; gap: 12px; }
     .t-scope #nav .ham { display: flex; }
-    .t-scope .hd-country { display: none; }
     .t-scope .hd-end { margin-inline-start: auto; }
 }
 

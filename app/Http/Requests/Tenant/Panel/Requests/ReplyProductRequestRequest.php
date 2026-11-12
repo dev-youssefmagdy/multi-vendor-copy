@@ -20,7 +20,7 @@ final class ReplyProductRequestRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'attachments.*' => 'attachment',
+            'attachments.*' => __('attachment'),
         ];
     }
 }

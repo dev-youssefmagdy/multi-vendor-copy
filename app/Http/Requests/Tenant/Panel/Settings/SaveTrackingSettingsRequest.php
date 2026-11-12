@@ -31,7 +31,7 @@ final class SaveTrackingSettingsRequest extends TenantFormRequest
             'fb_pixel_id' => __('Facebook pixel ID'),
             'tiktok_pixel_id' => __('TikTok pixel ID'),
             'snapchat_pixel_id' => __('Snapchat pixel ID'),
-            'ga_measurement_id' => 'GA4 measurement ID',
+            'ga_measurement_id' => __('GA4 measurement ID'),
         ];
     }
 }

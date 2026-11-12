@@ -167,6 +167,10 @@ class OrderStatusPage extends Component
             'reviewProductId' => 'required|integer',
             'reviewStars' => 'required|integer|min:1|max:5',
             'reviewComment' => 'nullable|string|max:1000',
+        ], [], [
+            'reviewProductId' => __('product'),
+            'reviewStars' => __('rating'),
+            'reviewComment' => __('comment'),
         ]);
 
         $repo = app(StorefrontRepository::class);

@@ -387,7 +387,7 @@
                             <x-tenant::locale-pane :code="$language->code" :active="$language->code === $activeLocale">
                                 <div class="form-grid">
                                     <x-tenant::textarea :name="'translations.'.$language->code.'.footer_text'" :label="__('Footer Text')" rows="4" :value="$footerTranslations[$language->code]['footer_text'] ?? ''" maxlength="1000" />
-                                    <x-tenant::input :name="'translations.'.$language->code.'.footer_copyright'" :label="__('Copyright')" placeholder="© {{ date('Y') }} Your Store. All rights reserved." :value="$footerTranslations[$language->code]['footer_copyright'] ?? ''" maxlength="255" />
+                                    <x-tenant::input :name="'translations.'.$language->code.'.footer_copyright'" :label="__('Copyright')" :placeholder="'© '.date('Y').' '.__('Your Store. All rights reserved.')" :value="$footerTranslations[$language->code]['footer_copyright'] ?? ''" maxlength="255" />
                                 </div>
                             </x-tenant::locale-pane>
                         @endforeach

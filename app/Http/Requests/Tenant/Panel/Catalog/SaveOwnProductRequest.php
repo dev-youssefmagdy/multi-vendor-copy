@@ -97,11 +97,11 @@ final class SaveOwnProductRequest extends TenantFormRequest
     {
         return [
             'base_price' => __('base price'),
-            'category_ids' => 'categories',
-            'badge_ids' => 'badges',
+            'category_ids' => __('categories'),
+            'badge_ids' => __('badges'),
             'primary_image' => __('primary image'),
             'gallery_files' => __('gallery files'),
-            'return_window_days' => 'return window (days)',
+            'return_window_days' => __('return window (days)'),
             'return_fee' => __('return fee'),
             'return_conditions' => __('return conditions'),
         ];

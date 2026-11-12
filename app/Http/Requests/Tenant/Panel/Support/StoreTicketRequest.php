@@ -21,9 +21,9 @@ final class StoreTicketRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'subject' => 'subject',
-            'category' => 'category',
-            'body' => 'message',
+            'subject' => __('subject'),
+            'category' => __('category'),
+            'body' => __('message'),
         ];
     }
 

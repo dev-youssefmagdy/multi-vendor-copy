@@ -47,7 +47,7 @@ final class UpdateDomainRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'domain' => 'domain',
+            'domain' => __('domain'),
         ];
     }
 }

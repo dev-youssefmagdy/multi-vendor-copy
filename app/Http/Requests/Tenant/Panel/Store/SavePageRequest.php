@@ -41,7 +41,7 @@ final class SavePageRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'slug' => 'slug',
+            'slug' => __('slug'),
         ];
     }
 

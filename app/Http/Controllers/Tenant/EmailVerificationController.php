@@ -21,7 +21,7 @@ class EmailVerificationController extends Controller
         }
 
         if ($admin->hasVerifiedEmail()) {
-            return back()->with('status', 'Your email is already verified.')->with('status_type', 'success');
+            return back()->with('status', __('Your email is already verified.'))->with('status_type', 'success');
         }
 
         $verifyUrl = URL::temporarySignedRoute(
@@ -34,7 +34,7 @@ class EmailVerificationController extends Controller
 
         return back()->with(
             'status',
-            $sent ? 'A verification link has been sent to ' . $admin->email . '.' : 'We could not send the verification email. Please check your mail configuration.'
+            $sent ? __('A verification link has been sent to :email.', ['email' => $admin->email]) : __('We could not send the verification email. Please check your mail configuration.')
         )->with('status_type', $sent ? 'success' : 'error');
     }
 
@@ -51,7 +51,7 @@ class EmailVerificationController extends Controller
         $redirectRoute = auth('tenant')->check() ? 'tenant.dashboard' : 'tenant.login';
 
         return redirect()->route($redirectRoute)
-            ->with('status', 'Your email address has been verified.')
+            ->with('status', __('Your email address has been verified.'))
             ->with('status_type', 'success');
     }
 }

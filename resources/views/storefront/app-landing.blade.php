@@ -16,12 +16,12 @@
 <body>
 <main>
     <h1 style="font-size:1.25rem">{{ $host }}</h1>
-    <a class="btn" href="{{ $appUrl }}">Open in app</a>
-    @if ($playUrl)<a class="btn alt" href="{{ $playUrl }}">Install on Google Play</a>@endif
-    @if ($iosUrl)<a class="btn alt" href="{{ $iosUrl }}">Install on the App Store</a>@endif
-    <a class="btn alt" href="{{ $webUrl }}">Continue in browser</a>
-    @if ($platformAppUrl)<small>Using our multi-store app instead? <a href="{{ $platformAppUrl }}">Open it there</a></small>@endif
-    @if ($storeCode !== '')<small>Already installed? Enter this store code in the {{ $platformAppUrl ? 'multi-store ' : '' }}app: <strong>{{ $storeCode }}</strong></small>@endif
+    <a class="btn" href="{{ $appUrl }}">{{ __('Open in app') }}</a>
+    @if ($playUrl)<a class="btn alt" href="{{ $playUrl }}">{{ __('Install on Google Play') }}</a>@endif
+    @if ($iosUrl)<a class="btn alt" href="{{ $iosUrl }}">{{ __('Install on the App Store') }}</a>@endif
+    <a class="btn alt" href="{{ $webUrl }}">{{ __('Continue in browser') }}</a>
+    @if ($platformAppUrl)<small>{{ __('Using our multi-store app instead?') }} <a href="{{ $platformAppUrl }}">{{ __('Open it there') }}</a></small>@endif
+    @if ($storeCode !== '')<small>{{ $platformAppUrl ? __('Already installed? Enter this store code in the multi-store app:') : __('Already installed? Enter this store code in the app:') }} <strong>{{ $storeCode }}</strong></small>@endif
 </main>
 </body>
 </html>

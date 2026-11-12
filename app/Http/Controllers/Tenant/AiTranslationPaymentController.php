@@ -42,7 +42,7 @@ class AiTranslationPaymentController extends Controller
 
         if (!$this->purchaseService->canPurchase($tenant, $language) || $this->purchaseService->isFree($language)) {
             return redirect()->route('tenant.settings.ai-translation')
-                ->with('purchase_error', 'This AI translation cannot be purchased.');
+                ->with('purchase_error', __('This AI translation cannot be purchased.'));
         }
 
         $amount = (float) $language->ai_translation_price;
@@ -85,7 +85,7 @@ class AiTranslationPaymentController extends Controller
         }
 
         return redirect()->route('tenant.settings.ai-translation')
-            ->withErrors(['payment' => $result->errorMessage ?? 'Payment initiation failed. Please try again.']);
+            ->withErrors(['payment' => $result->errorMessage ?? __('Payment initiation failed. Please try again.')]);
     }
 
     public function success(Request $request, string $gateway): RedirectResponse
@@ -97,12 +97,12 @@ class AiTranslationPaymentController extends Controller
                 ->withErrors(['payment' => $e->getMessage()]);
         } catch (\Throwable) {
             return redirect()->route('tenant.settings.ai-translation')
-                ->withErrors(['payment' => 'Payment verification failed. Please contact support.']);
+                ->withErrors(['payment' => __('Payment verification failed. Please contact support.')]);
         }
 
         if (!$result->success) {
             return redirect()->route('tenant.settings.ai-translation')
-                ->withErrors(['payment' => $result->errorMessage ?? 'Payment was not successful.']);
+                ->withErrors(['payment' => $result->errorMessage ?? __('Payment was not successful.')]);
         }
 
         $pending = session('tenant_ai_translation_pending_payment');
@@ -111,14 +111,14 @@ class AiTranslationPaymentController extends Controller
 
         if (!$languageId) {
             return redirect()->route('tenant.settings.ai-translation')
-                ->withErrors(['payment' => 'Payment reference lost. Please contact support.']);
+                ->withErrors(['payment' => __('Payment reference lost. Please contact support.')]);
         }
 
         $language = CentralLanguage::query()->find($languageId);
 
         if (!$language) {
             return redirect()->route('tenant.settings.ai-translation')
-                ->withErrors(['payment' => 'Language no longer available.']);
+                ->withErrors(['payment' => __('Language no longer available.')]);
         }
 
         $tenant = tenant();
@@ -131,7 +131,7 @@ class AiTranslationPaymentController extends Controller
         session()->forget('tenant_ai_translation_pending_payment');
 
         return redirect()->route('tenant.settings.ai-translation')
-            ->with('purchase_error', 'Payment was cancelled.');
+            ->with('purchase_error', __('Payment was cancelled.'));
     }
 
     private function handleSuccess(

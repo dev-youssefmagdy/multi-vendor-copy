@@ -1,7 +1,11 @@
 <main id="mn">
-    <div class="page-actions compact-actions" style="margin-bottom:12px; justify-content:flex-end;">
-        <x-btn type="button" wire:click="openSettingsModal">Program Settings</x-btn>
-    </div>
+    {{-- Only the affiliate pages (ManagesAffiliateSettings) have a settings modal; on any
+         other list page this button called a missing method and crashed (MethodNotFoundException). --}}
+    @if (method_exists($this, 'openSettingsModal'))
+        <div class="page-actions compact-actions" style="margin-bottom:12px; justify-content:flex-end;">
+            <x-btn type="button" wire:click="openSettingsModal">Program Settings</x-btn>
+        </div>
+    @endif
 
     @php
         $filterFields = $filterFields ?? [];

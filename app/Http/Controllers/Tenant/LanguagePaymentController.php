@@ -46,7 +46,7 @@ class LanguagePaymentController extends Controller
 
         if ($this->purchaseService->tenantHasPurchased($tenant, $language->id)) {
             return redirect()->route('tenant.finance.buy-languages')
-                ->with('purchase_error', 'You have already purchased this language.');
+                ->with('purchase_error', __('You have already purchased this language.'));
         }
 
         $amount = (float) $language->price;
@@ -89,7 +89,7 @@ class LanguagePaymentController extends Controller
         }
 
         return redirect()->route('tenant.finance.buy-languages')
-            ->withErrors(['payment' => $result->errorMessage ?? 'Payment initiation failed. Please try again.']);
+            ->withErrors(['payment' => $result->errorMessage ?? __('Payment initiation failed. Please try again.')]);
     }
 
     public function success(Request $request, string $gateway): RedirectResponse
@@ -101,12 +101,12 @@ class LanguagePaymentController extends Controller
                 ->withErrors(['payment' => $e->getMessage()]);
         } catch (\Throwable) {
             return redirect()->route('tenant.finance.buy-languages')
-                ->withErrors(['payment' => 'Payment verification failed. Please contact support.']);
+                ->withErrors(['payment' => __('Payment verification failed. Please contact support.')]);
         }
 
         if (!$result->success) {
             return redirect()->route('tenant.finance.buy-languages')
-                ->withErrors(['payment' => $result->errorMessage ?? 'Payment was not successful.']);
+                ->withErrors(['payment' => $result->errorMessage ?? __('Payment was not successful.')]);
         }
 
         $pending = session('tenant_language_pending_payment');
@@ -115,14 +115,14 @@ class LanguagePaymentController extends Controller
 
         if (!$languageId) {
             return redirect()->route('tenant.finance.buy-languages')
-                ->withErrors(['payment' => 'Language payment reference lost. Please contact support.']);
+                ->withErrors(['payment' => __('Language payment reference lost. Please contact support.')]);
         }
 
         $language = CentralLanguage::query()->find($languageId);
 
         if (!$language) {
             return redirect()->route('tenant.finance.buy-languages')
-                ->withErrors(['payment' => 'Language no longer available.']);
+                ->withErrors(['payment' => __('Language no longer available.')]);
         }
 
         $tenant = tenant();
@@ -135,7 +135,7 @@ class LanguagePaymentController extends Controller
         session()->forget('tenant_language_pending_payment');
 
         return redirect()->route('tenant.finance.buy-languages')
-            ->with('purchase_error', 'Payment was cancelled.');
+            ->with('purchase_error', __('Payment was cancelled.'));
     }
 
     private function handleSuccess(

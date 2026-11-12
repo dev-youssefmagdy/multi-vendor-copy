@@ -25,10 +25,10 @@ final class SavePromoBannerRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'promo_banner_title'        => 'title',
-            'promo_banner_subtitle'     => 'subtitle',
-            'promo_banner_link'         => 'link URL',
-            'promo_banner_cta_text'     => 'call-to-action text',
+            'promo_banner_title'        => __('title'),
+            'promo_banner_subtitle'     => __('subtitle'),
+            'promo_banner_link'         => __('link URL'),
+            'promo_banner_cta_text'     => __('call-to-action text'),
             'promo_banner_image'        => __('banner image'),
             'promo_banner_mobile_image' => __('mobile banner image'),
         ];

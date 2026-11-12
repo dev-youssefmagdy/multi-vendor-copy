@@ -34,8 +34,8 @@ final class UpdateCustomerProfileRequest extends TenantFormRequest
     {
         return [
             'full_name' => __('full name'),
-            'country_id' => 'country',
-            'city_id' => 'city',
+            'country_id' => __('country'),
+            'city_id' => __('city'),
             'password_confirmation' => __('password confirmation'),
         ];
     }

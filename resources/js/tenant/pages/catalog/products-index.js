@@ -44,7 +44,7 @@ function renderPriceFinderResults(root, priceData) {
 
     emptyEl.hidden = true;
     resultsEl.hidden = false;
-    root.querySelector('[data-price-finder-hint]').textContent = `AI-discovered market prices from ${sampleSize} web sources. Refresh to get updated data.`;
+    root.querySelector('[data-price-finder-hint]').textContent = t('AI-discovered market prices from :count web sources. Refresh to get updated data.', { count: sampleSize });
 
     const statsEl = root.querySelector('[data-price-finder-stats]');
     statsEl.innerHTML = '';

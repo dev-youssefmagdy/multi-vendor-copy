@@ -1,5 +1,6 @@
 import { debounce } from '../core/dom.js';
 import { emit } from '../core/events.js';
+import { t } from '../core/i18n.js';
 
 function collect(el) {
     const values = {};
@@ -50,7 +51,7 @@ function updatePill(el, filters) {
 
     const count = Object.keys(filters).length;
     pill.hidden = count === 0;
-    pill.textContent = `${count} active`;
+    pill.textContent = t(':count active', { count });
 }
 
 function updateUrl(el, filters) {

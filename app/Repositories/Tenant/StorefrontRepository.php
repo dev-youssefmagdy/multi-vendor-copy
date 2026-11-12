@@ -1616,15 +1616,15 @@ class StorefrontRepository
 
     public function productBySlug(string $slug): ?Product
     {
-        return $this->excludeOutOfStock(
-            Product::query()
-                ->where('active', true)
-                // ->whereRaw($this->basePriceExpression() . ' > 0')
-                // Own products limited to other countries 404 like an inactive product.
-                ->availableInCountry($this->customerCountryId())
-                ->where('slug', $slug)
-                ->with($this->productRelations(true))
-        )
+        // Out-of-stock products still open (the themes show "Out of Stock" and add-to-cart
+        // refuses them); excluding them made a freshly published product with stock 0 a 404.
+        return Product::query()
+            ->where('active', true)
+            // ->whereRaw($this->basePriceExpression() . ' > 0')
+            // Own products limited to other countries 404 like an inactive product.
+            ->availableInCountry($this->customerCountryId())
+            ->where('slug', $slug)
+            ->with($this->productRelations(true))
             ->first();
     }
 

@@ -29,7 +29,7 @@ final class SubscribeRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'package_id' => 'plan',
+            'package_id' => __('plan'),
             'gateway' => __('payment gateway'),
         ];
     }

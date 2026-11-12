@@ -124,7 +124,7 @@ final class GeneralSettingsController extends PanelController
             ->exists();
 
         if ($hasPending) {
-            throw new PanelActionException('A target countries change request is already pending review.', 409, toastType: 'warning');
+            throw new PanelActionException(__('A target countries change request is already pending review.'), 409, toastType: 'warning');
         }
 
         $currentIds = TenantCountry::query()
@@ -172,7 +172,7 @@ final class GeneralSettingsController extends PanelController
             ->exists();
 
         if ($hasPending) {
-            throw new PanelActionException('A categories change request is already pending review.', 409, toastType: 'warning');
+            throw new PanelActionException(__('A categories change request is already pending review.'), 409, toastType: 'warning');
         }
 
         $currentIds = array_map('intval', (array) (tenant()->category_ids ?? []));

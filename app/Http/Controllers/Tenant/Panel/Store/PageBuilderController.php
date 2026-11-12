@@ -128,7 +128,7 @@ final class PageBuilderController extends PanelController
         $orderedKeys = (array) $request->input('ids', []);
 
         if (!$themeId) {
-            return $this->failure('A theme must be selected.', 422);
+            return $this->failure(__('A theme must be selected.'), 422);
         }
 
         foreach ($orderedKeys as $index => $key) {
@@ -156,7 +156,7 @@ final class PageBuilderController extends PanelController
             : null;
 
         if (!$themeId) {
-            return $this->failure('A theme must be selected.', 422);
+            return $this->failure(__('A theme must be selected.'), 422);
         }
 
         $theme = Theme::query()->find($themeId);

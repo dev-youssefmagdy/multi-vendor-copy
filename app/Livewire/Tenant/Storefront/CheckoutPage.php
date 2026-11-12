@@ -188,8 +188,8 @@ class CheckoutPage extends Component
             'data.modal.country' => 'nullable|string|max:100',
             'data.modal.country_id' => 'nullable|integer',
         ], [], [
-            'data.modal.full_name' => 'full name',
-            'data.modal.line1' => 'street address',
+            'data.modal.full_name' => __('full name'),
+            'data.modal.line1' => __('street address'),
         ]);
 
         /** @var \App\Models\Tenant\Customer $customer */
@@ -368,15 +368,15 @@ class CheckoutPage extends Component
             'data.billing.phone' => $billingRequired ? 'required|string|max:30' : 'nullable',
             'data.billing.address' => $billingRequired ? 'required|string|max:300' : 'nullable',
         ], [], [
-            'data.payment.method' => 'payment method',
-            'data.shipping.name' => 'shipping name',
-            'data.shipping.email' => 'shipping email',
-            'data.shipping.phone' => 'shipping phone',
-            'data.shipping.address' => 'shipping address',
-            'data.billing.name' => 'billing name',
-            'data.billing.email' => 'billing email',
-            'data.billing.phone' => 'billing phone',
-            'data.billing.address' => 'billing address',
+            'data.payment.method' => __('payment method'),
+            'data.shipping.name' => __('shipping name'),
+            'data.shipping.email' => __('shipping email'),
+            'data.shipping.phone' => __('shipping phone'),
+            'data.shipping.address' => __('shipping address'),
+            'data.billing.name' => __('billing name'),
+            'data.billing.email' => __('billing email'),
+            'data.billing.phone' => __('billing phone'),
+            'data.billing.address' => __('billing address'),
         ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             $this->toast($e->validator->errors()->first(), 'error');

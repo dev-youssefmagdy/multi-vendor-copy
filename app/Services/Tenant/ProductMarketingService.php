@@ -94,17 +94,21 @@ final class ProductMarketingService
         }
 
         $enabledLanguages = Language::query()->where('is_active', true)->get()->keyBy('code');
-        $label = $platform === 'all' ? 'all platforms' : ucfirst($platform);
+        $label = $platform === 'all' ? __('all platforms') : ucfirst($platform);
         $languageLabel = $language === 'all'
-            ? 'all enabled languages'
+            ? __('all enabled languages')
             : ($enabledLanguages[$language]?->native_name ?: $enabledLanguages[$language]?->name ?: strtoupper($language));
-        $imageLabel = $includeImage ? 'with image' : 'without image';
+        $imageLabel = $includeImage ? __('with image') : __('without image');
 
         return [
             'posts' => $merged,
             'image_b64' => $imageB64,
             'active_lang' => $activeLang,
-            'message' => "Social media posts generated for {$label} in {$languageLabel} ({$imageLabel}).",
+            'message' => __('Social media posts generated for :platform in :language (:image).', [
+                'platform' => $label,
+                'language' => $languageLabel,
+                'image' => $imageLabel,
+            ]),
         ];
     }
 

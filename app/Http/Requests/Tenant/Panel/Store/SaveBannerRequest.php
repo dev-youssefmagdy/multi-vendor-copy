@@ -33,7 +33,7 @@ final class SaveBannerRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'country_ids' => 'countries',
+            'country_ids' => __('countries'),
             'serial_number' => __('sort order'),
             'banner_image' => __('banner image'),
         ];

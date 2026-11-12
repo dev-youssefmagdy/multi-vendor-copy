@@ -80,8 +80,8 @@ final class UpdateComplianceRequest extends TenantFormRequest
             'accountType' => __('account type'),
             'businessName' => __('business name'),
             'storeName' => __('store name'),
-            'countryId' => 'country',
-            'cityId' => 'city',
+            'countryId' => __('country'),
+            'cityId' => __('city'),
             'ownerName' => __('owner name'),
             'ownerIdNumber' => __('owner id number'),
             'ownerDob' => __('date of birth'),
@@ -89,12 +89,12 @@ final class UpdateComplianceRequest extends TenantFormRequest
             'companyName' => __('company name'),
             'registrationNumber' => __('registration number'),
             'registrationExpiry' => __('registration expiry'),
-            'vatNumber' => 'VAT number',
+            'vatNumber' => __('VAT number'),
             'bankName' => __('bank name'),
             'bankHolderName' => __('account holder name'),
             'bankAccountNumber' => __('account number'),
-            'bankIban' => 'IBAN',
-            'currencyId' => 'currency',
+            'bankIban' => __('IBAN'),
+            'currencyId' => __('currency'),
         ];
     }
 }

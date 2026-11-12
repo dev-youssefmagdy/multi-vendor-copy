@@ -127,6 +127,20 @@ final class PanelJsTranslations
         'You do not have permission to perform this action.',
         'Your Price',
         'Your session expired. Reloading…',
+        '% of price',
+        ':count active',
+        ':count key(s) selected',
+        ':count selected',
+        ':count unread',
+        '_MENU_ per page',
+        '2Pay.js is still loading. Please try again.',
+        'AI-discovered market prices from :count web sources. Refresh to get updated data.',
+        'Completed',
+        'Failed',
+        'Fixed ($)',
+        'Processing',
+        'Queued',
+        'Running',
     ];
 
     /** @return array<string, string> */

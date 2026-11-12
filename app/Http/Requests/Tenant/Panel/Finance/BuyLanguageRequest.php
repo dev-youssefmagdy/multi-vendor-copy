@@ -29,7 +29,7 @@ final class BuyLanguageRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'language_id' => 'language',
+            'language_id' => __('language'),
             'gateway' => __('payment gateway'),
         ];
     }

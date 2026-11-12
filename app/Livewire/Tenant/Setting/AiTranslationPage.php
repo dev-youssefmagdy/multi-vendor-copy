@@ -80,7 +80,7 @@ class AiTranslationPage extends TenantPage
         $service->completePurchase(tenant(), $language, []);
         $limitService->incrementCounter(tenant(), 'ai_calls_count');
         $this->closeModal();
-        $this->toast('AI translation started. This may take a few minutes.');
+        $this->toast(__('AI translation started. This may take a few minutes.'));
     }
 
     public function initiatePayment(): void

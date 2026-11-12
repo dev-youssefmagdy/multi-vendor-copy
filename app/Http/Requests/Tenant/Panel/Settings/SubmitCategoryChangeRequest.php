@@ -19,7 +19,7 @@ final class SubmitCategoryChangeRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'requested_category_ids' => 'categories',
+            'requested_category_ids' => __('categories'),
         ];
     }
 }

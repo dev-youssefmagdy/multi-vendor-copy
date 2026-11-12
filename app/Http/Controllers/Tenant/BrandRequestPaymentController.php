@@ -86,7 +86,7 @@ class BrandRequestPaymentController extends Controller
         }
 
         return redirect()->route('tenant.brand-requests.show', $routeId)
-            ->withErrors(['payment' => $result->errorMessage ?? 'Payment initiation failed. Please try again.']);
+            ->withErrors(['payment' => $result->errorMessage ?? __('Payment initiation failed. Please try again.')]);
     }
 
     public function success(Request $request, string $gateway): RedirectResponse
@@ -96,13 +96,13 @@ class BrandRequestPaymentController extends Controller
         } catch (PaymentException $e) {
             return $this->redirectOnError($request, $e->getMessage(), $gateway);
         } catch (\Throwable) {
-            return $this->redirectOnError($request, 'Payment verification failed. Please contact support.', $gateway);
+            return $this->redirectOnError($request, __('Payment verification failed. Please contact support.'), $gateway);
         }
 
         if (!$result->success) {
             return $this->redirectOnError(
                 $request,
-                $result->errorMessage ?? 'Payment was not successful.',
+                $result->errorMessage ?? __('Payment was not successful.'),
                 $gateway,
             );
         }
@@ -112,7 +112,7 @@ class BrandRequestPaymentController extends Controller
             ?: ($pending['payment_request_id'] ?? null);
 
         if (!$paymentRequestId) {
-            return $this->redirectOnError($request, 'Payment reference lost. Please contact support.', $gateway);
+            return $this->redirectOnError($request, __('Payment reference lost. Please contact support.'), $gateway);
         }
 
         $paymentRequest = BrandPaymentRequest::where('id', $paymentRequestId)
@@ -120,7 +120,7 @@ class BrandRequestPaymentController extends Controller
             ->first();
 
         if (!$paymentRequest) {
-            return $this->redirectOnError($request, 'Payment request no longer exists.', $gateway);
+            return $this->redirectOnError($request, __('Payment request no longer exists.'), $gateway);
         }
 
         return $this->handleSuccess($paymentRequest, $gateway, $result->transactionId);
@@ -136,11 +136,11 @@ class BrandRequestPaymentController extends Controller
 
         if ($requestId) {
             return redirect()->route('tenant.brand-requests.show', $requestId)
-                ->with('br_payment_error', 'Payment was cancelled.');
+                ->with('br_payment_error', __('Payment was cancelled.'));
         }
 
         return redirect()->route('tenant.brand-requests.index')
-            ->with('br_payment_error', 'Payment was cancelled.');
+            ->with('br_payment_error', __('Payment was cancelled.'));
     }
 
     private function handleSuccess(
@@ -163,7 +163,7 @@ class BrandRequestPaymentController extends Controller
         $brandRequestId = $paymentRequest->brand_request_id;
 
         return redirect()->route('tenant.brand-requests.show', $brandRequestId)
-            ->with('br_payment_success', 'Payment successful! Your payment has been recorded.');
+            ->with('br_payment_success', __('Payment successful! Your payment has been recorded.'));
     }
 
     private function redirectOnError(Request $request, string $message, string $gateway): RedirectResponse

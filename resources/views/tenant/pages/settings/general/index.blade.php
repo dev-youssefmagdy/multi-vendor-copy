@@ -30,7 +30,7 @@
                             <span class="badge mr-1">{{ $country->flag_emoji }} {{ $country->name }}</span>
                         @endforeach
                     @endif
-                    @if($currentCountries->isEmpty()){{ __('No countries configured yet.@endif') }}
+                    @if($currentCountries->isEmpty()){{ __('No countries configured yet.') }}@endif
                 </p>
                 @if($pendingCountryRequest)
                     <p class="field-hint mt-2">{{ __('A change request is pending review.') }}</p>
@@ -47,7 +47,7 @@
                     @foreach($currentCategories as $category)
                         <span class="badge mr-1">{{ $category->translationValue('name') ?: $category->getRawOriginal('name') ?: $category->id }}</span>
                     @endforeach
-                    @if($currentCategories->isEmpty()){{ __('No categories configured yet.@endif') }}
+                    @if($currentCategories->isEmpty()){{ __('No categories configured yet.') }}@endif
                 </p>
                 @if($pendingCategoryRequest)
                     <p class="field-hint mt-2">{{ __('A change request is pending review.') }}</p>

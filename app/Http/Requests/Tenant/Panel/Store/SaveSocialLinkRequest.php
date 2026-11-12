@@ -21,8 +21,8 @@ final class SaveSocialLinkRequest extends TenantFormRequest
     public function attributes(): array
     {
         return [
-            'icon' => 'icon',
-            'url' => 'profile URL',
+            'icon' => __('icon'),
+            'url' => __('profile URL'),
             'serial_number' => __('display order'),
         ];
     }

@@ -78,8 +78,8 @@ final class SaveProductRequest extends TenantFormRequest
     {
         return [
             'central_product_id' => __('central product'),
-            'category_ids' => 'categories',
-            'badge_ids' => 'badges',
+            'category_ids' => __('categories'),
+            'badge_ids' => __('badges'),
         ];
     }
 }
