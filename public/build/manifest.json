@@ -2557,7 +2557,7 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-HNRR4bjS.css",
+    "file": "assets/app-nWAO2ha1.css",
     "src": "resources/css/app.css"
   },
   "resources/css/ecommet.css": {
@@ -2873,7 +2873,7 @@
     "isEntry": true
   },
   "resources/css/tenant/app.css": {
-    "file": "assets/app-CpodCei4.css",
+    "file": "assets/app-DL_-gpeP.css",
     "name": "app",
     "names": [
       "app.css"
@@ -2881,7 +2881,7 @@
     "src": "resources/css/tenant/app.css",
     "isEntry": true,
     "css": [
-      "assets/app-HNRR4bjS.css"
+      "assets/app-nWAO2ha1.css"
     ],
     "assets": [
       "assets/outfit-latin-ext-400-normal-5tcqmc2S.woff2",
@@ -3788,7 +3788,7 @@
     ]
   },
   "resources/js/tenant/pages/onboarding/index.js": {
-    "file": "assets/index-CTTIIL-q.js",
+    "file": "assets/index-BeTcdur3.js",
     "name": "index",
     "src": "resources/js/tenant/pages/onboarding/index.js",
     "isEntry": true,
@@ -4011,7 +4011,7 @@
     ]
   },
   "resources/js/tenant/pages/settings/compliance.js": {
-    "file": "assets/compliance-BSVRsOKh.js",
+    "file": "assets/compliance-DYacu_Du.js",
     "name": "compliance",
     "src": "resources/js/tenant/pages/settings/compliance.js",
     "isEntry": true,
@@ -4019,7 +4019,7 @@
       "_select2-CyTLiwMq.js"
     ],
     "css": [
-      "assets/compliance-wp9nXMrN.css"
+      "assets/compliance-DC5PzYqV.css"
     ]
   },
   "resources/js/tenant/pages/settings/currencies.js": {
