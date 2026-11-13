@@ -26,23 +26,26 @@
                     <h3 class="panel-title">{{ __('Business Info') }}</h3>
                     <p class="panel-copy">{{ __('Where your business legally operates from.') }}</p>
                 </div>
-                <div class="acct-section-save">
-                    <button type="submit" class="btn btn-primary">{{ __('Save Changes') }}</button>
-                </div>
             </div>
             <div class="form-grid form-grid-2">
                 <x-tenant::select name="accountType" :label="__('Account Type')" required
                     :options="['individual' => __('Individual'), 'company' => __('Company')]" :value="$accountType"
                     :help="__('Choose Company to enable the Company Info section.')" />
-                <x-tenant::input name="businessName" :label="__('Business Name')" required maxlength="255" :value="$businessName" />
+                {{-- Business name only applies to companies; compliance.js toggles it with Account Type. --}}
+                <div data-company-only @if($accountType !== 'company') hidden @endif>
+                    <x-tenant::input name="businessName" :label="__('Business Name')" required maxlength="255" :value="$businessName" />
+                </div>
                 <x-tenant::input name="storeName" :label="__('Store Name')" required maxlength="255" :value="$storeName" />
-                <x-tenant::select2 name="countryId" :label="__('Country')" :placeholder="__('Select country')"
+                <x-tenant::select2 name="countryId" :label="__('Country')" :placeholder="__('Select country')" required
                     :options="$countries->pluck('name', 'id')->all()" :value="$countryId" />
-                <x-tenant::select2 name="cityId" :label="__('City')" :placeholder="__('Select city')" required
+                <x-tenant::select2 name="cityId" :label="__('City')" :placeholder="__('Select city (optional)')"
                     :options="$cities->pluck('name', 'id')->all()" :value="$cityId" :disabled="$cities->isEmpty()"
                     data-cities-url="{{ route('tenant.settings.compliance.cities-by-country', ['countryId' => '__ID__']) }}" />
                 <x-tenant::phone name="phone" :label="__('Phone')" required :value="$phone" />
                 <x-tenant::input type="email" name="email" :label="__('Email')" required maxlength="255" :value="$email" />
+            </div>
+            <div class="acct-section-footer">
+                <button type="submit" class="btn btn-primary">{{ __('Save Changes') }}</button>
             </div>
         </section>
     </x-tenant::form>
@@ -63,15 +66,15 @@
                     <h3 class="panel-title">{{ __('Owner Info') }}</h3>
                     <p class="panel-copy">{{ __('The legal owner or representative of this store.') }}</p>
                 </div>
-                <div class="acct-section-save">
-                    <button type="submit" class="btn btn-primary">{{ __('Save Changes') }}</button>
-                </div>
             </div>
             <div class="form-grid form-grid-2">
                 <x-tenant::input name="ownerName" :label="__('Owner Full Name')" required maxlength="255" :value="$ownerName" />
                 <x-tenant::input name="ownerIdNumber" :label="__('Owner ID / Passport Number')" required maxlength="100" :value="$ownerIdNumber" />
                 <x-tenant::input type="date" name="ownerDob" :label="__('Date of Birth (optional)')" :value="$ownerDob" />
                 <x-tenant::input name="ownerContact" :label="__('Owner Contact Details')" :placeholder="__('Phone or alternate email')" maxlength="100" :value="$ownerContact" />
+            </div>
+            <div class="acct-section-footer">
+                <button type="submit" class="btn btn-primary">{{ __('Save Changes') }}</button>
             </div>
         </section>
     </x-tenant::form>
@@ -93,9 +96,6 @@
                 <div>
                     <h3 class="panel-title">{{ __('Company Info (if applicable)') }}</h3>
                     <p class="panel-copy">{{ __('Registered company details, if you operate under a legal entity.') }}</p>
-                </div>
-                <div class="acct-section-save">
-                    <button type="submit" class="btn btn-primary">{{ __('Save Changes') }}</button>
                 </div>
             </div>
             <fieldset style="border:0;padding:0;margin:0;min-width:0">
@@ -119,6 +119,9 @@
                 </div>
             </div>
             </fieldset>
+            <div class="acct-section-footer">
+                <button type="submit" class="btn btn-primary">{{ __('Save Changes') }}</button>
+            </div>
         </section>
     </x-tenant::form>
     @endif
@@ -139,9 +142,6 @@
                     <h3 class="panel-title">{{ __('Bank Account') }}</h3>
                     <p class="panel-copy">{{ __('Used to process payouts for your store\'s earnings.') }}</p>
                 </div>
-                <div class="acct-section-save">
-                    <button type="submit" class="btn btn-primary">{{ __('Save Changes') }}</button>
-                </div>
             </div>
             <div class="form-grid form-grid-2">
                 <x-tenant::input name="bankName" :label="__('Bank Name')" required maxlength="255" :value="$bankName" />
@@ -150,6 +150,9 @@
                 <x-tenant::input name="bankAccountNumber" :label="__('Account Number')" required maxlength="100" :value="$bankAccountNumber" />
                 <x-tenant::select2 name="currencyId" :label="__('Currency')" :placeholder="__('Select currency')"
                     :options="$currencies->mapWithKeys(fn ($c) => [$c->id => $c->code.' — '.$c->name])->all()" :value="$currencyId" />
+            </div>
+            <div class="acct-section-footer">
+                <button type="submit" class="btn btn-primary">{{ __('Save Changes') }}</button>
             </div>
         </section>
     </x-tenant::form>
@@ -169,9 +172,6 @@
                 <div>
                     <h3 class="panel-title">{{ __('Verification Documents') }}</h3>
                     <p class="panel-copy">{{ __('Upload the documents our compliance team needs to verify your store.') }}</p>
-                </div>
-                <div class="acct-section-save">
-                    <button type="submit" class="btn btn-primary">{{ __('Save Changes') }}</button>
                 </div>
             </div>
             <div class="form-grid form-grid-2">
@@ -237,6 +237,9 @@
                     @endif
                     <x-tenant::file name="docAdditionalUploads" multiple />
                 </div>
+            </div>
+            <div class="acct-section-footer">
+                <button type="submit" class="btn btn-primary">{{ __('Save Changes') }}</button>
             </div>
         </section>
     </x-tenant::form>

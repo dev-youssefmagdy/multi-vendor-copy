@@ -287,7 +287,7 @@ class TenantNavigation
             'compliance_business_name',
             'compliance_store_name',
             'compliance_country',
-            'compliance_city',
+            // City is optional (client request), so it doesn't count toward completion.
             'compliance_phone',
             'compliance_email',
             'compliance_owner_name',

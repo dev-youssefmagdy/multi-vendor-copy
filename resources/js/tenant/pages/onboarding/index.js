@@ -32,7 +32,10 @@ function initTour(root) {
     }
 
     function iconMarkup(name) {
-        return template?.querySelector(`[data-icon-name="${CSS.escape(name)}"]`)?.innerHTML ?? '';
+        // A <template>'s children live in .content, not in the element itself.
+        const source = template?.content ?? template;
+
+        return source?.querySelector(`[data-icon-name="${CSS.escape(name)}"]`)?.innerHTML ?? '';
     }
 
     function render() {

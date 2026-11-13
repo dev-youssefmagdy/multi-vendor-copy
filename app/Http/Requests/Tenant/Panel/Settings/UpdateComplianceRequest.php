@@ -61,13 +61,14 @@ final class UpdateComplianceRequest extends TenantFormRequest
             ],
             default => [
                 'accountType' => ['required', 'in:individual,company'],
-                'businessName' => ['required', 'string', 'max:255'],
+                // Individuals have no separate business name (the field is hidden for them).
+                'businessName' => ['required_if:accountType,company', 'nullable', 'string', 'max:255'],
                 'storeName' => ['required', 'string', 'max:255'],
                 // Country lives only in the central DB (Country::class uses CentralConnection),
                 // but the default connection inside a tenant request is `tenant` — qualify
                 // the rule with the central connection explicitly.
-                'countryId' => ['nullable', 'integer', 'exists:'.config('tenancy.database.central_connection').'.countries,id'],
-                'cityId' => ['required', 'integer', 'exists:'.config('tenancy.database.central_connection').'.cities,id'],
+                'countryId' => ['required', 'integer', 'exists:'.config('tenancy.database.central_connection').'.countries,id'],
+                'cityId' => ['nullable', 'integer', 'exists:'.config('tenancy.database.central_connection').'.cities,id'],
                 'phone' => ['required', 'string', 'max:50'],
                 'email' => ['required', 'email', 'max:255'],
             ],

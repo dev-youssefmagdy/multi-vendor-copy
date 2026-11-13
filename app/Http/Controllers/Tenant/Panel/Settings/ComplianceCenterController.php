@@ -128,10 +128,13 @@ final class ComplianceCenterController extends PanelController
     private function businessUpdates(array $validated): array
     {
         return [
-            'business_name' => $validated['businessName'],
+            // Individuals trade under their store name; the business name field is hidden for them.
+            'business_name' => $validated['accountType'] === 'company'
+                ? $validated['businessName']
+                : (filled($validated['businessName'] ?? null) ? $validated['businessName'] : $validated['storeName']),
             'store_name' => $validated['storeName'],
-            'country' => $validated['countryId'] ?? null,
-            'city' => $validated['cityId'],
+            'country' => $validated['countryId'],
+            'city' => $validated['cityId'] ?? null,
             'phone' => $validated['phone'],
             'email' => $validated['email'],
         ];

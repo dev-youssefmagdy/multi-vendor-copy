@@ -47,6 +47,32 @@ async function initCountryCityCascade() {
     });
 }
 
+// Business Name only applies to company accounts: hide it (and drop `required`,
+// so the hidden field can't block the form) when Account Type is Individual.
+function initAccountTypeToggle() {
+    const accountType = document.querySelector('[name="accountType"]');
+    const companyOnly = document.querySelectorAll('[data-company-only]');
+
+    if (!accountType || companyOnly.length === 0) {
+        return;
+    }
+
+    const sync = () => {
+        const isCompany = accountType.value === 'company';
+
+        companyOnly.forEach((wrap) => {
+            wrap.hidden = !isCompany;
+            wrap.querySelectorAll('input, select, textarea').forEach((field) => {
+                field.required = isCompany;
+            });
+        });
+    };
+
+    accountType.addEventListener('change', sync);
+    sync();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     initCountryCityCascade();
+    initAccountTypeToggle();
 });

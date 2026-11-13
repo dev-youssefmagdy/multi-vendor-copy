@@ -67,3 +67,12 @@
     border: 1px solid var(--border);
     border-radius: 10px;
 }
+
+/* Save button at the bottom of each section's form (client request). */
+.acct-section-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--ds-border, rgba(0, 0, 0, 0.08));
+}

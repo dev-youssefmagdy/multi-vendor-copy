@@ -5280,8 +5280,8 @@ details[open] .filters-chevron {
     border-radius: 0;
 }
 
+/* The step icon stays a 72px square (stretched to the 480px column it showed as an empty bar). */
 .ob-page-panel > .ob-step-counter,
-.ob-page-panel > .ob-icon-wrap,
 .ob-page-panel > .ob-content,
 .ob-page-panel > .ob-dots,
 .ob-page-panel > .ob-actions {
