@@ -951,6 +951,14 @@
 .t-scope .db-brand-options .btn-tile { flex: 1 1 auto; padding: 0 16px; white-space: nowrap; }
 .t-scope .db-brand-options .btn-tile:first-child { flex-basis: 225px; flex-grow: 0; }
 
+/* Hover on this always-dark banner: the global tile hover (12% orange + near-black text)
+   turned into dark text on a dark-brown tile, so the label disappeared. */
+.t-scope .db-brand-options .btn-tile:not([aria-checked="true"]):hover {
+    background: rgba(253, 111, 4, 0.18);
+    border-color: var(--ds-brand-500);
+    color: #fff;
+}
+
 /* Selected option = solid orange, like the design-system tile's active state */
 .t-scope .db-brand-options .btn-tile[aria-checked="true"] {
     background: var(--ds-brand-500);
