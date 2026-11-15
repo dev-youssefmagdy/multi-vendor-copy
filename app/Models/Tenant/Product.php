@@ -405,16 +405,17 @@ class Product extends Model
      */
     public function scopeAvailableInCountry(Builder $query, ?int $countryId): Builder
     {
-        // Strict (2026-11-15, client request): a product limited to some countries is shown ONLY when
-        // the visitor's detected country is one of them. Unknown country => hidden too; products
-        // without a country list stay visible everywhere.
+        // "Sold in countries" for vendor own products (2026-11-16, client request):
+        //   NULL       => all countries ("Select all countries"): visible everywhere;
+        //   [ids...]   => visible ONLY when the visitor's detected country is one of them (unknown => hidden);
+        //   []         => no country ticked: hidden everywhere.
+        // Catalog (central-linked) products are not filtered here.
         $table = $query->getModel()->getTable();
 
         return $query->where(function (Builder $q) use ($table, $countryId): void {
             $q->whereRaw("COALESCE({$table}.is_own_product, 0) = 0")
                 ->orWhereNotNull("{$table}.central_product_id")
-                ->orWhereNull("{$table}.allowed_country_ids")
-                ->orWhereRaw("JSON_LENGTH({$table}.allowed_country_ids) = 0");
+                ->orWhereNull("{$table}.allowed_country_ids");
 
             if ($countryId) {
                 $q->orWhereRaw("JSON_CONTAINS({$table}.allowed_country_ids, ?)", [(string) (int) $countryId]);
@@ -425,10 +426,13 @@ class Product extends Model
     /** In-memory twin of scopeAvailableInCountry(). */
     public function isAvailableInCountry(?int $countryId): bool
     {
-        $allowed = array_map('intval', (array) ($this->allowed_country_ids ?? []));
+        if (!$this->isVendorOwnProduct() || $this->allowed_country_ids === null) {
+            return true; // catalog product, or own product sold in all countries
+        }
 
-        if (!$this->isVendorOwnProduct() || $allowed === []) {
-            return true;
+        $allowed = array_map('intval', (array) $this->allowed_country_ids);
+        if ($allowed === []) {
+            return false; // no country ticked: hidden everywhere
         }
 
         if ($countryId === null) {

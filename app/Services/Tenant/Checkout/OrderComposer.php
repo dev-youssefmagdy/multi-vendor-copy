@@ -35,7 +35,7 @@ class OrderComposer
 
     /**
      * "Sold in countries": names of cart products that may not be sold to $countryId
-     * (Product::isAvailableInCountry(); a product with no selected countries sells everywhere).
+     * (Product::isAvailableInCountry(): NULL = all countries, [] = none, else only the listed ones).
      * Used by CheckoutPage::placeOrder() and PlacesOrders::place() to refuse the order.
      *
      * @param  array<int, array<string, mixed>>  $cartItems

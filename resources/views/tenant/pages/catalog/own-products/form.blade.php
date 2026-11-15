@@ -41,11 +41,12 @@
                 <div class="op-countries" data-op-countries>
                     <div class="op-countries-head">
                         <span class="op-countries-title">{{ __('Sold in countries') }}</span>
-                        <span class="op-countries-hint">{{ __('Pick from your targeted countries. Leave all unticked to make it available everywhere.') }}</span>
+                        <span class="op-countries-hint">{{ __('Select all countries to sell everywhere, or pick the countries where this product is sold. With no country ticked the product is hidden.') }}</span>
                     </div>
                     @if(empty($countryOptions))
                         <div class="op-country-none">{{ __('No targeted countries yet. Add countries to your store first, then choose where this product is sold.') }}</div>
                     @else
+                    <input type="hidden" name="countries_picker" value="1">
                     <label class="op-search">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="8.75"/><path d="M17.5 17.5l4.25 4.25"/></svg>
                         <input type="search" placeholder="{{ __('Search') }}" aria-label="{{ __('Search countries') }}" data-op-country-search>

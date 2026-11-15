@@ -65,6 +65,31 @@ final class OwnProductController extends PanelController
         return $rows;
     }
 
+    /**
+     * Ticked ISO2 codes of the "Sold in countries" picker => products.allowed_country_ids:
+     * every targeted country ticked => NULL (all countries), none => [] (hidden), else the ticked ids.
+     *
+     * @param  array<int, mixed>  $ticked
+     * @param  list<string>  $optionCodes  lowercase ISO2 codes offered by the picker
+     * @return list<int>|null
+     */
+    public static function allowedCountryIdsFromTicks(array $ticked, array $optionCodes): ?array
+    {
+        $codes = array_values(array_unique(array_map(fn ($code) => strtolower((string) $code), array_filter($ticked, fn ($code) => filled($code)))));
+        $codes = array_values(array_intersect($codes, $optionCodes));
+
+        if ($optionCodes !== [] && array_diff($optionCodes, $codes) === []) {
+            return null;
+        }
+
+        if ($codes === []) {
+            return [];
+        }
+
+        return Country::query()->whereIn('iso2', array_map('strtoupper', $codes))
+            ->pluck('id')->map(fn ($id) => (int) $id)->sort()->values()->all();
+    }
+
     public function __construct(
         private readonly TenantPanelRepository $repo,
         private readonly TenantPanelService $service,
@@ -149,13 +174,13 @@ final class OwnProductController extends PanelController
             'return_conditions' => $returnPolicyOverride ? ($request->input('return_conditions') ?: null) : null,
         ], $product);
 
-        // Ticked countries → central country ids. None ticked = no country
-        // preference (NULL), same convention as catalog-synced products.
-        $countryCodes = array_map('strtoupper', array_values(array_filter((array) $request->input('countries', []), fn ($code) => filled($code))));
-        $countryIds = $countryCodes === []
-            ? []
-            : Country::query()->whereIn('iso2', $countryCodes)->pluck('id')->map(fn ($id) => (int) $id)->sort()->values()->all();
-        $savedProduct->update(['allowed_country_ids' => $countryIds === [] ? null : $countryIds]);
+        // "Sold in countries" (Product::scopeAvailableInCountry()): every targeted country ticked
+        // ("Select all countries") => NULL = sold everywhere; some ticked => those central country
+        // ids; none ticked => [] = hidden everywhere. Only when the picker was on the form
+        // (countries_picker marker), so a store with no targeted countries keeps the old value.
+        if ($request->boolean('countries_picker')) {
+            $savedProduct->update(['allowed_country_ids' => self::allowedCountryIdsFromTicks((array) $request->input('countries', []), array_keys(self::countryOptions()))]);
+        }
 
         $savedProduct->badges()->sync(array_values(array_filter((array) $request->input('badge_ids', []), fn ($id) => filled($id))));
 
@@ -302,7 +327,8 @@ final class OwnProductController extends PanelController
         $existingGallery = collect();
         $categoryIds = [];
         $selectedBadgeIds = [];
-        $selectedCountries = [];
+        // A new product starts as "sold in all countries" (every targeted country ticked).
+        $selectedCountries = array_keys(self::countryOptions());
         $productData = null;
 
         if ($product) {
@@ -316,10 +342,11 @@ final class OwnProductController extends PanelController
             $categoryIds = $product->categories->pluck('id')->all();
             $selectedBadgeIds = $product->badges->pluck('id')->all();
 
-            $allowedCountryIds = (array) ($product->allowed_country_ids ?? []);
-            $selectedCountries = $allowedCountryIds === []
-                ? []
-                : Country::query()->whereIn('id', $allowedCountryIds)->pluck('iso2')->map(fn ($code) => strtolower((string) $code))->all();
+            // NULL = sold in all countries: show every targeted country ticked.
+            $allowedCountryIds = $product->allowed_country_ids;
+            $selectedCountries = $allowedCountryIds === null
+                ? array_keys(self::countryOptions())
+                : ($allowedCountryIds === [] ? [] : Country::query()->whereIn('id', (array) $allowedCountryIds)->pluck('iso2')->map(fn ($code) => strtolower((string) $code))->all());
             $existingImage = $product->primary_image_url;
             $existingGallery = $product->files->where('key', 'gallery')->values();
 
