@@ -118,6 +118,27 @@ class StorefrontRepository
     }
 
     /**
+     * Country that decides "Sold in countries" visibility (listings, home sections, flash-sale strips,
+     * product page): the visitor's DETECTED country (Cloudflare IP country, ?country=XX QA override,
+     * session detection), so a saved address or a manual country pick cannot reveal a product limited
+     * to other countries. Requests without detection (mobile app API) use the session country the app
+     * set. Pricing and shipping keep using customerCountryId() (address first).
+     */
+    public function visibilityCountryId(): ?int
+    {
+        if (array_key_exists('visibility_country_id', $this->memo)) {
+            return $this->memo['visibility_country_id'];
+        }
+
+        $id = $this->detectedCountry()?->id;
+        if (!$id && session('storefront_country_id')) {
+            $id = (int) session('storefront_country_id');
+        }
+
+        return $this->memo['visibility_country_id'] = $id ? (int) $id : null;
+    }
+
+    /**
      * Cache a query result behind a version-tagged key: the key embeds the
      * current cache version of each tag, so it stays valid until a write to
      * one of those models bumps its tag (see CacheVersionObserver) — no TTL
@@ -333,7 +354,7 @@ class StorefrontRepository
         $query = Product::query()
             ->where('active', true)
             // ->whereRaw($this->basePriceExpression() . ' > 0')
-            ->availableInCountry($this->customerCountryId())
+            ->availableInCountry($this->visibilityCountryId())
             ->with($this->productRelations($withCategories));
 
         return $excludeOutOfStock ? $this->excludeOutOfStock($query) : $query;
@@ -1428,7 +1449,7 @@ class StorefrontRepository
     public function featuredProducts(int $limit = 10): Collection
     {
         return $this->hydrateProductCards(
-            app(\App\Services\HomeProductService::class)->getFeatured($limit, $this->customerCountryId())
+            app(\App\Services\HomeProductService::class)->getFeatured($limit, $this->visibilityCountryId())
         );
     }
 
@@ -1467,7 +1488,7 @@ class StorefrontRepository
     public function sectionProductPool(string $section, int $limit = 200): ?array
     {
         $service = app(\App\Services\HomeProductService::class);
-        $countryId = $this->customerCountryId();
+        $countryId = $this->visibilityCountryId();
 
         $products = match ($section) {
             'trending' => $service->getTrendingNow($limit, $countryId),
@@ -1545,7 +1566,7 @@ class StorefrontRepository
             Product::query()
                 ->where('active', true)
                 // ->whereRaw($this->basePriceExpression() . ' > 0')
-                ->availableInCountry($this->customerCountryId())
+                ->availableInCountry($this->visibilityCountryId())
                 ->whereHas('translations', fn($q) => $q
                     ->where('field', 'name')
                     ->where('value', 'like', '%' . $query . '%'))
@@ -1566,7 +1587,7 @@ class StorefrontRepository
             Product::query()
                 ->where('active', true)
                 // ->whereRaw($this->basePriceExpression() . ' > 0')
-                ->availableInCountry($this->customerCountryId())
+                ->availableInCountry($this->visibilityCountryId())
                 ->with($this->productRelations())
         )
             ->where(function (Builder $q) use ($keyword, $matchingCentralProductIds): void {
@@ -1622,7 +1643,7 @@ class StorefrontRepository
             ->where('active', true)
             // ->whereRaw($this->basePriceExpression() . ' > 0')
             // Own products limited to other countries 404 like an inactive product.
-            ->availableInCountry($this->customerCountryId())
+            ->availableInCountry($this->visibilityCountryId())
             ->where('slug', $slug)
             ->with($this->productRelations(true))
             ->first();
@@ -1718,7 +1739,7 @@ class StorefrontRepository
         $key = 'trending_now_' . $limit;
 
         return $this->memo[$key] ??= $this->hydrateProductCards(
-            app(\App\Services\HomeProductService::class)->getTrendingNow($limit, $this->customerCountryId())
+            app(\App\Services\HomeProductService::class)->getTrendingNow($limit, $this->visibilityCountryId())
         );
     }
 
@@ -1847,7 +1868,7 @@ class StorefrontRepository
     public function bestSellingProducts(int $perPage = 12, int $page = 1, int $days = 30): LengthAwarePaginator
     {
         return $this->paginateFromService(
-            fn(int $limit) => app(\App\Services\HomeProductService::class)->getBestSelling($limit, $this->customerCountryId(), $days),
+            fn(int $limit) => app(\App\Services\HomeProductService::class)->getBestSelling($limit, $this->visibilityCountryId(), $days),
             $perPage,
             $page,
         );
@@ -1856,7 +1877,7 @@ class StorefrontRepository
     public function newInProducts(int $perPage = 10, int $page = 1): LengthAwarePaginator
     {
         return $this->paginateFromService(
-            fn(int $limit) => app(\App\Services\HomeProductService::class)->getNewIn($limit, $this->customerCountryId()),
+            fn(int $limit) => app(\App\Services\HomeProductService::class)->getNewIn($limit, $this->visibilityCountryId()),
             $perPage,
             $page,
         );
@@ -1884,10 +1905,10 @@ class StorefrontRepository
         }
 
         $service = app(\App\Services\HomeProductService::class);
-        $products = $service->getRecommended($limit, $this->customerCountryId());
+        $products = $service->getRecommended($limit, $this->visibilityCountryId());
 
         if ($products->isEmpty()) {
-            $products = $service->getInteractionBased($limit, $this->customerCountryId());
+            $products = $service->getInteractionBased($limit, $this->visibilityCountryId());
         }
 
         return $this->memo[$key] = $this->hydrateProductCards($products);
@@ -1932,7 +1953,7 @@ class StorefrontRepository
         // the TTL matches the flash-sale lists' (bounded staleness, as there).
         $fresh = null;
         $entry = $this->cacheRemember(
-            "home_products_page1:{$perPage}:" . ($this->customerCountryId() ?? 'default'),
+            "home_products_page1:{$perPage}:" . ($this->customerCountryId() ?? 'default') . ':vis' . ($this->visibilityCountryId() ?? 'none'),
             ['Product', 'ProductVariant', 'FlashSale'],
             function () use (&$fresh, $query, $perPage) {
                 $fresh = $this->pageWithoutCount($query, $perPage);
@@ -1990,7 +2011,7 @@ class StorefrontRepository
             ->whereIn('id', $picked)
             // Re-checked: the pool may predate a deactivation not yet bumped.
             ->where('active', true)
-            ->availableInCountry($this->customerCountryId())
+            ->availableInCountry($this->visibilityCountryId())
             ->get()
             ->sortBy(fn(Product $product) => $position[$product->getKey()] ?? PHP_INT_MAX)
             ->values();
@@ -2014,7 +2035,7 @@ class StorefrontRepository
         $flashSales = $this->activeFlashSaleRows();
 
         // Own products limited to other countries are not shown (Product::isAvailableInCountry()).
-        $countryId = $this->customerCountryId();
+        $countryId = $this->visibilityCountryId();
         $flashSales->each(fn(FlashSale $flashSale) => $flashSale->setRelation(
             'products',
             $flashSale->products->filter(fn(Product $product) => $product->isAvailableInCountry($countryId))->values()

@@ -405,21 +405,20 @@ class Product extends Model
      */
     public function scopeAvailableInCountry(Builder $query, ?int $countryId): Builder
     {
-        // Unknown visitor country (no address, nothing picked yet, e.g. someone opening a
-        // shared product link): don't hide anything. Hiding here made every country-limited
-        // own product 404 for first-time visitors.
-        if (!$countryId) {
-            return $query;
-        }
-
+        // Strict (2026-11-15, client request): a product limited to some countries is shown ONLY when
+        // the visitor's detected country is one of them. Unknown country => hidden too; products
+        // without a country list stay visible everywhere.
         $table = $query->getModel()->getTable();
 
         return $query->where(function (Builder $q) use ($table, $countryId): void {
             $q->whereRaw("COALESCE({$table}.is_own_product, 0) = 0")
                 ->orWhereNotNull("{$table}.central_product_id")
                 ->orWhereNull("{$table}.allowed_country_ids")
-                ->orWhereRaw("JSON_LENGTH({$table}.allowed_country_ids) = 0")
-                ->orWhereRaw("JSON_CONTAINS({$table}.allowed_country_ids, ?)", [(string) (int) $countryId]);
+                ->orWhereRaw("JSON_LENGTH({$table}.allowed_country_ids) = 0");
+
+            if ($countryId) {
+                $q->orWhereRaw("JSON_CONTAINS({$table}.allowed_country_ids, ?)", [(string) (int) $countryId]);
+            }
         });
     }
 
@@ -428,8 +427,12 @@ class Product extends Model
     {
         $allowed = array_map('intval', (array) ($this->allowed_country_ids ?? []));
 
-        if (!$this->isVendorOwnProduct() || $allowed === [] || $countryId === null) {
+        if (!$this->isVendorOwnProduct() || $allowed === []) {
             return true;
+        }
+
+        if ($countryId === null) {
+            return false; // unknown country: limited products are hidden (see scopeAvailableInCountry)
         }
 
         return in_array((int) $countryId, $allowed, true);

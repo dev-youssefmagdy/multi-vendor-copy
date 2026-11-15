@@ -37,7 +37,12 @@ order_grand_total   = items_grand_total + order.shipping_charge - order.coupon_d
   (`OrderComposer::itemsNotSoldInCountry()`, called by `CheckoutPage::placeOrder()` and `PlacesOrders::place()`, message lists the products).
   Visitor country = `CustomerCountryResolver` (selected/saved address first, then the session country); the session country comes from
   `CountryDetectorService`, which now re-reads Cloudflare `CF-IPCountry` on every request (a VPN / network change is picked up immediately;
-  `?country=XX` stays a session-wide QA override). Unknown country still shows everything; the address step decides.
+  `?country=XX` stays a session-wide QA override).
+  **Visibility = detected country, strict (2026-11-15):** listings, home sections, flash-sale strips and the product page use
+  `StorefrontRepository::visibilityCountryId()` = the DETECTED country (CountryDetectorService; mobile API without detection falls back
+  to the app's session country), not the saved address or a manual country pick. A product with a country list is shown ONLY when that
+  country is in the list; when the country is unknown it is hidden as well (`scopeAvailableInCountry(null)` / `isAvailableInCountry(null)`).
+  Products without a list are visible everywhere. Pricing/shipping still use `customerCountryId()` (address first).
 * **Own-products orders are merchant-fulfilled (2026-11-08):** no stored column; discriminator = `Tenant\Order::isOwnProductsOrder()` (has items and every item's product is `is_own_product`; the companion order of a mixed cart and own-only carts). Platform (central admin) treats them read-only: excluded from the Delivery Queue / its counters, and status, tracking, attachments, cancel, refund, create-return, shipping label and receipt are rejected server-side (`OrderFulfillmentService::assertPlatformManageable`, Livewire pages, `OrderReceiptController`). Shipping stays on the catalog order only (`shipping_charge = 0` on the own order), so shipping/settlement lines come only from the catalog order. Formulas unchanged.
 * `tax` is 0 today; whatever is calculated per item is summed into `order.tax`.
 

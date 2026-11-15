@@ -70,7 +70,7 @@ class OwnProductStorefrontPricingTest extends TestCase
         $restricted = $this->own(['allowed_country_ids' => [142]]);
         $this->assertTrue($restricted->isAvailableInCountry(142));
         $this->assertFalse($restricted->isAvailableInCountry(116));
-        $this->assertTrue($restricted->isAvailableInCountry(null)); // unknown visitor country: shown
+        $this->assertFalse($restricted->isAvailableInCountry(null)); // unknown visitor country: hidden (strict "only there")
 
         $this->assertTrue($this->own()->isAvailableInCountry(116));
 

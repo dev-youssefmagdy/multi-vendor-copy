@@ -120,10 +120,23 @@ class OwnProductStorefrontVisibilityTest extends TestCase
             $this->visitFrom($this->morocco);
             Livewire::test(ProductPage::class, ['slug' => $restricted->slug])->assertStatus(404);
 
-            // Unknown country (first visit from a shared link, nothing picked yet): shown.
+            // Unknown country: a country-limited product is hidden too (strict "only there");
+            // products without a country list stay visible.
             $repo = $this->visitFrom(null);
-            $this->assertNotNull($repo->productBySlug($restricted->slug), 'product page, unknown country');
-            $this->assertContains($restricted->id, $repo->paginatedSearchProducts([], 50)->getCollection()->modelKeys());
+            $this->assertNull($repo->productBySlug($restricted->slug), 'product page, unknown country');
+            $this->assertNotContains($restricted->id, $repo->paginatedSearchProducts([], 50)->getCollection()->modelKeys());
+            $this->assertContains($everywhere->id, $repo->paginatedSearchProducts([], 50)->getCollection()->modelKeys());
+
+            // The DETECTED country decides (Cloudflare IP country), not the session / address country.
+            session(['storefront_country_id' => $this->russia]);
+            request()->server->set('HTTP_CF_IPCOUNTRY', 'MA');
+            $this->app->forgetInstance(StorefrontRepository::class);
+            $this->assertNull(app(StorefrontRepository::class)->productBySlug($restricted->slug), 'detected Morocco hides it');
+            request()->server->set('HTTP_CF_IPCOUNTRY', 'RU');
+            $this->app->forgetInstance(StorefrontRepository::class);
+            $this->assertNotNull(app(StorefrontRepository::class)->productBySlug($restricted->slug), 'detected Russia shows it');
+            request()->server->remove('HTTP_CF_IPCOUNTRY');
+            session()->forget('storefront_detected_country');
 
             // A published product with stock 0 opens (shows "Out of Stock") instead of 404.
             $soldOut = $this->ownProduct(['manage_stock' => true, 'stock' => 0]);
