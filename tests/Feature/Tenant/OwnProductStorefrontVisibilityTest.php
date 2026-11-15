@@ -137,6 +137,23 @@ class OwnProductStorefrontVisibilityTest extends TestCase
     }
 
     #[Test]
+    public function own_product_sold_in_one_country_cannot_be_ordered_for_another_country(): void
+    {
+        $this->tenant->run(function (): void {
+            $restricted = $this->ownProduct(['allowed_country_ids' => [$this->russia]]);
+            $everywhere = $this->ownProduct();
+            $items = [['product' => $restricted], ['product' => $everywhere]];
+
+            $this->assertSame([$restricted->slug], array_map(
+                fn ($n) => $n === ($restricted->translationValue('name') ?? $restricted->slug) ? $restricted->slug : $n,
+                OrderComposer::itemsNotSoldInCountry($items, $this->morocco),
+            ), 'shipping to Morocco refuses the Russia-only product only');
+            $this->assertSame([], OrderComposer::itemsNotSoldInCountry($items, $this->russia), 'shipping to Russia is allowed');
+            $this->assertSame([], OrderComposer::itemsNotSoldInCountry($items, null), 'unknown country is decided at the address step');
+        });
+    }
+
+    #[Test]
     public function own_product_shows_the_vendor_sale_price_in_every_country_and_its_gallery_video(): void
     {
         $this->tenant->run(function (): void {

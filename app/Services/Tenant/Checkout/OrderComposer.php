@@ -34,6 +34,38 @@ class OrderComposer
     }
 
     /**
+     * "Sold in countries": names of cart products that may not be sold to $countryId
+     * (Product::isAvailableInCountry(); a product with no selected countries sells everywhere).
+     * Used by CheckoutPage::placeOrder() and PlacesOrders::place() to refuse the order.
+     *
+     * @param  array<int, array<string, mixed>>  $cartItems
+     * @return list<string>
+     */
+    public static function itemsNotSoldInCountry(array $cartItems, ?int $countryId): array
+    {
+        if (!$countryId) {
+            return [];
+        }
+
+        $names = [];
+        foreach ($cartItems as $item) {
+            $product = $item['product'] ?? null;
+            if ($product instanceof \App\Models\Tenant\Product && !$product->isAvailableInCountry($countryId)) {
+                $names[] = (string) ($product->translationValue('name') ?? $product->slug ?? ('#' . $product->id));
+            }
+        }
+
+        return array_values(array_unique($names));
+    }
+
+    public static function notSoldInCountryMessage(array $names): string
+    {
+        return __('These products are not sold in your shipping country: :products. Remove them from your cart to continue.', [
+            'products' => implode(', ', $names),
+        ]);
+    }
+
+    /**
      * Whether a cart entry (['product' => ..., ...]) takes part in the order shipping charge:
      * catalog (central-linked) physical products only.
      *

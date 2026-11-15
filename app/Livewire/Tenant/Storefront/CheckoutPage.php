@@ -416,6 +416,15 @@ class CheckoutPage extends Component
             return;
         }
 
+        // "Sold in countries": refuse products the vendor limited to other countries.
+        $notSold = \App\Services\Tenant\Checkout\OrderComposer::itemsNotSoldInCountry($cartItems, $this->resolveShippingCountryId());
+        if ($notSold !== []) {
+            $message = \App\Services\Tenant\Checkout\OrderComposer::notSoldInCountryMessage($notSold);
+            $this->addError('order', $message);
+            $this->toast($message, 'error');
+            return;
+        }
+
         $appliedCoupon = null;
         if ($couponCode = session('storefront_coupon')) {
             $appliedCoupon = Coupon::query()->where('code', $couponCode)->first();

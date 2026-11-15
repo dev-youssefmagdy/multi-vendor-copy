@@ -13,12 +13,17 @@ use Illuminate\Http\Request;
  * additional PHP extensions.
  *
  * Detection order:
- *   1. ?country=XX query string override (persisted to session)
- *   2. Session-cached value from a previous request
- *   3. CF-IPCountry    (Cloudflare)
- *   4. X-Country-Code  (custom load-balancer header)
- *   5. Accept-Language region hint (e.g. en-EG → EG)
- *   6. Returns null if nothing can be determined
+ *   1. ?country=XX query string override (persisted to session as an explicit override)
+ *   2. Session override from an earlier ?country=XX
+ *   3. CF-IPCountry    (Cloudflare) - read on EVERY request
+ *   4. X-Country-Code  (custom load-balancer header) - read on every request
+ *   5. Session-cached value from a previous (non-IP) detection
+ *   6. Accept-Language region hint (e.g. en-EG → EG)
+ *   7. Returns null if nothing can be determined
+ *
+ * The IP headers are checked before the session cache so a visitor who changes network
+ * (travel, VPN) is re-detected immediately. Before 2026-11-15 the first detection stuck for
+ * the whole session, which made "Sold in countries" look broken when testing with a VPN.
  *
  * The ISO 2-letter code is matched against the central `countries` table.
  */
@@ -58,31 +63,39 @@ class CountryDetectorService
         //    session so subsequent page loads keep the override.
         $override = $request->query('country');
         if (is_string($override) && strlen($override) === 2) {
+            $request->session()?->put('storefront_country_override', strtoupper($override));
             $request->session()?->put('storefront_detected_country', strtoupper($override));
             return strtoupper($override);
         }
 
-        // 2. Session-cached detection (set by this service on an earlier request).
+        // 2. Explicit override from an earlier ?country=XX in this session.
+        $sessionOverride = $request->session()?->get('storefront_country_override');
+        if (is_string($sessionOverride) && strlen($sessionOverride) === 2) {
+            return $sessionOverride;
+        }
+
+        // 3. Cloudflare's IP-country header — authoritative, re-read on every request.
+        //    XX = unknown, T1 = Tor exit node: not a country.
+        $cf = strtoupper((string) $request->server('HTTP_CF_IPCOUNTRY'));
+        if (strlen($cf) === 2 && !in_array($cf, ['XX', 'T1'], true)) {
+            $request->session()?->put('storefront_detected_country', $cf);
+            return $cf;
+        }
+
+        // 4. Custom header some load balancers / CDNs inject.
+        $custom = strtoupper((string) $request->header('X-Country-Code'));
+        if (strlen($custom) === 2) {
+            $request->session()?->put('storefront_detected_country', $custom);
+            return $custom;
+        }
+
+        // 5. Session-cached detection (no IP header on this request).
         $cached = $request->session()?->get('storefront_detected_country');
         if (is_string($cached) && strlen($cached) === 2) {
             return $cached;
         }
 
-        // 3. Cloudflare's IP-country header — most reliable when behind CF.
-        $cf = $request->server('HTTP_CF_IPCOUNTRY');
-        if ($cf && $cf !== 'XX' && strlen($cf) === 2) {
-            $request->session()?->put('storefront_detected_country', strtoupper($cf));
-            return $cf;
-        }
-
-        // 4. Custom header some load balancers / CDNs inject.
-        $custom = $request->header('X-Country-Code');
-        if ($custom && strlen($custom) === 2) {
-            $request->session()?->put('storefront_detected_country', strtoupper($custom));
-            return $custom;
-        }
-
-        // 5. Best-effort fallback: the region suffix of Accept-Language
+        // 6. Best-effort fallback: the region suffix of Accept-Language
         //    (e.g. "en-EG,en;q=0.9" → EG). Not authoritative but better than
         //    nothing for visitors not behind a country-aware proxy.
         $acceptLang = (string) $request->header('Accept-Language', '');

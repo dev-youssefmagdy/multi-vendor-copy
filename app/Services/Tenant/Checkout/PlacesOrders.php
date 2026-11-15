@@ -94,6 +94,13 @@ class PlacesOrders
 
         $shippingCountryId = $this->resolveShippingCountryId($shippingAddressId, $shippingCountryIdInline);
 
+        // "Sold in countries": refuse products the vendor limited to other countries.
+        $notSold = OrderComposer::itemsNotSoldInCountry($cartItems, $shippingCountryId);
+        if ($notSold !== []) {
+            $result['message'] = OrderComposer::notSoldInCountryMessage($notSold);
+            return $result;
+        }
+
         // Re-price the cart for the shipping country so persisted lines match what the customer saw.
         $cartItems = $repo->cartItems();
 
