@@ -68,8 +68,9 @@ final class ProductMarketingService
 
         $result = $this->socialPostService->generateForProduct($product, $platform, $language, $includeImage);
 
-        if (empty($result['posts'])) {
-            throw new RuntimeException('The AI service returned no posts. Please check that the Python service is running and OPENAI_API_KEY is set.');
+        if (empty(array_filter($result['posts']))) {
+            throw $this->socialPostService->lastError()
+                ?? new \App\Exceptions\AiServiceException('no_results', 'The AI service returned no posts.');
         }
 
         $existing = $product->social_posts ?? [];

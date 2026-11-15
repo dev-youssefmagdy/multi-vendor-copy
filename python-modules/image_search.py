@@ -29,6 +29,8 @@ from dataclasses import dataclass
 from typing import List, Optional
 
 from openai import APIStatusError, OpenAI, RateLimitError
+
+import ai_config
 from PIL import Image
 
 logger = logging.getLogger(__name__)
@@ -58,8 +60,7 @@ def _normalize_image(content: bytes, label: str) -> tuple[bytes, str]:
     except Exception as exc:
         raise ValueError(f"Not a readable image: {label} ({exc})") from exc
 
-EMBEDDING_MODEL = os.getenv("OPENAI_IMAGE_EMBEDDING_MODEL", "text-embedding-3-small")
-VISION_MODEL = os.getenv("OPENAI_VISION_MODEL", "gpt-4o-mini")
+# Models come from the admin AI Settings per request (ai_config), env as fallback.
 
 
 @dataclass
@@ -128,11 +129,7 @@ def _with_retry(fn, *, attempts: int = 3):
 
 
 def _describe_image(image_url: str) -> str:
-    api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key:
-        raise RuntimeError("OPENAI_API_KEY environment variable is not set.")
-
-    client = OpenAI(api_key=api_key)
+    client = ai_config.client()
     prompt = (
         "Describe this product image for a visual similarity search index. "
         "List the object type/category, shape, colors, materials, patterns, "
@@ -140,7 +137,7 @@ def _describe_image(image_url: str) -> str:
         "preamble, 1-2 sentences."
     )
     resp = _with_retry(lambda: client.chat.completions.create(
-        model=VISION_MODEL,
+        model=ai_config.get("vision_model"),
         messages=[
             {
                 "role": "user",
@@ -161,15 +158,13 @@ def _describe_image(image_url: str) -> str:
 
 def embed_image(image_path: str) -> ImageEmbeddingResult:
     """Turn a local image path or a public image URL into an embedding vector."""
-    api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key:
-        raise RuntimeError("OPENAI_API_KEY environment variable is not set.")
+    ai_config.client()  # fail fast when no key is configured
 
     image_url = _resolve_image_url(image_path)
     description = _describe_image(image_url)
 
-    client = OpenAI(api_key=api_key)
-    resp = _with_retry(lambda: client.embeddings.create(model=EMBEDDING_MODEL, input=description))
+    client = ai_config.client()
+    resp = _with_retry(lambda: client.embeddings.create(model=ai_config.get("embedding_model"), input=description))
     vector = resp.data[0].embedding
 
     return ImageEmbeddingResult(embedding=vector, dims=len(vector), description=description)

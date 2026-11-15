@@ -21,6 +21,8 @@ from typing import Dict, List, Optional
 
 from openai import OpenAI
 
+import ai_config
+
 SUPPORTED_PLATFORMS = ["instagram", "facebook", "twitter", "linkedin", "tiktok", "generic"]
 
 # Platform-specific copy briefs. Kept short so the model gets clear direction
@@ -91,10 +93,7 @@ class SocialPostBundle:
 
 
 def _client() -> OpenAI:
-    api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key:
-        raise RuntimeError("OPENAI_API_KEY environment variable is not set.")
-    return OpenAI(api_key=api_key)
+    return ai_config.client()
 
 
 def _build_prompt(
@@ -200,8 +199,8 @@ def generate_posts(
             f"Allowed: {', '.join(SUPPORTED_PLATFORMS)} or 'all'."
         )
 
-    text_model = text_model or os.getenv("OPENAI_TEXT_MODEL", "gpt-4o-mini")
-    image_model = image_model or os.getenv("OPENAI_IMAGE_MODEL", "gpt-image-1")
+    text_model = text_model or ai_config.get("text_model")
+    image_model = image_model or ai_config.get("image_model")
 
     client = _client()
     platforms = SUPPORTED_PLATFORMS if platform == "all" else [platform]

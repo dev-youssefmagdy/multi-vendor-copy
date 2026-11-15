@@ -13,6 +13,14 @@ class SocialPostService
     private string $baseUrl;
     private ?string $token;
 
+    /** Last failure of callEndpoint() (null on success), so callers can explain why nothing came back. */
+    private ?\App\Exceptions\AiServiceException $lastError = null;
+
+    public function lastError(): ?\App\Exceptions\AiServiceException
+    {
+        return $this->lastError;
+    }
+
     public function __construct()
     {
         $this->baseUrl = rtrim((string) config('services.python_modules.url', 'http://127.0.0.1:8008'), '/');
@@ -57,6 +65,7 @@ class SocialPostService
 
         $allPosts = [];
         $imageb64 = null;
+        $this->lastError = null;
 
         foreach ($languages as $index => $language) {
             $locale = $language->code;
@@ -88,7 +97,10 @@ class SocialPostService
             $response = $this->callEndpoint('/social-post', $payload);
 
             if ($response === null) {
-                // Service unreachable — skip this language.
+                // Account-level problems (no credits, bad key) fail every language the same way: stop early.
+                if (in_array($this->lastError?->reason, ['ai_quota_exhausted', 'ai_auth_failed', 'service_unreachable'], true)) {
+                    break;
+                }
                 Log::warning('[SocialPostService] Skipped locale due to service failure.', compact('locale'));
                 continue;
             }
@@ -126,28 +138,30 @@ class SocialPostService
     private function callEndpoint(string $path, array $payload): ?array
     {
         try {
-            $request = Http::timeout(120)->acceptJson();
-
-            if ($this->token) {
-                $request = $request->withHeaders(['X-Service-Token' => $this->token]);
-            }
+            // Service token + AI settings (OpenAI key/models from Admin → Settings → AI Settings).
+            $request = Http::timeout(120)->acceptJson()->withHeaders(\App\Support\AiSettings::pythonHeaders());
 
             $response = $request->post($this->baseUrl . $path, $payload);
-            // dd($response->body(), $this->baseUrl . $path, $payload, $this->token, env('OPENAI_API_KEY'));
 
             if ($response->failed()) {
                 Log::error('[SocialPostService] HTTP error from Python service.', [
                     'status' => $response->status(),
                     'body' => $response->body(),
                 ]);
+                $this->lastError = \App\Exceptions\AiServiceException::fromResponse($response->status(), $response->json('detail'), $response->body());
                 return null;
             }
 
             return $response->json();
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            Log::error('[SocialPostService] Python service unreachable.', ['message' => $e->getMessage()]);
+            $this->lastError = new \App\Exceptions\AiServiceException('service_unreachable', $e->getMessage(), $e);
+            return null;
         } catch (\Throwable $e) {
             Log::error('[SocialPostService] Exception calling Python service.', [
                 'message' => $e->getMessage(),
             ]);
+            $this->lastError = new \App\Exceptions\AiServiceException('unknown', $e->getMessage(), $e);
             return null;
         }
     }

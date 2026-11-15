@@ -19,6 +19,8 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import json
+import logging
 import mimetypes
 import os
 import re
@@ -34,6 +36,14 @@ try:
 except ImportError:
     from duckduckgo_search import DDGS
 from openai import OpenAI
+
+import ai_config
+
+logger = logging.getLogger(__name__)
+
+
+class SearchUnavailableError(RuntimeError):
+    """The web search provider failed for every query (blocked, rate-limited, offline)."""
 
 # Only match USD-denominated amounts ($12.99, US$12.99, USD 12.99, 12.99 USD).
 # Other currency symbols/codes (€, £, EUR, GBP, SAR, AED, EGP, ...) are deliberately
@@ -85,9 +95,7 @@ def _identify_product_from_image(image_path: str, hint_text: Optional[str] = Non
     """Use OpenAI vision to turn a product/variant image into a short search
     query (brand, model, distinguishing features) suitable for a price search.
     """
-    api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key:
-        raise RuntimeError("OPENAI_API_KEY environment variable is not set.")
+    client = ai_config.client()
 
     if image_path.startswith("http://") or image_path.startswith("https://"):
         image_url = image_path
@@ -105,8 +113,7 @@ def _identify_product_from_image(image_path: str, hint_text: Optional[str] = Non
     if hint_text:
         prompt += f" Known product name/context: {hint_text}."
 
-    client = OpenAI(api_key=api_key)
-    model = os.getenv("OPENAI_VISION_MODEL", "gpt-4o-mini")
+    model = ai_config.get("vision_model")
     resp = client.chat.completions.create(
         model=model,
         messages=[
@@ -188,31 +195,57 @@ _SEARCH_QUERY_TEMPLATES = [
     '"{query}" price comparison shop',
 ]
 
+# Fallbacks without the exact-phrase quotes (used only when the quoted ones found little).
+_LOOSE_QUERY_TEMPLATES = [
+    '{query} price USD',
+    '{query} buy online',
+]
+
+# Marketplace titles are often 20+ words of keyword stuffing ("For Iwatch Series 11 10 9 8 ...").
+# Search engines and the relevance check both work far better on the leading words.
+MAX_QUERY_WORDS = 8
+
+
+def _normalize_query(text: str) -> str:
+    text = re.sub(r"<[^>]+>", " ", text or "")
+    text = re.sub(r"[\[\]{}()|/\\,;:!?\"'“”…]+", " ", text)
+    text = re.sub(r"\.{2,}", " ", text)
+    words = [w for w in text.split() if w.strip("-_.")]
+    return " ".join(words[:MAX_QUERY_WORDS]).strip()
+
 
 def _search_results(query: str, limit: int = 15) -> List[dict]:
     # Run multiple query templates to maximise price-bearing result coverage,
     # then deduplicate by URL so downstream fetches don't double-count.
+    # Each template is tried independently: one failing (rate limit, timeout) must not
+    # discard the others. Exact-phrase templates come first; the unquoted ones
+    # rescue long marketplace titles that never match verbatim.
     seen_urls: set = set()
     results: List[dict] = []
     per_template = max(6, limit // len(_SEARCH_QUERY_TEMPLATES))
-    try:
-        with DDGS() as ddgs:
-            for template in _SEARCH_QUERY_TEMPLATES:
-                q = template.format(query=query)
-                for r in ddgs.text(
-                    q,
-                    region="wt-wt",
-                    safesearch="moderate",
-                    max_results=per_template,
-                ):
+    errors: List[str] = []
+    attempts = 0
+    templates = _SEARCH_QUERY_TEMPLATES + _LOOSE_QUERY_TEMPLATES
+    with DDGS() as ddgs:
+        for template in templates:
+            if template in _LOOSE_QUERY_TEMPLATES and len(results) >= limit:
+                break
+            attempts += 1
+            q = template.format(query=query)
+            try:
+                for r in ddgs.text(q, region="wt-wt", safesearch="moderate", max_results=per_template) or []:
                     url = r.get("href") or r.get("url") or ""
                     if url and url not in seen_urls:
                         seen_urls.add(url)
                         results.append(r)
-                if len(results) >= limit * 2:
-                    break
-    except Exception:
-        pass
+            except Exception as exc:  # noqa: BLE001 - provider raises many types
+                errors.append(f"{type(exc).__name__}: {exc}")
+                logger.warning("price search failed for %r: %s", q, exc)
+            if len(results) >= limit * 2:
+                break
+
+    if not results and errors and len(errors) == attempts:
+        raise SearchUnavailableError("Web search is unavailable: " + errors[-1][:200])
     return results
 
 
@@ -302,6 +335,52 @@ async def _gather_prices(query: str, limit: int) -> List[PriceHit]:
     return hits
 
 
+def _ai_web_price_hits(query: str, limit: int) -> List[PriceHit]:
+    """Fallback: ask an OpenAI model with the built-in web_search tool for current USD
+    listings. Only used when the free search found nothing, and only if a key is set.
+    Any failure returns [] (with a log line) so the caller can report "no prices found".
+    """
+    if not ai_config.api_key() or os.getenv("PRICE_AI_FALLBACK", "1") in ("0", "false", "False"):
+        return []
+
+    prompt = (
+        f"Find up to {limit} current online store listings for this product: {query}\n"
+        "Use web search. Only include listings that show a price in US dollars for this exact kind of product. "
+        'Reply with ONLY a JSON array, no prose: [{"source": "store domain", "price": 12.99, '
+        '"url": "https://...", "title": "listing title"}]. Reply [] if nothing reliable is found.'
+    )
+    try:
+        client = ai_config.client()
+        resp = client.responses.create(
+            model=ai_config.get("search_model"),
+            tools=[{"type": "web_search"}],
+            input=prompt,
+        )
+        text = (getattr(resp, "output_text", "") or "").strip()
+        match = re.search(r"\[.*\]", text, re.DOTALL)
+        rows = json.loads(match.group(0)) if match else []
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("AI web price fallback failed: %s", exc)
+        return []
+
+    hits: List[PriceHit] = []
+    for row in rows if isinstance(rows, list) else []:
+        try:
+            price = float(str(row.get("price", "")).replace("$", "").replace(",", ""))
+        except (TypeError, ValueError, AttributeError):
+            continue
+        url = str(row.get("url") or "")
+        if not (MIN_PRICE <= price <= MAX_PRICE) or not url.startswith("http"):
+            continue
+        hits.append(PriceHit(
+            source=str(row.get("source") or urlparse(url).netloc or "web"),
+            price=round(price, 2),
+            url=url,
+            title=str(row.get("title") or query)[:200],
+        ))
+    return hits[:limit]
+
+
 def _summarise(hits: List[PriceHit], query: str) -> PriceReport:
     prices = [h.price for h in hits]
     if not prices:
@@ -342,11 +421,26 @@ async def find_average_price(
     if not product_name and not image_path:
         raise ValueError("product_name or image_path is required")
 
-    query = product_name
+    query = _normalize_query(product_name) or product_name
     if image_path:
         # Run the (blocking) vision call in a worker thread so it doesn't block
         # the event loop, then use the identified description as the search query.
         query = await asyncio.to_thread(_identify_product_from_image, image_path, product_name or None)
+        query = _normalize_query(query) or query
 
-    hits = await _gather_prices(query, limit=limit)
+    search_error: Optional[Exception] = None
+    try:
+        hits = await _gather_prices(query, limit=limit)
+    except SearchUnavailableError as exc:
+        search_error = exc
+        hits = []
+
+    if not hits:
+        hits = await asyncio.to_thread(_ai_web_price_hits, query, limit)
+
+    if not hits and search_error is not None:
+        # Nothing from either source and the free search was down: surface it instead of
+        # pretending the product simply has no prices.
+        raise search_error
+
     return _summarise(hits, query)

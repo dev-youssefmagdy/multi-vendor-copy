@@ -41,10 +41,11 @@ from typing import Optional
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from openai import RateLimitError
+from openai import APIStatusError, AuthenticationError, PermissionDeniedError, RateLimitError
 from pydantic import BaseModel, Field
 
-from price_finder import find_average_price
+import ai_config
+from price_finder import SearchUnavailableError, find_average_price
 from social_post_generator import SUPPORTED_PLATFORMS, generate_posts
 from logo_generator import (
     SUPPORTED_STYLES,
@@ -63,6 +64,30 @@ app = FastAPI(
     version="1.0.0",
     description="Price discovery + social post generation for the Laravel multi-vendor platform.",
 )
+
+class AiConfigMiddleware:
+    """Pure ASGI middleware: copies the X-OpenAI-* headers (AI settings stored in the Laravel
+    database) into ai_config's ContextVar for this request only."""
+
+    def __init__(self, inner):
+        self.inner = inner
+
+    async def __call__(self, scope, receive, send):
+        if scope.get("type") != "http":
+            return await self.inner(scope, receive, send)
+        headers = {
+            k.decode("latin-1").lower(): v.decode("latin-1")
+            for k, v in scope.get("headers") or []
+            if k.decode("latin-1").lower() in ai_config.HEADER_NAMES
+        }
+        token = ai_config.set_request_overrides(headers)
+        try:
+            return await self.inner(scope, receive, send)
+        finally:
+            ai_config.reset_request_overrides(token)
+
+
+app.add_middleware(AiConfigMiddleware)
 
 # Optional shared secret so only the Laravel backend can call these endpoints.
 # Clients must send the matching header when SERVICE_TOKEN is set.
@@ -137,9 +162,61 @@ async def price(req: PriceRequest, x_service_token: Optional[str] = Header(defau
         return asdict(report)
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc))
+    except SearchUnavailableError as exc:
+        logger.warning("price search unavailable: %s", exc)
+        raise HTTPException(status_code=503, detail={"code": "search_unavailable", "message": str(exc)})
     except Exception as exc:
+        mapped = _ai_provider_http_error(exc)
+        if mapped:
+            raise mapped
         logger.exception("price endpoint failed")
         raise HTTPException(status_code=500, detail=f"Price lookup failed: {exc}")
+
+
+def _ai_provider_http_error(exc: Exception) -> Optional[HTTPException]:
+    """Translate OpenAI account problems into stable status codes + `code` values that the
+    Laravel side maps to clear messages (instead of an opaque 500):
+      402 ai_quota_exhausted - no credits / billing quota on the key's organization or project
+      502 ai_auth_failed     - key missing, revoked, or lacking access to the model
+      429 ai_rate_limited    - temporary rate limit
+    """
+    if isinstance(exc, RateLimitError):
+        body = getattr(exc, "body", None) or {}
+        err = body.get("error", body) if isinstance(body, dict) else {}
+        code = str((err or {}).get("code") or (err or {}).get("type") or "")
+        if "quota" in code or "credit" in code or "insufficient" in str(exc).lower():
+            return HTTPException(status_code=402, detail={
+                "code": "ai_quota_exhausted",
+                "message": "The OpenAI account linked to the configured API key has no credits left (insufficient_quota). "
+                           "Add credits to the same organization/project that owns this key, then retry.",
+            })
+        return HTTPException(status_code=429, detail={"code": "ai_rate_limited", "message": "The AI provider is rate-limiting requests. Try again shortly."})
+    if isinstance(exc, (AuthenticationError, PermissionDeniedError)):
+        return HTTPException(status_code=502, detail={"code": "ai_auth_failed", "message": f"OpenAI rejected the API key or model access: {exc}"})
+    if isinstance(exc, RuntimeError) and "OPENAI_API_KEY" in str(exc):
+        return HTTPException(status_code=502, detail={"code": "ai_auth_failed", "message": str(exc)})
+    if isinstance(exc, APIStatusError):
+        return HTTPException(status_code=502, detail={"code": "ai_provider_error", "message": f"OpenAI error {exc.status_code}: {exc}"})
+    return None
+
+
+@app.get("/health/ai")
+def health_ai(x_service_token: Optional[str] = Header(default=None)) -> dict:
+    """Deep check: performs a 1-token OpenAI call so admins can verify key + credits."""
+    _auth(x_service_token)
+    try:
+        client = ai_config.client()
+        client.chat.completions.create(
+            model=ai_config.get("text_model"),
+            messages=[{"role": "user", "content": "ping"}],
+            max_tokens=1,
+        )
+        return {"status": "ok", "openai": "ok"}
+    except Exception as exc:  # noqa: BLE001
+        mapped = _ai_provider_http_error(exc)
+        if mapped:
+            raise mapped
+        raise HTTPException(status_code=500, detail={"code": "ai_provider_error", "message": str(exc)})
 
 
 @app.post("/social-post")
@@ -159,10 +236,12 @@ def social_post(req: SocialPostRequest, x_service_token: Optional[str] = Header(
         return asdict(bundle)
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc))
-    except RuntimeError as exc:
-        # Missing API key etc. — surface clearly.
-        raise HTTPException(status_code=503, detail=str(exc))
     except Exception as exc:
+        mapped = _ai_provider_http_error(exc)
+        if mapped:
+            raise mapped
+        if isinstance(exc, RuntimeError):
+            raise HTTPException(status_code=503, detail=str(exc))
         logger.exception("social-post endpoint failed")
         raise HTTPException(status_code=500, detail=f"Generation failed: {exc}")
 

@@ -216,6 +216,18 @@ async function openPriceListModal(productId) {
 
     priceListState = { productId, ...data };
 
+    const ownBlock = root.querySelector('[data-price-list-own]');
+    const catalogBlock = root.querySelector('[data-price-list-catalog]');
+    if (ownBlock && catalogBlock) {
+        ownBlock.hidden = !data.ownProduct;
+        catalogBlock.hidden = !!data.ownProduct;
+    }
+    if (data.ownProduct) {
+        renderOwnPriceList(root, data);
+        openModal('product-price-list-modal');
+        return;
+    }
+
     const productTable = root.querySelector('[data-price-list-product-table] tbody');
     const noPrices = root.querySelector('[data-price-list-no-prices]');
     if (Object.keys(data.prices || {}).length) {
@@ -256,8 +268,34 @@ async function openPriceListModal(productId) {
     openModal('product-price-list-modal');
 }
 
+// Own products: read-only summary (one price for every country; edited on the product form).
+function escapeHtml(value) {
+    const div = document.createElement('div');
+    div.textContent = String(value ?? '');
+    return div.innerHTML;
+}
+
+function renderOwnPriceList(root, data) {
+    const money = (v) => `$${Number(v || 0).toFixed(2)}`;
+    const rows = [[t('Base price'), money(data.basePrice)]];
+    if (data.salePrice) {
+        rows.push([t('Sale price'), money(data.salePrice)]);
+    }
+    rows.push([`<strong>${t('Your Price')}</strong>`, `<strong>${money(data.sellPrice)}</strong>`]);
+    root.querySelector('[data-price-list-own-table] tbody').innerHTML = rows
+        .map(([label, value]) => `<tr><td>${label}</td><td>${value}</td></tr>`).join('');
+
+    const variants = data.variants || [];
+    root.querySelector('[data-price-list-own-variants-heading]').hidden = !variants.length;
+    root.querySelector('[data-price-list-own-variants-wrap]').hidden = !variants.length;
+    root.querySelector('[data-price-list-own-variants] tbody').innerHTML = variants
+        .map((v) => `<tr><td>${escapeHtml(v.label)}</td><td>${money(v.price)}</td></tr>`).join('');
+
+    root.querySelector('[data-price-list-own-edit]').href = data.editUrl || '#';
+}
+
 async function savePriceList() {
-    if (!priceListState) {
+    if (!priceListState || priceListState.ownProduct) {
         return;
     }
 

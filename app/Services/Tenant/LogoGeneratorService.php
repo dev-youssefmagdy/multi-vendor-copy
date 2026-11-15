@@ -79,7 +79,8 @@ class LogoGeneratorService
             throw new \RuntimeException('You have reached the maximum number of AI logo generations allowed for your store.');
         }
 
-        $headers = ['Accept' => 'application/json'];
+        // AI settings (OpenAI key/models) from the admin panel + this service's own token.
+        $headers = array_merge(\App\Support\AiSettings::pythonHeaders(), ['Accept' => 'application/json']);
         if ($this->token !== '') {
             $headers['X-Service-Token'] = $this->token;
         }

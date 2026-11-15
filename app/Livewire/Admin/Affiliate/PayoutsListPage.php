@@ -9,6 +9,7 @@ use App\Models\AffiliatePayout;
 use App\Models\AffiliatePayoutRequest;
 use App\Services\AffiliateService;
 use App\Support\ImageOptimizer;
+use App\Support\VendorProfile;
 use Illuminate\Support\Facades\Storage;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
@@ -16,7 +17,8 @@ use Livewire\WithPagination;
 /**
  * Central admin: affiliate withdrawal requests (submitted from the affiliate portal or the vendor
  * panel's Partner Program tab, stored in central `affiliate_payout_requests`) plus issued payouts.
- * Admin pays a request (records an AffiliatePayout with a receipt) or rejects it.
+ * Admin pays a request (records an AffiliatePayout, receipt optional) or rejects it.
+ * Vendor identity and bank details come from the vendor's Compliance Center via VendorProfile.
  */
 class PayoutsListPage extends ListPage
 {
@@ -37,6 +39,13 @@ class PayoutsListPage extends ListPage
     public string $payNotes             = '';
     public $payReceipt                  = null;
     public string $rejectNote           = '';
+
+    /** Payee profile shown in the pay + details modals (see VendorProfile). */
+    public array $payeeProfile          = [];
+    public bool $showDetailsModal       = false;
+    public array $detailsStats          = [];
+
+    protected bool $exportable = true;
 
     protected function pageView(): string
     {
@@ -115,8 +124,7 @@ class PayoutsListPage extends ListPage
             };
 
             return [
-                '<div class="entity-title">' . e($a?->name ?? '—') . '</div><div class="entity-subtitle">' . e(($a?->email ?? '') . ($a?->isTenant() ? ' · store: ' . $a->tenant_id : '')) . '</div>'
-                    . ($a ? ' <span class="badge ' . ($a->isTenant() ? 'badge-cyan' : 'badge-secondary') . '">' . ($a->isTenant() ? 'Vendor' : 'External') . '</span>' : ''),
+                $this->affiliateCell($a, $r->id),
                 '<strong>$' . number_format((float) $r->amount, 2) . '</strong>',
                 '$' . number_format((float) ($a?->balance ?? 0), 2),
                 e($r->note ?: '—') . ($r->admin_note ? '<div class="entity-subtitle">Admin: ' . e($r->admin_note) . '</div>' : ''),
@@ -142,7 +150,7 @@ class PayoutsListPage extends ListPage
         $records = AffiliatePayout::query()->with('affiliate')->latest('paid_at')->latest('id')->paginate(25);
 
         $rows = collect($records->items())->map(fn (AffiliatePayout $p) => [
-            e($p->affiliate?->name ?? '—'),
+            $this->affiliateCell($p->affiliate, null),
             '<strong>$' . number_format((float) $p->amount, 2) . '</strong>',
             e(ucfirst(str_replace('_', ' ', (string) $p->method))),
             e($p->reference ?? '—'),
@@ -151,6 +159,104 @@ class PayoutsListPage extends ListPage
         ])->all();
 
         return [$records, $rows];
+    }
+
+    /**
+     * Readable affiliate cell: person + store name (vendors), contact email, bank-details state,
+     * and a Details button. Vendor affiliates carry a generated alias email (owner+tenant-id@…),
+     * so the store owner's real email is shown instead.
+     */
+    private function affiliateCell(?\App\Models\Affiliate $a, ?int $requestId): string
+    {
+        if (!$a) {
+            return '—';
+        }
+
+        $p = VendorProfile::forAffiliate($a);
+        $name = VendorProfile::displayName($p, (string) $a->name);
+        $sub = $p['is_vendor']
+            ? __('Store') . ': ' . ($p['store_name'] ?: '—') . ($p['email'] ? ' · ' . $p['email'] : '')
+            : (string) $a->email;
+        $bank = VendorProfile::hasBankDetails($p)
+            ? '<span class="badge badge-green">' . e(__('Bank details')) . '</span>'
+            : '<span class="badge badge-red">' . e(__('No bank details')) . '</span>';
+        $type = '<span class="badge ' . ($p['is_vendor'] ? 'badge-cyan' : 'badge-secondary') . '">' . e($p['is_vendor'] ? __('Vendor') : __('External')) . '</span>';
+
+        return '<div class="entity-title">' . e($name) . '</div>'
+            . '<div class="entity-subtitle">' . e($sub) . '</div>'
+            . '<div class="flex gap-2" style="margin-top:6px;flex-wrap:wrap;align-items:center">' . $type . $bank
+            . '<button type="button" class="btn btn-secondary btn-sm" wire:click="openDetailsModal(' . (int) $a->id . ')">' . e(__('Details')) . '</button></div>';
+    }
+
+    public function openDetailsModal(int $affiliateId): void
+    {
+        $this->authorizePermission('affiliates.manage');
+        $a = \App\Models\Affiliate::query()->findOrFail($affiliateId);
+
+        $this->payeeProfile = VendorProfile::forAffiliate($a);
+        $this->requestAffiliateName = VendorProfile::displayName($this->payeeProfile, (string) $a->name);
+        $this->detailsStats = [
+            'code'          => (string) $a->code,
+            'status'        => ucfirst((string) $a->status),
+            'balance'       => (float) $a->balance,
+            'total_earned'  => (float) $a->total_earned,
+            'total_paid'    => (float) $a->total_paid,
+            'referrals'     => $a->referrals()->count(),
+            'conversions'   => $a->conversions()->count(),
+            'pending'       => (float) $a->payoutRequests()->where('status', 'pending')->sum('amount'),
+            'joined'        => $a->created_at?->format('M d, Y') ?? '—',
+        ];
+        $this->showDetailsModal = true;
+    }
+
+    // ── CSV export (current filter, all pages) ──────────────────────────
+    protected function exportFileName(): string
+    {
+        return 'affiliate-' . ($this->showingPayouts() ? 'payouts' : 'withdrawal-requests-' . $this->statusFilter) . '-' . now()->format('Y-m-d') . '.csv';
+    }
+
+    protected function exportHeaders(): array
+    {
+        $person = ['Full name', 'Type', 'Store name', 'Store URL', 'Email', 'Phone', 'Country', 'City',
+            'Bank name', 'Account holder', 'Account number', 'IBAN', 'Bank currency', 'PayPal'];
+
+        return $this->showingPayouts()
+            ? array_merge(['Payout ID'], $person, ['Amount (USD)', 'Method', 'Reference', 'Notes', 'Receipt', 'Paid at'])
+            : array_merge(['Request ID'], $person, ['Amount (USD)', 'Current balance (USD)', 'Affiliate note', 'Status', 'Requested at', 'Payout reference', 'Receipt', 'Admin note']);
+    }
+
+    protected function exportRows(): array
+    {
+        $this->authorizePermission('affiliates.manage');
+
+        $person = function (?\App\Models\Affiliate $a): array {
+            $p = VendorProfile::forAffiliate($a);
+
+            return [
+                VendorProfile::displayName($p, (string) ($a?->name ?? '')),
+                $p['is_vendor'] ? 'Vendor' : 'External',
+                $p['store_name'], $p['store_url'], $p['email'] ?: (string) ($a?->email ?? ''), $p['phone'], $p['country'], $p['city'],
+                $p['bank_name'], $p['bank_holder_name'], $p['bank_account_number'], $p['bank_iban'], $p['bank_currency'], $p['paypal_email'],
+            ];
+        };
+
+        if ($this->showingPayouts()) {
+            return AffiliatePayout::query()->with('affiliate')->latest('paid_at')->latest('id')->get()
+                ->map(fn (AffiliatePayout $p) => array_merge([$p->id], $person($p->affiliate), [
+                    number_format((float) $p->amount, 2, '.', ''), (string) $p->method, (string) $p->reference, (string) $p->notes,
+                    (string) $p->attachment_path, $p->paid_at?->format('Y-m-d H:i') ?? '',
+                ]))->all();
+        }
+
+        return AffiliatePayoutRequest::query()->with(['affiliate', 'payout'])
+            ->when($this->statusFilter !== 'all', fn ($q) => $q->where('status', $this->statusFilter))
+            ->latest('id')->get()
+            ->map(fn (AffiliatePayoutRequest $r) => array_merge([$r->id], $person($r->affiliate), [
+                number_format((float) $r->amount, 2, '.', ''),
+                number_format((float) ($r->affiliate?->balance ?? 0), 2, '.', ''),
+                (string) $r->note, ucfirst((string) $r->status), $r->created_at?->format('Y-m-d H:i') ?? '',
+                (string) ($r->payout?->reference ?? ''), (string) ($r->payout?->attachment_path ?? ''), (string) $r->admin_note,
+            ]))->all();
     }
 
     public function updatedStatusFilter(): void
@@ -170,7 +276,8 @@ class PayoutsListPage extends ListPage
 
         $this->resetErrorBag();
         $this->requestId            = $r->id;
-        $this->requestAffiliateName = (string) ($r->affiliate?->name ?? '—');
+        $this->payeeProfile         = VendorProfile::forAffiliate($r->affiliate);
+        $this->requestAffiliateName = VendorProfile::displayName($this->payeeProfile, (string) ($r->affiliate?->name ?? '—'));
         $this->requestBalance       = (string) ($r->affiliate?->balance ?? '0');
         $this->requestNote          = (string) ($r->note ?? '');
         $this->payAmount            = (string) $r->amount;
@@ -187,7 +294,7 @@ class PayoutsListPage extends ListPage
             'payAmount'    => 'required|numeric|min:0.01',
             'payReference' => 'nullable|string|max:255',
             'payNotes'     => 'nullable|string|max:2000',
-            'payReceipt'   => 'required|file|mimes:jpg,jpeg,png,webp,avif,gif,pdf|max:10240',
+            'payReceipt'   => 'nullable|file|mimes:jpg,jpeg,png,webp,avif,gif,pdf|max:10240',
         ], [], ['payReceipt' => 'receipt', 'payAmount' => 'amount']);
 
         $request = $this->pendingRequest((int) $this->requestId);
@@ -197,7 +304,8 @@ class PayoutsListPage extends ListPage
             return;
         }
 
-        $path = ImageOptimizer::store($this->payReceipt, 'affiliate-payouts');
+        // Receipt is optional: admins may pay by cash / methods without a document.
+        $path = $this->payReceipt ? ImageOptimizer::store($this->payReceipt, 'affiliate-payouts') : null;
 
         try {
             $service->issuePayout($request->affiliate, [
@@ -206,10 +314,12 @@ class PayoutsListPage extends ListPage
                 'method'          => 'manual',
                 'reference'       => $this->payReference ?: null,
                 'notes'           => $this->payNotes ?: null,
-                'attachment_path' => Storage::disk('public')->url($path),
+                'attachment_path' => $path ? Storage::disk('public')->url($path) : null,
             ]);
         } catch (\InvalidArgumentException $e) {
-            Storage::disk('public')->delete($path);
+            if ($path) {
+                Storage::disk('public')->delete($path);
+            }
             $this->addError('payAmount', $e->getMessage());
             return;
         }
@@ -248,7 +358,9 @@ class PayoutsListPage extends ListPage
         $this->showSettingsModal = false;
         $this->showPayModal      = false;
         $this->showRejectModal   = false;
+        $this->showDetailsModal  = false;
         $this->requestId         = null;
+        $this->payeeProfile      = [];
         $this->payReceipt        = null;
         $this->resetErrorBag();
     }

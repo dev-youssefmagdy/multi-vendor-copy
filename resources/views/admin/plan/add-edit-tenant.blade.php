@@ -56,6 +56,15 @@
                 </div>
             </button>
             @if ($isEdit)
+                <button type="button" class="section-tab" :class="{ 'is-active': tab === 'merchant' }" @click="tab = 'merchant'">
+                    <svg class="tab-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+                        <path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6" />
+                    </svg>
+                    <div>
+                        <span>Merchant Info</span>
+                        <small>Owner, business &amp; bank</small>
+                    </div>
+                </button>
                 <button type="button" class="section-tab" :class="{ 'is-active': tab === 'billing' }" @click="tab = 'billing'">
                     <svg class="tab-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
                         <rect x="2" y="5" width="20" height="14" rx="2" />
@@ -409,6 +418,53 @@
                             </table>
                         </div>
                     @endif
+                </div>
+            </div>
+
+            {{-- ── Merchant Info Tab (read-only; vendor edits it in the Compliance Center) ── --}}
+            @php $vp = $vendorProfile ?? []; @endphp
+            <div x-show="tab === 'merchant'" x-cloak>
+                <div class="page-stack">
+                    <div class="card form-card">
+                        <div class="acct-section-head" style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
+                            <div>
+                                <div class="panel-title">Merchant Information</div>
+                                <p class="panel-copy">Everything the vendor submitted in the Compliance Center. Read-only here; the vendor updates it from their panel.</p>
+                            </div>
+                            <div class="flex gap-2" style="align-items:center">
+                                @php $cs = $vp['compliance_status'] ?? 'pending'; @endphp
+                                <span class="badge {{ $cs === 'verified' ? 'badge-green' : ($cs === 'needs_action' ? 'badge-red' : 'badge-amber') }}">{{ ucfirst(str_replace('_', ' ', $cs)) }}</span>
+                                <a class="btn btn-secondary btn-sm" href="{{ route('admin.compliance.show', $tenant->id) }}">Review compliance</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card form-card">
+                        <div class="panel-title" style="margin-bottom:12px">Business &amp; Contact</div>
+                        @include('livewire.admin.partials.vendor-profile-fields', ['profile' => $vp, 'sections' => ['identity']])
+                    </div>
+
+                    <div class="card form-card">
+                        <div class="panel-title" style="margin-bottom:12px">Owner</div>
+                        @include('livewire.admin.partials.vendor-profile-fields', ['profile' => $vp, 'sections' => ['owner']])
+                    </div>
+
+                    @if (($vp['account_type'] ?? '') === 'Company')
+                        <div class="card form-card">
+                            <div class="panel-title" style="margin-bottom:12px">Company</div>
+                            @include('livewire.admin.partials.vendor-profile-fields', ['profile' => $vp, 'sections' => ['business']])
+                        </div>
+                    @endif
+
+                    <div class="card form-card">
+                        <div class="panel-title" style="margin-bottom:12px">Bank Account</div>
+                        @include('livewire.admin.partials.vendor-profile-fields', ['profile' => $vp, 'sections' => ['bank']])
+                    </div>
+
+                    <div class="card form-card">
+                        <div class="panel-title" style="margin-bottom:12px">Documents</div>
+                        @include('livewire.admin.partials.vendor-profile-fields', ['profile' => $vp, 'sections' => ['documents']])
+                    </div>
                 </div>
             </div>
 

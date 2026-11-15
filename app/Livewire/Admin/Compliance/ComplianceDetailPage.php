@@ -66,6 +66,8 @@ class ComplianceDetailPage extends AdminPage
             'tenant' => $tenant,
             'complianceSettings' => $complianceSettings,
             'completionPercent' => $completionPercent,
+            // Resolved names for id-stored fields (country / city / bank currency).
+            'profile' => $tenant ? \App\Support\VendorProfile::forTenant($tenant) : [],
         ]);
     }
 

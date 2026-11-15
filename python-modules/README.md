@@ -16,6 +16,18 @@ features:
 
 ---
 
+## 0. Where the OpenAI key comes from
+
+The OpenAI key, base URL and model names are managed in the **central admin → Settings → AI Settings**
+(stored encrypted in the central `app_settings` table, see `App\Support\AiSettings`). Laravel forwards
+them on every request as `X-OpenAI-*` headers and `ai_config.py` uses them for that request only.
+The `OPENAI_*` variables in this folder's `.env` are a **fallback** for local runs and manual `curl` tests.
+`SERVICE_TOKEN` stays in `.env` (it protects the channel the key travels over).
+
+OpenAI account problems are returned with stable codes: `402 ai_quota_exhausted` (no credits on the key's
+organization/project), `502 ai_auth_failed` (invalid key / no model access), `429 ai_rate_limited`;
+`/price` returns `503 search_unavailable` when the free web search is blocked. `GET /health/ai` checks key + credits.
+
 ## 1. Local setup
 
 ```bash

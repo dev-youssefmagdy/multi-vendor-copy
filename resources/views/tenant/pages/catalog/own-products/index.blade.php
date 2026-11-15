@@ -79,6 +79,8 @@
     </div>
 
     @include('tenant.pages.catalog.products._modals.video-ad')
+    @include('tenant.pages.catalog.products._modals.share')
+    @include('tenant.pages.catalog.products._modals.price-list')
 @endsection
 
 @push('tenant-vite')

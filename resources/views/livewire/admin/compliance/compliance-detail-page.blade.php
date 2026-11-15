@@ -45,7 +45,8 @@
                 <div class="form-grid form-grid-2">
                     <div><span class="field-label">Business Name</span><div>{{ $data('compliance_business_name') }}</div></div>
                     <div><span class="field-label">Store Name</span><div>{{ $data('compliance_store_name') }}</div></div>
-                    <div><span class="field-label">City</span><div>{{ $data('compliance_city') }}</div></div>
+                    <div><span class="field-label">Country</span><div>{{ ($profile['country'] ?? '') ?: '—' }}</div></div>
+                    <div><span class="field-label">City</span><div>{{ ($profile['city'] ?? '') ?: '—' }}</div></div>
                     <div><span class="field-label">Phone</span><div>{{ $data('compliance_phone') }}</div></div>
                     <div><span class="field-label">Email</span><div>{{ $data('compliance_email') }}</div></div>
                 </div>
@@ -86,7 +87,7 @@
                     <div><span class="field-label">Account Holder</span><div>{{ $data('compliance_bank_holder_name') }}</div></div>
                     <div><span class="field-label">IBAN</span><div>{{ $data('compliance_bank_iban') }}</div></div>
                     <div><span class="field-label">Account Number</span><div>{{ $data('compliance_bank_account_number') }}</div></div>
-                    <div><span class="field-label">Currency</span><div>{{ $data('compliance_bank_currency') }}</div></div>
+                    <div><span class="field-label">Currency</span><div>{{ ($profile['bank_currency'] ?? '') ?: '—' }}</div></div>
                 </div>
             </section>
 

@@ -12,7 +12,7 @@ class OpenAiTranslationService
 
     public function configured(): bool
     {
-        return filled(config('services.openai.api_key'));
+        return \App\Support\AiSettings::configured();
     }
 
     /**
@@ -110,8 +110,9 @@ class OpenAiTranslationService
             throw new RuntimeException('OpenAI translation is not configured.');
         }
 
-        $response = Http::baseUrl(rtrim((string) config('services.openai.base_url', 'https://api.openai.com/v1'), '/'))
-            ->withToken((string) config('services.openai.api_key'))
+        // Key, base URL and model come from Admin → Settings → AI Settings (env as fallback).
+        $response = Http::baseUrl(rtrim(\App\Support\AiSettings::get('base_url'), '/'))
+            ->withToken(\App\Support\AiSettings::apiKey())
             ->acceptJson()
             ->timeout((int) config('services.openai.timeout', 120))
             ->retry(3, 2000, function (\Throwable $e) {
@@ -119,7 +120,7 @@ class OpenAiTranslationService
                     && in_array($e->response?->status(), [429, 500, 502, 503, 520, 521, 522, 524], true);
             }, throw: false)
             ->post('/chat/completions', [
-                'model' => (string) config('services.openai.translation_model', 'gpt-4.1-mini'),
+                'model' => \App\Support\AiSettings::get('translation_model'),
                 'temperature' => 0.1,
                 'response_format' => ['type' => 'json_object'],
                 'messages' => [

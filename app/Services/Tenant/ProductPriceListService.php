@@ -17,6 +17,10 @@ final class ProductPriceListService
     {
         $product->loadMissing('variants');
 
+        if (self::isOwnProduct($product)) {
+            return $this->ownProductState($product);
+        }
+
         [$shippingCosts, $centralProduct] = tenancy()->central(function () use ($product) {
             $costs = FixedShippingCost::query()
                 ->where('is_active', true)
@@ -204,5 +208,36 @@ final class ProductPriceListService
         }
 
         return $prices;
+    }
+
+    /**
+     * Vendor-own product (no central product): priced from the vendor's form, the same in every
+     * country (ORDER_FORMULAS.md "Own products are priced from the vendor's form"). The catalog
+     * price list (central sale price + profit + fixed shipping) does not apply and must never be
+     * saved onto it, so this state is read-only.
+     */
+    public static function isOwnProduct(Product $product): bool
+    {
+        return (bool) $product->is_own_product && !$product->central_product_id;
+    }
+
+    private function ownProductState(Product $product): array
+    {
+        $base = (float) ($product->default_price ?? 0);
+        $sale = (float) ($product->sale_price ?? 0);
+
+        return [
+            'ownProduct' => true,
+            'editUrl' => route('tenant.own-products.edit', $product),
+            'basePrice' => round($base, 2),
+            'salePrice' => $sale > 0 ? round($sale, 2) : null,
+            'sellPrice' => round($product->ownSellPrice(null, null), 2),
+            'variants' => $product->variants->map(fn ($variant) => [
+                'id' => $variant->id,
+                'label' => $variant->display_label ?? ('Variant #' . $variant->id),
+                'price' => round($variant->sellPriceForCountry(null), 2),
+            ])->values()->all(),
+            'prices' => [],
+        ];
     }
 }

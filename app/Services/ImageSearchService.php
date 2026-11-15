@@ -174,11 +174,8 @@ class ImageSearchService
     private function callEndpoint(string $path, array $payload): array
     {
         try {
-            $request = Http::timeout(60)->acceptJson();
-
-            if ($this->token) {
-                $request = $request->withHeaders(['X-Service-Token' => $this->token]);
-            }
+            // Service token + AI settings (OpenAI key/models from Admin → Settings → AI Settings).
+            $request = Http::timeout(60)->acceptJson()->withHeaders(\App\Support\AiSettings::pythonHeaders());
 
             $response = $request->post($this->baseUrl . $path, $payload);
 

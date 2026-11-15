@@ -231,6 +231,7 @@ class AdminNavigation
                             ['label' => 'Email Templates', 'route' => 'admin.settings.email-templates', 'permission' => 'settings.email-templates.manage'],
                             ['label' => 'Email Configuration', 'route' => 'admin.settings.email-configuration', 'permission' => 'settings.email-configuration.manage'],
                             ['label' => 'Social Login', 'route' => 'admin.settings.social-login', 'permission' => 'settings.social-login.manage'],
+                            ['label' => 'AI Settings', 'route' => 'admin.settings.ai', 'permission' => 'settings.general.manage'],
                             ['label' => 'Currencies', 'route' => 'admin.settings.currencies', 'permission' => 'settings.currencies.view'],
                             ['label' => 'Languages', 'route' => 'admin.settings.languages', 'permission' => 'settings.languages.view'],
                             ['label' => 'Translation Key Access', 'route' => 'admin.settings.translation-key-access', 'permission' => 'settings.languages.manage'],

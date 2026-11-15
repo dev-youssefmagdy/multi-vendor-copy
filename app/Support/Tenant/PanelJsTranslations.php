@@ -126,6 +126,8 @@ final class PanelJsTranslations
         'Visual match — :count results',
         'You do not have permission to perform this action.',
         'Your Price',
+        'Base price',
+        'Sale price',
         'Your session expired. Reloading…',
         '% of price',
         ':count active',

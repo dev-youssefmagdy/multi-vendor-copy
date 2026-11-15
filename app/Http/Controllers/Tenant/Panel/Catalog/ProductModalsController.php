@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Tenant\Panel\Catalog;
 
+use App\Exceptions\AiServiceException;
 use App\Http\Controllers\Tenant\Panel\PanelController;
 use App\Http\Requests\Tenant\Panel\Catalog\FetchAiPriceRequest;
 use App\Http\Requests\Tenant\Panel\Catalog\GenerateSocialPostsRequest;
@@ -39,8 +40,12 @@ final class ProductModalsController extends PanelController
                 $validated['language'],
                 (bool) ($validated['include_image'] ?? true),
             );
+        } catch (AiServiceException $e) {
+            // Technical details go to the log; the vendor gets the reason in plain words.
+            Log::warning('AI social posts generation failed', ['product_id' => $product->id, 'reason' => $e->reason, 'error' => $e->getMessage()]);
+
+            return $this->failure($e->userMessage('social'));
         } catch (\Throwable $e) {
-            // Technical details (AI service down, missing API key...) are for us, not the vendor.
             Log::warning('AI social posts generation failed', ['product_id' => $product->id, 'error' => $e->getMessage()]);
 
             return $this->failure(__('We couldn’t generate posts right now. Please try again in a few minutes. If the problem continues, contact support.'));
@@ -70,6 +75,10 @@ final class ProductModalsController extends PanelController
                 (bool) ($validated['use_image'] ?? false),
                 $variantId,
             );
+        } catch (AiServiceException $e) {
+            Log::warning('AI price fetch failed', ['product_id' => $product->id, 'variant_id' => $variantId, 'reason' => $e->reason, 'error' => $e->getMessage()]);
+
+            return $this->failure($e->userMessage('price'));
         } catch (\Throwable $e) {
             Log::warning('AI price fetch failed', ['product_id' => $product->id, 'variant_id' => $variantId, 'error' => $e->getMessage()]);
 
@@ -91,6 +100,10 @@ final class ProductModalsController extends PanelController
 
     public function priceListSave(SavePriceListRequest $request, Product $product): JsonResponse
     {
+        if (ProductPriceListService::isOwnProduct($product)) {
+            return $this->failure(__('Own products are priced from the product form. Edit the product to change its price.'));
+        }
+
         $validated = $request->validated();
 
         $state = $this->priceList->state($product);
@@ -108,6 +121,10 @@ final class ProductModalsController extends PanelController
 
     public function priceListPreview(Request $request, Product $product): JsonResponse
     {
+        if (ProductPriceListService::isOwnProduct($product)) {
+            return $this->failure(__('Own products are priced from the product form. Edit the product to change its price.'));
+        }
+
         $state = $this->priceList->state($product);
 
         $result = $this->priceList->preview(

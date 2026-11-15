@@ -440,7 +440,9 @@ class ProductsList extends ListPage
 
             $this->toast(__('Social media posts generated for :product in :language (:image).', ['product' => $label, 'language' => $languageLabel, 'image' => $imageLabel]));
         } catch (\Throwable $e) {
-            $this->socialError = __('Generation failed: :error', ['error' => $e->getMessage()]);
+            $this->socialError = $e instanceof \App\Exceptions\AiServiceException
+                ? $e->userMessage('social')
+                : __('Generation failed: :error', ['error' => $e->getMessage()]);
         } finally {
             $this->socialGenerating = false;
         }
@@ -496,7 +498,9 @@ class ProductsList extends ListPage
             $this->priceData = $service->fetchForProduct($product, useImage: $this->priceUseImage, variant: $variant);
             $this->toast(__('Price data fetched and saved successfully.'));
         } catch (\Throwable $e) {
-            $this->priceError = __('Fetch failed: :error', ['error' => $e->getMessage()]);
+            $this->priceError = $e instanceof \App\Exceptions\AiServiceException
+                ? $e->userMessage('price')
+                : __('Fetch failed: :error', ['error' => $e->getMessage()]);
         } finally {
             $this->priceFetching = false;
         }

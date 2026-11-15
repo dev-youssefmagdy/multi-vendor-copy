@@ -1,8 +1,8 @@
 {{--
     Own (store-managed) product as a design card (Own products tab). Same look
     as the catalog product card (catalog/products/_card) but with own-product
-    actions only: active/featured toggles, edit and delete on the own-products
-    routes, and the video ad CTA. No market comparison — that data only exists
+    actions only: active/featured toggles, edit, share, a read-only price list
+    and delete on the own-products routes, and the video ad CTA. No market comparison — that data only exists
     for catalog products.
 --}}
 
@@ -59,6 +59,8 @@
                     <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M11 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/><path stroke-linecap="round" stroke-linejoin="round" d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                 </a>
                 <x-tenant::dropdown align="end">
+                    <x-tenant::dropdown-item data-modal-open="product-share-modal" data-product-id="{{ $product->id }}">{{ __('Share') }}</x-tenant::dropdown-item>
+                    <x-tenant::dropdown-item data-modal-open="product-price-list-modal" data-product-id="{{ $product->id }}">{{ __('Price list') }}</x-tenant::dropdown-item>
                     <x-tenant::dropdown-item danger
                         data-action-url="{{ route('tenant.own-products.destroy', $product) }}"
                         data-action-method="DELETE"

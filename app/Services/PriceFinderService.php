@@ -54,6 +54,11 @@ class PriceFinderService
 
         $result = $this->callEndpoint('/price', $payload);
 
+        // An empty search is not a success: keep the previously saved prices and tell the caller.
+        if ((int) ($result['sample_size'] ?? 0) < 1 || empty($result['hits'])) {
+            throw new \App\Exceptions\AiServiceException('no_results', 'No price hits for query: ' . ($result['query'] ?? $name));
+        }
+
         $product->update(['ai_price_data' => $result]);
 
         return $result;
@@ -65,29 +70,24 @@ class PriceFinderService
     private function callEndpoint(string $path, array $payload): array
     {
         try {
-            $request = Http::timeout(60)->acceptJson();
-
-            if ($this->token) {
-                $request = $request->withHeaders(['X-Service-Token' => $this->token]);
-            }
+            // Service token + AI settings (OpenAI key/models from Admin → Settings → AI Settings).
+            $request = Http::timeout(60)->acceptJson()->withHeaders(\App\Support\AiSettings::pythonHeaders());
 
             $response = $request->post($this->baseUrl . $path, $payload);
 
             if ($response->failed()) {
-                $detail = $response->json('detail') ?? $response->body();
-
                 Log::error('[PriceFinderService] HTTP error.', [
                     'status' => $response->status(),
                     'body' => $response->body(),
                 ]);
 
-                throw new \RuntimeException($detail ?: 'The AI price service returned an error.');
+                throw \App\Exceptions\AiServiceException::fromResponse($response->status(), $response->json('detail'), $response->body());
             }
 
-            return $response->json();
+            return (array) $response->json();
         } catch (\Illuminate\Http\Client\ConnectionException $e) {
             Log::error('[PriceFinderService] Connection exception.', ['message' => $e->getMessage()]);
-            throw new \RuntimeException('The AI price service is unavailable. Make sure the Python service is running.', previous: $e);
+            throw new \App\Exceptions\AiServiceException('service_unreachable', 'The AI price service is unavailable. Make sure the Python service is running.', $e);
         }
     }
 }

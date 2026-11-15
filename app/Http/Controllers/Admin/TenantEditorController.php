@@ -45,6 +45,7 @@ class TenantEditorController extends Controller
                 'billingHistory' => $loaded->paymentLogs()->with('package')->latest()->get(),
                 'currentLogoUrl' => $loaded->logo,
                 'mobileApp'      => \App\Models\TenantMobileApp::query()->where('tenant_id', $loaded->getKey())->first(),
+                'vendorProfile'  => \App\Support\VendorProfile::forTenant($loaded),
             ]
         ));
     }

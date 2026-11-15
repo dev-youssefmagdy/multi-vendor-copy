@@ -19,6 +19,8 @@ from typing import Optional
 
 from openai import OpenAI
 
+import ai_config
+
 # ── Style briefs ──────────────────────────────────────────────────────────────
 
 STYLE_BRIEFS: dict[str, str] = {
@@ -86,10 +88,7 @@ class LogoResult:
 # ── Internal helpers ──────────────────────────────────────────────────────────
 
 def _client() -> OpenAI:
-    api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key:
-        raise RuntimeError("OPENAI_API_KEY environment variable is not set.")
-    return OpenAI(api_key=api_key)
+    return ai_config.client()
 
 
 def _build_logo_prompt(
@@ -164,7 +163,7 @@ def generate_logo(
     if style not in STYLE_BRIEFS:
         style = "modern"
 
-    image_model = (model or os.getenv("OPENAI_IMAGE_MODEL", DEFAULT_IMAGE_MODEL)).strip()
+    image_model = (model or ai_config.get("image_model") or DEFAULT_IMAGE_MODEL).strip()
     prompt = _build_logo_prompt(store_name, tagline, category, style, colors)
 
     client = _client()
