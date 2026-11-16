@@ -1195,6 +1195,8 @@
 }
 
 .db-store-country svg { width: 24px; height: 24px; }
+.db-store-country [data-country-label] { display: inline-flex; align-items: center; gap: 8px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.db-store-country [data-country-label].has-country { color: #FAFAFA; }
 
 .db-store-links {
     display: flex;
@@ -1847,6 +1849,7 @@
     .db-store-edit-head { flex-direction: column; align-items: stretch; gap: 12px; }
     .db-store-sub { max-width: none; }
     .db-store-country { width: 100%; }
+    .db-store-edit-head .t-country-picker { width: 100%; }
     .db-store-links { margin-top: 17px; }
 
     /* Product request: boxes on top, copy, then the 3 steps in one row */

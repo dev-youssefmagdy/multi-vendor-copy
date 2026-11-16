@@ -37,8 +37,8 @@
       "_vendor-swal-Bl7W2J8u.js"
     ]
   },
-  "_core-CXI6kFc5.js": {
-    "file": "assets/core-CXI6kFc5.js",
+  "_core-Xs1Vbokj.js": {
+    "file": "assets/core-Xs1Vbokj.js",
     "name": "core",
     "imports": [
       "_preload-helper-Cdi5alSk.js",
@@ -91,9 +91,9 @@
       "resources/js/tenant/modules/payment-gateway.js"
     ]
   },
-  "_dashboard-a7DsTkec.css": {
-    "file": "assets/dashboard-a7DsTkec.css",
-    "src": "_dashboard-a7DsTkec.css"
+  "_dashboard-DDCONgMN.css": {
+    "file": "assets/dashboard-DDCONgMN.css",
+    "src": "_dashboard-DDCONgMN.css"
   },
   "_dom-Dd90qM89.js": {
     "file": "assets/dom-Dd90qM89.js",
@@ -2557,11 +2557,11 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-Cb0p47EF.css",
+    "file": "assets/app-C3wN7LF4.css",
     "src": "resources/css/app.css"
   },
   "resources/css/ecommet.css": {
-    "file": "assets/ecommet-e2MXVcy6.css",
+    "file": "assets/ecommet-Cy2YqVmv.css",
     "name": "ecommet",
     "names": [
       "ecommet.css"
@@ -2615,7 +2615,7 @@
     "isEntry": true
   },
   "resources/css/elora-variants.css": {
-    "file": "assets/souqify-variants-CaXzqR-n.css",
+    "file": "assets/souqify-variants-djP1idWY.css",
     "name": "elora-variants",
     "names": [
       "elora-variants.css",
@@ -2854,7 +2854,7 @@
     "isEntry": true
   },
   "resources/css/souqify-variants.css": {
-    "file": "assets/souqify-variants-CaXzqR-n.css",
+    "file": "assets/souqify-variants-djP1idWY.css",
     "name": "elora-variants",
     "names": [
       "elora-variants.css",
@@ -2864,7 +2864,7 @@
     "isEntry": true
   },
   "resources/css/souqify.css": {
-    "file": "assets/souqify-Bq8L3YQA.css",
+    "file": "assets/souqify-BSJ5K-1n.css",
     "name": "souqify",
     "names": [
       "souqify.css"
@@ -2873,7 +2873,7 @@
     "isEntry": true
   },
   "resources/css/tenant/app.css": {
-    "file": "assets/app-Rtpvtdsy.css",
+    "file": "assets/app-gEeyARVq.css",
     "name": "app",
     "names": [
       "app.css"
@@ -2881,7 +2881,7 @@
     "src": "resources/css/tenant/app.css",
     "isEntry": true,
     "css": [
-      "assets/app-Cb0p47EF.css"
+      "assets/app-C3wN7LF4.css"
     ],
     "assets": [
       "assets/outfit-latin-ext-400-normal-5tcqmc2S.woff2",
@@ -3222,12 +3222,12 @@
     "isEntry": true
   },
   "resources/js/tenant/app.js": {
-    "file": "assets/app-CzsqLnpV.js",
+    "file": "assets/app-DQ0oFzrP.js",
     "name": "app",
     "src": "resources/js/tenant/app.js",
     "isEntry": true,
     "imports": [
-      "_core-CXI6kFc5.js",
+      "_core-Xs1Vbokj.js",
       "_events-CFA2UmB3.js"
     ]
   },
@@ -3287,7 +3287,7 @@
     "isDynamicEntry": true
   },
   "resources/js/tenant/components/copy.js": {
-    "file": "assets/copy-i0Z3ShTM.js",
+    "file": "assets/copy-c48bJzmH.js",
     "name": "copy",
     "src": "resources/js/tenant/components/copy.js",
     "isDynamicEntry": true,
@@ -3608,13 +3608,13 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/catalog/module-nav.js": {
-    "file": "assets/module-nav-8ry7QEXI.js",
+    "file": "assets/module-nav-Dht-TIci.js",
     "name": "module-nav",
     "src": "resources/js/tenant/pages/catalog/module-nav.js",
     "isEntry": true,
     "css": [
       "assets/module-nav-V9Agd-qb.css",
-      "assets/dashboard-a7DsTkec.css"
+      "assets/dashboard-DDCONgMN.css"
     ]
   },
   "resources/js/tenant/pages/catalog/own-product-form.js": {
@@ -3646,7 +3646,7 @@
     ]
   },
   "resources/js/tenant/pages/catalog/products-grid.js": {
-    "file": "assets/products-grid-D2hJB4X3.js",
+    "file": "assets/products-grid-BJw9-y12.js",
     "name": "products-grid",
     "src": "resources/js/tenant/pages/catalog/products-grid.js",
     "isEntry": true,
@@ -3654,7 +3654,7 @@
       "_events-CFA2UmB3.js"
     ],
     "css": [
-      "assets/dashboard-a7DsTkec.css",
+      "assets/dashboard-DDCONgMN.css",
       "assets/todays-chances-DpmMPii-.css"
     ]
   },
@@ -3681,7 +3681,7 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/dashboard/index.js": {
-    "file": "assets/index-BOlbAvFe.js",
+    "file": "assets/index-Sbsf7b1t.js",
     "name": "index",
     "src": "resources/js/tenant/pages/dashboard/index.js",
     "isEntry": true,
@@ -3690,14 +3690,14 @@
       "_opportunities-C0Ih-S-P.js",
       "_swiper-BJ9ytRY3.js",
       "_product-modals-DfR1pwH0.js",
-      "_core-CXI6kFc5.js",
+      "_core-Xs1Vbokj.js",
       "_events-CFA2UmB3.js",
       "_i18n-DGKVOdfd.js",
       "_registry-CG1aNXNj.js",
       "_toast-DF0uKesF.js"
     ],
     "css": [
-      "assets/dashboard-a7DsTkec.css"
+      "assets/dashboard-DDCONgMN.css"
     ]
   },
   "resources/js/tenant/pages/finance/billing-index.js": {
@@ -3804,17 +3804,17 @@
     ]
   },
   "resources/js/tenant/pages/requests/brand-create.js": {
-    "file": "assets/brand-create-DGVlvJRz.js",
+    "file": "assets/brand-create-ue8qYxN7.js",
     "name": "brand-create",
     "src": "resources/js/tenant/pages/requests/brand-create.js",
     "isEntry": true,
     "css": [
-      "assets/dashboard-a7DsTkec.css",
+      "assets/dashboard-DDCONgMN.css",
       "assets/orders-CF6Vfa0G.css"
     ]
   },
   "resources/js/tenant/pages/requests/brand-index.js": {
-    "file": "assets/brand-index-DdapbEbd.js",
+    "file": "assets/brand-index-Bd9xBzrf.js",
     "name": "brand-index",
     "src": "resources/js/tenant/pages/requests/brand-index.js",
     "isEntry": true,
@@ -3823,7 +3823,7 @@
     ],
     "css": [
       "assets/analytics-BeA5e-tf.css",
-      "assets/dashboard-a7DsTkec.css",
+      "assets/dashboard-DDCONgMN.css",
       "assets/orders-CF6Vfa0G.css"
     ]
   },
@@ -3839,7 +3839,7 @@
     ]
   },
   "resources/js/tenant/pages/requests/manufacturing-create.js": {
-    "file": "assets/manufacturing-create-dWUt84x1.js",
+    "file": "assets/manufacturing-create-CZx_GQ71.js",
     "name": "manufacturing-create",
     "src": "resources/js/tenant/pages/requests/manufacturing-create.js",
     "isEntry": true,
@@ -3849,12 +3849,12 @@
       "_i18n-DGKVOdfd.js"
     ],
     "css": [
-      "assets/dashboard-a7DsTkec.css",
+      "assets/dashboard-DDCONgMN.css",
       "assets/orders-CF6Vfa0G.css"
     ]
   },
   "resources/js/tenant/pages/requests/manufacturing-index.js": {
-    "file": "assets/manufacturing-index--n0HJgTX.js",
+    "file": "assets/manufacturing-index-DlMYuzWk.js",
     "name": "manufacturing-index",
     "src": "resources/js/tenant/pages/requests/manufacturing-index.js",
     "isEntry": true,
@@ -3863,7 +3863,7 @@
     ],
     "css": [
       "assets/analytics-BeA5e-tf.css",
-      "assets/dashboard-a7DsTkec.css",
+      "assets/dashboard-DDCONgMN.css",
       "assets/orders-CF6Vfa0G.css"
     ]
   },
@@ -3879,12 +3879,12 @@
     ]
   },
   "resources/js/tenant/pages/requests/product-request-create.js": {
-    "file": "assets/product-request-create-DE97A3cF.js",
+    "file": "assets/product-request-create-6kl1VhOH.js",
     "name": "product-request-create",
     "src": "resources/js/tenant/pages/requests/product-request-create.js",
     "isEntry": true,
     "css": [
-      "assets/dashboard-a7DsTkec.css",
+      "assets/dashboard-DDCONgMN.css",
       "assets/orders-CF6Vfa0G.css",
       "assets/requests-CJpz01p_.css"
     ]
@@ -3903,7 +3903,7 @@
     ]
   },
   "resources/js/tenant/pages/requests/product-requests-index.js": {
-    "file": "assets/product-requests-index-bNcfHvwL.js",
+    "file": "assets/product-requests-index-D3XLhATa.js",
     "name": "product-requests-index",
     "src": "resources/js/tenant/pages/requests/product-requests-index.js",
     "isEntry": true,
@@ -3912,7 +3912,7 @@
     ],
     "css": [
       "assets/analytics-BeA5e-tf.css",
-      "assets/dashboard-a7DsTkec.css",
+      "assets/dashboard-DDCONgMN.css",
       "assets/orders-CF6Vfa0G.css",
       "assets/requests-CJpz01p_.css"
     ]
@@ -3930,7 +3930,7 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/sales/customers-index.js": {
-    "file": "assets/customers-index-Cgff058o.js",
+    "file": "assets/customers-index-DvkbN_LO.js",
     "name": "customers-index",
     "src": "resources/js/tenant/pages/sales/customers-index.js",
     "isEntry": true,
@@ -3939,17 +3939,17 @@
     ],
     "css": [
       "assets/analytics-BeA5e-tf.css",
-      "assets/dashboard-a7DsTkec.css",
+      "assets/dashboard-DDCONgMN.css",
       "assets/orders-CF6Vfa0G.css"
     ]
   },
   "resources/js/tenant/pages/sales/order-show.js": {
-    "file": "assets/order-show-Dwh1_aRv.js",
+    "file": "assets/order-show-DkrU_5OQ.js",
     "name": "order-show",
     "src": "resources/js/tenant/pages/sales/order-show.js",
     "isEntry": true,
     "imports": [
-      "_core-CXI6kFc5.js",
+      "_core-Xs1Vbokj.js",
       "_events-CFA2UmB3.js",
       "_forms-BQlu-xgW.js",
       "_registry-CG1aNXNj.js"
@@ -3959,7 +3959,7 @@
     ]
   },
   "resources/js/tenant/pages/sales/orders-index.js": {
-    "file": "assets/orders-index-CaavO-kt.js",
+    "file": "assets/orders-index-CUAqlFOG.js",
     "name": "orders-index",
     "src": "resources/js/tenant/pages/sales/orders-index.js",
     "isEntry": true,
@@ -3968,7 +3968,7 @@
     ],
     "css": [
       "assets/analytics-BeA5e-tf.css",
-      "assets/dashboard-a7DsTkec.css",
+      "assets/dashboard-DDCONgMN.css",
       "assets/orders-CF6Vfa0G.css"
     ]
   },
@@ -4124,7 +4124,7 @@
     ]
   },
   "resources/js/tenant/pages/store/appearance.js": {
-    "file": "assets/appearance-C06tbPvK.js",
+    "file": "assets/appearance-zWQdsX4U.js",
     "name": "appearance",
     "src": "resources/js/tenant/pages/store/appearance.js",
     "isEntry": true,
@@ -4210,7 +4210,7 @@
     "isEntry": true
   },
   "resources/js/tenant/pages/store/themes.js": {
-    "file": "assets/themes-CmlHA_jV.js",
+    "file": "assets/themes-ChdcRrhI.js",
     "name": "themes",
     "src": "resources/js/tenant/pages/store/themes.js",
     "isEntry": true,
@@ -4286,7 +4286,7 @@
     ]
   },
   "resources/js/tenant/pages/todays-chances.js": {
-    "file": "assets/todays-chances-t7gAaxMA.js",
+    "file": "assets/todays-chances-D73aIAsp.js",
     "name": "todays-chances",
     "src": "resources/js/tenant/pages/todays-chances.js",
     "isEntry": true,
@@ -4295,7 +4295,7 @@
       "_product-modals-DfR1pwH0.js"
     ],
     "css": [
-      "assets/dashboard-a7DsTkec.css",
+      "assets/dashboard-DDCONgMN.css",
       "assets/todays-chances-DpmMPii-.css"
     ]
   },

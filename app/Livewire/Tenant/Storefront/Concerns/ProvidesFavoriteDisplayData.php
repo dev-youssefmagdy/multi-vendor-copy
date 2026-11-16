@@ -30,6 +30,7 @@ trait ProvidesFavoriteDisplayData
         // Guests can call this with up to 200 products: batch-load what the payload reads.
         return Product::with($repository->productRelations())
             ->where('active', true)
+            ->availableInCountry($repository->visibilityCountryId())
             ->where(fn ($q) => $q->whereIn('slug', $slugs)->orWhereIn('id', $ids))
             ->get()
             ->each(fn (Product $product) => $product->variants->each->setRelation('product', $product))

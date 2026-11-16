@@ -16,7 +16,39 @@ class ApplyStorefrontSessionContext
     ) {
     }
 
+    /** Session keys this middleware may rewrite; restored after a ?preview_country request. */
+    private const PREVIEW_RESTORED_KEYS = [
+        'storefront_country',
+        'storefront_country_id',
+        'storefront_language',
+        'storefront_currency',
+    ];
+
     public function handle(Request $request, Closure $next): Response
+    {
+        // Vendor-panel "Live Store Preview" for a chosen country (?preview_country=XX): the page
+        // renders as that country, but the visitor's (vendor's) own session keeps its country,
+        // language and currency.
+        if (CountryDetectorService::previewIso2($request) === null || !$request->hasSession()) {
+            return $this->apply($request, $next);
+        }
+
+        $session = $request->session();
+        $snapshot = [];
+        foreach (self::PREVIEW_RESTORED_KEYS as $key) {
+            $snapshot[$key] = [$session->has($key), $session->get($key)];
+        }
+
+        try {
+            return $this->apply($request, $next);
+        } finally {
+            foreach ($snapshot as $key => [$had, $value]) {
+                $had ? $session->put($key, $value) : $session->forget($key);
+            }
+        }
+    }
+
+    private function apply(Request $request, Closure $next): Response
     {
         // Auto-detect the visitor's country. The service caches its result in
         // the session so subsequent requests skip header inspection. A

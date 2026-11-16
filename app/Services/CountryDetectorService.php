@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
  * additional PHP extensions.
  *
  * Detection order:
+ *   0. ?preview_country=XX (vendor-panel "Live Store Preview"): this request only, never
+ *      persisted; ApplyStorefrontSessionContext also keeps the session untouched for it
  *   1. ?country=XX query string override (persisted to session as an explicit override)
  *   2. Session override from an earlier ?country=XX
  *   3. CF-IPCountry    (Cloudflare) - read on EVERY request
@@ -31,6 +33,17 @@ class CountryDetectorService
 {
     /** Request attribute holding the per-request country lookup memo (by ISO2). */
     public const MEMO_ATTRIBUTE = '_country_detector_memo';
+
+    /** Query parameter of the vendor-panel storefront preview (request-only country). */
+    public const PREVIEW_PARAM = 'preview_country';
+
+    /** ISO2 (upper case) of a ?preview_country=XX request, else null. */
+    public static function previewIso2(Request $request): ?string
+    {
+        $preview = $request->query(self::PREVIEW_PARAM);
+
+        return is_string($preview) && preg_match('/^[A-Za-z]{2}$/', $preview) === 1 ? strtoupper($preview) : null;
+    }
 
     public function detect(Request $request): ?Country
     {
@@ -58,6 +71,12 @@ class CountryDetectorService
 
     protected function extractIso2(Request $request): ?string
     {
+        // 0. Vendor-panel preview of the storefront as a given country: request-only.
+        $preview = self::previewIso2($request);
+        if ($preview !== null) {
+            return $preview;
+        }
+
         // 1. Explicit override via query string (?country=EG) — useful for QA
         //    and operators testing country-specific themes. Persisted in the
         //    session so subsequent page loads keep the override.

@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Tenant\Panel\Store;
 
 use App\Http\Controllers\Tenant\Panel\PanelController;
 use App\Models\HomeVariant;
+use App\Models\Tenant\TenantHomeVariant;
 use App\Models\Tenant\TenantPageSection;
 use App\Models\Tenant\Theme;
 use App\Repositories\Tenant\TenantPanelRepository;
@@ -209,7 +210,18 @@ final class PageBuilderController extends PanelController
             return null;
         }
 
-        return $availableVariants->first()?->id;
+        // Open the edition the storefront actually shows (store-wide choice, else the
+        // theme's default), not simply the first one listed.
+        $live = (int) TenantHomeVariant::query()
+            ->where('theme_id', $theme->id)
+            ->whereNull('country_id')
+            ->value('home_variant_id');
+
+        if ($live && $availableVariants->contains('id', $live)) {
+            return $live;
+        }
+
+        return $availableVariants->firstWhere('is_default', true)?->id ?? $availableVariants->first()?->id;
     }
 
     private function variantsForTheme(?Theme $theme): Collection

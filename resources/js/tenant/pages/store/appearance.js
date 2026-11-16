@@ -151,6 +151,9 @@ function initLivePreview(form) {
 
 document.querySelectorAll('[data-design-form]').forEach(initLivePreview);
 
+// Dashboard per-country shortcut (?tab=colors&theme=&variant=): bring that edition into view.
+document.querySelector('[data-design-focus]')?.scrollIntoView({ block: 'start' });
+
 // Per-color "Default #xxxxxx" link.
 document.querySelectorAll('[data-default-color]').forEach((btn) => {
     btn.addEventListener('click', () => {

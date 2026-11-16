@@ -30,7 +30,13 @@ class SitemapController
         ];
 
         // Active products
+        // Own products with no "Sold in countries" ticked are hidden everywhere
+        // (Product::scopeAvailableInCountry()), so they would only 404 for crawlers.
         Product::where('active', true)
+            ->where(fn ($q) => $q->whereRaw('COALESCE(is_own_product, 0) = 0')
+                ->orWhereNotNull('central_product_id')
+                ->orWhereNull('allowed_country_ids')
+                ->orWhereRaw('JSON_LENGTH(allowed_country_ids) > 0'))
             ->select(['slug', 'updated_at'])
             ->orderBy('id')
             ->chunk(200, function ($products) use ($baseUrl, &$urls) {

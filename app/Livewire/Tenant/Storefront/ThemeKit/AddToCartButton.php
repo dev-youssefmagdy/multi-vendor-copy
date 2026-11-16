@@ -31,6 +31,7 @@ class AddToCartButton extends Component
     {
         $productModel = Product::with(['variants', 'centralProduct'])
             ->where('active', true)
+            ->availableInCountry(app(\App\Repositories\Tenant\StorefrontRepository::class)->visibilityCountryId())
             ->find($this->product);
 
         if (!$productModel) {

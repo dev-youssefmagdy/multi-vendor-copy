@@ -54,6 +54,12 @@ final class AppearanceController extends PanelController
                 'logo_path_en' => ($settings['logo_path_en'] ?? '') ?: null,
             ],
             'colorThemes' => $this->repo->appearanceColorThemes(),
+            // ?theme=&variant= (dashboard "Edit your storefront" per-country shortcut): the
+            // edition to open and scroll to on the Colors tab.
+            'colorFocus' => [
+                'theme' => (int) $request->query('theme', 0),
+                'variant' => (int) $request->query('variant', 0),
+            ],
             'socialLinks' => $this->repo->socialLinks(),
             'promoBanner' => [
                 'promo_banner_title'              => $settings['promo_banner_title'] ?? '',

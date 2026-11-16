@@ -400,7 +400,7 @@ class Product extends Model
     /**
      * Country targeting ("sold in") of vendor-own products: an own product with a non-empty
      * allowed_country_ids list is only listed / shown to visitors from one of those countries
-     * (an unknown visitor country shows it). Catalog products are never filtered here: for
+     * (an unknown visitor country hides it; [] hides it everywhere). Catalog products are never filtered here: for
      * them allowed_country_ids is only a ranking preference (StorefrontRepository::countryPriorityExpression()).
      */
     public function scopeAvailableInCountry(Builder $query, ?int $countryId): Builder

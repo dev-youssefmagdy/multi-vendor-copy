@@ -34,7 +34,7 @@ class CartPage extends Component
 
     public function addToCart(int $productId): void
     {
-        $product = Product::with(['variants', 'centralProduct'])->where('active', true)->find($productId);
+        $product = Product::with(['variants', 'centralProduct'])->where('active', true)->availableInCountry(app(\App\Repositories\Tenant\StorefrontRepository::class)->visibilityCountryId())->find($productId);
         if (!$product) {
             return;
         }

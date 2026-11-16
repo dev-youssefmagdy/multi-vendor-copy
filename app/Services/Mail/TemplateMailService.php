@@ -1052,9 +1052,9 @@ class TemplateMailService
     }
 
     /**
-     * Send a store-admin email verification link. Uses the tenant's own mail
-     * configuration (falling back to central) directly, bypassing the
-     * template-driven system since this is a one-off transactional link.
+     * Send a store-admin email verification link through the central (platform)
+     * mail configuration, bypassing the template-driven system since this is a
+     * one-off transactional link.
      */
     public function sendTenantEmailVerification(string $email, string $verifyUrl): bool
     {
@@ -1068,7 +1068,10 @@ class TemplateMailService
             .'<p><a href="'.e($verifyUrl).'" style="display:inline-block;padding:10px 18px;background:#111827;color:#fff;border-radius:8px;text-decoration:none;">Verify Email Address</a></p>'
             .'<p style="color:#6b7280;font-size:12px;">If you did not create this account, no further action is required. This link expires in 60 minutes.</p>';
 
-        return $this->tryDeliverAsTenant($email, $subject, $body);
+        // Account emails (verification) always go through the platform's central mail
+        // configuration: the store's own SMTP is for its customers and may not be set up
+        // (or may be broken) while the vendor is still onboarding.
+        return $this->sendCentralMessage($email, $subject, $body);
     }
 
     protected function centralAdminEmail(): ?string

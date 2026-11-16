@@ -114,7 +114,30 @@ class StorefrontRepository
 
     private function detectedCountry(): ?\App\Models\Country
     {
-        return $this->memo['detected_country'] ??= app(CountryDetectorService::class)->detect(request());
+        // array_key_exists, not ??=: a null (unknown / "no country") result is memoized too,
+        // which forCountry(null) relies on.
+        if (!array_key_exists('detected_country', $this->memo)) {
+            $this->memo['detected_country'] = app(CountryDetectorService::class)->detect(request());
+        }
+
+        return $this->memo['detected_country'];
+    }
+
+    /**
+     * A copy of this repository that resolves the storefront (theme, home variant, colors,
+     * banners, "Sold in countries" visibility) as a visitor from $country would see it,
+     * whatever the current request's detected country is. null = a visitor with no known
+     * country (the store-wide defaults). Used by the vendor panel's per-country shortcuts.
+     */
+    public function forCountry(?\App\Models\Country $country): static
+    {
+        $clone = clone $this;
+        $clone->memo = [
+            'detected_country' => $country,
+            'visibility_country_id' => $country?->id,
+        ];
+
+        return $clone;
     }
 
     /**
@@ -426,6 +449,7 @@ class StorefrontRepository
 
         $productIds = Product::query()
             ->where('active', true)
+            ->availableInCountry($this->visibilityCountryId())
             ->when($categoryIds, fn ($q) => $q->whereHas('categories', fn ($c) => $c->whereIn('categories.id', $categoryIds)))
             ->pluck('id');
 

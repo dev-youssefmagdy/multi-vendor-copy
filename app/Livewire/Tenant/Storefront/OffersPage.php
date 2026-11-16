@@ -26,6 +26,7 @@ class OffersPage extends Component
     {
         $product = \App\Models\Tenant\Product::with(['variants', 'centralProduct'])
             ->where('active', true)
+            ->availableInCountry(app(\App\Repositories\Tenant\StorefrontRepository::class)->visibilityCountryId())
             ->find($productId);
 
         if (!$product) {

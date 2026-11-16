@@ -82,7 +82,8 @@
                 </div>
 
                 @forelse($colorThemes as $themeId => $themeSection)
-                    <details class="card form-card theme-color-group" @if($themeSection['is_active']) open @endif>
+                    @php $focusTheme = ($colorFocus['theme'] ?? 0) === (int) $themeId; @endphp
+                    <details class="card form-card theme-color-group" @if($themeSection['is_active'] || $focusTheme) open @endif>
                         <summary class="panel-head mb-0 t-color-theme-summary">
                             <div>
                                 <h3 class="panel-title">
@@ -102,7 +103,8 @@
                                     :action="route('tenant.store.appearance.colors', [$themeId, $variantId])"
                                     method="PUT"
                                     :validate="route('tenant.store.appearance.colors.validate', [$themeId, $variantId])"
-                                    data-design-form :data-roles="json_encode($section['roles'])">
+                                    data-design-form :data-roles="json_encode($section['roles'])"
+                                    :data-design-focus="$focusTheme && ($colorFocus['variant'] ?? 0) === (int) $variantId ? '1' : null">
                                     <section class="card form-card t-color-variant-card">
                                         <div class="panel-head">
                                             <div>

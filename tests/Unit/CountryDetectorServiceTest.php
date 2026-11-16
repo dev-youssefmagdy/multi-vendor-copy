@@ -61,4 +61,29 @@ class CountryDetectorServiceTest extends TestCase
             $this->assertNull($this->iso($this->request($session, ['HTTP_CF_IPCOUNTRY' => $code])));
         }
     }
+
+    #[Test]
+    public function preview_country_applies_to_that_request_only(): void
+    {
+        // Vendor dashboard "Live Store Preview" as Egypt, from a vendor detected in Morocco.
+        $session = new Store('test', new ArraySessionHandler(10));
+
+        $this->assertSame('EG', $this->iso($this->request($session, ['HTTP_CF_IPCOUNTRY' => 'MA'], ['preview_country' => 'eg'])));
+        $this->assertFalse($session->has('storefront_country_override'));
+        $this->assertFalse($session->has('storefront_detected_country'));
+
+        // The vendor's own next visit is still detected as Morocco.
+        $this->assertSame('MA', $this->iso($this->request($session, ['HTTP_CF_IPCOUNTRY' => 'MA'])));
+    }
+
+    #[Test]
+    public function malformed_preview_country_is_ignored(): void
+    {
+        $session = new Store('test', new ArraySessionHandler(10));
+
+        foreach (['', 'EGY', 'e1', ['EG']] as $value) {
+            $this->assertNull(CountryDetectorService::previewIso2($this->request($session, [], ['preview_country' => $value])));
+        }
+        $this->assertSame('MA', $this->iso($this->request($session, ['HTTP_CF_IPCOUNTRY' => 'MA'], ['preview_country' => 'EGY'])));
+    }
 }

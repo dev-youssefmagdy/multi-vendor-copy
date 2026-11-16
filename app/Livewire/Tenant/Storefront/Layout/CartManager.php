@@ -63,7 +63,7 @@ class CartManager extends Component
      */
     private function addLine(int $productId, ?int $variantId, bool $preferInStock = false): ?string
     {
-        $product = Product::with(['variants', 'centralProduct'])->where('active', true)->find($productId);
+        $product = Product::with(['variants', 'centralProduct'])->where('active', true)->availableInCountry(app(\App\Repositories\Tenant\StorefrontRepository::class)->visibilityCountryId())->find($productId);
         if (!$product) {
             return '';
         }

@@ -33,6 +33,7 @@ class CartController extends Controller
             // Product-card "quick add" — always qty 1, first active variant.
             $product = Product::with(['variants', 'centralProduct'])
                 ->where('active', true)
+                ->availableInCountry(app(\App\Repositories\Tenant\StorefrontRepository::class)->visibilityCountryId())
                 ->find($validated['product_id']);
 
             if (!$product) {

@@ -28,7 +28,7 @@ function renderCountryRows(countries) {
     `).join('');
 }
 
-async function openCountriesModal(trigger) {
+async function openCountriesModal(trigger, searchTerm = '') {
     const url = trigger.dataset.countriesUrl;
     const actionUrl = trigger.dataset.countriesAction;
     const themeName = trigger.dataset.themeName || '';
@@ -65,7 +65,8 @@ async function openCountriesModal(trigger) {
 
     const searchInput = modal.querySelector('[data-countries-search]');
     if (searchInput) {
-        searchInput.value = '';
+        searchInput.value = searchTerm;
+        searchInput.dispatchEvent(new Event('input', { bubbles: true }));
     }
 
     await openModal('theme-countries-modal', { action: actionUrl, mode: 'PUT' });
@@ -144,7 +145,7 @@ function hydrateCvSelects(listEl) {
     });
 }
 
-async function openCvModal(trigger) {
+async function openCvModal(trigger, searchTerm = '') {
     const url = trigger.dataset.cvUrl;
     _cvActionUrl = trigger.dataset.cvAction || '';
     const themeName = trigger.dataset.themeName || '';
@@ -173,7 +174,10 @@ async function openCvModal(trigger) {
     }
 
     const searchInput = modal.querySelector('[data-cv-search]');
-    if (searchInput) searchInput.value = '';
+    if (searchInput) {
+        searchInput.value = searchTerm;
+        searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+    }
 
     await openModal('theme-country-variants-modal');
 }
@@ -226,3 +230,26 @@ document.addEventListener('input', (event) => {
         row.hidden = term !== '' && !name.includes(term) && !iso.includes(term);
     });
 });
+
+// ── Deep link from the dashboard "Edit your storefront" country shortcuts ──
+// ?open=variants|countries&theme=<id>&country=<ISO2> opens that theme's Country Variants
+// (or Countries) modal filtered to the country. Built by StorefrontCountryShortcuts.
+(function openFromQuery() {
+    const params = new URLSearchParams(location.search);
+    const open = params.get('open');
+    const themeId = params.get('theme');
+    const country = (params.get('country') || '').trim();
+
+    if (!open || !themeId) return;
+
+    const selector = open === 'countries' ? '[data-theme-countries-open]' : '[data-theme-cv-open]';
+    const trigger = document.querySelector(`${selector}[data-theme-id="${CSS.escape(themeId)}"]`);
+    if (!trigger) return;
+
+    trigger.closest('.theme-group-panel')?.scrollIntoView({ block: 'start' });
+    if (open === 'countries') {
+        openCountriesModal(trigger, country);
+    } else {
+        openCvModal(trigger, country);
+    }
+})();

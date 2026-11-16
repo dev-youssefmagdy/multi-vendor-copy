@@ -66,6 +66,7 @@ class FavoritesPage extends Component
 
         return Product::with(['centralProduct', 'variants.centralVariant'])
             ->where('active', true)
+            ->availableInCountry(app(\App\Repositories\Tenant\StorefrontRepository::class)->visibilityCountryId())
             ->whereIn('slug', $slugs)
             ->get()
             ->mapWithKeys(fn ($product) => [$product->slug => $product->storefrontCartData($symbol, $rate)])

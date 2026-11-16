@@ -43,6 +43,14 @@ order_grand_total   = items_grand_total + order.shipping_charge - order.coupon_d
   to the app's session country), not the saved address or a manual country pick. A product with a country list is shown ONLY when that
   country is in the list; when the country is unknown it is hidden as well (`scopeAvailableInCountry(null)` / `isAvailableInCountry(null)`).
   Products without a list are visible everywhere. Pricing/shipping still use `customerCountryId()` (address first).
+  **List values (2026-11-16):** `NULL` = "Select all countries" (visible everywhere), `[ids]` = only those countries, `[]` = nothing
+  ticked (hidden everywhere, also left out of the sitemap). The same `availableInCountry(visibilityCountryId())` filter now also guards
+  every add-to-cart entry point (`CartController::add()` + the Livewire quick-add actions), favorites and the sidebar variant-filter counts,
+  so a hidden product can't be put in the cart from a stale page either.
+  **Vendor preview (2026-11-16):** `?preview_country=XX` renders the storefront as XX for that request only (dashboard "Live Store
+  Preview" country selector); `ApplyStorefrontSessionContext` restores the session's country/language/currency afterwards, unlike the
+  session-wide `?country=XX` QA override. `StorefrontRepository::forCountry($country)` resolves theme / edition / colors / banners /
+  visibility as a visitor from `$country` (used by `App\Support\Tenant\StorefrontCountryShortcuts`).
 * **Own-products orders are merchant-fulfilled (2026-11-08):** no stored column; discriminator = `Tenant\Order::isOwnProductsOrder()` (has items and every item's product is `is_own_product`; the companion order of a mixed cart and own-only carts). Platform (central admin) treats them read-only: excluded from the Delivery Queue / its counters, and status, tracking, attachments, cancel, refund, create-return, shipping label and receipt are rejected server-side (`OrderFulfillmentService::assertPlatformManageable`, Livewire pages, `OrderReceiptController`). Shipping stays on the catalog order only (`shipping_charge = 0` on the own order), so shipping/settlement lines come only from the catalog order. Formulas unchanged.
 * `tax` is 0 today; whatever is calculated per item is summed into `order.tax`.
 

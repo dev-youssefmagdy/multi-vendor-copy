@@ -202,7 +202,7 @@ class CategoryPage extends Component
 
     public function addToCart(int $productId): void
     {
-        $product = \App\Models\Tenant\Product::with(['variants', 'centralProduct'])->where('active', true)->find($productId);
+        $product = \App\Models\Tenant\Product::with(['variants', 'centralProduct'])->where('active', true)->availableInCountry(app(\App\Repositories\Tenant\StorefrontRepository::class)->visibilityCountryId())->find($productId);
         if (!$product) {
             return;
         }
