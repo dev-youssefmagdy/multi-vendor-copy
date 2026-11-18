@@ -1,5 +1,6 @@
 import { get } from '@tenant/core/http.js';
 import { t } from '../../core/i18n.js';
+import { initProductAiTranslate } from './product-ai-translate.js';
 
 const form = document.getElementById('product-form');
 const select = form?.querySelector('[data-central-product-select]');
@@ -46,3 +47,6 @@ async function loadSnapshot(centralProductId) {
 if (select) {
     select.addEventListener('change', () => loadSnapshot(select.value));
 }
+
+// "Translate with AI" preview on the translation tabs.
+initProductAiTranslate(form);

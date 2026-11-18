@@ -231,6 +231,28 @@
 
 [data-theme="dark"] .t-scope .t-locale-tab:not(.is-active) { background: var(--ds-input-bg); color: var(--ds-text-muted); }
 
+/* "Translate with AI" bar at the top of a locale pane (product forms) */
+.t-scope .t-ai-translate {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 16px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    padding: 12px 16px;
+    border: 1px dashed var(--ds-brand-500);
+    border-radius: var(--ds-radius-btn);
+    background: var(--ds-brand-50);
+}
+.t-scope .t-ai-translate.is-locked { border-color: var(--ds-border, #d9d9d9); background: transparent; }
+.t-scope .t-ai-translate-copy { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 260px; }
+.t-scope .t-ai-translate-title { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: var(--ds-text); }
+.t-scope .t-ai-translate-title svg { color: var(--ds-brand-500); }
+.t-scope .t-ai-translate-hint { font-size: 13px; color: var(--ds-text-muted); }
+.t-scope .t-ai-translate-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.t-scope .t-ai-translate-remaining { font-size: 12px; color: var(--ds-text-muted); white-space: nowrap; }
+[data-theme="dark"] .t-scope .t-ai-translate { background: transparent; }
+
 /* Title / copy placed straight in a card (no .panel-head row) */
 .t-scope :is(.ds-card, .card.form-card) > .panel-title { margin-bottom: 16px; }
 .t-scope :is(.ds-card, .card.form-card) > .panel-title:has(+ .panel-copy) { margin-bottom: 0; }

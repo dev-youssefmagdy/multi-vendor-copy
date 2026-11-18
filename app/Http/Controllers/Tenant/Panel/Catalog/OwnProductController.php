@@ -13,6 +13,7 @@ use App\Models\Tenant\Product;
 use App\Models\Tenant\ProductBadge;
 use App\Models\VariationOption;
 use App\Repositories\Tenant\TenantPanelRepository;
+use App\Services\Tenant\PlanLimitService;
 use App\Services\Tenant\TenantPanelService;
 use App\Support\CacheVersion;
 use Illuminate\Http\JsonResponse;
@@ -431,6 +432,9 @@ final class OwnProductController extends PanelController
             'countryOptions' => self::countryOptions(),
             'countryFlags' => self::countryFlags(),
             'selectedCountries' => $selectedCountries,
+            // "Translate with AI" on the translation tabs (package AI translation add-on).
+            'aiTranslationEnabled' => app(PlanLimitService::class)->aiTranslationEnabled(tenant()),
+            'aiTranslationRemaining' => app(\App\Services\Tenant\ProductAiTranslationService::class)->usageSummary(tenant())['remaining'],
         ];
     }
 }

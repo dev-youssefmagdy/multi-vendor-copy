@@ -140,6 +140,11 @@ final class PanelJsTranslations
         'Completed',
         'Failed',
         'Fixed ($)',
+        // Product forms: "Translate with AI" (pages/catalog/product-ai-translate.js)
+        'Translate with AI',
+        'Regenerate',
+        ':count AI calls left on your plan',
+        'AI preview: review or edit the fields below, then save the product to keep it. Not happy with it? Regenerate.',
         'Processing',
         'Queued',
         'Running',

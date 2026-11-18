@@ -119,9 +119,11 @@
         </div>
 
         <x-tenant::card-collapse :title="__('Translations')" :subtitle="__('Storefront copy for each active tenant language.')">
+            @php($aiSourceLanguage = $languages->firstWhere('is_default', true) ?? $languages->first())
             <x-tenant::locale-tabs :languages="$languages" :active="$activeLocale">
                 @foreach($languages as $language)
                     <x-tenant::locale-pane :code="$language->code" :active="$language->code === $activeLocale">
+                        @include('tenant.pages.catalog._ai-translate-bar', ['sourceLanguage' => $aiSourceLanguage])
                         <div class="form-grid">
                             <x-tenant::input name="translations.{{ $language->code }}.name" :label="__('Name')" :value="$translations[$language->code]['name'] ?? ''" />
                             <x-tenant::input name="translations.{{ $language->code }}.meta_keywords" :label="__('Meta Keywords')" :value="$translations[$language->code]['meta_keywords'] ?? ''" />

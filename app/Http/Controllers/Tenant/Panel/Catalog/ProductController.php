@@ -91,6 +91,9 @@ final class ProductController extends PanelController
             'weightGrams' => $centralProduct['weight_grams'] ?? 0,
             'variants' => $variants,
             'pendingEditRequest' => $pendingEditRequest,
+            // "Translate with AI" on the translation tabs (package AI translation add-on).
+            'aiTranslationEnabled' => app(PlanLimitService::class)->aiTranslationEnabled(tenant()),
+            'aiTranslationRemaining' => app(\App\Services\Tenant\ProductAiTranslationService::class)->usageSummary(tenant())['remaining'],
         ]);
     }
 

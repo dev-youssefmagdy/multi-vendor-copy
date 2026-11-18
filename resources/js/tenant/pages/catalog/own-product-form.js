@@ -1,8 +1,12 @@
 import '@tenant-css/pages/own-products.css';
 import { t } from '../../core/i18n.js';
+import { initProductAiTranslate } from './product-ai-translate.js';
 
 const form = document.getElementById('own-product-form');
 if (form) {
+    // ── "Translate with AI" preview on the translation tabs ─────────────────
+    initProductAiTranslate(form);
+
     // ── Manage-stock toggle ──────────────────────────────────────────────────
     const manageStockToggle = form.querySelector('[data-manage-stock-toggle]');
     const stockFieldWraps = form.querySelectorAll('[data-stock-fields]');

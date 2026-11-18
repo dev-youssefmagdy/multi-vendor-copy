@@ -209,6 +209,16 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('tenant-validate', fn (Request $request) => Limit::perMinute(180)->by(
             $request->user('tenant')?->id ?: $request->ip(),
         ));
+
+        // Per-product "Translate with AI" (vendor product forms): every call spends AI tokens.
+        RateLimiter::for('tenant-ai-product-translate', function (Request $request) {
+            $key = 'ai-product-translate|' . (tenant()?->getTenantKey() ?? 'central') . '|' . ($request->user('tenant')?->id ?: $request->ip());
+
+            return [
+                Limit::perMinute(6)->by($key),
+                Limit::perHour(60)->by($key . '|hour'),
+            ];
+        });
     }
 
     protected function configureSessionDomain(): void

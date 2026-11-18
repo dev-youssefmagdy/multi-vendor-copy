@@ -143,16 +143,19 @@ class PlanLimitService
                 return;
             }
 
-            $data = $record->data ?? [];
-            $data[$key] = (int) ($data[$key] ?? 0) + 1;
-            $record->update(['data' => $data]);
+            // Tenant is a stancl VirtualColumn model: keys inside the `data` JSON column are
+            // decoded into plain attributes on retrieval, and a `data` attribute set by hand is
+            // dropped on save. So the counter must be read/written as its own attribute
+            // ($record->ai_calls_count), not through $record->data[...] (which never persisted).
+            $record->setAttribute($key, (int) ($record->getAttribute($key) ?? 0) + 1);
+            $record->save();
         });
     }
 
     private function counter(TenantModel $tenant, string $key): int
     {
         return (int) (tenancy()->central(
-            fn() => TenantModel::query()->find($tenant->getTenantKey())?->data[$key] ?? 0
+            fn() => TenantModel::query()->find($tenant->getTenantKey())?->getAttribute($key) ?? 0
         ) ?? 0);
     }
 

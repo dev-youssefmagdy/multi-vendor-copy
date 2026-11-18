@@ -94,6 +94,9 @@ class OpenAiTranslationService
      * json-encoded once and sent as-is; OpenAI must echo back the identical
      * array (same ids, same translation keys) with values translated.
      * Returns the array keyed by id => field => translated value.
+     *
+     * $temperature defaults to the deterministic 0.1 used by the bulk runs; the
+     * per-product "Regenerate" action passes a higher value to get a new wording.
      */
     public function translateStructuredBatch(
         array $items,
@@ -101,6 +104,7 @@ class OpenAiTranslationService
         string $targetLocale,
         string $targetLanguage,
         string $context,
+        ?float $temperature = null,
     ): array {
         if ($items === []) {
             return [];
@@ -121,7 +125,7 @@ class OpenAiTranslationService
             }, throw: false)
             ->post('/chat/completions', [
                 'model' => \App\Support\AiSettings::get('translation_model'),
-                'temperature' => 0.1,
+                'temperature' => $temperature ?? 0.1,
                 'response_format' => ['type' => 'json_object'],
                 'messages' => [
                     [

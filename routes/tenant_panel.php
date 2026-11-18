@@ -18,6 +18,7 @@ use App\Http\Controllers\Tenant\Panel\Catalog\CategorySortController;
 use App\Http\Controllers\Tenant\Panel\Catalog\EditRequestsController;
 use App\Http\Controllers\Tenant\Panel\Catalog\OwnProductController;
 use App\Http\Controllers\Tenant\Panel\Catalog\OwnProductsListController;
+use App\Http\Controllers\Tenant\Panel\Catalog\ProductAiTranslationController;
 use App\Http\Controllers\Tenant\Panel\Catalog\ProductController;
 use App\Http\Controllers\Tenant\Panel\Catalog\ProductModalsController;
 use App\Http\Controllers\Tenant\Panel\Catalog\ProductsListController;
@@ -201,6 +202,8 @@ Route::middleware(['auth:tenant', 'tenant.tour'])->group(function () {
         Route::get('/create', [ProductController::class, 'create'])->name('create');
         Route::post('/', [ProductController::class, 'store'])->name('store');
         Route::post('/validate', [ProductController::class, 'validateStore'])->name('validate')->middleware('throttle:tenant-validate');
+        // "Translate with AI" preview on the own-product and platform-product forms (nothing is saved).
+        Route::post('/ai-translate', [ProductAiTranslationController::class, 'translate'])->name('ai-translate')->middleware('throttle:tenant-ai-product-translate');
         Route::patch('/{product}/active', [ProductsListController::class, 'toggleActive'])->name('toggle-active');
         Route::patch('/{product}/featured', [ProductsListController::class, 'toggleFeatured'])->name('toggle-featured');
         Route::get('/{product}/social', [ProductModalsController::class, 'social'])->name('social');

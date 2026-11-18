@@ -73,9 +73,11 @@
                 </div>
 
                 @if($languages->count())
+                    @php($aiSourceLanguage = $languages->firstWhere('code', $defaultLocale) ?? $languages->first())
                     <x-tenant::locale-tabs :languages="$languages" :active="$defaultLocale">
                         @foreach($languages as $language)
                             <x-tenant::locale-pane :code="$language->code" :active="$language->code === $defaultLocale">
+                                @include('tenant.pages.catalog._ai-translate-bar', ['sourceLanguage' => $aiSourceLanguage])
                                 <div class="form-grid op-grid-3">
                                     <x-tenant::input
                                         name="translations.{{ $language->code }}.name"

@@ -210,10 +210,13 @@ class TenantPanelRepository
             ->select('products.*')
             ->selectRaw($salesSql.' as sales_count')
             ->with(['translations.language', 'categories.translations.language', 'variants', 'files', 'badges'])
+            // Products tab = the platform catalog; the vendor's own products have their own tab.
+            ->where(fn (Builder $q) => $q->where('products.is_own_product', false)->orWhereNull('products.is_own_product'))
             ->when(filled($filters['search'] ?? null), function ($query) use ($filters) {
                 $search = trim((string) $filters['search']);
-                $query->where('slug', 'like', "%{$search}%")
-                    ->orWhereHas('translations', fn (Builder $translationQuery) => $translationQuery->where('value', 'like', "%{$search}%"));
+                // Grouped: an ungrouped OR made a search ignore every other filter.
+                $query->where(fn (Builder $q) => $q->where('slug', 'like', "%{$search}%")
+                    ->orWhereHas('translations', fn (Builder $translationQuery) => $translationQuery->where('value', 'like', "%{$search}%")));
             })
             ->when(($filters['status'] ?? '') !== '', fn ($query) => $query->where('active', $filters['status'] === 'active'))
             ->when(in_array($filters['stock'] ?? '', ['in', 'partial', 'out'], true), function ($query) use ($filters) {
@@ -234,7 +237,10 @@ class TenantPanelRepository
                 'price_asc' => $query->orderBy('default_price')->orderBy('order_number'),
                 'price_desc' => $query->orderByDesc('default_price')->orderBy('order_number'),
                 default => $query->orderBy('order_number'),
-            });
+            })
+            // Unique tie-breaker: many products share order_number, and MySQL may return ties
+            // in a different order per page, so products repeated across pages (and others vanished).
+            ->orderBy('products.id');
     }
 
     /**
@@ -286,10 +292,16 @@ class TenantPanelRepository
     public function productStats(): array
     {
         return [
-            'total' => Product::query()->count(),
-            'active' => Product::query()->where('active', true)->count(),
-            'featured' => Product::query()->where('featured', true)->count(),
+            'total' => $this->catalogProducts()->count(),
+            'active' => $this->catalogProducts()->where('active', true)->count(),
+            'featured' => $this->catalogProducts()->where('featured', true)->count(),
         ];
+    }
+
+    /** Platform-catalog products (the Products tab), i.e. everything but the vendor's own products. */
+    private function catalogProducts(): Builder
+    {
+        return Product::query()->where(fn (Builder $q) => $q->where('is_own_product', false)->orWhereNull('is_own_product'));
     }
 
     public function searchCentralProducts(string $search = '', int $page = 1, int $perPage = 15): array
@@ -522,27 +534,29 @@ class TenantPanelRepository
                 $query->whereHas('translations', fn (Builder $t) => $t->where('value', 'like', "%{$search}%"));
             })
             ->when(($filters['status'] ?? '') !== '', fn (Builder $query) => $query->where('active', $filters['status'] === 'active'))
+            // Stock filters are grouped: an ungrouped OR let catalog products into the Own products list.
             ->when(($filters['stock'] ?? '') === 'out', function (Builder $query) {
-                $query->where(function (Builder $noVar) {
+                $query->where(fn (Builder $q) => $q->where(function (Builder $noVar) {
                     $noVar->whereDoesntHave('variants')->where('manage_stock', true)->where('stock', '<=', 0);
                 })->orWhere(function (Builder $hasVar) {
                     $hasVar->whereHas('variants')->whereDoesntHave('variants', fn (Builder $v) => $v->where('stock', '>', 0));
-                });
+                }));
             })
             ->when(($filters['stock'] ?? '') === 'in', function (Builder $query) {
-                $query->where(function (Builder $noVar) {
+                $query->where(fn (Builder $q) => $q->where(function (Builder $noVar) {
                     $noVar->whereDoesntHave('variants')->where(function (Builder $nv) {
                         $nv->where('manage_stock', false)->orWhere('stock', '>', 0);
                     });
                 })->orWhere(function (Builder $hasVar) {
                     $hasVar->whereHas('variants')->whereDoesntHave('variants', fn (Builder $v) => $v->where('stock', '<=', 0));
-                });
+                }));
             })
             ->when(($filters['stock'] ?? '') === 'partial', function (Builder $query) {
                 $query->whereHas('variants', fn (Builder $v) => $v->where('stock', '<=', 0))
                     ->whereHas('variants', fn (Builder $v) => $v->where('stock', '>', 0));
             })
-            ->latest();
+            ->latest()
+            ->orderByDesc('id'); // tie-breaker: products created in the same second kept swapping pages
     }
 
     public function ownProductStats(): array
