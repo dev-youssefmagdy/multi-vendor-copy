@@ -1,1 +1,0 @@
-/* empty css                  *//* empty css                  *//* empty css               */import{t as e}from"./mobile-kpi-carousel-vegNK--w.js";e(document.querySelector(`.od-kpis`));

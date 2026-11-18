@@ -1,1 +1,0 @@
-import{t as e}from"./forms-BQlu-xgW.js";export{e as TenantForm};
