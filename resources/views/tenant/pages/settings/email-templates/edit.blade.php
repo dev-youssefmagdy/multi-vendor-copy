@@ -6,13 +6,15 @@
     <x-tenant::page-header :title="__('Edit Email Template')" :badge="__('Settings')"
         :description="__('Update the subject, body, and activation state for this tenant-specific email template.')"
         :back="route('tenant.settings.email-templates')">
+        @if ($template->central_email_template_id)
         <x-slot:actions>
             <button type="button" class="btn btn-secondary" data-action-url="{{ route('tenant.settings.email-templates.resync', $template) }}"
                 data-action-method="POST" data-success="redirect"
-                data-confirm="{{ __('Re-sync this template\'s subject, body, and translations from the central defaults? Any tenant-specific edits will be overwritten.') }}">
+                data-confirm="{{ __('Reset only this template\'s subject, body, active status and translations to the central defaults? Your edits to this template will be overwritten; other templates are not changed.') }}">
                 {{ __('Re-sync from Central') }}
             </button>
         </x-slot:actions>
+        @endif
     </x-tenant::page-header>
 
     <x-tenant::form id="email-template-form" :action="route('tenant.settings.email-templates.update', $template)" method="PUT"

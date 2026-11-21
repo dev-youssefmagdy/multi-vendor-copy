@@ -72,7 +72,7 @@ class AddEditEmailTemplate extends Component
             return;
         }
 
-        $syncService->syncForTenant($tenant, ['email-templates']);
+        $syncService->resetEmailTemplateFromCentral($tenant, EmailTemplate::query()->findOrFail($this->templateId));
 
         // Reload the updated template data
         $template = EmailTemplate::query()->findOrFail($this->templateId);

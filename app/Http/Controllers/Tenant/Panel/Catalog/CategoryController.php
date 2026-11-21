@@ -63,7 +63,7 @@ final class CategoryController extends PanelController
 
                 return view('tenant.pages.catalog.categories._cols.category', ['category' => $category, 'central' => $central])->render();
             })
-            ->editColumn('parent', fn (Category $category) => e($category->parent?->translationValue('name') ?? __('Root')))
+            ->editColumn('parent', fn (Category $category) => e($category->parent?->translationValue('name') ?? ($category->parent_id ? __('Hidden by platform') : __('Root'))))
             ->editColumn('status', fn (Category $category) => view('tenant.pages.catalog.categories._cols.status', ['category' => $category])->render())
             ->editColumn('products', fn (Category $category) => (string) $category->products->count())
             ->editColumn('updated_at', fn (Category $category) => $category->updated_at?->format('M d, Y'))
@@ -105,7 +105,7 @@ final class CategoryController extends PanelController
             'languages' => $languages,
             'activeLocale' => $activeLocale,
             'translations' => $translations,
-            'parents' => $this->repo->categoryOptions(),
+            'parents' => $this->repo->categoryOptions($category?->parent_id),
             'centralCategory' => $centralCategory,
             'currentThumbUrl' => $currentThumbUrl,
         ]);

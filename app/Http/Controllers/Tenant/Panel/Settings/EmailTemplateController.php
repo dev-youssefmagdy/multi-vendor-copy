@@ -135,7 +135,7 @@ final class EmailTemplateController extends PanelController
             return $this->failure(__('No active tenant context.'), 422);
         }
 
-        $syncService->syncForTenant($tenant, ['email-templates']);
+        $syncService->resetEmailTemplateFromCentral($tenant, $emailTemplate);
 
         return $this->success(__('Email template re-synced from central successfully.'), [], route('tenant.settings.email-templates.edit', $emailTemplate));
     }

@@ -114,6 +114,9 @@ platform_own_vendor = vendor_profit   - (vendor_profit if payout_released else 0
 `order_items` (column order): `id, order_id, product_id, product_variant_id, qty, cost, profit_amount, price,
 sub_total, fixed_shipping, discount, discount_source, tax, shipping_fee, weight, grand_total, timestamps`.
 
+`order_items.product_variant_id` FK is `ON DELETE SET NULL` (2026-11-21, dedup plan B1): deleting a catalog variant never
+deletes order lines; the line keeps `product_id` and its money snapshot. Readers must tolerate a null variant.
+
 ## 5. Where the formulas live in code (keep in sync with this file)
 
 | Concern | Code |

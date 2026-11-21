@@ -158,7 +158,12 @@ class TenantPanelService
 
             $product->fill($productFill);
             $product->save();
-            $product->categories()->sync($attributes['category_ids'] ?? []);
+            // New links default to category_product.source = tenant; existing links keep their source. Links to
+            // categories central currently hides are not in the form, so keep them (dedup plan R1/R2).
+            $product->categories()->sync(array_merge(
+                $attributes['category_ids'] ?? [],
+                $this->centrallyHiddenCategoryIds($product),
+            ));
             $product->syncTranslations($attributes['translations'] ?? []);
 
             if ($centralLinked) {
@@ -371,6 +376,22 @@ class TenantPanelService
         }
 
         return $result;
+    }
+
+    /** @return int[] category ids linked to the product whose category central currently hides */
+    protected function centrallyHiddenCategoryIds(Product $product): array
+    {
+        if (! $product->exists || ! Category::hasCentralVisibleColumn()) {
+            return [];
+        }
+
+        return DB::table('category_product as cp')
+            ->join('categories as c', 'c.id', '=', 'cp.category_id')
+            ->where('cp.product_id', $product->id)
+            ->where('c.central_visible', false)
+            ->pluck('cp.category_id')
+            ->map(fn ($id) => (int) $id)
+            ->all();
     }
 
     public function saveCategory(array $attributes, ?Category $category = null): Category

@@ -1152,21 +1152,44 @@ class TenantPanelRepository
             ->all();
     }
 
-    public function categoryOptions(): array
+    /**
+     * @param  int|null  $keepId  a category to list even when central hides it (the current parent on the category
+     *                            edit form), labelled "(hidden by platform)" so saving does not drop it.
+     */
+    public function categoryOptions(?int $keepId = null): array
     {
         $defaultLangId = $this->defaultLanguageId();
 
-        return DB::table('categories as c')
+        $options = DB::table('categories as c')
             ->leftJoin('translations as t', function ($join) use ($defaultLangId) {
                 $join->on('t.translatable_id', '=', 'c.id')
                     ->where('t.translatable_type', '=', Category::class)
                     ->where('t.field', '=', 'name')
                     ->where('t.language_id', '=', $defaultLangId);
             })
+            ->when(Category::hasCentralVisibleColumn(), fn ($q) => $q->where('c.central_visible', true))
             ->orderBy('c.id')
             ->select('c.id', DB::raw('COALESCE(t.value, CONCAT("Category #", c.id)) as name'))
             ->pluck('name', 'c.id')
             ->all();
+
+        if ($keepId && ! isset($options[$keepId])) {
+            $name = DB::table('categories as c')
+                ->leftJoin('translations as t', function ($join) use ($defaultLangId) {
+                    $join->on('t.translatable_id', '=', 'c.id')
+                        ->where('t.translatable_type', '=', Category::class)
+                        ->where('t.field', '=', 'name')
+                        ->where('t.language_id', '=', $defaultLangId);
+                })
+                ->where('c.id', $keepId)
+                ->value(DB::raw('COALESCE(t.value, CONCAT("Category #", c.id))'));
+
+            if ($name !== null) {
+                $options[$keepId] = $name . ' (' . __('Hidden by platform') . ')';
+            }
+        }
+
+        return $options;
     }
 
     /**
@@ -1186,14 +1209,19 @@ class TenantPanelRepository
                     ->where('t.field', '=', 'name')
                     ->where('t.language_id', '=', $defaultLangId);
             })
+            ->when(Category::hasCentralVisibleColumn(), fn ($q) => $q->where('c.central_visible', true))
             ->orderBy('c.parent_id')
             ->orderBy('c.id')
             ->select('c.id', 'c.parent_id', DB::raw('COALESCE(t.value, CONCAT("Category #", c.id)) as name'))
             ->get();
 
+        // A child whose parent central hides is listed as a root; otherwise the tree walk drops it and the product
+        // form would silently unlink it on save (dedup plan R1).
+        $visibleIds = $rows->pluck('id')->flip();
         $byParent = [];
         foreach ($rows as $row) {
-            $byParent[$row->parent_id ?? 0][] = $row;
+            $parentId = $row->parent_id !== null && isset($visibleIds[$row->parent_id]) ? $row->parent_id : 0;
+            $byParent[$parentId][] = $row;
         }
 
         $flat = [];

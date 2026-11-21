@@ -249,7 +249,8 @@ final class ProductsListController extends PanelController
 
         $roots = Category::query()
             ->with(['translations.language', 'children.translations.language', 'children.children.translations.language', 'children.children.children.translations.language'])
-            ->whereNull('parent_id')
+            // Roots, plus children whose parent central hides (the `parent` relation is scoped), so they stay filterable.
+            ->where(fn ($q) => $q->whereNull('parent_id')->orWhereDoesntHave('parent'))
             ->orderBy('order_number')
             ->get();
 

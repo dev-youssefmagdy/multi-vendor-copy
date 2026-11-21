@@ -48,6 +48,7 @@ use App\Models\Template as CentralTemplate;
 use App\Support\CacheVersion;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use InvalidArgumentException;
 
 class TenantCatalogSyncService
@@ -90,6 +91,9 @@ class TenantCatalogSyncService
     /** @var int[]|null central product ids the tenant explicitly asked to add (null = no explicit list) */
     protected ?array $adoptProductIds = null;
 
+    /** @var int[] central email template ids being reset by resetEmailTemplateFromCentral() (overwrite tenant edits) */
+    protected array $overwriteEmailTemplateIds = [];
+
     public function syncForTenant(Tenant $tenant, ?array $sections = null): array
     {
         $sections = $this->normalizeSections($sections);
@@ -123,6 +127,26 @@ class TenantCatalogSyncService
         // }
 
         return $summary;
+    }
+
+    /**
+     * Explicit "re-sync from central" for ONE template (tenant panel email template page): resets that template's
+     * subject/body/is_active and translations to central's version. Every other template keeps the tenant's edits
+     * (a normal sync runs for them). Returns 0 when the template has no central link.
+     */
+    public function resetEmailTemplateFromCentral(Tenant $tenant, EmailTemplate $template): int
+    {
+        if ($template->central_email_template_id === null) {
+            return 0;
+        }
+
+        $this->overwriteEmailTemplateIds = [(int) $template->central_email_template_id];
+
+        try {
+            return $this->syncSection($tenant, 'email-templates');
+        } finally {
+            $this->overwriteEmailTemplateIds = [];
+        }
     }
 
     public function sections(): array
@@ -283,7 +307,8 @@ class TenantCatalogSyncService
         $eligibleLanguages = $freeLanguages->concat($purchasedLanguages)->unique('id');
 
         // One lookup + one upsert. A tenant row is matched by its central id first, else it claims the row
-        // already using the same code (so it is UPDATEd rather than INSERTed); `is_default` is insert-only.
+        // already using the same code (so it is UPDATEd rather than INSERTed). `is_default` and `is_active` are
+        // insert-only (tenant toggles, dedup plan B2); central can only switch a language OFF (see below).
         $existing = Language::query()->toBase()->orderBy('id')->get(['id', 'code', 'central_language_id']);
         $byCentralId = $existing->whereNotNull('central_language_id')->pluck('id', 'central_language_id');
         $byCode = $existing->pluck('id', 'code');
@@ -307,8 +332,14 @@ class TenantCatalogSyncService
             Language::query()->toBase()->upsert(
                 $chunk,
                 ['id'],
-                ['central_language_id', 'code', 'name', 'native_name', 'direction', 'is_active', 'sort_order', 'updated_at']
+                ['central_language_id', 'code', 'name', 'native_name', 'direction', 'sort_order', 'updated_at']
             );
+        }
+
+        // Central may disable a language platform-wide: that wins. It never re-enables a tenant-disabled one.
+        $centralInactive = $eligibleLanguages->filter(fn ($language) => ! $language->is_active)->pluck('id');
+        if ($centralInactive->isNotEmpty()) {
+            Language::query()->whereIn('central_language_id', $centralInactive)->where('is_active', true)->update(['is_active' => false]);
         }
 
         // Delete languages that are no longer free AND not purchased by this tenant
@@ -330,11 +361,16 @@ class TenantCatalogSyncService
     {
         $currencies = $this->central(fn() => CentralCurrency::query()->orderBy('name')->get());
         $defaultCode = strtoupper((string) ($this->central(fn() => CentralAppSetting::query()->where('key', 'default_currency')->value('value')) ?? 'USD'));
+        $centralDefault = $defaultCode;
 
         // Single bulk upsert: existing rows are matched by their tenant id (looked up by central id), new rows get id NULL.
+        // `is_active` / `is_default` are tenant choices: seeded on insert only (dedup plan B2).
         $existingIds = Currency::query()
             ->whereNotNull('central_currency_id')
             ->pluck('id', 'central_currency_id');
+        if (Currency::query()->where('is_default', true)->exists()) {
+            $defaultCode = null; // the tenant already picked a default; a new row must not become a second one
+        }
         $now = now();
 
         $rows = $currencies->map(function ($currency) use ($existingIds, $defaultCode, $now) {
@@ -358,7 +394,7 @@ class TenantCatalogSyncService
             Currency::query()->upsert(
                 $chunk,
                 ['id'],
-                ['central_currency_id', 'code', 'name', 'symbol', 'conversion_rate', 'is_active', 'is_default', 'updated_at']
+                ['central_currency_id', 'code', 'name', 'symbol', 'conversion_rate', 'updated_at']
             );
         }
 
@@ -366,6 +402,11 @@ class TenantCatalogSyncService
             ->whereNotNull('central_currency_id')
             ->whereNotIn('central_currency_id', $currencies->pluck('id'))
             ->delete();
+
+        // Safety net: a store always needs a default (e.g. central deleted the tenant's default currency).
+        if (! Currency::query()->where('is_default', true)->exists() && $centralDefault !== '') {
+            Currency::query()->where('code', $centralDefault)->limit(1)->update(['is_default' => true, 'is_active' => true]);
+        }
 
         // Bulk writes skip model events; bump the storefront cache version once instead.
         CacheVersion::bump('Currency');
@@ -645,28 +686,38 @@ class TenantCatalogSyncService
                 })
                 ->first() ?? new EmailTemplate();
 
+            // subject / body / is_active (and translations) are the tenant's edits: seeded on insert only
+            // (dedup plan B2). The panel "re-sync from central" button resets them on purpose.
+            $reset = in_array((int) $template->id, $this->overwriteEmailTemplateIds, true);
+            $overwrite = ! $tenantTemplate->exists || $reset;
+
             $tenantTemplate->fill([
                 'central_email_template_id' => $template->id,
                 'name' => $template->name,
                 'action' => $template->action,
-                'subject' => $template->subject,
-                'body' => $template->body,
-                'is_active' => $template->status === ActivationStatus::Active,
             ]);
+            if ($overwrite) {
+                $tenantTemplate->fill([
+                    'subject' => $template->subject,
+                    'body' => $template->body,
+                    'is_active' => $template->status === ActivationStatus::Active,
+                ]);
+            }
 
             $tenantTemplate->save();
 
-            // Sync per-language translations from central to tenant
             foreach ($template->translations as $centralTranslation) {
-                EmailTemplateTranslation::query()->updateOrCreate(
-                    ['email_template_id' => $tenantTemplate->id, 'locale' => $centralTranslation->locale],
-                    ['subject' => $centralTranslation->subject, 'body' => $centralTranslation->body],
-                );
+                $keys = ['email_template_id' => $tenantTemplate->id, 'locale' => $centralTranslation->locale];
+                $values = ['subject' => $centralTranslation->subject, 'body' => $centralTranslation->body];
+
+                $overwrite
+                    ? EmailTemplateTranslation::query()->updateOrCreate($keys, $values)
+                    : EmailTemplateTranslation::query()->firstOrCreate($keys, $values);
             }
 
-            // Remove tenant translations that no longer exist centrally
+            // A reset also drops locales central no longer has; a normal sync keeps the tenant's own locales.
             $centralLocales = $template->translations->pluck('locale');
-            if ($centralLocales->isNotEmpty()) {
+            if ($reset && $centralLocales->isNotEmpty()) {
                 EmailTemplateTranslation::query()
                     ->where('email_template_id', $tenantTemplate->id)
                     ->whereNotIn('locale', $centralLocales)
@@ -691,15 +742,19 @@ class TenantCatalogSyncService
 
         $now = now();
 
+        // `source = central` marks rows the sync owns (a row already using a central slug is claimed, as before).
+        // Until the tenant DB has the column (2026_11_21_000002) nothing can be told apart, so nothing is deleted.
+        $hasSource = Schema::connection('tenant')->hasColumn('pages', 'source');
+
         Page::query()->toBase()->upsert(
             $pages->map(fn($page) => [
                 'slug' => $page->slug,
                 'active' => in_array($page->status, [ContentStatus::Active, ContentStatus::Published], true),
                 'created_at' => $now,
                 'updated_at' => $now,
-            ])->all(),
+            ] + ($hasSource ? ['source' => 'central'] : []))->all(),
             ['slug'],
-            ['active', 'updated_at'],
+            $hasSource ? ['source', 'active', 'updated_at'] : ['active', 'updated_at'],
         );
 
         $pageIds = Page::query()->toBase()->pluck('id', 'slug')->all();
@@ -717,9 +772,13 @@ class TenantCatalogSyncService
 
         (new BulkTranslationWriter())->replace((new Page())->getMorphClass(), $desired);
 
-        Page::query()
-            ->whereNotIn('slug', $pages->pluck('slug'))
-            ->delete();
+        // Only pages the sync created; the vendor's own pages (source = tenant) are never deleted (dedup plan B3).
+        if ($hasSource) {
+            Page::query()
+                ->where('source', 'central')
+                ->whereNotIn('slug', $pages->pluck('slug'))
+                ->delete();
+        }
 
         return $pages->count();
     }
@@ -772,7 +831,16 @@ class TenantCatalogSyncService
 
         $now = now();
         $fields = ['name', 'slug', 'description', 'meta_keywords', 'meta_description'];
-        $existing = $this->tenantRowsByCentralId(Category::query(), 'central_category_id', ['id', 'central_category_id', 'parent_id', 'active', 'featured']);
+        // `active` / `featured` / `order_number` are the vendor's toggles: seeded on insert only (dedup plan B2/R1).
+        // Central's publish state lives in `central_visible` (Category global scope), so an unpublish -> republish
+        // restores the category without touching the vendor's choice. Before the tenant DB has the column
+        // (2026_11_21_000004) only parent_id is refreshed.
+        $hasVisible = Category::hasCentralVisibleColumn();
+        $existing = $this->tenantRowsByCentralId(
+            $this->allCategories(),
+            'central_category_id',
+            array_merge(['id', 'central_category_id', 'parent_id'], $hasVisible ? ['central_visible'] : []),
+        );
 
         // Pass 1 – create the missing rows so every parent has a tenant id before parent_id is written
         // (the old loop relied on `ORDER BY parent_id`, which breaks for ids that are not top-down).
@@ -787,41 +855,37 @@ class TenantCatalogSyncService
                     'order_number' => $category->order_number,
                     'created_at' => $now,
                     'updated_at' => $now,
-                ];
+                ] + ($hasVisible ? ['central_visible' => $category->status->value === 'published'] : []);
             }
         }
         foreach (array_chunk($missing, 500) as $chunk) {
-            Category::query()->toBase()->insert($chunk);
+            $this->allCategories()->toBase()->insert($chunk);
         }
-        $created = array_column($missing, 'central_category_id', 'central_category_id');
 
-        $allRows = Category::query()->toBase()->whereNotNull('central_category_id')->orderBy('id')->get(['id', 'central_category_id']);
+        $allRows = $this->allCategories()->toBase()->whereNotNull('central_category_id')->orderBy('id')->get(['id', 'central_category_id']);
         $tenantIds = [];
         foreach ($allRows as $row) {
             $tenantIds[(int) $row->central_category_id] ??= (int) $row->id;
         }
 
-        // Pass 2 – parent_id / active / featured for rows that are new or changed.
+        // Pass 2 – parent_id (+ central_visible) for rows that are new or changed.
         $changed = [];
         foreach ($categories as $category) {
             $row = $existing[$category->id] ?? null;
             $parentId = $category->parent_id ? ($tenantIds[$category->parent_id] ?? null) : null;
-            $active = $category->status->value === 'published';
-            $featured = (bool) $category->is_featured;
+            $visible = $category->status->value === 'published';
 
-            if ($row === null || (int) $row->parent_id !== (int) $parentId || (bool) $row->active !== $active || (bool) $row->featured !== $featured) {
+            if ($row === null || (int) $row->parent_id !== (int) $parentId || ($hasVisible && (bool) $row->central_visible !== $visible)) {
                 $changed[] = [
                     'id' => $tenantIds[$category->id],
                     'central_category_id' => $category->id,
                     'parent_id' => $parentId,
-                    'active' => $active,
-                    'featured' => $featured,
                     'updated_at' => $now,
-                ];
+                ] + ($hasVisible ? ['central_visible' => $visible] : []);
             }
         }
         foreach (array_chunk($changed, 500) as $chunk) {
-            Category::query()->toBase()->upsert($chunk, ['id'], ['parent_id', 'active', 'featured', 'updated_at']);
+            $this->allCategories()->toBase()->upsert($chunk, ['id'], $hasVisible ? ['parent_id', 'central_visible', 'updated_at'] : ['parent_id', 'updated_at']);
         }
 
         [$codeToId, $activeIds] = $this->tenantLanguageMaps();
@@ -846,7 +910,7 @@ class TenantCatalogSyncService
         $keep = array_flip($categories->pluck('id')->all());
         $stale = $allRows->filter(fn($row) => ! isset($keep[(int) $row->central_category_id]))->pluck('id')->all();
         foreach (array_chunk($stale, 1000) as $ids) {
-            Category::query()->whereIn('id', $ids)->delete();
+            $this->allCategories()->whereIn('id', $ids)->delete();
         }
 
         // Bulk writes skip model events; bump the storefront cache version once instead.
@@ -925,7 +989,7 @@ class TenantCatalogSyncService
                 ->whereNotNull('central_language_id')
                 ->exists(),
             // Resolved once for the whole run instead of per product.
-            'categoryIdMap' => Category::query()->toBase()
+            'categoryIdMap' => $this->allCategories()->toBase()
                 ->whereNotNull('central_category_id')
                 ->pluck('id', 'central_category_id')
                 ->all(),
@@ -1144,8 +1208,10 @@ class TenantCatalogSyncService
     }
 
     /**
-     * Same result as $tenantProduct->categories()->sync([...]): attach the missing links,
-     * detach the extra ones and leave links that already match (and their sort_order) alone.
+     * Mirror central's product->category links (dedup plan B2/R2). Links the sync creates carry
+     * `category_product.source = central`; the vendor's own picks are `tenant` (column default). Only `central`
+     * links that central no longer has are detached; `tenant` links are never touched, and an existing link keeps
+     * its source and sort_order.
      *
      * @param  Collection<int, CentralProduct>  $products
      * @param  array<int, int[]>  $categoryPivot
@@ -1153,36 +1219,58 @@ class TenantCatalogSyncService
      */
     protected function syncProductCategories(Collection $products, array $categoryPivot, array $tenantProductIds, object $ctx): void
     {
+        $wanted = [];
+        foreach ($products as $product) {
+            $tenantId = $tenantProductIds[$product->id];
+            $wanted[$tenantId] = [];
+            foreach ($categoryPivot[$product->id] ?? [] as $centralCategoryId) {
+                if ($id = $ctx->categoryIdMap[$centralCategoryId] ?? null) {
+                    $wanted[$tenantId][] = (int) $id;
+                }
+            }
+        }
+
+        $this->syncCentralCategoryLinks($wanted);
+    }
+
+    /**
+     * @param  array<int, int[]>  $wanted  tenant product id => tenant category ids central links it to
+     */
+    protected function syncCentralCategoryLinks(array $wanted): void
+    {
+        if ($wanted === []) {
+            return;
+        }
+
+        // Before the tenant DB has the column (2026_11_21_000005) links can't be told apart: attach only.
+        $hasSource = Schema::connection('tenant')->hasColumn('category_product', 'source');
         $current = [];
-        foreach (\DB::table('category_product')->whereIn('product_id', array_values($tenantProductIds))->get(['product_id', 'category_id']) as $link) {
-            $current[(int) $link->product_id][(int) $link->category_id] = true;
+        foreach (\DB::table('category_product')->whereIn('product_id', array_keys($wanted))
+            ->get($hasSource ? ['product_id', 'category_id', 'source'] : ['product_id', 'category_id']) as $link) {
+            $current[(int) $link->product_id][(int) $link->category_id] = $hasSource ? $link->source : 'tenant';
         }
 
         $attach = [];
         $detach = [];
         $now = now();
 
-        foreach ($products as $product) {
-            $tenantId = $tenantProductIds[$product->id];
-            $wanted = [];
+        foreach ($wanted as $tenantId => $categoryIds) {
+            $want = array_fill_keys($categoryIds, true);
 
-            foreach ($categoryPivot[$product->id] ?? [] as $centralCategoryId) {
-                if ($id = $ctx->categoryIdMap[$centralCategoryId] ?? null) {
-                    $wanted[(int) $id] = true;
+            foreach (array_diff_key($want, $current[$tenantId] ?? []) as $categoryId => $_) {
+                $attach[] = ['category_id' => $categoryId, 'product_id' => $tenantId, 'created_at' => $now, 'updated_at' => $now]
+                    + ($hasSource ? ['source' => 'central'] : []);
+            }
+            foreach (array_diff_key($current[$tenantId] ?? [], $want) as $categoryId => $source) {
+                if ($hasSource && $source === 'central') {
+                    $detach[] = [$tenantId, $categoryId];
                 }
-            }
-
-            foreach (array_diff_key($wanted, $current[$tenantId] ?? []) as $categoryId => $_) {
-                $attach[] = ['category_id' => $categoryId, 'product_id' => $tenantId, 'created_at' => $now, 'updated_at' => $now];
-            }
-            foreach (array_diff_key($current[$tenantId] ?? [], $wanted) as $categoryId => $_) {
-                $detach[] = [$tenantId, $categoryId];
             }
         }
 
         foreach (array_chunk($detach, 500) as $chunk) {
             $placeholders = implode(',', array_fill(0, count($chunk), '(?,?)'));
-            \DB::delete("delete from category_product where (product_id, category_id) in ({$placeholders})", array_merge(...$chunk));
+            \DB::delete("delete from category_product where source = 'central' and (product_id, category_id) in ({$placeholders})", array_merge(...$chunk));
         }
         foreach (array_chunk($attach, 500) as $chunk) {
             \DB::table('category_product')->insertOrIgnore($chunk);
@@ -1451,6 +1539,12 @@ class TenantCatalogSyncService
         return array_filter($out);
     }
 
+    /** Tenant categories including the ones central currently hides (`central_visible = 0`). */
+    protected function allCategories(): \Illuminate\Database\Eloquent\Builder
+    {
+        return Category::withoutGlobalScope(Category::CENTRAL_VISIBLE_SCOPE);
+    }
+
     /**
      * Tenant rows keyed by their central id (the first row wins when duplicates exist),
      * read without hydrating models.
@@ -1666,9 +1760,10 @@ class TenantCatalogSyncService
             $tenantProduct->has_custom_translations ? [] : ['name', 'label', 'summary', 'description', 'meta_keywords', 'meta_description'],
             ['name', 'label', 'summary', 'description', 'meta_keywords', 'meta_description']
         ));
-        $tenantProduct->categories()->sync(
-            Category::query()->whereIn('central_category_id', $centralProduct->categories->pluck('id'))->pluck('id')->all()
-        );
+        // Central links only (dedup plan R2): the vendor's own category picks (source = tenant) are kept.
+        $this->syncCentralCategoryLinks([
+            $tenantProduct->id => $this->allCategories()->whereIn('central_category_id', $centralProduct->categories->pluck('id'))->pluck('id')->map(fn ($id) => (int) $id)->all(),
+        ]);
 
         $this->syncProductLabels($centralProduct, $tenantProduct);
 
@@ -1902,11 +1997,30 @@ class TenantCatalogSyncService
             ->whereNotNull('central_product_id')
             ->pluck('id', 'central_product_id');
 
+        // Match by central id (B4), falling back to the oldest unlinked row with the same text (legacy rows / the
+        // seeded featured, new-in... badges), which then gets linked. A central rename renames the tenant row.
+        // Until the tenant DB has the column (2026_11_21_000003): text match only, and nothing is deleted.
+        $linkable = Schema::connection('tenant')->hasColumn('product_badges', 'central_product_badge_id');
+        $tenantBadges = ProductBadge::query()->orderBy('id')->get();
+
         foreach ($centralBadges as $centralBadge) {
-            $tenantBadge = ProductBadge::query()->updateOrCreate(
-                ['text' => $centralBadge->text],
-                ['active' => $centralBadge->active]
-            );
+            $tenantBadge = ($linkable ? $tenantBadges->firstWhere('central_product_badge_id', $centralBadge->id) : null)
+                ?? $tenantBadges->first(fn (ProductBadge $b) => $b->central_product_badge_id === null && $b->text === $centralBadge->text)
+                ?? new ProductBadge();
+
+            $textTaken = $tenantBadges->contains(fn (ProductBadge $b) => $b->text === $centralBadge->text && $b->id !== $tenantBadge->id);
+            if (! $tenantBadge->exists || ! $textTaken) {
+                $tenantBadge->text = $centralBadge->text; // never create a second row with the same text (route key)
+            }
+            if ($linkable) {
+                $tenantBadge->central_product_badge_id = $centralBadge->id;
+            }
+            $tenantBadge->active = $centralBadge->active;
+            $tenantBadge->save();
+
+            if (! $tenantBadges->contains('id', $tenantBadge->id)) {
+                $tenantBadges->push($tenantBadge);
+            }
 
             $rowsForBadge = $centralPivotRows->where('product_badge_id', $centralBadge->id);
             $countryIds = $rowsForBadge->pluck('country_id')->unique()->all();
@@ -1948,9 +2062,14 @@ class TenantCatalogSyncService
             }
         }
 
-        ProductBadge::query()
-            ->whereNotIn('text', $centralBadges->pluck('text'))
-            ->delete();
+        // Only badges linked to a central badge that central removed; tenant badges (central id NULL, incl. the
+        // seeded featured / recommended / new-in / best-selling / trending-now ones) are never deleted (B3).
+        if ($linkable) {
+            ProductBadge::query()
+                ->whereNotNull('central_product_badge_id')
+                ->whereNotIn('central_product_badge_id', $centralBadges->pluck('id'))
+                ->delete();
+        }
 
         // Raw pivot writes and the stale delete skip model events.
         CacheVersion::bumpMany(['ProductBadge', 'Product']);

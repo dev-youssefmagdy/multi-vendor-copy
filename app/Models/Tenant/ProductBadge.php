@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class ProductBadge extends Model
 {
-    protected $fillable = ['text', 'active'];
+    protected $fillable = ['text', 'active', 'central_product_badge_id'];
 
     public function getRouteKeyName(): string
     {
@@ -18,6 +18,7 @@ class ProductBadge extends Model
     {
         return [
             'active' => 'boolean',
+            'central_product_badge_id' => 'integer',
         ];
     }
 
