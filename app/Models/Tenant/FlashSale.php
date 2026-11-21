@@ -2,6 +2,7 @@
 
 namespace App\Models\Tenant;
 
+use App\Models\Concerns\HasCatalogRefs;
 use App\Models\Concerns\HasCountries;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class FlashSale extends Model
 {
+    use HasCatalogRefs;
     use HasCountries;
     use HasFactory;
 

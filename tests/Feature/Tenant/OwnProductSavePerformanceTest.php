@@ -46,6 +46,7 @@ class OwnProductSavePerformanceTest extends TestCase
         [$categoryIds, $badgeIds] = $this->seedLookups();
         $payload = $this->payload($categoryIds, $badgeIds);
 
+        $this->warmCatalogRefColumnCache();
         [$response, $queries] = $this->measure(fn () => $this->actingAsTenantAdmin()
             ->json('post', $this->tenantUrl('/admin/own-products'), $payload));
 
@@ -268,5 +269,18 @@ class OwnProductSavePerformanceTest extends TestCase
                 tenancy()->end();
             }
         }
+    }
+
+    /**
+     * Steady state: the typed-ref column lists (dedup phase 1) are cached in the app cache for an hour, so only the
+     * first request after a deploy / per hour pays those information_schema lookups. Warm them like production.
+     */
+    private function warmCatalogRefColumnCache(): void
+    {
+        $this->inTenant(function () {
+            foreach (['category_product', 'product_badge_product', 'product_label_product'] as $table) {
+                \App\Support\Catalog\CatalogRefWriter::current()->fillJoined($table, ['product_id' => [0]]);
+            }
+        });
     }
 }

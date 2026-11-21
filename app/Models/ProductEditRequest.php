@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ProductEditRequestStatus;
+use App\Models\Concerns\HasCatalogRefs;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Stancl\Tenancy\Database\Concerns\CentralConnection;
@@ -10,6 +11,7 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
 class ProductEditRequest extends Model
 {
     use CentralConnection;
+    use HasCatalogRefs;
 
     protected $fillable = [
         'tenant_id',
@@ -22,6 +24,24 @@ class ProductEditRequest extends Model
         'reviewed_by',
         'reviewed_at',
     ];
+
+    /**
+     * Dedup plan §4.2a: `central_product_id` = the central product the request is about (NULL for an own product),
+     * derived from the typed pair HasCatalogRefs just filled. Guarded: no-op until the central migration ran.
+     */
+    protected static function booted(): void
+    {
+        static::saving(function (self $request) {
+            if (! $request->isDirty(['product_type', 'catalog_product_id'])
+                || ! \App\Support\Catalog\CatalogRefColumns::has($request->getConnection(), $request->getTable(), 'central_product_id')) {
+                return;
+            }
+
+            $request->setAttribute('central_product_id', $request->getAttribute('product_type') === \App\Support\Catalog\CatalogRef::CENTRAL
+                ? $request->getAttribute('catalog_product_id')
+                : null);
+        });
+    }
 
     protected function casts(): array
     {

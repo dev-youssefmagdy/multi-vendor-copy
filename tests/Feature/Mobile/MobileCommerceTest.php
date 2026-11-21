@@ -115,6 +115,41 @@ class MobileCommerceTest extends TestCase
         ]], $this->h($a))->assertOk()->assertJsonPath('data.items_total', 100);
     }
 
+    /**
+     * Dedup plan phase 1: mobile_carts.items entries carry 4 internal typed-ref keys. They must stay internal
+     * (the API item shape is unchanged) and must not split or break the line (same v_/p_ key, qty adds up).
+     */
+    public function test_cart_typed_refs_stay_internal_and_do_not_split_lines(): void
+    {
+        $token = $this->register('refs@example.com');
+        $this->addToCart($token, 1);
+        $this->addToCart($token, 2); // second add hits the already enriched stored line
+
+        $items = $this->tenant->run(fn () => \App\Models\Tenant\MobileCart::query()->value('items'));
+        $key = 'v_'.$this->variant->id;
+        $this->assertSame([$key], array_keys($items));
+        $this->assertSame(3, $items[$key]['qty']);
+        foreach (\App\Support\Catalog\CatalogRefColumns::CART_KEYS as $refKey) {
+            $this->assertArrayHasKey($refKey, $items[$key]);
+        }
+        $this->assertSame('tenant', $items[$key]['product_type']); // own product
+        $this->assertSame($this->variant->product_id, $items[$key]['catalog_product_id']);
+
+        $cart = $this->getJson('/api/mobile/v1/cart', $this->h($token))->assertOk();
+        $this->assertSame(3, $cart->json('data.count'));
+        $this->assertCount(1, $cart->json('data.items'));
+        $this->assertSame(
+            ['key', 'product_id', 'variant_id', 'slug', 'name', 'image', 'qty', 'unit_price', 'original_price', 'is_flash_sale', 'line_total', 'out_of_stock'],
+            array_keys($cart->json('data.items.0')),
+        );
+        $this->assertStringNotContainsString('catalog_product_id', $cart->getContent());
+        $this->assertStringNotContainsString('product_type', $cart->getContent());
+
+        $this->postJson('/api/mobile/v1/cart/update', ['key' => $key, 'qty' => 5], $this->h($token))->assertOk()->assertJsonPath('data.count', 5);
+        $quote = $this->postJson('/api/mobile/v1/checkout/quote', [], $this->h($token))->assertOk();
+        $this->assertStringNotContainsString('catalog_product_id', $quote->getContent());
+    }
+
     public function test_cross_tenant_token_cannot_read_cart_or_checkout(): void
     {
         $token = $this->register();

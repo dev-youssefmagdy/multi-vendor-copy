@@ -46,6 +46,7 @@ use App\Models\Tenant\ThemeCountry;
 use App\Models\Tenant\Translation;
 use App\Models\Template as CentralTemplate;
 use App\Support\CacheVersion;
+use App\Support\Catalog\CatalogRefWriter;
 use App\Support\Catalog\CatalogSource;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -232,6 +233,20 @@ class TenantCatalogSyncService
         ]);
 
         return true;
+    }
+
+    /**
+     * Dedup plan phase 1 dual-write: the typed reference pairs of pivot rows this sync wrote (raw inserts / sync()
+     * skip model events). Only NULL pairs are filled; no-op until `tenants:migrate` added the columns; never throws.
+     *
+     * @param  string[]  $tables
+     * @param  array<string, int[]>  $only
+     */
+    protected function fillCatalogRefs(array $tables, array $only = []): void
+    {
+        foreach ($tables as $table) {
+            CatalogRefWriter::fillQuietly($table, $only);
+        }
     }
 
     protected function runSection(Tenant $tenant, string $section): int
@@ -1039,6 +1054,8 @@ class TenantCatalogSyncService
         }
 
         $this->deleteStaleCatalogRows($ctx->seenVariants, array_flip($allIds));
+
+        $this->fillCatalogRefs(['category_product', 'product_label_product']);
 
         // Bulk writes skip model events; bump the storefront cache versions once instead
         // (Category too: category_product pivot rows and per-category counts change).
@@ -1854,6 +1871,8 @@ class TenantCatalogSyncService
                 ->delete();
         }
 
+        $this->fillCatalogRefs(['category_product', 'product_label_product'], ['product_id' => [$tenantProduct->id]]);
+
         // Category pivot sync, translations and the variant delete skip model events.
         CacheVersion::bumpMany(['Product', 'ProductVariant', 'Category', 'ProductLabel']);
 
@@ -2000,6 +2019,7 @@ class TenantCatalogSyncService
             ->delete();
 
         // Pivot sync and the stale delete skip model events.
+        $this->fillCatalogRefs(['flash_sales', 'flash_sale_product']);
         CacheVersion::bumpMany(['FlashSale', 'Product']);
 
         return $centralSales->count();
@@ -2096,6 +2116,7 @@ class TenantCatalogSyncService
         }
 
         // Raw pivot writes and the stale delete skip model events.
+        $this->fillCatalogRefs(['product_badge_product']);
         CacheVersion::bumpMany(['ProductBadge', 'Product']);
 
         return $centralBadges->count();
@@ -2145,6 +2166,7 @@ class TenantCatalogSyncService
             ->delete();
 
         // Raw pivot writes and the stale delete skip model events.
+        $this->fillCatalogRefs(['product_label_product']);
         CacheVersion::bumpMany(['ProductLabel', 'Product']);
 
         return $centralLabels->count();

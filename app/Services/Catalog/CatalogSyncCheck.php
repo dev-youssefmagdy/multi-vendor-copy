@@ -6,6 +6,7 @@ use App\Enums\EmailTemplateType;
 use App\Enums\PaymentGatewayType;
 use App\Enums\ProductEditRequestStatus;
 use App\Models\Tenant;
+use App\Support\Catalog\CatalogRefColumns;
 use App\Support\Catalog\CatalogSource;
 use App\Support\Catalog\CentralTable;
 use Illuminate\Database\Connection;
@@ -31,6 +32,23 @@ use Throwable;
  */
 class CatalogSyncCheck
 {
+    /**
+     * Pseudo-section (dedup plan phase 1): typed reference pairs per table. Metrics: null_refs (source id set, pair
+     * NULL = backfill pending), unmapped_refs (of those, the tenant row is gone: cannot be mapped), dangling_refs
+     * (pair set but the referenced central/tenant row no longer exists), plus the same per table under `tables`.
+     */
+    public const REFS = 'refs';
+
+    /** entity => central table a `central` ref points at (dangling check). */
+    private const REF_CENTRAL_TABLES = [
+        'product' => 'products',
+        'variant' => 'product_variants',
+        'category' => 'categories',
+        'badge' => 'product_badges',
+        'label' => 'product_labels',
+        'flash_sale' => 'central_flash_sales',
+    ];
+
     /**
      * section => [tenant table, link column, central table, central key, "expected" rule]. "expected" = 'all', a
      * method name returning [sql, bindings] for alias `c`, or null when the tenant only carries a subset that
@@ -83,7 +101,8 @@ class CatalogSyncCheck
      */
     public function run(array $tenantIds = [], array $sections = []): array
     {
-        $sections = $sections === [] ? CatalogSource::SECTIONS : array_values(array_intersect(CatalogSource::SECTIONS, $sections));
+        $all = [...CatalogSource::SECTIONS, self::REFS];
+        $sections = $sections === [] ? $all : array_values(array_intersect($all, $sections));
 
         return $this->readOnly(function () use ($tenantIds, $sections) {
             $this->centralColumns = $this->columnsOf(CentralTable::database());
@@ -133,7 +152,7 @@ class CatalogSyncCheck
                 $metrics = ['error' => $e->getMessage()];
             }
 
-            $result['sections'][$section] = ['mode' => CatalogSource::for($tenant, $section)] + $metrics;
+            $result['sections'][$section] = ['mode' => $section === self::REFS ? '-' : CatalogSource::for($tenant, $section)] + $metrics;
         }
 
         return $result;
@@ -142,6 +161,10 @@ class CatalogSyncCheck
     /** @return array<string, mixed> */
     private function checkSection(string $section): array
     {
+        if ($section === self::REFS) {
+            return $this->refMetrics();
+        }
+
         $spec = self::SPECS[$section];
         if ($spec === null) {
             return ['note' => 'no central link (keyed by name); mode only'];
@@ -388,6 +411,83 @@ class CatalogSyncCheck
             'tenant_only_language' => (int) $row->tenant_only_language,
             'tenant_only_field' => (int) $row->tenant_only_field,
         ];
+    }
+
+    /** @return array<string, mixed> */
+    private function refMetrics(): array
+    {
+        $totals = ['null_refs' => 0, 'unmapped_refs' => 0, 'dangling_refs' => 0];
+        $tables = [];
+        $missing = [];
+
+        $specs = [];
+        foreach (array_keys(CatalogRefColumns::TENANT_TABLES) as $table) {
+            $specs[$table] = [$this->t($table), $this->tenantColumns[$table] ?? null, '', []];
+        }
+        foreach (array_keys(CatalogRefColumns::CENTRAL_TABLES) as $table) {
+            $specs[$table] = [CentralTable::name($table), $this->centralColumns[$table] ?? null, ' AND t.`tenant_id` = ?', [(string) $this->tenant->getTenantKey()]];
+        }
+
+        foreach ($specs as $table => [$from, $columns, $where, $bindings]) {
+            if ($columns === null) {
+                continue;
+            }
+
+            $metrics = ['rows' => (int) $this->scalar("SELECT COUNT(*) FROM {$from} t WHERE 1 = 1{$where}", $bindings)];
+            foreach (CatalogRefColumns::specFor($table) as $column => [$entity, $type, $id]) {
+                if (! isset($columns[$type], $columns[$id])) {
+                    $missing[$table] = true;
+
+                    continue;
+                }
+
+                [$entityTable] = CatalogRefColumns::ENTITIES[$entity];
+                $central = CentralTable::name(self::REF_CENTRAL_TABLES[$entity]);
+                $row = $this->db->selectOne(
+                    "SELECT
+                        SUM(CASE WHEN t.`{$type}` IS NULL AND t.`{$column}` IS NOT NULL THEN 1 ELSE 0 END) AS null_refs,
+                        SUM(CASE WHEN t.`{$type}` IS NULL AND t.`{$column}` IS NOT NULL
+                                 AND NOT EXISTS (SELECT 1 FROM {$this->t($entityTable)} e WHERE e.`id` = t.`{$column}`) THEN 1 ELSE 0 END) AS unmapped,
+                        SUM(CASE WHEN (t.`{$type}` = 'tenant' AND NOT EXISTS (SELECT 1 FROM {$this->t($entityTable)} e WHERE e.`id` = t.`{$id}`))
+                                   OR (t.`{$type}` = 'central' AND NOT EXISTS (SELECT 1 FROM {$central} c WHERE c.`id` = t.`{$id}`)) THEN 1 ELSE 0 END) AS dangling
+                     FROM {$from} t WHERE 1 = 1{$where}",
+                    $bindings,
+                );
+                $metrics[$column] = ['null_refs' => (int) $row->null_refs, 'unmapped' => (int) $row->unmapped, 'dangling' => (int) $row->dangling];
+                $totals['null_refs'] += (int) $row->null_refs;
+                $totals['unmapped_refs'] += (int) $row->unmapped;
+                $totals['dangling_refs'] += (int) $row->dangling;
+            }
+            $tables[$table] = $metrics;
+        }
+
+        if (isset($this->tenantColumns['mobile_carts']['items'])) {
+            $carts = ['rows' => 0, 'items_without_refs' => 0, 'unmapped' => 0];
+            $productIds = array_flip(array_map('intval', array_column(
+                $this->db->select("SELECT `id` FROM {$this->t('products')}"),
+                'id',
+            )));
+            foreach ($this->db->select("SELECT `items` FROM {$this->t('mobile_carts')}") as $cart) {
+                $carts['rows']++;
+                foreach ((array) json_decode((string) $cart->items, true) as $item) {
+                    if (is_array($item) && ! isset($item['product_type'])) {
+                        $carts['items_without_refs']++;
+                        $carts['unmapped'] += isset($productIds[(int) ($item['product_id'] ?? 0)]) ? 0 : 1;
+                    }
+                }
+            }
+            $tables['mobile_carts'] = $carts;
+            $totals['null_refs'] += $carts['items_without_refs'];
+            $totals['unmapped_refs'] += $carts['unmapped'];
+        }
+
+        if ($missing !== [] && count($missing) === count(array_filter($specs, fn ($spec) => $spec[1] !== null))) {
+            $totals = array_fill_keys(array_keys($totals), null); // nothing migrated yet: no figures, gates skip
+        }
+
+        return $totals
+            + ($missing !== [] ? ['note' => 'typed columns missing (migration not run): ' . implode(', ', array_keys($missing))] : [])
+            + ['tables' => $tables];
     }
 
     /** SQL for "central row is live" (alias $alias); before the soft-delete migration every row is live. */

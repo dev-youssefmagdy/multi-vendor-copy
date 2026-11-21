@@ -64,9 +64,17 @@ class CatalogSyncMigrationsTest extends TestCase
         parent::tearDown();
     }
 
+    /**
+     * SHOW CREATE TABLE with its lines sorted: down() + up() re-appends a column at the end, so once a later
+     * migration (dedup phase 1 typed refs) added columns after it, only the column ORDER differs.
+     */
     private function createTable(string $table): string
     {
-        return (string) collect((array) DB::selectOne("SHOW CREATE TABLE `{$table}`"))->values()->get(1);
+        $lines = explode("\n", (string) collect((array) DB::selectOne("SHOW CREATE TABLE `{$table}`"))->values()->get(1));
+        $lines = array_map(fn (string $line) => rtrim(trim($line), ','), $lines);
+        sort($lines);
+
+        return implode("\n", $lines);
     }
 
     /** @param callable(): mixed $callback */

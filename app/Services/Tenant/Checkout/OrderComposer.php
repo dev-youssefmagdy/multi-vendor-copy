@@ -13,6 +13,8 @@ use App\Models\Tenant\PaymentGateway;
 use App\Models\Tenant\Product as TenantProduct;
 use App\Models\Tenant\ProductVariant as TenantProductVariant;
 use App\Services\Tenant\OrderLifecycleService;
+use App\Support\Catalog\CatalogRefColumns;
+use App\Support\Catalog\CatalogRefResolver;
 use App\Support\OrderPricing;
 use Illuminate\Support\Str;
 
@@ -128,6 +130,45 @@ class OrderComposer
     }
 
     /**
+     * Typed catalog refs of the order lines (dedup plan phase 1, ORDER_FORMULAS.md §4): one batch lookup for all
+     * lines, returned as a per-line attribute builder. Money columns are untouched. Returns a no-op builder until
+     * the tenant migration has added the columns (the OrderItem save hook then has nothing to fill either).
+     *
+     * @param  array<int, array<string, mixed>>  $items  line payloads (product_id, product_variant_id, …)
+     * @return \Closure(array<string, mixed>): array<string, mixed>
+     */
+    public static function lineRefs(array $items): \Closure
+    {
+        $model = new OrderItem();
+        if ($items === [] || ! CatalogRefColumns::ready($model->getConnection(), $model->getTable())) {
+            return fn (array $item): array => [];
+        }
+
+        try {
+            $resolver = CatalogRefResolver::on($model->getConnection());
+            $products = $resolver->products(array_column($items, 'product_id'));
+            $variants = $resolver->variants(array_column($items, 'product_variant_id'));
+        } catch (\Throwable $e) {
+            // Never block checkout on a reference lookup; OrderItem's save hook / catalog:backfill-refs retry.
+            report($e);
+
+            return fn (array $item): array => [];
+        }
+
+        return function (array $item) use ($products, $variants): array {
+            $product = $products[(int) ($item['product_id'] ?? 0)] ?? null;
+            $variant = $variants[(int) ($item['product_variant_id'] ?? 0)] ?? null;
+
+            return [
+                'product_type' => $product?->source,
+                'catalog_product_id' => $product?->id,
+                'variant_type' => $variant?->source,
+                'catalog_variant_id' => $variant?->id,
+            ];
+        };
+    }
+
+    /**
      * Create the order(s) for a cart. Mixed carts (own + central lines) yield two orders:
      * central (primary, carries shipping) and own (companion).
      *
@@ -206,10 +247,11 @@ class OrderComposer
         }
 
         $lifecycle = app(OrderLifecycleService::class);
+        $lineRefs = self::lineRefs(array_merge($ownItems, $centralItems));
 
         $persist = function (array $items, float $shipping, float $coupon_discount) use (
             $customer, $coupon, $selectedGateway, $gatewayId, $discountPercent, $couponSource,
-            $collectedBy, $centralGateway, $groupUuid, $ctx, $lifecycle
+            $collectedBy, $centralGateway, $groupUuid, $ctx, $lifecycle, $lineRefs
         ): Order {
             $totals = OrderPricing::order($items, $shipping, $coupon_discount, $couponSource);
 
@@ -237,7 +279,7 @@ class OrderComposer
             ]);
 
             foreach ($items as $item) {
-                OrderItem::create(array_merge($item, ['order_id' => $order->id]));
+                OrderItem::create(array_merge($item, ['order_id' => $order->id], $lineRefs($item)));
             }
 
             $lifecycle->recordPlaced($order->fresh(['items', 'customer', 'paymentGateway']));

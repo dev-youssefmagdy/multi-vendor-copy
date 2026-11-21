@@ -208,6 +208,7 @@ final class ProductController extends PanelController
         ], $product);
 
         $saved->badges()->sync(array_filter((array) ($validated['badge_ids'] ?? []), filled(...)));
+        \App\Support\Catalog\CatalogRefWriter::fillQuietly('product_badge_product', ['product_id' => [$saved->id]]);
         CacheVersion::bumpMany(['ProductBadge', 'Product']);
 
         $message = $editRequestSubmitted

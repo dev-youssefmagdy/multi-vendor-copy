@@ -2,12 +2,14 @@
 
 namespace App\Models\Tenant;
 
+use App\Models\Concerns\HasCatalogRefs;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrderItem extends Model
 {
+    use HasCatalogRefs;
     use HasFactory;
 
     protected $fillable = [
@@ -26,6 +28,11 @@ class OrderItem extends Model
         'shipping_fee',
         'weight',
         'grand_total',
+        // Dedup plan phase 1 typed refs (ORDER_FORMULAS.md §4); set by OrderComposer, else derived on save.
+        'product_type',
+        'catalog_product_id',
+        'variant_type',
+        'catalog_variant_id',
     ];
 
     protected function casts(): array

@@ -8,6 +8,7 @@ use App\Enums\ReturnMethod;
 use App\Enums\ReturnReason;
 use App\Enums\ReturnStatus;
 use App\Enums\ReturnType;
+use App\Models\Concerns\HasCatalogRefs;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -16,6 +17,7 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
 class ReturnRequest extends Model
 {
     use CentralConnection;
+    use HasCatalogRefs;
 
     protected $fillable = [
         'tenant_id',

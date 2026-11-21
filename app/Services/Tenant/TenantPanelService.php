@@ -164,6 +164,7 @@ class TenantPanelService
                 $attributes['category_ids'] ?? [],
                 $this->centrallyHiddenCategoryIds($product),
             ));
+            \App\Support\Catalog\CatalogRefWriter::fillQuietly('category_product', ['product_id' => [$product->id]]);
             $product->syncTranslations($attributes['translations'] ?? []);
 
             if ($centralLinked) {
@@ -556,6 +557,7 @@ class TenantPanelService
                 ? $productIds
                 : array_filter([(int) ($flashSale->product_id ?? 0)])
             );
+            \App\Support\Catalog\CatalogRefWriter::fillQuietly('flash_sale_product', ['flash_sale_id' => [$flashSale->id]]);
             CacheVersion::bumpMany(['FlashSale', 'Product']);
 
             return $flashSale->fresh(['product.translations.language', 'products.translations.language']);

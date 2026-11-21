@@ -125,6 +125,7 @@ class OwnProductController extends Controller
         ], $product);
 
         $savedProduct->badges()->sync(array_values(array_filter((array) $request->input('badge_ids', []), fn($id) => filled($id))));
+        \App\Support\Catalog\CatalogRefWriter::fillQuietly('product_badge_product', ['product_id' => [$savedProduct->id]]);
 
         // Primary image — a new upload always wins; explicit removal without a
         // new file simply deletes the existing one.

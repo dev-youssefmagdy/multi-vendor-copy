@@ -138,6 +138,7 @@ final class BadgeController extends PanelController
                 'updated_at' => $now,
             ]);
         }
+        \App\Support\Catalog\CatalogRefWriter::fillQuietly('product_badge_product', ['product_badge_id' => [$badge->id]]);
 
         CacheVersion::bumpMany(['ProductBadge', 'Product']);
 

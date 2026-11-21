@@ -117,6 +117,18 @@ sub_total, fixed_shipping, discount, discount_source, tax, shipping_fee, weight,
 `order_items.product_variant_id` FK is `ON DELETE SET NULL` (2026-11-21, dedup plan B1): deleting a catalog variant never
 deletes order lines; the line keeps `product_id` and its money snapshot. Readers must tolerate a null variant.
 
+`order_items` typed catalog references (2026-11-23, dedup plan phase 1), appended after `updated_at`:
+`product_type`, `catalog_product_id`, `variant_type`, `catalog_variant_id` (all NULL-able; index
+`(product_type, catalog_product_id)` and `(variant_type, catalog_variant_id)`).
+* `*_type` = `central` | `tenant`; `catalog_*_id` = the **central** id when `central`, the **tenant** id when `tenant`.
+* Rule (`App\Support\Catalog\CatalogRefResolver`): product = `central` iff `central_product_id` is set and the product is not
+  `is_own_product` (`is_tenant_owned` stays `central`); variant = `central` iff `central_product_variant_id` is set and its product is
+  not own. Written by `OrderComposer::create()` (one batch lookup per order, `OrderComposer::lineRefs()`), by the `OrderItem` save
+  hook for any other writer, and for old rows by `php artisan catalog:backfill-refs`.
+* Identity only: no formula reads them, money columns are untouched, readers still use `product_id` / `product_variant_id` until
+  the products cutover (dedup plan phase 5). When the variant FK sets `product_variant_id` to NULL the pair keeps the history.
+* NULL pair = not backfilled yet, or the tenant row was already gone at backfill time (reported by `catalog:sync-check --section=refs`).
+
 ## 5. Where the formulas live in code (keep in sync with this file)
 
 | Concern | Code |
@@ -127,6 +139,7 @@ deletes order lines; the line keeps `product_id` and its money snapshot. Readers
 | Cost / profit / fixed-shipping split of a unit price | `Product` / `ProductVariant::priceBreakdownForCountry()` |
 | Shipping eligibility (own = no shipping) | `OrderComposer::isOwnProduct()` / `isShippableCartItem()` |
 | Building lines + persisting orders (checkout, API) | `App\Services\Tenant\Checkout\OrderComposer` (used by `PlacesOrders` and `CheckoutPage`) |
+| Typed catalog refs of order lines (`product_type` / `catalog_product_id`, `variant_type` / `catalog_variant_id`) | `OrderComposer::lineRefs()` → `App\Support\Catalog\CatalogRefResolver`; `HasCatalogRefs` on `OrderItem` |
 | Cart / checkout totals | `StorefrontRepository::cartItems()/cartTotal()` - priced with the **storefront (session) country**, identical in cart and checkout; the delivery-address country only selects the shipping zone fee |
 | Vendor -> platform payment | `VendorPurchaseService` + `VendorSettlementPaymentController` (creates a `VendorSettlement` record) |
 

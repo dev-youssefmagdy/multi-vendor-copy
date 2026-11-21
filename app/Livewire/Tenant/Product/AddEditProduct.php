@@ -154,6 +154,7 @@ class AddEditProduct extends Component
         ], $this->productId ? ($existingProduct ?? Product::query()->findOrFail($this->productId)) : null);
 
         $product->badges()->sync(array_filter((array) $this->badgeIds, filled(...)));
+        \App\Support\Catalog\CatalogRefWriter::fillQuietly('product_badge_product', ['product_id' => [$product->id]]);
         CacheVersion::bumpMany(['ProductBadge', 'Product']);
 
         if ($editRequestSubmitted) {

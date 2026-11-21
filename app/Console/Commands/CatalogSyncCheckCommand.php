@@ -9,13 +9,15 @@ use Illuminate\Console\Command;
 /**
  * Dedup plan §2b.1: read-only drift report between central and every tenant's synced catalog copies.
  * Exit code 1 when a gate fails (default gate: no orphan variants), so it can run in CI/deploy or on a schedule.
+ * Section `refs` (dedup plan phase 1): typed reference pairs still NULL / unmappable / dangling per table
+ * (details per table with --json); optional gate e.g. --gate=unmapped_refs:0.
  */
 class CatalogSyncCheckCommand extends Command
 {
     protected $signature = 'catalog:sync-check
         {--tenant=* : Tenant id(s); default every tenant}
         {--section=* : Section(s); default every section}
-        {--gate=* : metric:max, e.g. orphan_variants:0 or translations.different:100 (replaces the default gates)}
+        {--gate=* : metric:max, e.g. orphan_variants:0, translations.different:100 or unmapped_refs:0 (replaces the default gates)}
         {--json : Print the report as JSON}';
 
     protected $description = 'Read-only report: drift between central catalog data and the tenant copies (dedup plan §2b.1)';
@@ -26,9 +28,10 @@ class CatalogSyncCheckCommand extends Command
     public function handle(CatalogSyncCheck $check): int
     {
         $sections = array_map(fn ($s) => strtolower(trim((string) $s)), (array) $this->option('section'));
-        $unknown = array_diff($sections, CatalogSource::SECTIONS);
+        $valid = [...CatalogSource::SECTIONS, CatalogSyncCheck::REFS];
+        $unknown = array_diff($sections, $valid);
         if ($unknown !== []) {
-            $this->error('Unknown section(s): ' . implode(', ', $unknown) . '. Valid: ' . implode(', ', CatalogSource::SECTIONS));
+            $this->error('Unknown section(s): ' . implode(', ', $unknown) . '. Valid: ' . implode(', ', $valid));
 
             return self::INVALID;
         }
@@ -103,7 +106,7 @@ class CatalogSyncCheckCommand extends Command
 
             $rows = [];
             foreach ($tenant['sections'] as $section => $m) {
-                $other = collect($m)->except(['mode', 'rows', 'linked', 'own', 'missing', 'extra', 'stale_missing', 'stale_trashed', 'duplicate_links'])
+                $other = collect($m)->except(['mode', 'rows', 'linked', 'own', 'missing', 'extra', 'stale_missing', 'stale_trashed', 'duplicate_links', 'tables'])
                     ->map(fn ($v, $k) => $k . '=' . (is_array($v) ? json_encode($v) : var_export($v, true)))
                     ->implode('  ');
 

@@ -108,6 +108,7 @@ class TenantDemoSeeder extends Seeder
             if (!$flashSale->products()->where('products.id', $product->id)->exists()) {
                 $flashSale->products()->attach($product->id);
             }
+            \App\Support\Catalog\CatalogRefWriter::fillQuietly('flash_sale_product', ['flash_sale_id' => [$flashSale->id]]);
         }
     }
 

@@ -63,6 +63,7 @@ class BadgeProductsList extends Component
         ProductBadge::query()->findOrFail($this->badgeId)
             ->products()
             ->sync($this->selectedProducts);
+        \App\Support\Catalog\CatalogRefWriter::fillQuietly('product_badge_product', ['product_badge_id' => [$this->badgeId]]);
         CacheVersion::bumpMany(['ProductBadge', 'Product']);
 
         session()->flash('status', __('Badge assignment saved — :count products assigned.', ['count' => count($this->selectedProducts)]));

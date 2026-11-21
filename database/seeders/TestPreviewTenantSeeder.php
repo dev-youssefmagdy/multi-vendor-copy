@@ -183,6 +183,7 @@ class TestPreviewTenantSeeder extends Seeder
         );
 
         $fs->products()->attach($products->pluck('id')->all());
+        \App\Support\Catalog\CatalogRefWriter::fillQuietly('flash_sale_product', ['flash_sale_id' => [$fs->id]]);
 
         $this->command?->info("Flash sale seeded with " . $products->count() . " products.");
     }

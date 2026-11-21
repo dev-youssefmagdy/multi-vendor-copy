@@ -290,6 +290,7 @@ final class FlashSaleController extends PanelController
             'created_at'    => now(),
             'updated_at'    => now(),
         ]);
+        \App\Support\Catalog\CatalogRefWriter::fillQuietly('flash_sale_product', ['flash_sale_id' => [$flashSale->id]]);
         CacheVersion::bumpMany(['FlashSale', 'Product']);
 
         return $this->success(__('Product added to flash sale.'), ['attached' => true]);
