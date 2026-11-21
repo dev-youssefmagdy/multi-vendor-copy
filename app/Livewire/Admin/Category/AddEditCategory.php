@@ -132,7 +132,7 @@ class AddEditCategory extends Component
 
         $rules = [
             'parentPath' => ['array'],
-            'parentPath.*' => ['integer', Rule::exists('categories', 'id')],
+            'parentPath.*' => ['integer', \App\Support\Catalog\LiveCatalogRule::exists(Category::class)],
             'status' => ['required', Rule::enum(CategoryStatus::class)],
             'isFeatured' => ['boolean'],
             'removeThumbImage' => ['boolean'],

@@ -46,28 +46,17 @@ use App\Models\Tenant\ThemeCountry;
 use App\Models\Tenant\Translation;
 use App\Models\Template as CentralTemplate;
 use App\Support\CacheVersion;
+use App\Support\Catalog\CatalogSource;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use InvalidArgumentException;
 
 class TenantCatalogSyncService
 {
-    protected const SECTIONS = [
-        'languages',
-        'currencies',
-        'settings',
-        'payment-gateways',
-        'themes',
-        'email-templates',
-        'pages',
-        'categories',
-        'products',
-        'badges',
-        'labels',
-        'flash-sales',
-        'coupons',
-    ];
+    /** Same list (and order) as the per-tenant cut-over flag (dedup plan §6). */
+    protected const SECTIONS = CatalogSource::SECTIONS;
 
     protected const PRODUCT_CHUNK = 100;
 
@@ -106,6 +95,10 @@ class TenantCatalogSyncService
         tenancy()->initialize($tenant);
         // try {
         foreach ($sections as $section) {
+            if ($this->skipsCentralSection($tenant, $section)) {
+                continue; // summary stays 0
+            }
+
             $summary[$section] = match ($section) {
                 'languages' => $this->syncLanguages(),
                 'currencies' => $this->syncCurrencies(),
@@ -222,8 +215,31 @@ class TenantCatalogSyncService
         });
     }
 
+    /**
+     * Dedup plan §2b: a section whose CatalogSource mode is `central` for this tenant is read live from central,
+     * so no entry point may write tenant copies for it any more. With every tenant on `sync` (default) this never
+     * skips anything.
+     */
+    public function skipsCentralSection(Tenant $tenant, string $section): bool
+    {
+        if (! in_array($section, CatalogSource::SECTIONS, true) || ! CatalogSource::isCentral($tenant, $section)) {
+            return false;
+        }
+
+        Log::debug('Catalog sync skipped: section is read from central for this tenant.', [
+            'tenant' => $tenant->getTenantKey(),
+            'section' => $section,
+        ]);
+
+        return true;
+    }
+
     protected function runSection(Tenant $tenant, string $section): int
     {
+        if ($this->skipsCentralSection($tenant, $section)) {
+            return 0;
+        }
+
         return match ($section) {
             'languages' => $this->syncLanguages(),
             'currencies' => $this->syncCurrencies(),
@@ -1665,6 +1681,10 @@ class TenantCatalogSyncService
      */
     public function syncNewProductsForTenant(Tenant $tenant, ?array $centralProductIds = null): int
     {
+        if ($this->skipsCentralSection($tenant, 'products')) {
+            return 0;
+        }
+
         set_time_limit(0);
         tenancy()->initialize($tenant);
 
@@ -1707,6 +1727,10 @@ class TenantCatalogSyncService
 
     public function syncProductToTenant(CentralProduct $centralProduct, Tenant $tenant, bool $force = false): void
     {
+        if ($this->skipsCentralSection($tenant, 'products')) {
+            return;
+        }
+
         $this->profitPercentage = max(0, (float) ($tenant->profit_percentage ?? 0));
 
         // Load active shipping costs from central.
@@ -2171,6 +2195,14 @@ class TenantCatalogSyncService
             fn(CentralCoupon $coupon) => $coupon->isAllCountries() || array_intersect($coupon->countryIds(), $tenantCountryIds) !== []
         );
 
+        // Remove tenant coupons whose central counterpart was deleted or is no longer applicable to this tenant
+        // (e.g. tenant stopped serving that country) BEFORE upserting: a central code deleted and re-created
+        // (new central id, same code) would otherwise hit `coupons_code_unique` on every later sync (QA D-P0-1).
+        Coupon::query()
+            ->whereNotNull('central_coupon_id')
+            ->whereNotIn('central_coupon_id', $applicableCoupons->pluck('id'))
+            ->delete();
+
         foreach ($applicableCoupons as $centralCoupon) {
             $tenantCoupon = Coupon::query()->updateOrCreate(
                 ['central_coupon_id' => $centralCoupon->id],
@@ -2189,13 +2221,6 @@ class TenantCatalogSyncService
                 $centralCoupon->isAllCountries() ? [] : array_intersect($centralCoupon->countryIds(), $tenantCountryIds)
             );
         }
-
-        // Remove tenant coupons whose central counterpart was deleted or is no
-        // longer applicable to this tenant (e.g. tenant stopped serving that country).
-        Coupon::query()
-            ->whereNotNull('central_coupon_id')
-            ->whereNotIn('central_coupon_id', $applicableCoupons->pluck('id'))
-            ->delete();
 
         return $applicableCoupons->count();
     }

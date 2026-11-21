@@ -43,7 +43,8 @@ class SyncTenantSectionJob implements ShouldQueue
             return;
         }
 
-        if ($this->section === 'products') {
+        // Central-mode products have no tenant copies to reprice (dedup plan §2b; the profit job is rewritten in phase 5).
+        if ($this->section === 'products' && ! \App\Support\Catalog\CatalogSource::isCentral($tenant, 'products')) {
             ApplyTenantProfitPercentageJob::dispatch($tenant->id);
         }
     }

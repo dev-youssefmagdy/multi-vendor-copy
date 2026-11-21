@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Concerns\SoftDeletesCatalogRow;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -12,7 +13,7 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
 class VariationOption extends Model
 {
     use HasFactory;
-    use HasTranslations, CentralConnection;
+    use HasTranslations, CentralConnection, SoftDeletesCatalogRow;
 
     protected array $translated = ['name'];
 
@@ -36,5 +37,13 @@ class VariationOption extends Model
     public function variants(): BelongsToMany
     {
         return $this->belongsToMany(ProductVariant::class, 'product_variant_option')->withTimestamps();
+    }
+
+    /** ON DELETE actions of the FKs pointing at this table, replayed on soft delete (SoftDeletesCatalogRow). */
+    protected static function catalogDeleteActions(): array
+    {
+        return [
+            ['product_variant_option', 'variation_option_id', 'cascade'],
+        ];
     }
 }

@@ -307,7 +307,7 @@ class CompleteRegistrationPage extends Component
                 'min:1',
                 "max:{$this->categoriesCount}",
             ],
-            'selectedCategoryIds.*' => ['integer', Rule::exists('categories', 'id')],
+            'selectedCategoryIds.*' => ['integer', \App\Support\Catalog\LiveCatalogRule::exists(Category::class)],
         ]);
 
         $this->finalize($registrationService, array_map('intval', $this->selectedCategoryIds));

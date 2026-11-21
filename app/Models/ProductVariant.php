@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\VariationStatus;
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Concerns\SoftDeletesCatalogRow;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -13,7 +14,7 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
 
 class ProductVariant extends Model
 {
-    use HasFactory, HasTranslations, CentralConnection;
+    use HasFactory, HasTranslations, CentralConnection, SoftDeletesCatalogRow;
 
     protected array $translated = ['title'];
 
@@ -69,5 +70,14 @@ class ProductVariant extends Model
     public function files(): MorphMany
     {
         return $this->morphMany(File::class, 'model');
+    }
+
+    /** ON DELETE actions of the FKs pointing at this table, replayed on soft delete (SoftDeletesCatalogRow). */
+    protected static function catalogDeleteActions(): array
+    {
+        return [
+            ['product_variant_option', 'product_variant_id', 'cascade'],
+            ['product_image_embeddings', 'variant_id', 'cascade'],
+        ];
     }
 }

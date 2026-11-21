@@ -28,6 +28,11 @@ class CentralCatalogTenantSyncService
     protected function dispatchProductToTenants(Product $product, iterable $tenants): void
     {
         foreach ($tenants as $tenant) {
+            // Dedup plan §2b: tenants reading products live from central get no copy.
+            if ($this->tenantCatalogSyncService->skipsCentralSection($tenant, 'products')) {
+                continue;
+            }
+
             SyncCentralProductToTenantJob::dispatch($product->id, $tenant->id);
         }
     }
@@ -130,7 +135,17 @@ class CentralCatalogTenantSyncService
         $sections = array_values(array_unique(array_filter($sections)));
 
         foreach ($tenants as $tenant) {
-            SyncTenantSectionsJob::dispatch($tenant->id, $sections);
+            // Dedup plan §2b: drop the sections this tenant reads live from central (all on `sync` = unchanged).
+            $tenantSections = array_values(array_filter(
+                $sections,
+                fn (string $section) => ! $this->tenantCatalogSyncService->skipsCentralSection($tenant, $section),
+            ));
+
+            if ($sections !== [] && $tenantSections === []) {
+                continue;
+            }
+
+            SyncTenantSectionsJob::dispatch($tenant->id, $tenantSections);
         }
     }
 }

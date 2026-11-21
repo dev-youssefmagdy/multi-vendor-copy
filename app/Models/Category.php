@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\CategoryStatus;
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Concerns\SoftDeletesCatalogRow;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -15,7 +16,7 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
 class Category extends Model
 {
     use HasFactory;
-    use HasTranslations, CentralConnection;
+    use HasTranslations, CentralConnection, SoftDeletesCatalogRow;
 
     protected array $translated = ['name', 'slug', 'description', 'meta_keywords', 'meta_description'];
 
@@ -66,5 +67,14 @@ class Category extends Model
             : $this->files()->where('key', 'thumb')->first();
 
         return $file?->full_path;
+    }
+
+    /** ON DELETE actions of the FKs pointing at this table, replayed on soft delete (SoftDeletesCatalogRow). */
+    protected static function catalogDeleteActions(): array
+    {
+        return [
+            ['category_product', 'category_id', 'cascade'],
+            ['categories', 'parent_id', 'null'],
+        ];
     }
 }

@@ -6,13 +6,14 @@ use App\Models\Concerns\HasCountries;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
+use App\Models\Concerns\SoftDeletesCatalogRow;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class CentralFlashSale extends Model
 {
-    use HasCountries;
+    use HasCountries, SoftDeletesCatalogRow;
 
     protected string $countryPivotTable = 'central_flash_sale_country';
 
@@ -101,5 +102,14 @@ class CentralFlashSale extends Model
         }
 
         return true;
+    }
+
+    /** ON DELETE actions of the FKs pointing at this table, replayed on soft delete (SoftDeletesCatalogRow). */
+    protected static function catalogDeleteActions(): array
+    {
+        return [
+            ['central_flash_sale_product', 'central_flash_sale_id', 'cascade'],
+            ['central_flash_sale_country', 'central_flash_sale_id', 'cascade'],
+        ];
     }
 }

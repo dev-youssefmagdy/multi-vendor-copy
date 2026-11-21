@@ -100,7 +100,7 @@ class TenantEditorController extends Controller
             'phone'             => ['nullable', 'string', 'max:50'],
             'status'            => ['required', Rule::enum(TenantStatus::class)],
             'categoryIds'       => ['array'],
-            'categoryIds.*'     => ['integer', Rule::exists('categories', 'id')],
+            'categoryIds.*'     => ['integer', \App\Support\Catalog\LiveCatalogRule::exists(Category::class)],
             'primaryLanguageId' => ['nullable', 'integer', Rule::exists('languages', 'id')],
             'packageId'         => ['nullable', 'integer', Rule::exists('packages', 'id')],
             'trialEndsAt'       => ['nullable', 'date'],

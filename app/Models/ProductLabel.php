@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use App\Models\Concerns\SoftDeletesCatalogRow;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Stancl\Tenancy\Database\Concerns\CentralConnection;
@@ -15,7 +16,7 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  */
 class ProductLabel extends Model
 {
-    use CentralConnection;
+    use CentralConnection, SoftDeletesCatalogRow;
 
     protected $fillable = ['text', 'translations', 'icon', 'active', 'sort_order'];
 
@@ -58,5 +59,13 @@ class ProductLabel extends Model
             '{stock}' => $stock > 99 ? '+99' : (string) max(0, $stock),
             '{delivery_date}' => Carbon::now()->addDays(3)->translatedFormat('d F'),
         ]);
+    }
+
+    /** ON DELETE actions of the FKs pointing at this table, replayed on soft delete (SoftDeletesCatalogRow). */
+    protected static function catalogDeleteActions(): array
+    {
+        return [
+            ['product_label_product', 'product_label_id', 'cascade'],
+        ];
     }
 }

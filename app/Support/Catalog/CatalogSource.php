@@ -14,7 +14,10 @@ use InvalidArgumentException;
  * Storage (decision, phase 0): the tenant's `catalog_source` attribute, i.e. a key inside the central
  * `tenants.data` JSON column (stancl VirtualColumn: Tenant has no custom physical columns), e.g.
  * `{"badges": "central"}`. No migration needed; unknown / missing sections fall back to `sync`.
- * Nothing reads this flag yet (phase 0 = no behaviour change).
+ *
+ * Phase 0: TenantCatalogSyncService / CentralCatalogTenantSyncService skip `central` sections and
+ * `catalog:sync-check` reports the mode. Nothing sets a section to `central` outside tests yet (no read path
+ * exists before phase 2), so all tenants stay on `sync`.
  */
 final class CatalogSource
 {
@@ -79,8 +82,26 @@ final class CatalogSource
     }
 
     /**
-     * Returns the full map with one section changed (does not save). Persist with
-     * `Tenant::saveData($tenant->id, [CatalogSource::ATTRIBUTE => $map])` (row-locked read-modify-write).
+     * Persists one section's mode (tests and ops commands only; no request path flips a mode). Row-locked
+     * read-modify-write on the central `tenants` row, so concurrent `saveData()` writers keep their keys; the given
+     * model is updated in memory too.
+     */
+    public static function set(Tenant $tenant, string $section, string $source): void
+    {
+        $tenant->getConnection()->transaction(function () use ($tenant, $section, $source) {
+            $fresh = $tenant->newQuery()->whereKey($tenant->getTenantKey())->lockForUpdate()->firstOrFail();
+            $map = self::withSection($fresh, $section, $source);
+
+            $fresh->setAttribute(self::ATTRIBUTE, $map);
+            $fresh->save();
+
+            $tenant->setAttribute(self::ATTRIBUTE, $map);
+            $tenant->syncOriginalAttribute(self::ATTRIBUTE);
+        });
+    }
+
+    /**
+     * Returns the full map with one section changed (does not save; see set()).
      *
      * @return array<string, 'sync'|'central'>
      */

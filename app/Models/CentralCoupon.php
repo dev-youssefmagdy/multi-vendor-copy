@@ -7,11 +7,12 @@ use App\Models\Concerns\HasCountries;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
+use App\Models\Concerns\SoftDeletesCatalogRow;
 use Illuminate\Database\Eloquent\Model;
 
 class CentralCoupon extends Model
 {
-    use HasCountries;
+    use HasCountries, SoftDeletesCatalogRow;
 
     protected string $countryPivotTable = 'central_coupon_country';
 
@@ -50,5 +51,13 @@ class CentralCoupon extends Model
             ->where('active', true)
             ->where(fn($q) => $q->whereNull('start_date')->orWhere('start_date', '<=', $moment))
             ->where(fn($q) => $q->whereNull('end_date')->orWhere('end_date', '>=', $moment));
+    }
+
+    /** ON DELETE actions of the FKs pointing at this table, replayed on soft delete (SoftDeletesCatalogRow). */
+    protected static function catalogDeleteActions(): array
+    {
+        return [
+            ['central_coupon_country', 'central_coupon_id', 'cascade'],
+        ];
     }
 }
