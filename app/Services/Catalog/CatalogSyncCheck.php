@@ -192,7 +192,8 @@ class CatalogSyncCheck
             'categories' => $this->visibilityMetric('categories', 'central_category_id', 'categories', "c.status = 'published'"),
             'badges' => ['duplicate_texts' => (int) $this->scalar(
                 "SELECT COUNT(*) FROM (SELECT text FROM {$this->t('product_badges')} GROUP BY text HAVING COUNT(*) > 1) d"
-            )],
+            )] + $this->badgeParityMetrics() + $this->dedupMetrics('badges'),
+            'labels' => $this->labelParityMetrics() + $this->dedupMetrics('labels'),
             default => [],
         } + (isset(self::TRANSLATED[$section]) ? ['translations' => $this->translationParity($section, $table, $link, $centralTable, $centralKey)] : []);
     }
@@ -346,7 +347,170 @@ class CatalogSyncCheck
             )
             : null;
 
-        return $metrics;
+        return $metrics + $this->fieldOverrideMetrics() + $this->dedupMetrics('field_overrides', 'field_overrides_');
+    }
+
+    /** SQL (alias $alias) for "tenant product is NOT an own product". */
+    private function notOwn(string $alias): string
+    {
+        return $this->tenantHas('products', 'is_own_product') ? "COALESCE({$alias}.`is_own_product`, 0) = 0" : '1 = 1';
+    }
+
+    /**
+     * Dedup phase 2 badge parity (usable as gates, e.g. --gate=pairs_missing_in_copy:0):
+     *  pairs_missing_in_copy  central pivot pairs of carried products with no tenant copy row (sync lag; would show
+     *                         up as new in central mode → run the badges sync before migrate/verify)
+     *  sort_overrides_pending copy rows of a central pair whose sort differs from central and have no override row yet
+     *  attaches_pending       copy rows on a central-linked badge that central does not have (vendor attaches) and no
+     *                         typed attach row yet
+     *  override_rows / central_attach_rows  phase-2 rows (null before the tenant migration)
+     *
+     * @return array<string, int|null>
+     */
+    private function badgeParityMetrics(): array
+    {
+        if (! $this->tenantHas('product_badges', 'central_product_badge_id') || ! isset($this->centralColumns['product_badge_product']['country_id'])) {
+            return [];
+        }
+
+        $t = $this->t('product_badge_product');
+        $b = $this->t('product_badges');
+        $p = $this->t('products');
+        $cp = CentralTable::name('product_badge_product');
+        $hasOverrides = isset($this->tenantColumns['tenant_badge_product_overrides']);
+        $hasAttach = $this->tenantHas('product_badge_product', 'catalog_badge_id');
+        $o = $this->t('tenant_badge_product_overrides');
+        $centralPair = "SELECT 1 FROM {$cp} cp WHERE cp.product_badge_id = b.central_product_badge_id AND cp.product_id = p.central_product_id AND cp.country_id <=> t.country_id";
+
+        $missing = (int) $this->scalar(
+            "SELECT COUNT(*) FROM {$cp} cp JOIN {$p} p ON p.central_product_id = cp.product_id AND {$this->notOwn('p')}
+              WHERE NOT EXISTS (SELECT 1 FROM {$t} t JOIN {$b} b ON b.id = t.product_badge_id
+                                 WHERE b.central_product_badge_id = cp.product_badge_id AND t.product_id = p.id AND t.country_id <=> cp.country_id)"
+        );
+
+        $overrideExists = $hasOverrides
+            ? "EXISTS (SELECT 1 FROM {$o} o WHERE o.badge_type = 'central' AND o.badge_id = b.central_product_badge_id AND o.product_type = 'central' AND o.product_id = p.central_product_id AND o.country_key = IFNULL(t.country_id, 0))"
+            : '0 = 1';
+        $attachExists = $hasAttach
+            ? "EXISTS (SELECT 1 FROM {$t} a WHERE a.product_badge_id IS NULL AND a.badge_type = 'central' AND a.catalog_badge_id = b.central_product_badge_id AND a.product_id = t.product_id AND a.country_id <=> t.country_id)"
+            : '0 = 1';
+
+        $row = $this->db->selectOne(
+            "SELECT
+                SUM(CASE WHEN p.central_product_id IS NOT NULL AND {$this->notOwn('p')} AND EXISTS ({$centralPair} AND cp.sort_order <> t.sort_order) AND NOT {$overrideExists} THEN 1 ELSE 0 END) AS sort_pending,
+                SUM(CASE WHEN NOT (p.central_product_id IS NOT NULL AND {$this->notOwn('p')} AND EXISTS ({$centralPair})) AND NOT {$attachExists} THEN 1 ELSE 0 END) AS attach_pending
+             FROM {$t} t
+             JOIN {$b} b ON b.id = t.product_badge_id AND b.central_product_badge_id IS NOT NULL
+             LEFT JOIN {$p} p ON p.id = t.product_id"
+        );
+
+        return [
+            'pairs_missing_in_copy' => $missing,
+            'sort_overrides_pending' => (int) $row->sort_pending,
+            'attaches_pending' => (int) $row->attach_pending,
+            'override_rows' => $hasOverrides ? (int) $this->scalar("SELECT COUNT(*) FROM {$o}") : null,
+            'central_attach_rows' => $hasAttach ? (int) $this->scalar("SELECT COUNT(*) FROM {$t} WHERE product_badge_id IS NULL") : null,
+        ];
+    }
+
+    /**
+     * Dedup phase 2 label parity (labels = DROP, read central directly): pairs_missing_in_copy / pairs_extra_in_copy
+     * (central product_label_product of carried products vs the tenant copy pivot) and stale_copies (copy fields ≠
+     * central). All must be 0 for the labels verify to pass.
+     *
+     * @return array<string, int|null>
+     */
+    private function labelParityMetrics(): array
+    {
+        if (! $this->tenantHas('product_labels', 'central_product_label_id') || ! isset($this->tenantColumns['product_label_product'])) {
+            return [];
+        }
+
+        $t = $this->t('product_label_product');
+        $l = $this->t('product_labels');
+        $p = $this->t('products');
+        $cpl = CentralTable::name('product_label_product');
+        $cl = CentralTable::name('product_labels');
+
+        return [
+            'pairs_missing_in_copy' => (int) $this->scalar(
+                "SELECT COUNT(*) FROM {$cpl} cp JOIN {$p} p ON p.central_product_id = cp.product_id AND {$this->notOwn('p')}
+                 JOIN {$cl} c ON c.id = cp.product_label_id AND {$this->centralLive('product_labels')}
+                  WHERE NOT EXISTS (SELECT 1 FROM {$t} t JOIN {$l} l ON l.id = t.product_label_id
+                                     WHERE l.central_product_label_id = cp.product_label_id AND t.product_id = p.id)"
+            ),
+            'pairs_extra_in_copy' => (int) $this->scalar(
+                "SELECT COUNT(*) FROM {$t} t JOIN {$l} l ON l.id = t.product_label_id AND l.central_product_label_id IS NOT NULL
+                 LEFT JOIN {$p} p ON p.id = t.product_id
+                  WHERE NOT EXISTS (SELECT 1 FROM {$cpl} cp JOIN {$cl} c ON c.id = cp.product_label_id AND {$this->centralLive('product_labels')}
+                                     WHERE cp.product_label_id = l.central_product_label_id AND cp.product_id = p.central_product_id)"
+            ),
+            'stale_copies' => (int) $this->scalar(
+                "SELECT COUNT(*) FROM {$l} l JOIN {$cl} c ON c.id = l.central_product_label_id
+                  WHERE NOT (l.text <=> c.text AND l.icon <=> c.icon AND l.active <=> c.active AND l.sort_order <=> c.sort_order
+                             AND CAST(l.translations AS JSON) <=> CAST(c.translations AS JSON))"
+            ),
+        ];
+    }
+
+    /**
+     * Dedup §4.2a: field_override_rows, custom_without_override (legacy freeze still active for that product until
+     * `catalog:dedup-migrate field_overrides`), field_overrides_central_changed (central value differs from the value
+     * at approval: "central updated" hint).
+     *
+     * @return array<string, int|null>
+     */
+    private function fieldOverrideMetrics(): array
+    {
+        if (! isset($this->tenantColumns['tenant_field_overrides'])) {
+            return ['field_override_rows' => null];
+        }
+
+        $o = $this->t('tenant_field_overrides');
+        $p = $this->t('products');
+
+        return [
+            'field_override_rows' => (int) $this->scalar("SELECT COUNT(*) FROM {$o}"),
+            'custom_without_override' => $this->tenantHas('products', 'has_custom_translations') ? (int) $this->scalar(
+                "SELECT COUNT(*) FROM {$p} p WHERE p.has_custom_translations = 1 AND p.central_product_id IS NOT NULL
+                   AND NOT EXISTS (SELECT 1 FROM {$o} o WHERE o.entity_type = 'central_product' AND o.entity_id = p.central_product_id)"
+            ) : null,
+            'field_overrides_central_changed' => (int) $this->scalar(
+                "SELECT COUNT(*) FROM {$o} o
+                   LEFT JOIN " . CentralTable::name('languages') . ' cl ON cl.code = o.locale
+                   LEFT JOIN ' . CentralTable::name('translations') . " ct ON ct.translatable_type = ? AND ct.translatable_id = o.entity_id
+                        AND ct.language_id = cl.id AND ct.field = o.field
+                  WHERE o.entity_type = 'central_product' AND NOT (TRIM(COALESCE(o.central_value_at_approval, '')) <=> TRIM(COALESCE(ct.value, '')))",
+                [\App\Models\Product::class],
+            ),
+        ];
+    }
+
+    /**
+     * Last `catalog:dedup-migrate` runs of this tenant + section: {prefix}dedup_migrate / dedup_verify (status) and
+     * {prefix}dedup_verify_diffs (int; gate e.g. --gate=dedup_verify_diffs:0; null = never verified).
+     *
+     * @return array<string, mixed>
+     */
+    private function dedupMetrics(string $section, string $prefix = ''): array
+    {
+        if (! isset($this->centralColumns['catalog_dedup_runs'])) {
+            return [];
+        }
+
+        $last = fn (string $step) => $this->db->selectOne(
+            'SELECT status, counts FROM `catalog_dedup_runs` WHERE tenant_id = ? AND section = ? AND step = ? ORDER BY id DESC LIMIT 1',
+            [(string) $this->tenant->getTenantKey(), $section, $step],
+        );
+        $migrate = $last('migrate');
+        $verify = $last('verify');
+        $verifyCounts = $verify ? (array) json_decode((string) $verify->counts, true) : [];
+
+        return [
+            $prefix . 'dedup_migrate' => $migrate->status ?? null,
+            $prefix . 'dedup_verify' => $verify->status ?? null,
+            $prefix . 'dedup_verify_diffs' => $verify && $verify->status === 'done' ? (int) ($verifyCounts['diffs'] ?? 0) : null,
+        ];
     }
 
     /**

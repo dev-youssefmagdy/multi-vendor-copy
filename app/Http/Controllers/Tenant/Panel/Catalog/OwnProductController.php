@@ -10,7 +10,7 @@ use App\Http\Controllers\Tenant\Panel\PanelController;
 use App\Http\Requests\Tenant\Panel\Catalog\SaveOwnProductRequest;
 use App\Models\Country;
 use App\Models\Tenant\Product;
-use App\Models\Tenant\ProductBadge;
+use App\Repositories\Tenant\Catalog\ProductBadgeSelection;
 use App\Models\VariationOption;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\Tenant\PlanLimitService;
@@ -183,8 +183,7 @@ final class OwnProductController extends PanelController
             $savedProduct->update(['allowed_country_ids' => self::allowedCountryIdsFromTicks((array) $request->input('countries', []), array_keys(self::countryOptions()))]);
         }
 
-        $savedProduct->badges()->sync(array_values(array_filter((array) $request->input('badge_ids', []), fn ($id) => filled($id))));
-        \App\Support\Catalog\CatalogRefWriter::fillQuietly('product_badge_product', ['product_id' => [$savedProduct->id]]);
+        app(ProductBadgeSelection::class)->save($savedProduct, (array) $request->input('badge_ids', []));
 
         // Primary image — a new upload always wins; explicit removal without a
         // new file simply deletes the existing one.
@@ -428,7 +427,7 @@ final class OwnProductController extends PanelController
             'existingGallery' => $existingGallery,
             'variations' => $variations,
             'variationsJson' => $variationsJson,
-            'badges' => ProductBadge::query()->where('active', true)->orderBy('text')->get(),
+            'badges' => app(ProductBadgeSelection::class)->options(),
             'selectedBadgeIds' => $selectedBadgeIds,
             'countryOptions' => self::countryOptions(),
             'countryFlags' => self::countryFlags(),

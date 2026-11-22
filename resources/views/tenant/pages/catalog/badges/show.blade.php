@@ -6,10 +6,22 @@
     @include('tenant.pages.catalog._module-nav', ['activeTab' => $badge->text])
 
     <div class="pm-page-actions">
-        <a href="{{ route('tenant.badges.sort', $badge) }}" class="btn btn-secondary">{{ __('Sort order') }}</a>
+        <a href="{{ route('tenant.badges.sort', ['badge' => $badge, 'country_id' => $activeCountryId]) }}" class="btn btn-secondary">{{ __('Sort order') }}</a>
     </div>
 
     <x-tenant::stats-grid :stats="$stats" :columns="2" />
+
+    {{-- Dedup phase 2 (badges = central): the badge itself (name, active) belongs to the platform and is read-only
+         here; which of your products carry it, per country, and their order stay yours. Sync mode: not rendered. --}}
+    @if($badge instanceof \App\Repositories\Tenant\Catalog\CatalogBadge && $badge->isCentral())
+        <div class="notice-muted" data-badge-platform-notice>
+            <x-tenant::badge color="cyan">{{ __('Platform') }}</x-tenant::badge>
+            {{ __('This badge is managed by the platform: its name and status cannot be changed here. You choose which of your products carry it and in which order.') }}
+            @unless($badge->active)
+                <strong>{{ __('The platform has switched this badge off, so it is not shown on your storefront.') }}</strong>
+            @endunless
+        </div>
+    @endif
 
     <x-tenant::card :title="__('Countries')" data-badge-country-tabs>
         <div class="t-badge-country-tabs">

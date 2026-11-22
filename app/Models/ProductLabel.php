@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use App\Models\Concerns\ProductLabelText;
 use App\Models\Concerns\SoftDeletesCatalogRow;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -16,7 +16,7 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  */
 class ProductLabel extends Model
 {
-    use CentralConnection, SoftDeletesCatalogRow;
+    use CentralConnection, ProductLabelText, SoftDeletesCatalogRow;
 
     protected $fillable = ['text', 'translations', 'icon', 'active', 'sort_order'];
 
@@ -42,23 +42,6 @@ class ProductLabel extends Model
     public function scopeOrdered(Builder $query): Builder
     {
         return $query->orderBy('sort_order')->orderBy('id');
-    }
-
-    /** Text in the current app locale, falling back to the default `text`. */
-    public function localizedText(?string $locale = null): string
-    {
-        $translated = trim((string) data_get($this->translations, $locale ?? app()->getLocale()));
-
-        return $translated !== '' ? $translated : (string) $this->text;
-    }
-
-    /** Replace {stock} / {delivery_date} for one product. */
-    public function resolveText(int $stock): string
-    {
-        return strtr($this->localizedText(), [
-            '{stock}' => $stock > 99 ? '+99' : (string) max(0, $stock),
-            '{delivery_date}' => Carbon::now()->addDays(3)->translatedFormat('d F'),
-        ]);
     }
 
     /** ON DELETE actions of the FKs pointing at this table, replayed on soft delete (SoftDeletesCatalogRow). */

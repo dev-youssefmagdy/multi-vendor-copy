@@ -2,6 +2,10 @@
 
 namespace App\Models\Tenant;
 
+use App\Models\Tenant\Catalog\MergedProductBadge;
+use App\Models\Tenant\Catalog\MergedProductLabel;
+use App\Repositories\Tenant\Catalog\BadgeCatalog;
+use App\Repositories\Tenant\Catalog\LabelCatalog;
 use App\Services\Tenant\CustomerCountryResolver;
 use Carbon\Carbon;
 use App\Models\Tenant\Concerns\HasTranslations;
@@ -157,13 +161,35 @@ class Product extends Model
         return $this->morphMany(File::class, 'model')->orderBy('sort_order')->orderBy('id');
     }
 
-    public function badges(): BelongsToMany
+    /**
+     * The product's badges. Dedup plan phase 2: while the tenant's `catalog_source.badges` is `central`, the merged
+     * membership (central pairs + tenant attaches + own badges, BadgeCatalog) as MergedProductBadge rows (`text`,
+     * `active` like ProductBadge; `id` = badge ref "c:12"/"t:3"); otherwise the synced pivot, unchanged. Writes in
+     * central mode go through BadgeAssignments (this relation is read-only then).
+     */
+    public function badges(): BelongsToMany|HasMany
     {
+        if (BadgeCatalog::enabled()) {
+            return $this->hasMany(MergedProductBadge::class, 'product_id', 'id')
+                ->orderBy('badge_type')
+                ->orderBy('badge_id');
+        }
+
         return $this->belongsToMany(ProductBadge::class, 'product_badge_product')->withTimestamps();
     }
 
-    public function labels(): BelongsToMany
+    /**
+     * The product's labels. Dedup plan phase 2 (labels = DROP): while `catalog_source.labels` is `central`, central
+     * labels read live (LabelCatalog, MergedProductLabel); otherwise the synced copies, unchanged.
+     */
+    public function labels(): BelongsToMany|HasMany
     {
+        if (LabelCatalog::enabled()) {
+            return $this->hasMany(MergedProductLabel::class, 'product_id', 'id')
+                ->orderBy('sort_order')
+                ->orderBy('id');
+        }
+
         return $this->belongsToMany(ProductLabel::class, 'product_label_product')
             ->withTimestamps()
             ->orderBy('product_labels.sort_order')
@@ -183,7 +209,7 @@ class Product extends Model
         return $this->labels
             ->where('active', true)
             ->take(1) // a product shows a single label
-            ->map(fn(ProductLabel $label) => [
+            ->map(fn($label) => [ // ProductLabel or MergedProductLabel (ProductLabelText)
                 'icon' => \App\Support\ProductLabelIcons::svg($label->icon),
                 'text' => $label->resolveText($stock),
             ])

@@ -9,7 +9,7 @@ use App\Http\Requests\Tenant\Panel\Catalog\SaveProductRequest;
 use App\Models\Product as CentralProduct;
 use App\Models\ProductEditRequest;
 use App\Models\Tenant\Product;
-use App\Models\Tenant\ProductBadge;
+use App\Repositories\Tenant\Catalog\ProductBadgeSelection;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\Tenant\PlanLimitService;
 use App\Services\Tenant\TenantPanelService;
@@ -84,7 +84,7 @@ final class ProductController extends PanelController
             'activeLocale' => $activeLocale,
             'translations' => $translations,
             'categoryTree' => $this->repo->categoryTreeOptions(),
-            'badges' => ProductBadge::query()->where('active', true)->orderBy('text')->get(),
+            'badges' => app(ProductBadgeSelection::class)->options(),
             'centralProduct' => $centralProduct,
             'centralProductId' => $centralProductId,
             'shippingCosts' => $shippingCosts,
@@ -207,8 +207,7 @@ final class ProductController extends PanelController
             'default_locale' => $validated['active_locale'],
         ], $product);
 
-        $saved->badges()->sync(array_filter((array) ($validated['badge_ids'] ?? []), filled(...)));
-        \App\Support\Catalog\CatalogRefWriter::fillQuietly('product_badge_product', ['product_id' => [$saved->id]]);
+        app(ProductBadgeSelection::class)->save($saved, (array) ($validated['badge_ids'] ?? []));
         CacheVersion::bumpMany(['ProductBadge', 'Product']);
 
         $message = $editRequestSubmitted

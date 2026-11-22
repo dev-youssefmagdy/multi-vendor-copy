@@ -18,6 +18,9 @@ use App\Models\StaticPage;
 use App\Models\Tenant;
 use App\Models\Template;
 use App\Models\Variation;
+use App\Repositories\Tenant\Catalog\BadgeCatalog;
+use App\Repositories\Tenant\Catalog\LabelCatalog;
+use App\Support\CacheVersion;
 
 class CentralCatalogTenantSyncService
 {
@@ -133,6 +136,16 @@ class CentralCatalogTenantSyncService
     protected function dispatchToTenants(iterable $tenants, array $sections): void
     {
         $sections = array_values(array_unique(array_filter($sections)));
+
+        // Dedup plan phase 2 / invariant 8: tenants reading badges / labels live from central get no sync job, so a
+        // central change must invalidate their caches through the global version tags instead.
+        $globalTags = array_values(array_intersect_key(
+            ['badges' => BadgeCatalog::CACHE_TAG, 'labels' => LabelCatalog::CACHE_TAG],
+            array_flip($sections),
+        ));
+        if ($globalTags !== []) {
+            CacheVersion::bumpMany($globalTags);
+        }
 
         foreach ($tenants as $tenant) {
             // Dedup plan §2b: drop the sections this tenant reads live from central (all on `sync` = unchanged).

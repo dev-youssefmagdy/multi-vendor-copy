@@ -39,14 +39,14 @@ use App\Http\Controllers\Admin\TenantEditorController;
 use App\Http\Controllers\Admin\OrderReceiptController;
 use App\Http\Controllers\Admin\TenantImpersonateController;
 use App\Http\Controllers\Admin\BadgeProductsController;
+use App\Http\Controllers\Admin\BadgeSortController;
+use App\Http\Controllers\Admin\ProductEditRequestController;
 use App\Livewire\Admin\Label\AddEditLabel;
 use App\Livewire\Admin\Label\LabelsList;
 use App\Http\Controllers\Admin\ProductController;
 use App\Livewire\Admin\Product\AddEditProduct;
-use App\Livewire\Admin\Product\ProductEditRequestsList;
 use App\Livewire\Admin\Product\ProductsList;
 use App\Livewire\Admin\Product\SortProducts;
-use App\Livewire\Admin\Product\SortBadgeProducts;
 use App\Http\Controllers\Admin\LanguageController;
 use App\Livewire\Admin\Setting\AddEditCurrency;
 use App\Livewire\Admin\Setting\AddEditEmailTemplate;
@@ -247,7 +247,14 @@ Route::group([
         Route::get('/create', [ProductController::class, 'create'])->middleware('admin.permission:catalog.products.manage')->name('create');
         Route::post('/create', [ProductController::class, 'store'])->middleware('admin.permission:catalog.products.manage')->name('store');
         Route::post('/validate', [ProductController::class, 'validateForm'])->middleware('admin.permission:catalog.products.manage')->name('validate');
-        Route::get('/edit-requests', ProductEditRequestsList::class)->middleware('admin.permission:catalog.product-edit-requests.manage')->name('edit-requests');
+        // Dedup plan §4.2a: Blade + JSON actions (was Livewire ProductEditRequestsList).
+        Route::middleware('admin.permission:catalog.product-edit-requests.manage')->group(function () {
+            Route::get('/edit-requests', [ProductEditRequestController::class, 'index'])->name('edit-requests');
+            Route::get('/edit-requests/{editRequest}', [ProductEditRequestController::class, 'show'])->whereNumber('editRequest')->name('edit-requests.show');
+            Route::post('/edit-requests/{editRequest}/approve', [ProductEditRequestController::class, 'approve'])->whereNumber('editRequest')->name('edit-requests.approve');
+            Route::post('/edit-requests/{editRequest}/reject', [ProductEditRequestController::class, 'reject'])->whereNumber('editRequest')->name('edit-requests.reject');
+            Route::post('/edit-requests/{editRequest}/reset', [ProductEditRequestController::class, 'reset'])->whereNumber('editRequest')->name('edit-requests.reset');
+        });
         Route::get('/{product}/edit', [ProductController::class, 'edit'])->middleware('admin.permission:catalog.products.manage')->name('edit');
         Route::put('/{product}/edit', [ProductController::class, 'update'])->middleware('admin.permission:catalog.products.manage')->name('update');
         Route::post('/{product}/validate', [ProductController::class, 'validateForm'])->middleware('admin.permission:catalog.products.manage')->name('validate.update');
@@ -284,7 +291,9 @@ Route::group([
         Route::get('/recommended', [BadgeProductsController::class, 'show'])->name('recommended');
         Route::get('/trending-now', [BadgeProductsController::class, 'show'])->name('trending-now');
         Route::get('/{badge}/search', [BadgeProductsController::class, 'searchProducts'])->name('search');
-        Route::get('/{badge}/sort', SortBadgeProducts::class)->name('sort');
+        // Dedup plan §7 / F1: Blade + JSON (was Livewire SortBadgeProducts); saving bumps the CentralProductBadge tag.
+        Route::get('/{badge}/sort', [BadgeSortController::class, 'index'])->name('sort');
+        Route::post('/{badge}/sort', [BadgeSortController::class, 'update'])->name('sort.update');
         Route::post('/{badge}/assign-category', [BadgeProductsController::class, 'assignCategory'])->name('assign-category');
         Route::post('/{badge}/save', [BadgeProductsController::class, 'save'])->name('save');
     });

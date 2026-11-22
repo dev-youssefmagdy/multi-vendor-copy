@@ -45,7 +45,10 @@ use App\Models\Tenant\Theme;
 use App\Models\Tenant\ThemeCountry;
 use App\Models\Tenant\Translation;
 use App\Models\Template as CentralTemplate;
+use App\Models\CatalogDedupRun;
+use App\Repositories\Tenant\Catalog\FieldOverrideStore;
 use App\Support\CacheVersion;
+use App\Support\Catalog\EditableCentralFields;
 use App\Support\Catalog\CatalogRefWriter;
 use App\Support\Catalog\CatalogSource;
 use Illuminate\Support\Facades\Cache;
@@ -80,6 +83,9 @@ class TenantCatalogSyncService
 
     /** @var int[]|null central product ids the tenant explicitly asked to add (null = no explicit list) */
     protected ?array $adoptProductIds = null;
+
+    /** @var array<string, array{0: bool, 1: int}> tenant id => [legacy has_custom_translations freeze active, checked at] (dedup §4.2a) */
+    protected array $legacyFreeze = [];
 
     /** @var int[] central email template ids being reset by resetEmailTemplateFromCentral() (overwrite tenant edits) */
     protected array $overwriteEmailTemplateIds = [];
@@ -1221,23 +1227,97 @@ class TenantCatalogSyncService
         $existingTranslations = $ctx->writer->existing($type, array_values($tenantProductIds));
         $desired = [];
 
+        // Dedup plan §4.2a: approved (field, locale) overrides win, every other field/locale follows central.
+        $overrides = $this->fieldOverrides($products->pluck('id')->all());
+        $legacyFreeze = $this->legacyCustomTranslationsFreeze(tenant());
+
         foreach ($products as $product) {
             $tenantId = $tenantProductIds[$product->id];
-            // A tenant's admin-approved name/description must survive future syncs;
-            // label, summary, meta_keywords, meta_description are never approval-gated so always sync.
-            $custom = isset($existing[$product->id]) && $existing[$product->id]->has_custom_translations;
+            // Legacy: `has_custom_translations` froze all 6 fields; only until the product has override rows / the
+            // tenant's field_overrides migration ran (catalog:dedup-migrate field_overrides).
+            $custom = isset($existing[$product->id]) && $existing[$product->id]->has_custom_translations
+                && $legacyFreeze && ! isset($overrides[$product->id]);
 
-            $desired[$tenantId] = $this->desiredTranslations(
+            $desired[$tenantId] = $this->applyFieldOverrides($this->desiredTranslations(
                 $existingTranslations[$tenantId] ?? [],
                 $custom ? [] : $this->centralLocaleFields($product, $fields, $ctx->centralCodes),
                 $custom ? [] : $fields,
                 $fields,
                 $ctx->codeToId,
                 $ctx->activeIds,
-            );
+            ), $overrides[$product->id] ?? [], $ctx->codeToId, $ctx->activeIds);
         }
 
         $ctx->writer->replace($type, $desired, $existingTranslations);
+    }
+
+    /**
+     * Approved field overrides (dedup plan §4.2a) of central products: [central id => [locale => [field => value]]].
+     * Empty while the tenant DB has no `tenant_field_overrides` table.
+     *
+     * @param  int[]  $centralProductIds
+     * @return array<int, array<string, array<string, string>>>
+     */
+    protected function fieldOverrides(array $centralProductIds): array
+    {
+        return (new FieldOverrideStore())->valuesFor(EditableCentralFields::CENTRAL_PRODUCT, $centralProductIds);
+    }
+
+    /**
+     * Whether the legacy `has_custom_translations` flag still freezes all translated fields of a product WITHOUT
+     * override rows: yes until `catalog:dedup-migrate field_overrides` converted this tenant's custom products
+     * (completed `migrate` run in `catalog_dedup_runs`). Cached per tenant for 60 s.
+     */
+    protected function legacyCustomTranslationsFreeze(?Tenant $tenant): bool
+    {
+        if ($tenant === null) {
+            return true;
+        }
+
+        $key = (string) $tenant->getTenantKey();
+        // Re-checked after 60 s: long-lived queue workers pick up a migrate run without a restart.
+        if (! array_key_exists($key, $this->legacyFreeze) || time() - $this->legacyFreeze[$key][1] >= 60) {
+            try {
+                $this->legacyFreeze[$key] = [! $this->central(fn () => CatalogDedupRun::query()
+                    ->where('tenant_id', $key)
+                    ->where('section', 'field_overrides')
+                    ->where('step', 'migrate')
+                    ->where('status', CatalogDedupRun::DONE)
+                    ->exists()), time()];
+            } catch (\Throwable) {
+                $this->legacyFreeze[$key] = [true, time()]; // progress table missing: keep the old behaviour
+            }
+        }
+
+        return $this->legacyFreeze[$key][0];
+    }
+
+    /**
+     * Overlay approved overrides onto desiredTranslations() output (languageId => field => value).
+     *
+     * @param  array<int, array<string, string>>  $desired
+     * @param  array<string, array<string, string>>  $overrides  locale => field => value
+     * @param  array<string, int>  $codeToId
+     * @param  int[]  $activeIds
+     * @return array<int, array<string, string>>
+     */
+    protected function applyFieldOverrides(array $desired, array $overrides, array $codeToId, array $activeIds): array
+    {
+        foreach ($overrides as $locale => $values) {
+            $languageId = $codeToId[$locale] ?? null;
+            if (! $languageId || ! in_array($languageId, $activeIds, false)) {
+                continue;
+            }
+            foreach ($values as $field => $value) {
+                if (trim($value) === '') {
+                    unset($desired[$languageId][$field]);
+                } else {
+                    $desired[$languageId][$field] = trim($value);
+                }
+            }
+        }
+
+        return array_filter($desired);
     }
 
     /**
@@ -1795,18 +1875,33 @@ class TenantCatalogSyncService
         ]);
         $tenantProduct->save();
 
-        $tenantProduct->syncTranslations($this->mergeTranslatedFields(
+        // Dedup plan §4.2a: only the approved (field, locale) overrides survive; legacy flag freezes until migrated.
+        $productFields = ['name', 'label', 'summary', 'description', 'meta_keywords', 'meta_description'];
+        $overrides = $this->fieldOverrides([$centralProduct->id])[$centralProduct->id] ?? [];
+        $frozen = $tenantProduct->has_custom_translations && $overrides === [] && $this->legacyCustomTranslationsFreeze($tenant);
+        $merged = $this->mergeTranslatedFields(
             $tenantProduct,
-            $tenantProduct->has_custom_translations ? [] : $centralProduct->translationsByLocale(['name', 'label', 'summary', 'description', 'meta_keywords', 'meta_description']),
-            $tenantProduct->has_custom_translations ? [] : ['name', 'label', 'summary', 'description', 'meta_keywords', 'meta_description'],
-            ['name', 'label', 'summary', 'description', 'meta_keywords', 'meta_description']
-        ));
+            $frozen ? [] : $centralProduct->translationsByLocale($productFields),
+            $frozen ? [] : $productFields,
+            $productFields
+        );
+        foreach ($overrides as $locale => $values) {
+            foreach ($values as $field => $value) {
+                if ($locale !== '' && isset($merged[$locale])) {
+                    $merged[$locale][$field] = $value;
+                }
+            }
+        }
+        $tenantProduct->syncTranslations($merged);
         // Central links only (dedup plan R2): the vendor's own category picks (source = tenant) are kept.
         $this->syncCentralCategoryLinks([
             $tenantProduct->id => $this->allCategories()->whereIn('central_category_id', $centralProduct->categories->pluck('id'))->pluck('id')->map(fn ($id) => (int) $id)->all(),
         ]);
 
-        $this->syncProductLabels($centralProduct, $tenantProduct);
+        // Labels read live from central for this tenant (dedup phase 2, DROP): no tenant label copies.
+        if (! $this->skipsCentralSection($tenant, 'labels')) {
+            $this->syncProductLabels($centralProduct, $tenantProduct);
+        }
 
         if ($isNewProduct) {
             $hasPaidTranslation = Language::query()

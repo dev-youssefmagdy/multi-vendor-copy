@@ -9,6 +9,9 @@ use App\Models\Country;
 use App\Models\Tenant\Product;
 use App\Models\Tenant\ProductBadge;
 use App\Models\TenantCountry;
+use App\Repositories\Tenant\Catalog\BadgeAssignments;
+use App\Repositories\Tenant\Catalog\BadgeCatalog;
+use App\Repositories\Tenant\Catalog\CatalogBadge;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Support\CacheVersion;
 use App\Support\Tenant\Metric;
@@ -18,10 +21,29 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
+/**
+ * Tenant panel badge assignment (route key = badge text). Dedup plan phase 2: while the tenant's
+ * `catalog_source.badges` is `central`, `{badge}` resolves through the merged BadgeCatalog (central badges are
+ * read-only, assignments are tenant data written by BadgeAssignments); otherwise the synced `product_badges` row,
+ * exactly as before.
+ */
 final class BadgeController extends PanelController
 {
-    public function __construct(private readonly TenantPanelRepository $repo)
+    public function __construct(
+        private readonly TenantPanelRepository $repo,
+        private readonly BadgeCatalog $catalog,
+        private readonly BadgeAssignments $assignments,
+    ) {
+    }
+
+    /** Synced row (sync mode) or merged badge (central mode); 404 like the implicit binding it replaces. */
+    private function badge(string $value): ProductBadge|CatalogBadge
     {
+        if (BadgeCatalog::enabled()) {
+            return $this->catalog->resolve($value) ?? abort(404);
+        }
+
+        return ProductBadge::query()->where('text', $value)->firstOrFail();
     }
 
     public function index(): RedirectResponse
@@ -29,8 +51,10 @@ final class BadgeController extends PanelController
         return redirect()->route('tenant.badges.show', ['badge' => 'new-in']);
     }
 
-    public function show(Request $request, ProductBadge $badge): View
+    public function show(Request $request, string $badge): View
     {
+        $badge = $this->badge($badge);
+
         $badgeTitle = match ($badge->text) {
             'new-in' => __('New In Products'),
             'best-selling' => __('Best Selling Products'),
@@ -50,7 +74,9 @@ final class BadgeController extends PanelController
 
         // Only products the storefront actually renders for this badge (active +
         // central-visible, see HomeProductService::queryBadge).
-        $selectedProductIds = $badge->productsForCountry($activeCountryId)->where('products.active', true)->pluck('products.id')->map(fn ($id) => (int) $id)->all();
+        $selectedProductIds = $badge instanceof CatalogBadge
+            ? $this->catalog->productIds($badge, $activeCountryId, activeProductsOnly: true)
+            : $badge->productsForCountry($activeCountryId)->where('products.active', true)->pluck('products.id')->map(fn ($id) => (int) $id)->all();
         $selectedProductLabels = $this->repo->productNamesForIds($selectedProductIds);
 
         return view('tenant.pages.catalog.badges.show', [
@@ -68,8 +94,10 @@ final class BadgeController extends PanelController
         ]);
     }
 
-    public function searchProducts(Request $request, ProductBadge $badge): JsonResponse
+    public function searchProducts(Request $request, string $badge): JsonResponse
     {
+        $this->badge($badge);
+
         $result = $this->repo->searchProducts(
             (string) $request->input('q', ''),
             (int) $request->input('page', 1),
@@ -82,8 +110,10 @@ final class BadgeController extends PanelController
         ]);
     }
 
-    public function assignCategory(Request $request, ProductBadge $badge): JsonResponse
+    public function assignCategory(Request $request, string $badge): JsonResponse
     {
+        $this->badge($badge);
+
         $categoryId = (int) $request->input('category_id');
 
         if (!$categoryId) {
@@ -111,13 +141,20 @@ final class BadgeController extends PanelController
         ]);
     }
 
-    public function save(Request $request, ProductBadge $badge): JsonResponse
+    public function save(Request $request, string $badge): JsonResponse
     {
+        $badge = $this->badge($badge);
         $countryId = $request->integer('country_id') ?: null;
         $ids = array_filter(array_map('intval', $request->input('product_ids', [])));
         // Drop ids the storefront would never render (inactive / centrally hidden).
         $ids = Product::query()->where('active', true)->whereIn('id', $ids)->pluck('id')
             ->map(fn ($id) => (int) $id)->sortBy(fn ($id) => array_search($id, $ids, true))->values()->all();
+
+        if ($badge instanceof CatalogBadge) {
+            $this->assignments->saveForBadge($badge, $countryId, $ids);
+
+            return $this->savedResponse($ids, $countryId);
+        }
 
         $existingOrder = $badge->productsForCountry($countryId)->pluck('product_badge_product.sort_order', 'products.id');
         $nextOrder = $existingOrder->isEmpty() ? 0 : ($existingOrder->max() + 1);
@@ -142,6 +179,11 @@ final class BadgeController extends PanelController
 
         CacheVersion::bumpMany(['ProductBadge', 'Product']);
 
+        return $this->savedResponse($ids, $countryId);
+    }
+
+    private function savedResponse(array $ids, ?int $countryId): JsonResponse
+    {
         $label = $countryId ? ('country #'.$countryId) : __('Default');
 
         return $this->success(__('Badge assignment saved — :count products assigned for :badge.', ['count' => count($ids), 'badge' => $label]));

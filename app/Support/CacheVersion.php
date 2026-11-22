@@ -18,7 +18,11 @@ class CacheVersion
      * stored once at `cv:global:{Tag}` regardless of the current tenancy, so a
      * central edit (bumped in central context) invalidates every tenant's keys.
      */
-    public const GLOBAL_TAGS = ['HomeVariant', 'BladeTheme', 'CentralCategory', 'Country', 'Template'];
+    public const GLOBAL_TAGS = [
+        'HomeVariant', 'BladeTheme', 'CentralCategory', 'Country', 'Template',
+        // Dedup plan phase 2 (invariant 8): central badges / labels read live by tenants in `central` mode.
+        'CentralProductBadge', 'CentralProductLabel',
+    ];
 
     /** Every tag the storefront caches are keyed on (see bumpStorefront()). */
     public const STOREFRONT_TAGS = [

@@ -83,6 +83,8 @@ class NotificationLinks
                     'manufacturing' => 'tenant.manufacturing.index',
                     'brand_request' => 'tenant.brand-requests.index',
                     'new_catalog_products' => 'tenant.products.index',
+                    // Admin decision on a product edit request (ProductEditRequestReview) → the vendor's request list.
+                    'product_edit_approved', 'product_edit_rejected' => 'tenant.products.edit-requests',
                     'customer' => 'tenant.customers.index',
                     'payout' => 'tenant.finance.payouts',
                     'domain' => 'tenant.settings.domains',

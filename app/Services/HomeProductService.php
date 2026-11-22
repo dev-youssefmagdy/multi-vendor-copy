@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\Tenant\OrderItem;
 use App\Models\Tenant\Product;
+use App\Repositories\Tenant\Catalog\BadgeCatalog;
+use App\Repositories\Tenant\Catalog\LabelCatalog;
 use App\Support\CacheVersion;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -16,7 +18,14 @@ class HomeProductService
 
     protected function cacheRemember(string $key, \Closure $callback, array $extraTags = [])
     {
-        $tags = array_merge(self::CACHE_TAGS, $extraTags);
+        // Dedup phase 2: central badge assignments / labels are read live, so central edits must invalidate (global
+        // tags; QA D-P2-4 for labels).
+        $tags = array_merge(
+            self::CACHE_TAGS,
+            $extraTags,
+            BadgeCatalog::enabled() ? [BadgeCatalog::CACHE_TAG] : [],
+            LabelCatalog::enabled() ? [LabelCatalog::CACHE_TAG] : [],
+        );
         $version = collect($tags)->map(fn($tag) => CacheVersion::get($tag))->implode('.');
         $fullKey = 'storefront:' . (tenant()?->id ?? 'central') . ":home_products:{$key}:v{$version}";
         $ttl = (int) config('cache.storefront.home_products_ttl', 3600);
@@ -80,9 +89,19 @@ class HomeProductService
             ->select('products.*')
             ->orderByRaw('COALESCE(bs_sales.qty_window, 0) DESC')
             ->orderByRaw('COALESCE(bs_sales.qty_all, 0) DESC')
-            ->orderByRaw("EXISTS (SELECT 1 FROM product_badge_product pbp JOIN product_badges pbd ON pbd.id = pbp.product_badge_id WHERE pbp.product_id = products.id AND pbd.text = 'best-selling' AND pbd.active = 1) DESC")
+            ->orderByRaw(self::bestSellingBadgeSql() . ' DESC')
             ->orderByDesc('products.created_at')
             ->orderByDesc('products.id');
+    }
+
+    /** "has an active best-selling badge" (synced pivot, or the merged membership in badges = central mode). */
+    protected static function bestSellingBadgeSql(): string
+    {
+        if (BadgeCatalog::enabled()) {
+            return '(EXISTS (SELECT 1 FROM (' . BadgeCatalog::membershipSql() . ") pbp WHERE pbp.product_id = products.id AND pbp.text = 'best-selling' AND pbp.active = 1))";
+        }
+
+        return "EXISTS (SELECT 1 FROM product_badge_product pbp JOIN product_badges pbd ON pbd.id = pbp.product_badge_id WHERE pbp.product_id = products.id AND pbd.text = 'best-selling' AND pbd.active = 1)";
     }
 
     public function getBestSelling(int $limit, ?int $countryId = null, int $days = 30): Collection
@@ -266,6 +285,23 @@ class HomeProductService
 
     private function queryBadge(string $badgeText, int $limit, ?int $countryId, ?int $visitorCountryId = null): Collection
     {
+        if (BadgeCatalog::enabled()) {
+            // Merged membership (central pairs + tenant attaches + own badges, sort override applied), same filters.
+            return $this->baseQuery($visitorCountryId ?? $countryId)
+                ->joinSub(app(BadgeCatalog::class)->membershipQuery('mbp'), 'product_badge_product', 'product_badge_product.product_id', '=', 'products.id')
+                ->where('product_badge_product.text', $badgeText)
+                ->where('product_badge_product.active', true)
+                ->when(
+                    $countryId === null,
+                    fn($q) => $q->whereNull('product_badge_product.country_id'),
+                    fn($q) => $q->where('product_badge_product.country_id', $countryId),
+                )
+                ->orderBy('product_badge_product.sort_order')
+                ->select('products.*')
+                ->limit($limit)
+                ->get();
+        }
+
         return $this->baseQuery($visitorCountryId ?? $countryId)
             ->join('product_badge_product', 'product_badge_product.product_id', '=', 'products.id')
             ->join('product_badges', function ($join) use ($badgeText) {

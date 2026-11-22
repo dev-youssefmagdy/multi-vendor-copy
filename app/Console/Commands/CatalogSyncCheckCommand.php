@@ -11,13 +11,18 @@ use Illuminate\Console\Command;
  * Exit code 1 when a gate fails (default gate: no orphan variants), so it can run in CI/deploy or on a schedule.
  * Section `refs` (dedup plan phase 1): typed reference pairs still NULL / unmappable / dangling per table
  * (details per table with --json); optional gate e.g. --gate=unmapped_refs:0.
+ *
+ * Gates fail closed (QA D-P2-3): a gated metric that a section reports as NULL / non-numeric (e.g.
+ * `dedup_verify_diffs` of a tenant that was never verified, or whose last verify failed) FAILS. An explicit --gate
+ * whose metric no selected section of a tenant reports at all, or a tenant that was skipped (no database), FAILS too;
+ * the default gate only checks the sections that report it.
  */
 class CatalogSyncCheckCommand extends Command
 {
     protected $signature = 'catalog:sync-check
         {--tenant=* : Tenant id(s); default every tenant}
         {--section=* : Section(s); default every section}
-        {--gate=* : metric:max, e.g. orphan_variants:0, translations.different:100 or unmapped_refs:0 (replaces the default gates)}
+        {--gate=* : metric:max, e.g. orphan_variants:0, translations.different:100 or unmapped_refs:0 (replaces the default gates). Fails closed: a gated metric that is NULL (e.g. dedup_verify_diffs never verified) or not reported by any selected section fails}
         {--json : Print the report as JSON}';
 
     protected $description = 'Read-only report: drift between central catalog data and the tenant copies (dedup plan §2b.1)';
@@ -42,7 +47,7 @@ class CatalogSyncCheckCommand extends Command
         }
 
         $report = $check->run((array) $this->option('tenant'), $sections);
-        $failures = $this->evaluate($report, $gates);
+        $failures = $this->evaluate($report, $gates, (array) $this->option('gate') !== []);
 
         if ($this->option('json')) {
             $this->line(json_encode(['gates' => $gates, 'failures' => $failures, 'tenants' => $report], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
@@ -75,16 +80,39 @@ class CatalogSyncCheckCommand extends Command
     }
 
     /** @return list<string> */
-    private function evaluate(array $report, array $gates): array
+    private function evaluate(array $report, array $gates, bool $explicit = true): array
     {
+        $missing = new \stdClass();
         $failures = [];
         foreach ($report as $tenant) {
+            if (($tenant['skipped'] ?? null) !== null) {
+                if ($explicit) {
+                    $failures[] = "{$tenant['tenant']}: skipped ({$tenant['skipped']}), gates not evaluated";
+                }
+
+                continue;
+            }
+
+            $reported = array_fill_keys(array_keys($gates), false);
             foreach ($tenant['sections'] as $section => $metrics) {
                 foreach ($gates as $metric => $max) {
-                    $value = data_get($metrics, $metric);
-                    if (is_int($value) && $value > $max) {
+                    $value = data_get($metrics, $metric, $missing);
+                    if ($value === $missing) {
+                        continue; // this section does not measure the metric
+                    }
+                    $reported[$metric] = true;
+                    if (! is_int($value)) {
+                        // Fail closed: NULL = not measured (e.g. never verified), which must not pass a gate.
+                        $failures[] = "{$tenant['tenant']} / {$section}: {$metric} = " . ($value === null ? 'NULL' : json_encode($value)) . " (not measured; max {$max})";
+                    } elseif ($value > $max) {
                         $failures[] = "{$tenant['tenant']} / {$section}: {$metric} = {$value} (max {$max})";
                     }
+                }
+            }
+
+            foreach ($explicit ? $reported : [] as $metric => $seen) {
+                if (! $seen) {
+                    $failures[] = "{$tenant['tenant']}: {$metric} is not reported by any selected section";
                 }
             }
         }
