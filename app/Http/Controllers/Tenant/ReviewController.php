@@ -19,21 +19,22 @@ class ReviewController extends Controller
         $customer = Auth::guard('storefront')->user();
 
         $validated = $request->validate([
-            'product_id' => 'required|integer|exists:products,id',
+            'product_id' => \App\Repositories\Tenant\Catalog\ProductCatalog::enabled() ? 'required|integer|min:1' : 'required|integer|exists:products,id',
             'stars' => 'required|integer|min:1|max:5',
             'comment' => 'nullable|string|max:2000',
         ]);
 
-        if (!Product::find($validated['product_id'])) {
+        if (!\App\Repositories\Tenant\Catalog\ProductCatalog::query()->find($validated['product_id'])) {
             return response()->json(['success' => false, 'message' => __('Product not found.')], 404);
         }
 
-        if (ProductRate::where('product_id', $validated['product_id'])->where('customer_id', $customer->id)->exists()) {
+        $ref = \App\Repositories\Tenant\Catalog\ProductCatalog::enabled() ? \App\Repositories\Tenant\Catalog\ProductCatalog::refColumnsForKey((int) $validated['product_id']) : null;
+
+        if (ProductRate::where($ref ? ['product_type' => $ref['product_type'], 'catalog_product_id' => $ref['catalog_product_id']] : ['product_id' => $validated['product_id']])->where('customer_id', $customer->id)->exists()) {
             return response()->json(['success' => false, 'message' => __('You have already reviewed this product.')], 422);
         }
 
-        $review = ProductRate::create([
-            'product_id' => $validated['product_id'],
+        $review = ProductRate::create(($ref ?? ['product_id' => $validated['product_id']]) + [
             'customer_id' => $customer->id,
             'stars' => $validated['stars'],
             'comment' => trim((string) ($validated['comment'] ?? '')) ?: null,
@@ -43,10 +44,17 @@ class ReviewController extends Controller
     }
 
     /** GET /products/{product}/reviews — paginated review list for a product. */
-    public function index(Product $product): JsonResponse
+    public function index(string $product): JsonResponse
     {
+        // Merged products are keyed by ProductKey, which implicit model binding cannot resolve: look it up through the catalog.
+        $product = \App\Repositories\Tenant\Catalog\ProductCatalog::query()->findOrFail((int) $product);
+
+        $scope = fn ($q) => $product instanceof \App\Models\Tenant\Catalog\MergedProduct
+            ? $q->where('product_type', $product->source)->where('catalog_product_id', $product->source_id)
+            : $q->where('product_id', $product->id);
+
         $reviews = ProductRate::with('customer:id,full_name')
-            ->where('product_id', $product->id)
+            ->tap($scope)
             ->latest()
             ->paginate(15);
 
@@ -59,8 +67,8 @@ class ReviewController extends Controller
                 'total' => $reviews->total(),
             ],
             'summary' => [
-                'average' => round((float) ProductRate::where('product_id', $product->id)->avg('stars'), 2),
-                'count' => ProductRate::where('product_id', $product->id)->count(),
+                'average' => round((float) ProductRate::query()->tap($scope)->avg('stars'), 2),
+                'count' => ProductRate::query()->tap($scope)->count(),
             ],
         ]);
     }

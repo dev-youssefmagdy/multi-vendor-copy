@@ -62,7 +62,7 @@ class CartController extends Controller
         $skipped = [];
         foreach ($request->input('items') as $i => $row) {
             // Only identifiers and qty are read; any client-sent price field is ignored.
-            $slug = $row['slug'] ?? (isset($row['product_id']) ? Product::query()->whereKey((int) $row['product_id'])->value('slug') : null);
+            $slug = $row['slug'] ?? (isset($row['product_id']) ? \App\Repositories\Tenant\Catalog\ProductCatalog::query()->whereKey((int) $row['product_id'])->value('slug') : null);
             $sub = Request::create('/', 'POST', ['slug' => $slug, 'variant_id' => $row['variant_id'] ?? null, 'qty' => $row['qty'] ?? 1]);
             $res = $this->web->add($sub);
             if ($res->getStatusCode() >= 400) {

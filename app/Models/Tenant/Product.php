@@ -39,6 +39,28 @@ class Product extends Model
         });
     }
 
+    /**
+     * Dedup plan phase 5: with `products = central` every `{product}` panel / API route parameter is a merged product KEY, never
+     * a tenant row id (a plain lookup could silently hit the wrong product). Resolved through the merged catalog; sync mode is
+     * the stock Eloquent lookup.
+     */
+    public function resolveRouteBinding($value, $field = null)
+    {
+        if ($field === null && ! $this instanceof \App\Models\Tenant\Catalog\MergedProduct && \App\Repositories\Tenant\Catalog\ProductCatalog::enabled()) {
+            // Own-product panel routes work on REAL own rows (a list of own products carries real ids; a merged key 1e9 + id maps back).
+            if (str_starts_with((string) request()->route()?->getName(), 'tenant.own-products.')) {
+                $id = (int) $value;
+                $id = \App\Support\Catalog\ProductKey::isOwnKey($id) ? $id - \App\Support\Catalog\ProductKey::OWN_OFFSET : $id;
+
+                return parent::resolveRouteBinding($id, $field);
+            }
+
+            return \App\Models\Tenant\Catalog\MergedProduct::query()->whereKey((int) $value)->first();
+        }
+
+        return parent::resolveRouteBinding($value, $field);
+    }
+
     protected array $translated = ['name', 'label', 'summary', 'description', 'meta_keywords', 'meta_description'];
 
     protected $with = ['files'];

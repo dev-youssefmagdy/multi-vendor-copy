@@ -59,7 +59,7 @@ trait ChecksCartStock
     protected function resolveCartEntryModels(string $key, array $entry): array
     {
         if (str_starts_with($key, 'v_') && ! empty($entry['variant_id'])) {
-            $variant = ProductVariant::with([
+            $variant = \App\Repositories\Tenant\Catalog\ProductCatalog::variantQuery()->with([
                 'product.centralProduct',
                 'product.variants',
                 'centralVariant',
@@ -68,7 +68,7 @@ trait ChecksCartStock
             return [$variant?->product, $variant];
         }
 
-        $product = Product::with(['variants', 'centralProduct'])
+        $product = \App\Repositories\Tenant\Catalog\ProductCatalog::query()->with(['variants', 'centralProduct'])
             ->find((int) ($entry['product_id'] ?? 0));
 
         $variant = $product?->variants->where('active', true)->first();

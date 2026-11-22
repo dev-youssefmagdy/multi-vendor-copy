@@ -422,7 +422,7 @@ class TenantNavigation
 
     public static function productSynced(): bool
     {
-        return Product::query()->exists();
+        return \App\Repositories\Tenant\Catalog\ProductCatalog::query()->exists();
     }
 
     /** Count of the tenant's pending product name/description edit requests, shown as a nav badge. */

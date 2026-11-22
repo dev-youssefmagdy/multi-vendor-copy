@@ -29,7 +29,7 @@ class AddToCartButton extends Component
 
     public function add(): void
     {
-        $productModel = Product::with(['variants', 'centralProduct'])
+        $productModel = \App\Repositories\Tenant\Catalog\ProductCatalog::query()->with(['variants', 'centralProduct'])
             ->where('active', true)
             ->availableInCountry(app(\App\Repositories\Tenant\StorefrontRepository::class)->visibilityCountryId())
             ->find($this->product);

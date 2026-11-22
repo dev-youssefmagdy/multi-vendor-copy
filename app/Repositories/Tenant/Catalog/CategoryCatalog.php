@@ -422,6 +422,9 @@ final class CategoryCatalog
     public static function membershipSql(?ConnectionInterface $db = null): string
     {
         $db ??= self::db();
+        if (ProductCatalog::enabled()) {
+            return self::membershipSqlMerged($db);
+        }
         $cc = CentralTable::name('categories');
         $ccp = CentralTable::name('category_product');
         $o = '`' . self::PAIR_OVERRIDES . '`';
@@ -460,5 +463,42 @@ final class CategoryCatalog
                 FROM `category_product` t
                 JOIN `categories` c ON c.`id` = t.`category_id` AND c.`central_category_id` IS NULL
                 JOIN `products` p ON p.`id` = t.`product_id`";
+    }
+
+    /**
+     * Phase 5 (`products` = central): `product_id` = merged product KEY (central id | own id + 1e9). Central pairs need an
+     * adoption row; vendor links and own-category rows use their typed product pair (no join to tenant copies).
+     */
+    private static function membershipSqlMerged(ConnectionInterface $db): string
+    {
+        $cc = CentralTable::name('categories');
+        $ccp = CentralTable::name('category_product');
+        $o = '`' . self::PAIR_OVERRIDES . '`';
+        $off = CategoryKey::OWN_OFFSET;
+        $visible = self::centralVisible('cc', $db);
+        $oKey = ProductCatalog::pairKeySql('o.`product_type`', 'o.`product_id`');
+        $tKey = ProductCatalog::pairKeySql('t.`product_type`', 't.`catalog_product_id`');
+
+        return "SELECT cp.`category_id` AS `category_key`, cp.`product_id` AS `product_id`, COALESCE(o.`sort_order`, cp.`sort_order`) AS `sort_order`,
+                    'central' AS `pair_source`, 'central' AS `category_type`, cp.`category_id` AS `category_id`,
+                    'central' AS `product_type`, cp.`product_id` AS `catalog_product_id`, cp.`created_at` AS `created_at`, cp.`updated_at` AS `updated_at`
+                FROM {$ccp} cp
+                JOIN {$cc} cc ON cc.`id` = cp.`category_id` AND {$visible}
+                LEFT JOIN {$o} o ON o.`category_type` = 'central' AND o.`category_id` = cp.`category_id`
+                    AND o.`product_type` = 'central' AND o.`product_id` = cp.`product_id`
+                WHERE COALESCE(o.`hidden`, 0) = 0 AND " . ProductCatalog::adoptedSql('cp.`product_id`') . "
+            UNION ALL
+            SELECT o.`category_id`, {$oKey}, COALESCE(o.`sort_order`, 0), 'tenant', 'central', o.`category_id`, o.`product_type`, o.`product_id`, o.`created_at`, o.`updated_at`
+                FROM {$o} o
+                JOIN {$cc} cc ON cc.`id` = o.`category_id` AND {$visible}
+                WHERE o.`category_type` = 'central' AND o.`source` = 'tenant' AND o.`hidden` = 0
+                  AND (o.`product_type` = 'tenant' OR " . ProductCatalog::adoptedSql('o.`product_id`') . ")
+                  AND NOT EXISTS (SELECT 1 FROM {$ccp} x WHERE x.`category_id` = o.`category_id` AND x.`product_id` = o.`product_id` AND o.`product_type` = 'central')
+            UNION ALL
+            SELECT t.`category_id` + {$off}, {$tKey}, t.`sort_order`, 'tenant', 'tenant', t.`category_id`, t.`product_type`, t.`catalog_product_id`, t.`created_at`, t.`updated_at`
+                FROM `category_product` t
+                JOIN `categories` c ON c.`id` = t.`category_id` AND c.`central_category_id` IS NULL
+                WHERE t.`catalog_product_id` IS NOT NULL
+                  AND (t.`product_type` = 'tenant' OR " . ProductCatalog::adoptedSql('t.`catalog_product_id`') . ')';
     }
 }

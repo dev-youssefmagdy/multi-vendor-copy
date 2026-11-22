@@ -106,7 +106,7 @@ class PlanLimitService
     public function usedCount(TenantModel $tenant, string $feature): int
     {
         return match ($feature) {
-            self::FEATURE_PRODUCTS => Product::query()->count(),
+            self::FEATURE_PRODUCTS => \App\Repositories\Tenant\Catalog\ProductCatalog::query()->count(),
             self::FEATURE_CATEGORIES => \App\Repositories\Tenant\Catalog\CategoryCatalog::query()->whereNull('parent_id')->count(), // dedup phase 4: merged in central mode
             self::FEATURE_BANNERS => Banner::query()->count(),
             self::FEATURE_LANGUAGES => $this->activePlanLanguagesCount(),

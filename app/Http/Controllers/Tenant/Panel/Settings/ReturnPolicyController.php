@@ -39,7 +39,7 @@ final class ReturnPolicyController extends PanelController
         $nonReturnableIds = json_decode($rows->get(self::KEYS['non_returnable_ids'])?->value ?: '[]', true) ?: [];
         $videoReasons = json_decode($rows->get(self::KEYS['video_required_reasons'])?->value ?: '[]', true) ?: [];
 
-        $selectedProducts = Product::query()
+        $selectedProducts = \App\Repositories\Tenant\Catalog\ProductCatalog::query()
             ->whereIn('id', $nonReturnableIds)
             ->with('translations.language')
             ->get()

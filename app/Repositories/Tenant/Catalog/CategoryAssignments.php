@@ -266,10 +266,12 @@ final class CategoryAssignments
         $productRef = $this->productRef($product);
         $centralPairs = $productRef->isCentral() ? array_flip(array_map('intval', $this->db()->table(CentralTable::qualified('category_product'))
             ->where('product_id', $productRef->id)->pluck('category_id')->all())) : [];
+        $merged = ProductCatalog::enabled() && $product instanceof \App\Models\Tenant\Catalog\MergedProduct;
         $ownLinks = array_flip(array_map('intval', $this->db()->table('category_product as t')
             ->join('categories as c', 'c.id', '=', 't.category_id')
             ->whereNull('c.central_category_id')
-            ->where('t.product_id', $product->id)
+            ->when($merged, fn ($q) => $q->where('t.product_type', $productRef->source)->where('t.catalog_product_id', $productRef->id),
+                fn ($q) => $q->where('t.product_id', $product->id))
             ->pluck('t.category_id')->all()));
 
         $pairRows = $this->db()->table(CategoryCatalog::PAIR_OVERRIDES)
@@ -283,11 +285,16 @@ final class CategoryAssignments
             if ($ref->isTenant()) {
                 if ($want && ! isset($ownLinks[$ref->id])) {
                     $this->db()->table('category_product')->insert([
-                        'category_id' => $ref->id, 'product_id' => $product->id, 'source' => 'tenant',
+                        'category_id' => $ref->id,
+                        // Phase 5: a merged central product has no tenant row (product_id NULL), the typed pair identifies it.
+                        'product_id' => $merged ? ($productRef->isTenant() ? $productRef->id : null) : $product->id,
+                        'source' => 'tenant',
                         'created_at' => now(), 'updated_at' => now(),
-                    ]);
+                    ] + ($merged ? ['product_type' => $productRef->source, 'catalog_product_id' => $productRef->id] : []));
                 } elseif (! $want && isset($ownLinks[$ref->id])) {
-                    $this->db()->table('category_product')->where('category_id', $ref->id)->where('product_id', $product->id)->delete();
+                    $this->db()->table('category_product')->where('category_id', $ref->id)
+                        ->when($merged, fn ($q) => $q->where('product_type', $productRef->source)->where('catalog_product_id', $productRef->id),
+                            fn ($q) => $q->where('product_id', $product->id))->delete();
                 }
 
                 continue;
@@ -317,7 +324,9 @@ final class CategoryAssignments
             }
         }
 
-        CatalogRefWriter::fillQuietly('category_product', ['product_id' => [$product->id]]);
+        if (! $merged) {
+            CatalogRefWriter::fillQuietly('category_product', ['product_id' => [$product->id]]);
+        }
         $this->bump();
     }
 
@@ -334,13 +343,14 @@ final class CategoryAssignments
         foreach (array_values($productIds) as $index => $productId) {
             $productId = (int) $productId;
             if (! $category->isCentral()) {
-                $this->db()->table('category_product')->where('category_id', $category->source_id)->where('product_id', $productId)
+                $this->db()->table('category_product')->where('category_id', $category->source_id)
+                    ->tap(fn ($q) => ProductCatalog::enabled() ? ProductCatalog::wherePairKey($q, $productId) : $q->where('product_id', $productId))
                     ->update(['sort_order' => $index, 'updated_at' => now()]);
 
                 continue;
             }
 
-            if (! isset($members[$productId]) || ($product = Product::query()->find($productId)) === null) {
+            if (! isset($members[$productId]) || ($product = ProductCatalog::query()->find($productId)) === null) {
                 continue;
             }
 
@@ -356,6 +366,10 @@ final class CategoryAssignments
     /** Typed ref of a tenant product (phase-1 rule: central iff linked and not own). */
     public function productRef(Product $product): CatalogRef
     {
+        if ($product instanceof \App\Models\Tenant\Catalog\MergedProduct) {
+            return $product->ref();
+        }
+
         $own = CatalogRefColumns::has($this->db(), 'products', 'is_own_product') && (bool) $product->getAttribute('is_own_product');
 
         return ! $own && $product->central_product_id

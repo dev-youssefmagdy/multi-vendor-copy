@@ -98,6 +98,10 @@ class SyncCentralProductWeightToTenantsJob implements ShouldQueue
     private function pushToTenants(callable $callback): void
     {
         foreach (Tenant::all() as $tenant) {
+            // Dedup plan phase 5 / §2b: tenants reading products live from central have no copies to write.
+            if (\App\Support\Catalog\CatalogSource::isCentral($tenant, 'products')) {
+                continue;
+            }
             tenancy()->initialize($tenant);
 
             // Raw updates skip the CacheVersionObserver; a callback returning 0

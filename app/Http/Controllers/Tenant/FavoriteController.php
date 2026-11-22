@@ -20,17 +20,25 @@ class FavoriteController extends Controller
             return response()->json(['success' => false, 'message' => __('Login required.')], 401);
         }
 
-        $validated = $request->validate(['product_id' => 'required|integer|exists:products,id']);
+        $central = \App\Repositories\Tenant\Catalog\ProductCatalog::enabled();
+        $validated = $request->validate(['product_id' => $central ? 'required|integer|min:1' : 'required|integer|exists:products,id']);
+
+        // Dedup plan phase 5: merged products are identified by their key (typed pair on the row).
+        $ref = $central ? \App\Repositories\Tenant\Catalog\ProductCatalog::refColumnsForKey((int) $validated['product_id']) : null;
+        if ($central && ($ref === null || ! \App\Repositories\Tenant\Catalog\ProductCatalog::query()->whereKey((int) $validated['product_id'])->exists())) {
+            return response()->json(['success' => false, 'message' => __('Product not found.')], 404);
+        }
 
         $existing = Favorite::where('customer_id', $customer->id)
-            ->where('product_id', $validated['product_id'])
+            ->when($ref, fn ($q) => $q->where('product_type', $ref['product_type'])->where('catalog_product_id', $ref['catalog_product_id']),
+                fn ($q) => $q->where('product_id', $validated['product_id']))
             ->first();
 
         if ($existing) {
             $existing->delete();
             $favorited = false;
         } else {
-            Favorite::create(['customer_id' => $customer->id, 'product_id' => $validated['product_id']]);
+            Favorite::create($ref ? ['customer_id' => $customer->id] + $ref : ['customer_id' => $customer->id, 'product_id' => $validated['product_id']]);
             $favorited = true;
         }
 
@@ -81,7 +89,9 @@ class FavoriteController extends Controller
         }
 
         return response()->json([
-            'ids' => Favorite::where('customer_id', $customer->id)->pluck('product_id'),
+            'ids' => \App\Repositories\Tenant\Catalog\ProductCatalog::enabled()
+                ? Favorite::where('customer_id', $customer->id)->get()->map(fn ($f) => $f->product_key)->filter()->values()
+                : Favorite::where('customer_id', $customer->id)->pluck('product_id'),
         ]);
     }
 }

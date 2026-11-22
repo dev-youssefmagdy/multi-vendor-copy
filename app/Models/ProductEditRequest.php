@@ -16,6 +16,10 @@ class ProductEditRequest extends Model
     protected $fillable = [
         'tenant_id',
         'product_id',
+        // Dedup plan phase 5: central-mode requests (no tenant copy) are identified by the central product id.
+        'product_type',
+        'catalog_product_id',
+        'central_product_id',
         'product_slug',
         'requested_translations',
         'current_translations',

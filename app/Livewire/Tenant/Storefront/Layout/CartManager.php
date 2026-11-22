@@ -63,7 +63,7 @@ class CartManager extends Component
      */
     private function addLine(int $productId, ?int $variantId, bool $preferInStock = false): ?string
     {
-        $product = Product::with(['variants', 'centralProduct'])->where('active', true)->availableInCountry(app(\App\Repositories\Tenant\StorefrontRepository::class)->visibilityCountryId())->find($productId);
+        $product = \App\Repositories\Tenant\Catalog\ProductCatalog::query()->with(['variants', 'centralProduct'])->where('active', true)->availableInCountry(app(\App\Repositories\Tenant\StorefrontRepository::class)->visibilityCountryId())->find($productId);
         if (!$product) {
             return '';
         }
@@ -89,7 +89,7 @@ class CartManager extends Component
         $existingQty = (int) ($cart[$key]['qty'] ?? 0);
 
         if ($variantId && !$variant) {
-            $variant = ProductVariant::with(['product.centralProduct', 'centralVariant'])->find($variantId);
+            $variant = \App\Repositories\Tenant\Catalog\ProductCatalog::variantQuery()->with(['product.centralProduct', 'centralVariant'])->find($variantId);
         }
 
         $stockError = $this->checkProductStock($product, $variant, 1, $existingQty);

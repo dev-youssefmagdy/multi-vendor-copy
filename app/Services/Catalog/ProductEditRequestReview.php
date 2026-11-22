@@ -292,7 +292,16 @@ final class ProductEditRequestReview
     private function product(ProductEditRequest $request): ?Product
     {
         // Also centrally hidden products (draft/archived): the request is still about them.
-        return Product::withoutGlobalScope('centralVisible')->find($request->product_id);
+        $product = Product::withoutGlobalScope('centralVisible')->find($request->product_id);
+        if ($product === null && $request->central_product_id) {
+            // Phase 5 (products = central): no tenant copy exists; a transient model carries the central link so the
+            // approve / reset code (which only needs the central id) works unchanged. Never saved.
+            $product = (new Product())->forceFill([
+                'central_product_id' => (int) $request->central_product_id, 'is_own_product' => false, 'slug' => $request->product_slug,
+            ]);
+        }
+
+        return $product;
     }
 
     private function centralId(Product $product): ?int

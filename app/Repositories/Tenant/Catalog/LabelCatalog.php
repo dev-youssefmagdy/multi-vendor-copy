@@ -53,6 +53,18 @@ final class LabelCatalog
     public static function membershipSql(?ConnectionInterface $db = null): string
     {
         $db ??= DB::connection('tenant');
+        if (ProductCatalog::enabled()) {
+            // Phase 5: product_id = merged key = central id; adoption instead of a join to the tenant copy.
+            $cl = CentralTable::name('product_labels');
+            $cpl = CentralTable::name('product_label_product');
+            $live = self::hasSoftDeletes($db) ? 'cl.`deleted_at` IS NULL' : '1 = 1';
+
+            return "SELECT cl.`id` AS `id`, cp.`product_id` AS `product_id`, cp.`product_id` AS `catalog_product_id`, cl.`text` AS `text`,
+                        cl.`translations` AS `translations`, cl.`icon` AS `icon`, cl.`active` AS `active`, cl.`sort_order` AS `sort_order`
+                    FROM {$cpl} cp
+                    JOIN {$cl} cl ON cl.`id` = cp.`product_label_id` AND {$live}
+                    WHERE " . ProductCatalog::adoptedSql('cp.`product_id`');
+        }
         $cl = CentralTable::name('product_labels');
         $cpl = CentralTable::name('product_label_product');
         $live = self::hasSoftDeletes($db) ? 'cl.`deleted_at` IS NULL' : '1 = 1';

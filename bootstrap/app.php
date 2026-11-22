@@ -98,6 +98,15 @@ return Application::configure(basePath: dirname(__DIR__))
         });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        // Dedup plan phase 5: a platform-owned field of a merged catalog row is read-only; show a message, never a 500.
+        $exceptions->render(function (\App\Support\Catalog\ReadOnlyCatalogRowException $e, \Illuminate\Http\Request $request) {
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => $e->userMessage()], 422);
+            }
+
+            return back()->with('error', $e->userMessage());
+        });
+
         $exceptions->render(function (\Illuminate\Database\Eloquent\ModelNotFoundException $e, \Illuminate\Http\Request $request) {
             if ($request->is('admin*') && $request->expectsJson()) {
                 return response()->json(['message' => 'The requested record no longer exists.'], 404);

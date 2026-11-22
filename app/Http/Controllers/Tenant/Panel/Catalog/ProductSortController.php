@@ -39,7 +39,7 @@ final class ProductSortController extends PanelController
         $ids = (array) $request->input('ids', []);
 
         foreach ($ids as $index => $productId) {
-            Product::query()->whereKey((int) $productId)->update(['order_number' => $index]);
+            app(\App\Repositories\Tenant\Catalog\ProductCatalog::class)->setOrderNumber((int) $productId, (int) $index);
         }
 
         CacheVersion::bump('Product');

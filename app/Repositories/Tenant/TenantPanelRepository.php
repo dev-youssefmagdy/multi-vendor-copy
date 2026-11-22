@@ -139,8 +139,8 @@ class TenantPanelRepository
             'customers' => $customers->count(),
             'active_customers' => $customers->filter(fn (Customer $customer) => $customer->active)->count(),
             'repeat_buyers' => $customers->filter(fn (Customer $customer) => (int) $customer->orders_count > 1)->count(),
-            'products' => Product::query()->count(),
-            'active_products' => Product::query()->where('active', true)->count(),
+            'products' => \App\Repositories\Tenant\Catalog\ProductCatalog::query()->count(),
+            'active_products' => \App\Repositories\Tenant\Catalog\ProductCatalog::query()->where('active', true)->count(),
             'subscribers' => Subscriber::query()->count(),
             'subscriptions' => $subscriptions->count(),
             'active_subscriptions' => $subscriptions->filter(fn (Subscription $subscription) => $subscription->status === SubscriptionStatus::Active)->count(),
@@ -204,9 +204,13 @@ class TenantPanelRepository
         // PANELS-UPDATES-PRODUCTS-SALES: units sold per product (same definition the storefront's best-selling
         // sort uses: order_items.qty, resolved through the variant when the line has no product id).
         $salesSql = '(SELECT COALESCE(SUM(oi.qty), 0) FROM order_items oi LEFT JOIN product_variants pv ON pv.id = oi.product_variant_id WHERE COALESCE(oi.product_id, pv.product_id) = products.id)';
+        if (\App\Repositories\Tenant\Catalog\ProductCatalog::enabled()) {
+            // Phase 5: order lines are matched by their typed product pair (central lines have no tenant product id).
+            $salesSql = '(SELECT COALESCE(SUM(oi.qty), 0) FROM order_items oi WHERE ' . \App\Support\Catalog\ProductKey::sqlPairKey('oi.product_type', 'oi.catalog_product_id') . ' = products.id)';
+        }
         $sort = (string) ($filters['sort'] ?? '');
 
-        return Product::query()
+        return \App\Repositories\Tenant\Catalog\ProductCatalog::query()
             ->select('products.*')
             ->selectRaw($salesSql.' as sales_count')
             ->with(['translations.language', 'categories.translations.language', 'variants', 'files', 'badges'])
@@ -305,7 +309,7 @@ class TenantPanelRepository
     /** Platform-catalog products (the Products tab), i.e. everything but the vendor's own products. */
     private function catalogProducts(): Builder
     {
-        return Product::query()->where(fn (Builder $q) => $q->where('is_own_product', false)->orWhereNull('is_own_product'));
+        return \App\Repositories\Tenant\Catalog\ProductCatalog::query()->where(fn (Builder $q) => $q->where('is_own_product', false)->orWhereNull('is_own_product'));
     }
 
     public function searchCentralProducts(string $search = '', int $page = 1, int $perPage = 15): array
@@ -484,8 +488,8 @@ class TenantPanelRepository
     {
         $defaultLangId = $this->defaultLanguageId();
 
-        $query = DB::table('products as p')
-            ->leftJoin('translations as t', function ($join) use ($defaultLangId) {
+        $query = DB::table($this->productsFrom('p'))
+            ->leftJoin($this->translationsFrom('t'), function ($join) use ($defaultLangId) {
                 $join->on('t.translatable_id', '=', 'p.id')
                     ->where('t.translatable_type', '=', Product::class)
                     ->where('t.field', '=', 'name')
@@ -537,7 +541,7 @@ class TenantPanelRepository
 
     public function queryOwnProducts(array $filters): Builder
     {
-        return Product::query()
+        return \App\Repositories\Tenant\Catalog\ProductCatalog::query()
             ->with(['badges', 'variants'])
             ->where('is_own_product', true)
             ->when(filled($filters['search'] ?? null), function (Builder $query) use ($filters) {
@@ -572,8 +576,8 @@ class TenantPanelRepository
 
     public function ownProductStats(): array
     {
-        $total = Product::where('is_own_product', true)->count();
-        $active = Product::where('is_own_product', true)->where('active', true)->count();
+        $total = \App\Repositories\Tenant\Catalog\ProductCatalog::query()->where('is_own_product', true)->count();
+        $active = \App\Repositories\Tenant\Catalog\ProductCatalog::query()->where('is_own_product', true)->where('active', true)->count();
 
         return [
             'total' => $total,
@@ -903,9 +907,9 @@ class TenantPanelRepository
             ->selectRaw('COUNT(*) as total, SUM(active = 1) as active_count, AVG(discount_percentage) as avg_discount')
             ->first();
 
-        $productCount = DB::table('flash_sale_product')
-            ->distinct('product_id')
-            ->count('product_id');
+        $productCount = \App\Repositories\Tenant\Catalog\ProductCatalog::enabled()
+            ? (int) DB::table('flash_sale_product')->whereNotNull('catalog_product_id')->selectRaw("COUNT(DISTINCT product_type, catalog_product_id) as c")->value('c')
+            : DB::table('flash_sale_product')->distinct('product_id')->count('product_id');
 
         return [
             'total' => (int) ($row->total ?? 0),
@@ -1178,8 +1182,8 @@ class TenantPanelRepository
     {
         $defaultLangId = $this->defaultLanguageId();
 
-        return DB::table('products as p')
-            ->leftJoin('translations as t', function ($join) use ($defaultLangId) {
+        return DB::table($this->productsFrom('p'))
+            ->leftJoin($this->translationsFrom('t'), function ($join) use ($defaultLangId) {
                 $join->on('t.translatable_id', '=', 'p.id')
                     ->where('t.translatable_type', '=', Product::class)
                     ->where('t.field', '=', 'name')
@@ -1291,8 +1295,8 @@ class TenantPanelRepository
     {
         $defaultLangId = $this->defaultLanguageId();
 
-        $query = DB::table('products as p')
-            ->leftJoin('translations as t', function ($join) use ($defaultLangId) {
+        $query = DB::table($this->productsFrom('p'))
+            ->leftJoin($this->translationsFrom('t'), function ($join) use ($defaultLangId) {
                 $join->on('t.translatable_id', '=', 'p.id')
                     ->where('t.translatable_type', '=', Product::class)
                     ->where('t.field', '=', 'name')
@@ -1337,8 +1341,8 @@ class TenantPanelRepository
 
         $defaultLangId = $this->defaultLanguageId();
 
-        return DB::table('products as p')
-            ->leftJoin('translations as t', function ($join) use ($defaultLangId) {
+        return DB::table($this->productsFrom('p'))
+            ->leftJoin($this->translationsFrom('t'), function ($join) use ($defaultLangId) {
                 $join->on('t.translatable_id', '=', 'p.id')
                     ->where('t.translatable_type', '=', Product::class)
                     ->where('t.field', '=', 'name')
@@ -1365,7 +1369,7 @@ class TenantPanelRepository
         }
 
         // Eager-load only the one file we need per product.
-        $products = Product::query()
+        $products = \App\Repositories\Tenant\Catalog\ProductCatalog::query()
             ->with(['files' => fn ($q) => $q->whereIn('key', ['primary_medium', 'primary_original'])->orderByDesc('key')])
             ->with('centralProduct')
             ->whereIn('id', $ids)
@@ -1441,17 +1445,19 @@ class TenantPanelRepository
             ->get();
 
         // Product-only aggregation (no variant)
+        $oiKey = $this->oiProductKey();
+        $merged = \App\Repositories\Tenant\Catalog\ProductCatalog::enabled();
         $productRows = DB::table('order_items as oi')
-            ->whereNull('oi.product_variant_id')
-            ->whereNotNull('oi.product_id')
-            ->selectRaw('
-                oi.product_id,
+            ->when($merged, fn ($q) => $q->whereNull('oi.catalog_variant_id')->whereNotNull('oi.catalog_product_id'),
+                fn ($q) => $q->whereNull('oi.product_variant_id')->whereNotNull('oi.product_id'))
+            ->selectRaw("
+                {$oiKey} as product_id,
                 SUM(oi.qty) as sold_qty,
                 COUNT(DISTINCT oi.order_id) as orders_count,
                 SUM(oi.grand_total) as revenue,
                 MAX(oi.created_at) as last_sale
-            ')
-            ->groupBy('oi.product_id')
+            ")
+            ->groupBy(DB::raw($oiKey))
             ->get();
 
         // Collect product IDs we need names for
@@ -1462,7 +1468,7 @@ class TenantPanelRepository
             ->values()
             ->all();
 
-        $products = Product::query()
+        $products = \App\Repositories\Tenant\Catalog\ProductCatalog::query()
             ->with('translations.language')
             ->whereIn('id', $productIds)
             ->get()
@@ -1705,54 +1711,100 @@ class TenantPanelRepository
     {
         $defaultLangId = $this->defaultLanguageId();
 
-        // All variants (including those with zero sales) left-joined to order_items
-        $variantRows = DB::table('product_variants as pv')
-            ->leftJoin('order_items as oi', 'oi.product_variant_id', '=', 'pv.id')
-            ->leftJoin('products as p', 'p.id', '=', 'pv.product_id')
-            ->leftJoin('translations as t', function ($join) use ($defaultLangId) {
-                $join->on('t.translatable_id', '=', 'p.id')
-                    ->where('t.translatable_type', '=', Product::class)
-                    ->where('t.field', '=', 'name')
-                    ->where('t.language_id', '=', $defaultLangId);
-            })
-            ->selectRaw('
-                pv.id,
-                pv.product_id,
-                pv.real_price,
-                pv.default_sell_price as sell_price,
-                pv.margin_percentage,
-                pv.active,
-                COALESCE(t.value, p.slug, CONCAT("Variant #", pv.id)) as name,
-                COALESCE(SUM(oi.qty), 0) as sold_qty,
-                COUNT(DISTINCT oi.order_id) as orders_count,
-                COALESCE(SUM(oi.grand_total), 0) as revenue,
-                MAX(oi.created_at) as last_sale
-            ')
-            ->groupBy('pv.id', 'pv.product_id', 'pv.real_price', 'pv.default_sell_price', 'pv.margin_percentage', 'pv.active', 'name')
-            ->get();
+        if (\App\Repositories\Tenant\Catalog\ProductCatalog::enabled()) {
+            // Dedup plan phase 5: merged variants / products, order lines matched through their typed pairs (central lines have no tenant ids).
+            $tenant = tenant();
+            $pct = $tenant ? (float) ($tenant->profit_percentage ?? 0) : 0.0;
+            $vKey = \App\Support\Catalog\ProductKey::sqlPairKey('oi.variant_type', 'oi.catalog_variant_id');
+            $pKey = \App\Support\Catalog\ProductKey::sqlPairKey('oi.product_type', 'oi.catalog_product_id');
 
-        // Order items linked directly to a product (no variant)
-        $productOnlyRows = DB::table('order_items as oi')
-            ->leftJoin('products as p', 'p.id', '=', 'oi.product_id')
-            ->leftJoin('translations as t', function ($join) use ($defaultLangId) {
-                $join->on('t.translatable_id', '=', 'oi.product_id')
-                    ->where('t.translatable_type', '=', Product::class)
-                    ->where('t.field', '=', 'name')
-                    ->where('t.language_id', '=', $defaultLangId);
-            })
-            ->whereNull('oi.product_variant_id')
-            ->whereNotNull('oi.product_id')
-            ->selectRaw('
-                oi.product_id,
-                p.active,
-                COALESCE(t.value, p.slug, CONCAT("Product #", oi.product_id)) as name,
-                SUM(oi.qty) as sold_qty,
-                COUNT(DISTINCT oi.order_id) as orders_count,
-                SUM(oi.grand_total) as revenue,
-                MAX(oi.created_at) as last_sale
-            ')
-            ->groupBy('oi.product_id', 'p.active', 'name')
-            ->get();
+            $variantRows = DB::table(DB::raw('(' . \App\Repositories\Tenant\Catalog\ProductCatalog::variantsSql($pct) . ') as pv'))
+                ->leftJoin('order_items as oi', fn ($j) => $j->whereRaw("{$vKey} = pv.id"))
+                ->leftJoin($this->productsFrom('p'), 'p.id', '=', 'pv.product_id')
+                ->leftJoin($this->translationsFrom('t'), function ($join) use ($defaultLangId) {
+                    $join->on('t.translatable_id', '=', 'p.id')
+                        ->where('t.translatable_type', '=', Product::class)
+                        ->where('t.field', '=', 'name')
+                        ->where('t.language_id', '=', $defaultLangId);
+                })
+                ->selectRaw('
+                    pv.id, pv.product_id, pv.real_price, pv.default_sell_price as sell_price, pv.margin_percentage, pv.active,
+                    COALESCE(t.value, p.slug, CONCAT("Variant #", pv.id)) as name,
+                    COALESCE(SUM(oi.qty), 0) as sold_qty, COUNT(DISTINCT oi.order_id) as orders_count,
+                    COALESCE(SUM(oi.grand_total), 0) as revenue, MAX(oi.created_at) as last_sale
+                ')
+                ->groupBy('pv.id', 'pv.product_id', 'pv.real_price', 'pv.default_sell_price', 'pv.margin_percentage', 'pv.active', 'name')
+                ->get();
+
+            $productOnlyRows = DB::table('order_items as oi')
+                ->leftJoin($this->productsFrom('p'), fn ($j) => $j->whereRaw("{$pKey} = p.id"))
+                ->leftJoin($this->translationsFrom('t'), function ($join) use ($defaultLangId) {
+                    $join->on('t.translatable_id', '=', 'p.id')
+                        ->where('t.translatable_type', '=', Product::class)
+                        ->where('t.field', '=', 'name')
+                        ->where('t.language_id', '=', $defaultLangId);
+                })
+                ->whereNull('oi.catalog_variant_id')
+                ->whereNotNull('oi.catalog_product_id')
+                ->selectRaw("
+                    p.id as product_id, p.active,
+                    COALESCE(t.value, p.slug, CONCAT('Product #', p.id)) as name,
+                    SUM(oi.qty) as sold_qty, COUNT(DISTINCT oi.order_id) as orders_count,
+                    SUM(oi.grand_total) as revenue, MAX(oi.created_at) as last_sale
+                ")
+                ->groupBy('p.id', 'p.active', 'name')
+                ->get();
+        } else {
+            // All variants (including those with zero sales) left-joined to order_items
+            $variantRows = DB::table('product_variants as pv')
+                ->leftJoin('order_items as oi', 'oi.product_variant_id', '=', 'pv.id')
+                ->leftJoin('products as p', 'p.id', '=', 'pv.product_id')
+                ->leftJoin($this->translationsFrom('t'), function ($join) use ($defaultLangId) {
+                    $join->on('t.translatable_id', '=', 'p.id')
+                        ->where('t.translatable_type', '=', Product::class)
+                        ->where('t.field', '=', 'name')
+                        ->where('t.language_id', '=', $defaultLangId);
+                })
+                ->selectRaw('
+                    pv.id,
+                    pv.product_id,
+                    pv.real_price,
+                    pv.default_sell_price as sell_price,
+                    pv.margin_percentage,
+                    pv.active,
+                    COALESCE(t.value, p.slug, CONCAT("Variant #", pv.id)) as name,
+                    COALESCE(SUM(oi.qty), 0) as sold_qty,
+                    COUNT(DISTINCT oi.order_id) as orders_count,
+                    COALESCE(SUM(oi.grand_total), 0) as revenue,
+                    MAX(oi.created_at) as last_sale
+                ')
+                ->groupBy('pv.id', 'pv.product_id', 'pv.real_price', 'pv.default_sell_price', 'pv.margin_percentage', 'pv.active', 'name')
+                ->get();
+
+            // Order items linked directly to a product (no variant)
+            $productOnlyRows = DB::table('order_items as oi')
+                ->leftJoin('products as p', 'p.id', '=', 'oi.product_id')
+                ->leftJoin('translations as t', function ($join) use ($defaultLangId) {
+                    $join->on('t.translatable_id', '=', 'oi.product_id')
+                        ->where('t.translatable_type', '=', Product::class)
+                        ->where('t.field', '=', 'name')
+                        ->where('t.language_id', '=', $defaultLangId);
+                })
+                ->whereNull('oi.product_variant_id')
+                ->whereNotNull('oi.product_id')
+                ->selectRaw('
+                    oi.product_id,
+                    p.active,
+                    COALESCE(t.value, p.slug, CONCAT("Product #", oi.product_id)) as name,
+                    SUM(oi.qty) as sold_qty,
+                    COUNT(DISTINCT oi.order_id) as orders_count,
+                    SUM(oi.grand_total) as revenue,
+                    MAX(oi.created_at) as last_sale
+                ')
+                ->groupBy('oi.product_id', 'p.active', 'name')
+                ->get();
+
+        }
 
         $rows = collect();
 
@@ -2664,7 +2716,7 @@ class TenantPanelRepository
             ->limit(5)
             ->get();
 
-        $productNames = Product::whereIn('id', $topProductRows->pluck('product_id'))
+        $productNames = \App\Repositories\Tenant\Catalog\ProductCatalog::query()->whereIn('id', $topProductRows->pluck('product_id'))
             ->get()
             ->mapWithKeys(fn (Product $p) => [$p->id => $p->translationValue('name') ?? $p->slug]);
 
@@ -2794,7 +2846,7 @@ class TenantPanelRepository
     /** Return the N most-recent central products added to this tenant's catalog. */
     public function newInProducts(int $limit = 6): Collection
     {
-        return Product::query()
+        return \App\Repositories\Tenant\Catalog\ProductCatalog::query()
             ->with(['translations.language', 'files'])
             ->orderByDesc('created_at')
             ->limit($limit)
@@ -2804,7 +2856,7 @@ class TenantPanelRepository
     /** Return the N products with the highest calculated opportunity score. */
     public function opportunityProducts(int $limit = 6): Collection
     {
-        return Product::query()
+        return \App\Repositories\Tenant\Catalog\ProductCatalog::query()
             ->with(['translations.language', 'files', 'categories.translations.language'])
             ->whereNotNull('cost_price')
             ->whereColumn('cost_price', '<', 'default_price')
@@ -2851,14 +2903,14 @@ class TenantPanelRepository
         // Sales velocity: recent (0–30 d) vs prior (30–60 d) in a single aggregating query.
         $salesRows = DB::table('order_items as oi')
             ->join('orders as o', 'o.id', '=', 'oi.order_id')
-            ->whereIn('oi.product_id', $productIds)
+            ->whereIn(DB::raw($this->oiProductKey()), $productIds)
             ->where('o.created_at', '>=', $day60)
             ->select(
-                'oi.product_id',
+                DB::raw($this->oiProductKey() . ' as product_id'),
                 DB::raw("SUM(CASE WHEN o.created_at >= '{$day30}' THEN 1 ELSE 0 END) as recent"),
                 DB::raw("SUM(CASE WHEN o.created_at < '{$day30}' THEN 1 ELSE 0 END) as prior_count")
             )
-            ->groupBy('oi.product_id')
+            ->groupBy(DB::raw($this->oiProductKey()))
             ->get()
             ->keyBy('product_id');
 
@@ -3043,7 +3095,7 @@ class TenantPanelRepository
         $products = $this->opportunityProducts($limit);
 
         if ($products->isEmpty()) {
-            $products = Product::query()
+            $products = \App\Repositories\Tenant\Catalog\ProductCatalog::query()
                 ->with(['translations.language', 'files', 'categories.translations.language'])
                 ->where('active', true)
                 ->inRandomOrder()
@@ -3278,4 +3330,34 @@ class TenantPanelRepository
 
         return array_map(fn (array $s) => array_merge(['image' => null], $s), array_slice($samples, 0, $limit));
     }
+
+    /** SQL for the product id of an order line (alias `oi`): the real column, or the merged product key in central mode. */
+    private function oiProductKey(): string
+    {
+        return \App\Repositories\Tenant\Catalog\ProductCatalog::enabled()
+            ? \App\Support\Catalog\ProductKey::sqlPairKey('oi.product_type', 'oi.catalog_product_id')
+            : 'oi.product_id';
+    }
+
+    /** `products as <alias>` for raw `DB::table()` readers: the real table, or the merged derived table in central mode (dedup plan phase 5). */
+    private function productsFrom(string $alias): \Illuminate\Contracts\Database\Query\Expression|string
+    {
+        if (! \App\Repositories\Tenant\Catalog\ProductCatalog::enabled()) {
+            return "products as {$alias}";
+        }
+        $tenant = tenant();
+
+        return DB::raw('(' . \App\Repositories\Tenant\Catalog\ProductCatalog::productsSql($tenant ? (float) ($tenant->profit_percentage ?? 0) : 0.0) . ") as `{$alias}`");
+    }
+
+    /** `translations as <alias>` joined on a product: the merged product translations in central mode (keyed by the product key). */
+    private function translationsFrom(string $alias): \Illuminate\Contracts\Database\Query\Expression|string
+    {
+        if (! \App\Repositories\Tenant\Catalog\ProductCatalog::enabled()) {
+            return "translations as {$alias}";
+        }
+
+        return DB::raw('(' . \App\Repositories\Tenant\Catalog\ProductCatalog::translationsSql() . ") as `{$alias}`");
+    }
+
 }

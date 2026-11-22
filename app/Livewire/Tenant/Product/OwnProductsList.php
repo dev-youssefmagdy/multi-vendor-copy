@@ -128,6 +128,7 @@ class OwnProductsList extends ListPage
     {
         $product = Product::where('id', $id)->where('is_own_product', true)->firstOrFail();
         $product->delete();
+        \App\Repositories\Tenant\Catalog\ProductCatalog::purgeOwnProductRefs((int) $id);
         $this->toast(__('Product deleted.'));
     }
 

@@ -290,11 +290,11 @@ final class FlashSaleController extends PanelController
             ->limit(50)
             ->get(['id', 'discount_percentage', 'start_date', 'end_date']);
 
-        $attached = DB::table('flash_sale_product')
-            ->whereIn('flash_sale_id', $sales->pluck('id'))
-            ->where('product_id', $productId)
-            ->pluck('flash_sale_id')
-            ->flip();
+        $attachedQuery = DB::table('flash_sale_product')->whereIn('flash_sale_id', $sales->pluck('id'));
+        \App\Repositories\Tenant\Catalog\ProductCatalog::enabled()
+            ? \App\Repositories\Tenant\Catalog\ProductCatalog::wherePairKey($attachedQuery, $productId)
+            : $attachedQuery->where('product_id', $productId);
+        $attached = $attachedQuery->pluck('flash_sale_id')->flip();
 
         $data = $sales->map(fn(FlashSale $s) => [
             'id'          => $s->id,
@@ -313,6 +313,12 @@ final class FlashSaleController extends PanelController
 
         if (!$productId) {
             return $this->failure(__('Product ID is required.'), 422);
+        }
+
+        if (\App\Repositories\Tenant\Catalog\ProductCatalog::enabled()) {
+            $attached = app(\App\Repositories\Tenant\Catalog\ProductCatalog::class)->toggleFlashSaleProduct((int) $flashSale->id, $productId);
+
+            return $this->success($attached ? __('Product added to flash sale.') : __('Product removed from flash sale.'), ['attached' => $attached]);
         }
 
         $already = DB::table('flash_sale_product')

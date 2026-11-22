@@ -31,7 +31,7 @@ class CartController extends Controller
 
         if (!empty($validated['product_id']) && empty($validated['slug'])) {
             // Product-card "quick add" — always qty 1, first active variant.
-            $product = Product::with(['variants', 'centralProduct'])
+            $product = \App\Repositories\Tenant\Catalog\ProductCatalog::query()->with(['variants', 'centralProduct'])
                 ->where('active', true)
                 ->availableInCountry(app(\App\Repositories\Tenant\StorefrontRepository::class)->visibilityCountryId())
                 ->find($validated['product_id']);

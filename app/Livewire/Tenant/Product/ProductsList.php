@@ -300,7 +300,7 @@ class ProductsList extends ListPage
 
     public function openSocialModal(int $productId): void
     {
-        $product = Product::query()->with('translations.language')->findOrFail($productId);
+        $product = \App\Repositories\Tenant\Catalog\ProductCatalog::query()->with('translations.language')->findOrFail($productId);
         $enabledLanguages = Language::query()
             ->where('is_active', true)
             ->orderBy('sort_order')->orderByDesc('is_default')
@@ -363,7 +363,7 @@ class ProductsList extends ListPage
 
     public function openVideoAdModal(int $productId): void
     {
-        $product = Product::query()->with('translations.language')->findOrFail($productId);
+        $product = \App\Repositories\Tenant\Catalog\ProductCatalog::query()->with('translations.language')->findOrFail($productId);
 
         $this->videoAdProductId = $productId;
         $this->videoAdProductName = $product->translationValue('name') ?? $product->slug ?? __('Product #:id', ['id' => $productId]);
@@ -387,7 +387,7 @@ class ProductsList extends ListPage
         $this->socialError = '';
 
         try {
-            $product = Product::query()->with('translations.language')->findOrFail($this->socialProductId);
+            $product = \App\Repositories\Tenant\Catalog\ProductCatalog::query()->with('translations.language')->findOrFail($this->socialProductId);
             $result = $service->generateForProduct(
                 $product,
                 $this->socialSelectedPlatform,
@@ -452,7 +452,7 @@ class ProductsList extends ListPage
 
     public function openPriceModal(int $productId): void
     {
-        $product = Product::query()->with('translations.language', 'variants')->findOrFail($productId);
+        $product = \App\Repositories\Tenant\Catalog\ProductCatalog::query()->with('translations.language', 'variants')->findOrFail($productId);
 
         $this->priceProductId = $productId;
         $this->priceProductName = $product->translationValue('name') ?? $product->slug ?? __('Product #:id', ['id' => $productId]);
@@ -490,9 +490,9 @@ class ProductsList extends ListPage
         $this->priceError = '';
 
         try {
-            $product = Product::query()->findOrFail($this->priceProductId);
+            $product = \App\Repositories\Tenant\Catalog\ProductCatalog::query()->findOrFail($this->priceProductId);
             $variant = $this->priceVariantId
-                ? ProductVariant::query()->where('product_id', $product->id)->find($this->priceVariantId)
+                ? \App\Repositories\Tenant\Catalog\ProductCatalog::variantQuery()->where('product_id', $product->id)->find($this->priceVariantId)
                 : null;
 
             $this->priceData = $service->fetchForProduct($product, useImage: $this->priceUseImage, variant: $variant);
@@ -510,7 +510,7 @@ class ProductsList extends ListPage
 
     public function openShareModal(int $productId): void
     {
-        $product = Product::query()->with('translations.language', 'files')->findOrFail($productId);
+        $product = \App\Repositories\Tenant\Catalog\ProductCatalog::query()->with('translations.language', 'files')->findOrFail($productId);
 
         $name = $product->translationValue('name') ?? $product->slug ?? __('Product #:id', ['id' => $productId]);
         $description = strip_tags($product->translationValue('description') ?? '');
@@ -555,14 +555,14 @@ class ProductsList extends ListPage
 
     public function toggleActive(int $productId): void
     {
-        $product = Product::query()->findOrFail($productId);
+        $product = \App\Repositories\Tenant\Catalog\ProductCatalog::query()->findOrFail($productId);
         $product->update(['active' => !$product->active]);
         $this->toast(__('Product status updated successfully.'));
     }
 
     public function toggleFeatured(int $productId): void
     {
-        $product = Product::query()->findOrFail($productId);
+        $product = \App\Repositories\Tenant\Catalog\ProductCatalog::query()->findOrFail($productId);
         $product->update(['featured' => !$product->featured]);
         $this->toast(__('Product featured state updated successfully.'));
     }
@@ -643,7 +643,7 @@ class ProductsList extends ListPage
 
     public function openPriceListModal(int $productId): void
     {
-        $product = Product::query()->with('variants')->findOrFail($productId);
+        $product = \App\Repositories\Tenant\Catalog\ProductCatalog::query()->with('variants')->findOrFail($productId);
 
         $this->priceListProductId = $productId;
         $this->priceListProductName = $product->translationValue('name') ?? $product->slug ?? __('Product #:id', ['id' => $productId]);
@@ -778,7 +778,7 @@ class ProductsList extends ListPage
             return;
         }
 
-        $product = Product::query()->with('variants')->findOrFail($this->priceListProductId);
+        $product = \App\Repositories\Tenant\Catalog\ProductCatalog::query()->with('variants')->findOrFail($this->priceListProductId);
         $centralSalePrice = $this->priceListCentralSalePrice;
 
         // Build profit JSON + computed prices for product

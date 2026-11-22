@@ -54,7 +54,7 @@ class ReturnAnalyticsPage extends ContentPage
             ->limit(5)
             ->get();
 
-        $productNames = Product::whereIn('id', $topProductRows->pluck('product_id'))
+        $productNames = \App\Repositories\Tenant\Catalog\ProductCatalog::query()->whereIn('id', $topProductRows->pluck('product_id'))
             ->get()
             ->mapWithKeys(fn (Product $p) => [$p->id => $p->translationValue('name') ?? $p->slug]);
 

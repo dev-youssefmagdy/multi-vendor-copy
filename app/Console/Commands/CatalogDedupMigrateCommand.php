@@ -18,16 +18,18 @@ use Illuminate\Support\Facades\Schema;
  *                                              value is back to the pre-approval value): they follow central afterwards.
  *                                              Without it a tenant with stale pairs is `failed` (freeze kept, exit 1).
  *
- * Sections: badges, labels, field_overrides, coupons, flash_sales, categories (DedupRunner::SECTIONS). Progress rows in `catalog_dedup_runs`, reports in
+ * Sections: badges, labels, field_overrides, coupons, flash_sales, categories, products (DedupRunner::SECTIONS). Progress rows in `catalog_dedup_runs`, reports in
  * storage/app/dedup-reports/<section>/<tenant>[.dry-run|.verify].json. No cleanup here (phase 7).
  */
 class CatalogDedupMigrateCommand extends Command
 {
     protected $signature = 'catalog:dedup-migrate
-        {section : badges | labels | field_overrides | coupons | flash_sales | categories}
+        {section : badges | labels | field_overrides | coupons | flash_sales | categories | products}
         {--tenant=* : Tenant id(s); default every tenant}
         {--dry-run : Classify and report only; write nothing}
         {--verify : Read-only shadow-read diff old (synced) vs new (merged) read}
+        {--remap-carts : products only, run AFTER the flip: rewrite mobile cart item ids into merged product keys (use with --dry-run first)}
+        {--reverse : products --remap-carts only: rewrite back to tenant copy ids before a rollback to sync}
         {--accept-stale : field_overrides only: drop the reported stale pairs (they follow central); without it a tenant with stale pairs fails and keeps its legacy freeze}';
 
     protected $description = 'Dedup plan §5a: migrate / verify one section\'s legacy tenant data (additive, per tenant)';
@@ -50,6 +52,11 @@ class CatalogDedupMigrateCommand extends Command
 
             return self::INVALID;
         }
+        if (($this->option('remap-carts') || $this->option('reverse')) && ($section !== 'products' || $this->option('verify'))) {
+            $this->error('--remap-carts / --reverse only apply to `products` migrate / dry run.');
+
+            return self::INVALID;
+        }
         if (! Schema::connection(config('tenancy.database.central_connection'))->hasTable('catalog_dedup_runs')) {
             $this->error('Central table catalog_dedup_runs is missing: run `php artisan migrate` first.');
 
@@ -67,7 +74,7 @@ class CatalogDedupMigrateCommand extends Command
         $diffs = 0;
         $rows = [];
         foreach ($tenants as $tenant) {
-            $report = $runner->run($tenant, $section, $step, ['accept_stale' => (bool) $this->option('accept-stale')]);
+            $report = $runner->run($tenant, $section, $step, ['accept_stale' => (bool) $this->option('accept-stale'), 'remap_carts' => (bool) $this->option('remap-carts'), 'reverse' => (bool) $this->option('reverse')]);
             $failed += $report['status'] === 'failed' ? 1 : 0;
             $diffs += (int) ($report['diffs'] ?? 0);
             $rows[] = [

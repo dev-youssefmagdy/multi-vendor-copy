@@ -159,7 +159,7 @@ class ReturnDetailPage extends Component
             ?? ($record->product_variant_id ? $order?->items->firstWhere('product_variant_id', (int) $record->product_variant_id) : null);
         $product = $orderItem?->product ?? $orderItem?->variant?->product;
         $replacement = $isExchange && $record->replacement_product_variant_id
-            ? ProductVariant::query()->find((int) $record->replacement_product_variant_id)
+            ? \App\Repositories\Tenant\Catalog\ProductCatalog::variantQuery()->find((int) $record->replacement_product_variant_id)
             : null;
         $inspection = $record->inspection_result instanceof InspectionResult ? $record->inspection_result : null;
 

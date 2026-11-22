@@ -180,7 +180,10 @@ final class BadgeCatalog
     public function productIds(CatalogBadge $badge, ?int $countryId, bool $activeProductsOnly = false): array
     {
         return $this->entries($badge, $countryId)
-            ->when($activeProductsOnly, fn (Builder $q) => $q->join('products', 'products.id', '=', 'm.product_id')
+            ->when($activeProductsOnly && ProductCatalog::enabled(), fn (Builder $q) => $q
+                ->joinSub(\App\Models\Tenant\Catalog\MergedProduct::query()->getQuery()->select(['id', 'active']), 'products', 'products.id', '=', 'm.product_id')
+                ->where('products.active', true))
+            ->when($activeProductsOnly && ! ProductCatalog::enabled(), fn (Builder $q) => $q->join('products', 'products.id', '=', 'm.product_id')
                 ->where('products.active', true)
                 ->when(CatalogRefColumns::has($this->db(), 'products', 'central_visible'), fn (Builder $q) => $q->where('products.central_visible', true)))
             ->pluck('m.product_id')
@@ -207,6 +210,10 @@ final class BadgeCatalog
     public static function membershipSql(?ConnectionInterface $db = null): string
     {
         $db ??= DB::connection('tenant');
+        if (ProductCatalog::enabled()) {
+            return self::membershipSqlMerged();
+        }
+
         $cb = CentralTable::name('product_badges');
         $cpb = CentralTable::name('product_badge_product');
         $o = '`' . self::OVERRIDES . '`';
@@ -241,6 +248,45 @@ final class BadgeCatalog
                 JOIN `product_badges` b ON b.`id` = t.`product_badge_id`
                 JOIN `products` p ON p.`id` = t.`product_id`
                 WHERE b.`central_product_badge_id` IS NULL
+                  AND NOT EXISTS (SELECT 1 FROM {$cb} sx WHERE sx.`text` = b.`text`)";
+    }
+
+    /**
+     * Phase 5 (`products` = central): same rows, `product_id` = the merged product KEY (ProductKey: central id | own
+     * id + 1e9) and no join to the tenant `products` copies: central pairs need an adoption row, tenant attaches use the
+     * phase-1 typed pair of the pivot.
+     */
+    private static function membershipSqlMerged(): string
+    {
+        $cb = CentralTable::name('product_badges');
+        $cpb = CentralTable::name('product_badge_product');
+        $o = '`' . self::OVERRIDES . '`';
+        $key = ProductCatalog::pairKeySql('t.`product_type`', 't.`catalog_product_id`');
+
+        return "SELECT CONCAT('c:', cb.`id`) AS `id`, 'central' AS `badge_type`, cb.`id` AS `badge_id`, cb.`text` AS `text`,
+                    cb.`active` AS `active`, cp.`product_id` AS `product_id`, 'central' AS `product_type`, cp.`product_id` AS `catalog_product_id`,
+                    cp.`country_id` AS `country_id`, COALESCE(o.`sort_order`, cp.`sort_order`) AS `sort_order`, 'central' AS `pair_source`
+                FROM {$cpb} cp
+                JOIN {$cb} cb ON cb.`id` = cp.`product_badge_id`
+                LEFT JOIN {$o} o ON o.`badge_type` = 'central' AND o.`badge_id` = cp.`product_badge_id`
+                    AND o.`product_type` = 'central' AND o.`product_id` = cp.`product_id` AND o.`country_key` = IFNULL(cp.`country_id`, 0)
+                WHERE COALESCE(o.`hidden`, 0) = 0 AND " . ProductCatalog::adoptedSql('cp.`product_id`') . "
+            UNION ALL
+            SELECT CONCAT('c:', cb.`id`), 'central', cb.`id`, cb.`text`, cb.`active`, {$key}, t.`product_type`, t.`catalog_product_id`,
+                    t.`country_id`, t.`sort_order`, 'tenant'
+                FROM `product_badge_product` t
+                JOIN {$cb} cb ON cb.`id` = t.`catalog_badge_id`
+                WHERE t.`product_badge_id` IS NULL AND t.`badge_type` = 'central' AND t.`catalog_product_id` IS NOT NULL
+                  AND (t.`product_type` = 'tenant' OR " . ProductCatalog::adoptedSql('t.`catalog_product_id`') . ")
+                  AND NOT EXISTS (SELECT 1 FROM {$cpb} x WHERE x.`product_badge_id` = cb.`id` AND t.`product_type` = 'central'
+                        AND x.`product_id` = t.`catalog_product_id` AND x.`country_id` <=> t.`country_id`)
+            UNION ALL
+            SELECT CONCAT('t:', b.`id`), 'tenant', b.`id`, b.`text`, b.`active`, {$key}, t.`product_type`, t.`catalog_product_id`,
+                    t.`country_id`, t.`sort_order`, 'tenant'
+                FROM `product_badge_product` t
+                JOIN `product_badges` b ON b.`id` = t.`product_badge_id`
+                WHERE b.`central_product_badge_id` IS NULL AND t.`catalog_product_id` IS NOT NULL
+                  AND (t.`product_type` = 'tenant' OR " . ProductCatalog::adoptedSql('t.`catalog_product_id`') . ")
                   AND NOT EXISTS (SELECT 1 FROM {$cb} sx WHERE sx.`text` = b.`text`)";
     }
 }

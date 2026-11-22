@@ -77,7 +77,7 @@ class ImageSearchController extends Controller
             return redirect()->route($routeName, ['mode' => 'image'])->withErrors(['image' => $e->getMessage()]);
         }
 
-        $centralIds = \App\Models\Tenant\Product::query()
+        $centralIds = \App\Repositories\Tenant\Catalog\ProductCatalog::query()
             ->where('active', true)
             ->pluck('central_product_id')
             ->filter()
@@ -138,7 +138,7 @@ class ImageSearchController extends Controller
             return response()->json(['error' => $e->getMessage()], 422);
         }
 
-        $candidateIds = \App\Models\Tenant\Product::query()
+        $candidateIds = \App\Repositories\Tenant\Catalog\ProductCatalog::query()
             ->whereNotNull('central_product_id')
             ->pluck('central_product_id')
             ->filter()

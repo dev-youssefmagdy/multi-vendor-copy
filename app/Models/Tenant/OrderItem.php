@@ -57,13 +57,32 @@ class OrderItem extends Model
         return $this->belongsTo(Order::class);
     }
 
+    /** Merged key of the line's product / variant from the typed pair (dedup plan phase 5); NULL for legacy rows. */
+    public function getProductKeyAttribute(): ?int
+    {
+        return \App\Support\Catalog\ProductKey::fromPair($this->attributes['product_type'] ?? null, $this->attributes['catalog_product_id'] ?? null);
+    }
+
+    public function getVariantKeyAttribute(): ?int
+    {
+        return \App\Support\Catalog\ProductKey::fromPair($this->attributes['variant_type'] ?? null, $this->attributes['catalog_variant_id'] ?? null);
+    }
+
     public function variant(): BelongsTo
     {
+        if (\App\Repositories\Tenant\Catalog\ProductCatalog::enabled()) {
+            return $this->belongsTo(\App\Models\Tenant\Catalog\MergedProductVariant::class, 'variant_key');
+        }
+
         return $this->belongsTo(ProductVariant::class, 'product_variant_id');
     }
 
     public function product(): BelongsTo
     {
+        if (\App\Repositories\Tenant\Catalog\ProductCatalog::enabled()) {
+            return $this->belongsTo(\App\Models\Tenant\Catalog\MergedProduct::class, 'product_key');
+        }
+
         return $this->belongsTo(Product::class);
     }
 }

@@ -130,7 +130,7 @@ final class ProductMarketingService
     public function fetchAiPrice(Product $product, bool $useImage, ?int $variantId): array
     {
         $variant = $variantId
-            ? ProductVariant::query()->where('product_id', $product->id)->find($variantId)
+            ? \App\Repositories\Tenant\Catalog\ProductCatalog::variantQuery()->where('product_id', $product->id)->find($variantId)
             : null;
 
         return $this->priceFinderService->fetchForProduct($product, useImage: $useImage, variant: $variant);

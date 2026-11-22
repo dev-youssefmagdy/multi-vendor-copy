@@ -72,8 +72,9 @@ class OrderLifecycleService
             ->filter()
             ->unique();
 
-        if ($productIds->isNotEmpty()) {
-            Product::whereIn('id', $productIds)->increment('orders_count');
+        // Phase 5: merged products derive `orders_count` from order_items by typed pair (no stored counter to increment).
+        if ($productIds->isNotEmpty() && ! \App\Repositories\Tenant\Catalog\ProductCatalog::enabled()) {
+            \App\Models\Tenant\Product::query()->whereIn('id', $productIds)->increment('orders_count');
         }
     }
 

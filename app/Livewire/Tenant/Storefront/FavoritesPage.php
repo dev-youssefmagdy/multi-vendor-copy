@@ -64,7 +64,7 @@ class FavoritesPage extends Component
         $symbol = data_get($currency, 'symbol', '$');
         $rate = (float) data_get($currency, 'conversion_rate', 1.0);
 
-        return Product::with(['centralProduct', 'variants.centralVariant'])
+        return \App\Repositories\Tenant\Catalog\ProductCatalog::query()->with(['centralProduct', 'variants.centralVariant'])
             ->where('active', true)
             ->availableInCountry(app(\App\Repositories\Tenant\StorefrontRepository::class)->visibilityCountryId())
             ->whereIn('slug', $slugs)

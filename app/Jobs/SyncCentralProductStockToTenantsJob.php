@@ -71,6 +71,10 @@ class SyncCentralProductStockToTenantsJob implements ShouldQueue
         $tenants = Tenant::all();
 
         foreach ($tenants as $tenant) {
+            // Dedup plan phase 5 / §2b: tenants reading products live from central have no copies to write.
+            if (\App\Support\Catalog\CatalogSource::isCentral($tenant, 'products')) {
+                continue;
+            }
             try {
                 tenancy()->initialize($tenant);
 

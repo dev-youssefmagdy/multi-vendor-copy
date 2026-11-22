@@ -154,7 +154,7 @@ class HomeProductService
             return $this->getStaticFallback($limit, $countryId);
         }
 
-        $categoryIds = \App\Models\Tenant\Product::query()
+        $categoryIds = \App\Repositories\Tenant\Catalog\ProductCatalog::query()
             ->whereIn('id', $interactedIds)
             ->where('active', true)
             ->with('categories:id')
@@ -323,6 +323,6 @@ class HomeProductService
     /** Active products the visitor's country may see (own products' "sold in" targeting). */
     protected function baseQuery(?int $countryId = null)
     {
-        return Product::query()->where('products.active', true)->availableInCountry($countryId);
+        return \App\Repositories\Tenant\Catalog\ProductCatalog::query()->where('products.active', true)->availableInCountry($countryId);
     }
 }

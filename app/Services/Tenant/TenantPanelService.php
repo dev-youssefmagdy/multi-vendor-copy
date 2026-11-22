@@ -608,7 +608,8 @@ class TenantPanelService
                 ->all();
 
             $flashSale->fill([
-                'product_id' => $productIds[0] ?? $attributes['product_id'] ?? $flashSale->product_id,
+                // Phase 5: the legacy single-product column cannot hold a merged key; the typed pivot is the source of truth.
+                'product_id' => \App\Repositories\Tenant\Catalog\ProductCatalog::enabled() ? null : ($productIds[0] ?? $attributes['product_id'] ?? $flashSale->product_id),
                 'discount_percentage' => $attributes['discount_percentage'],
                 'start_date' => $attributes['start_date'] ?? null,
                 'end_date' => $attributes['end_date'] ?? null,
@@ -618,6 +619,17 @@ class TenantPanelService
             $flashSale->save();
             if (array_key_exists('country_ids', $attributes)) {
                 $flashSale->syncCountries($attributes['country_ids']);
+            }
+
+            if (\App\Repositories\Tenant\Catalog\ProductCatalog::enabled()) {
+                // Phase 5: product ids are merged keys; the pivot is written through typed pairs.
+                app(\App\Repositories\Tenant\Catalog\ProductCatalog::class)->syncFlashSaleProducts(
+                    (int) $flashSale->id,
+                    $productIds !== [] ? $productIds : array_filter([(int) ($flashSale->product_id ?? 0)])
+                );
+                CacheVersion::bumpMany(['FlashSale', 'Product']);
+
+                return $flashSale->fresh();
             }
 
             $flashSale->products()->sync(
@@ -645,7 +657,7 @@ class TenantPanelService
             return [];
         }
 
-        $products = Product::query()
+        $products = \App\Repositories\Tenant\Catalog\ProductCatalog::query()
             ->with('centralProduct')
             ->whereIn('id', $productIds)
             ->get(['id', 'central_product_id', 'default_price', 'is_own_product']);
@@ -1396,13 +1408,18 @@ class TenantPanelService
     public function submitProductEditRequest(Product $product, array $changedTranslations, array $currentTranslations): void
     {
         $tenantId = tenant('id');
-        tenancy()->central(function () use ($product, $changedTranslations, $currentTranslations, $tenantId) {
+        // Phase 5: a merged central product has no tenant row; the request is keyed by the central product id (product_id 0).
+        $centralMode = $product instanceof \App\Models\Tenant\Catalog\MergedProduct && $product->isCentral();
+        tenancy()->central(function () use ($product, $changedTranslations, $currentTranslations, $tenantId, $centralMode) {
             ProductEditRequest::query()->updateOrCreate(
+                $centralMode
+                    ? ['tenant_id' => $tenantId, 'central_product_id' => (int) $product->source_id]
+                    : ['tenant_id' => $tenantId, 'product_id' => $product->id],
                 [
-                    'tenant_id' => $tenantId,
-                    'product_id' => $product->id,
-                ],
-                [
+                    'product_id' => $centralMode ? 0 : $product->id,
+                    'product_type' => $centralMode ? 'central' : null,
+                    'catalog_product_id' => $centralMode ? (int) $product->source_id : null,
+                    'central_product_id' => $centralMode ? (int) $product->source_id : null,
                     'product_slug' => $product->slug,
                     'requested_translations' => $changedTranslations,
                     'current_translations' => $currentTranslations,

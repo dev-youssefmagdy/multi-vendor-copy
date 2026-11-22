@@ -42,7 +42,7 @@ class BadgeProductsList extends Component
             return;
         }
 
-        $productIds = Product::query()
+        $productIds = \App\Repositories\Tenant\Catalog\ProductCatalog::query()
             ->whereHas('categories', fn ($q) => $q->where('categories.id', $this->filterCategoryId))
             ->pluck('id')
             ->map(fn ($id) => (string) $id)
@@ -74,7 +74,7 @@ class BadgeProductsList extends Component
     {
         $badge = ProductBadge::query()->findOrFail($this->badgeId);
 
-        $productOptions = Product::query()
+        $productOptions = \App\Repositories\Tenant\Catalog\ProductCatalog::query()
             ->with('translations.language')
             ->get()
             ->mapWithKeys(fn ($p) => [(string) $p->id => $p->translationValue('name') ?? $p->slug])
@@ -83,7 +83,7 @@ class BadgeProductsList extends Component
         return view('livewire.tenant.badge.badge-products-list', [
             'badge'          => $badge,
             'assignedCount'  => count($this->selectedProducts),
-            'catalogCount'   => Product::query()->count(),
+            'catalogCount'   => \App\Repositories\Tenant\Catalog\ProductCatalog::query()->count(),
             'categoryTree'   => app(TenantPanelRepository::class)->categoryTreeOptions(),
             'productOptions' => $productOptions,
         ]);

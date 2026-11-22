@@ -7,10 +7,14 @@ namespace App\Services\Tenant;
 use App\Jobs\SyncCentralProductStockToTenantsJob;
 use App\Models\Product as CentralProduct;
 use App\Models\ProductVariant as CentralVariant;
+use App\Models\Tenant\Catalog\MergedProduct;
+use App\Models\Tenant\Catalog\MergedProductVariant;
 use App\Models\Tenant\Order;
 use App\Models\Tenant\OrderItem;
 use App\Models\Tenant\Product as TenantProduct;
 use App\Models\Tenant\ProductVariant as TenantVariant;
+use App\Repositories\Tenant\Catalog\ProductCatalog;
+use App\Support\Catalog\ProductKey;
 use Illuminate\Contracts\Database\Query\Expression;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -238,6 +242,11 @@ class StockService
      */
     private function moveLineStock(?TenantVariant $variant, ?TenantProduct $product, int $qty, int $direction, bool $adjustSoldCount): ?int
     {
+        // Dedup plan phase 5: lines resolved through the merged catalog have no tenant copy row to update.
+        if ($variant instanceof MergedProductVariant || $product instanceof MergedProduct) {
+            return $this->moveMergedLineStock($variant, $product, $qty, $direction, $adjustSoldCount);
+        }
+
         if ($variant) {
             TenantVariant::query()->whereKey($variant->id)->update(['stock' => $this->stockExpression('stock', $qty, $direction)]);
 
@@ -275,6 +284,54 @@ class StockService
         $this->moveCentralStock((int) $product->central_product_id, $qty, $direction, $adjustSoldCount);
 
         return (int) $product->central_product_id;
+    }
+
+    /**
+     * Stock move of a merged line (ProductCatalog, `products` = central). CENTRAL rows: the tenant's `stock_override`
+     * (variant, or product for a variant-less line) moves when set (floored at 0), then central stock / sold_count move
+     * exactly like a synced line (moveCentralStock, manage_stock rule unchanged). OWN rows: the real tenant rows
+     * (`source_id`) move like before. Money columns and order snapshots are never touched.
+     */
+    private function moveMergedLineStock(?TenantVariant $variant, ?TenantProduct $product, int $qty, int $direction, bool $adjustSoldCount): ?int
+    {
+        $catalog = app(ProductCatalog::class);
+
+        if ($variant instanceof MergedProductVariant) {
+            if ($variant->source === 'tenant') {
+                TenantVariant::query()->whereKey((int) $variant->source_id)->update(['stock' => $this->stockExpression('stock', $qty, $direction)]);
+                $ownProductId = (int) $variant->product_id - ProductKey::OWN_OFFSET;
+                if ($ownProductId > 0) {
+                    $this->moveTenantProductStock($ownProductId, $qty, $direction);
+                }
+
+                return null;
+            }
+
+            $centralVariant = CentralVariant::query()->find((int) $variant->source_id, ['id', 'product_id']);
+            if (! $centralVariant) {
+                Log::warning("StockService: Central variant #{$variant->source_id} not found — skipped.");
+
+                return null;
+            }
+            $catalog->moveOverrideStock((int) $centralVariant->product_id, (int) $centralVariant->id, $qty, $direction);
+            $this->moveCentralStock((int) $centralVariant->product_id, $qty, $direction, $adjustSoldCount, (int) $centralVariant->id);
+
+            return (int) $centralVariant->product_id;
+        }
+
+        if (! $product instanceof MergedProduct) {
+            return null;
+        }
+        if ($product->source === 'tenant') {
+            $this->moveTenantProductStock((int) $product->source_id, $qty, $direction);
+
+            return null;
+        }
+
+        $catalog->moveOverrideStock((int) $product->source_id, null, $qty, $direction);
+        $this->moveCentralStock((int) $product->source_id, $qty, $direction, $adjustSoldCount);
+
+        return (int) $product->source_id;
     }
 
     private function moveTenantProductStock(int $productId, int $qty, int $direction): void

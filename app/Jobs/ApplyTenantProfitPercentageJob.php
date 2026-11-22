@@ -31,6 +31,12 @@ class ApplyTenantProfitPercentageJob implements ShouldQueue
             return;
         }
 
+        // Dedup plan phase 5: central-mode tenants have no stored copies; profit is applied at read time.
+        if (\App\Support\Catalog\CatalogSource::isCentral($tenant, 'products')) {
+            \App\Support\CacheVersion::bumpMany(['Product', 'ProductVariant']);
+            return;
+        }
+
         $service->applyProfitPercentage($tenant);
     }
 }

@@ -28,11 +28,11 @@ final class DashboardController extends PanelController
         $newProducts         = $repository->pendingNewProductCards(6);
         $newProductsPending  = $repository->pendingNewProductsCount();
         $pendingPurchases    = $repository->pendingVendorPurchaseCount();
-        $activeProductsCount = \App\Models\Tenant\Product::query()->where('active', true)->count();
+        $activeProductsCount = \App\Repositories\Tenant\Catalog\ProductCatalog::query()->where('active', true)->count();
 
         $partnerData = $this->partnerData();
 
-        $adsData = \App\Models\Tenant\Product::query()
+        $adsData = \App\Repositories\Tenant\Catalog\ProductCatalog::query()
             ->whereNotNull('social_posts')
             ->where('social_posts', '!=', '[]')
             ->orderByDesc('updated_at')

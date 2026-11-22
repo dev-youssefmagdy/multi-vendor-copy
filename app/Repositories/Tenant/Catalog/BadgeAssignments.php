@@ -76,7 +76,8 @@ final class BadgeAssignments
 
             $this->tenantRows($badge)
                 ->where(fn (Builder $q) => $countryId === null ? $q->whereNull('country_id') : $q->where('country_id', $countryId))
-                ->when($productIds !== [], fn (Builder $q) => $q->whereNotIn('product_id', $productIds))
+                ->when($productIds !== [] && ! ProductCatalog::enabled(), fn (Builder $q) => $q->whereNotIn('product_id', $productIds))
+                ->when($productIds !== [] && ProductCatalog::enabled(), fn (Builder $q) => ProductCatalog::whereNotPairKeys($q, $productIds))
                 ->delete();
         });
 
@@ -103,7 +104,7 @@ final class BadgeAssignments
                 }
 
                 $this->tenantRows($badge)
-                    ->where('product_id', $productId)
+                    ->tap(fn (Builder $q) => ProductCatalog::enabled() ? ProductCatalog::wherePairKey($q, $productId) : $q->where('product_id', $productId))
                     ->where(fn (Builder $q) => $countryId === null ? $q->whereNull('country_id') : $q->where('country_id', $countryId))
                     ->update(['sort_order' => $index, 'updated_at' => now()]);
             }
@@ -138,7 +139,7 @@ final class BadgeAssignments
                 if ($row->pair_source === 'central') {
                     $this->upsertOverride($badge, $productRef['catalog_product_id'], $row->country_id === null ? null : (int) $row->country_id, ['hidden' => true]);
                 } else {
-                    $this->tenantRows($badge)->where('product_id', $productId)
+                    $this->tenantRows($badge)->tap(fn (Builder $q) => ProductCatalog::enabled() ? ProductCatalog::wherePairKey($q, $productId) : $q->where('product_id', $productId))
                         ->where(fn (Builder $q) => $row->country_id === null ? $q->whereNull('country_id') : $q->where('country_id', $row->country_id))
                         ->delete();
                 }
@@ -179,6 +180,20 @@ final class BadgeAssignments
             return [];
         }
 
+        if (ProductCatalog::enabled()) {
+            // Phase 5: key = central id; adopted products only (override row), hidden pairs included.
+            $pairs = [];
+            foreach ($this->db()->select(
+                'SELECT cp.`product_id` AS central_id FROM ' . CentralTable::name('product_badge_product') . ' cp
+                  WHERE cp.`product_badge_id` = ? AND cp.`country_id` <=> ? AND ' . ProductCatalog::adoptedSql('cp.`product_id`'),
+                [$badge->badgeId, $countryId],
+            ) as $row) {
+                $pairs[(int) $row->central_id] ??= (int) $row->central_id;
+            }
+
+            return $pairs;
+        }
+
         $notOwn = CatalogRefColumns::has($this->db(), 'products', 'is_own_product') ? 'COALESCE(p.`is_own_product`, 0) = 0' : '1 = 1';
         $rows = $this->db()->select(
             'SELECT p.`id` AS tenant_id, cp.`product_id` AS central_id
@@ -213,7 +228,7 @@ final class BadgeAssignments
             'product_badge_id' => $badge->isCentral() ? null : $badge->badgeId,
             'badge_type' => $badge->ref->source,
             'catalog_badge_id' => $badge->badgeId,
-            'product_id' => $product['id'],
+            'product_id' => $product['id'] ?? null,
             'product_type' => $product['product_type'],
             'catalog_product_id' => $product['catalog_product_id'],
             'country_id' => $countryId,
@@ -262,6 +277,11 @@ final class BadgeAssignments
     {
         if ($ids === []) {
             return [];
+        }
+
+        // Phase 5: ids are merged product keys, no tenant row to look up.
+        if (ProductCatalog::enabled()) {
+            return ProductCatalog::refsForKeys($ids);
         }
 
         $hasOwn = CatalogRefColumns::has($this->db(), 'products', 'is_own_product');

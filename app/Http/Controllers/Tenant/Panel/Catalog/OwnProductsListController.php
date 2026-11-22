@@ -58,7 +58,9 @@ final class OwnProductsListController extends PanelController
     {
         abort_unless($product->is_own_product, 404);
 
+        $id = (int) $product->id;
         $product->delete();
+        \App\Repositories\Tenant\Catalog\ProductCatalog::purgeOwnProductRefs($id);
 
         return $this->success(__('Product deleted.'));
     }

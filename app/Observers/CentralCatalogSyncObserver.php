@@ -24,6 +24,8 @@ class CentralCatalogSyncObserver
             return;
         }
 
+        $this->bumpCentralProducts();
+
         if ($model instanceof Product) {
             EmbedProductImagesJob::dispatch($model->id);
 
@@ -38,6 +40,8 @@ class CentralCatalogSyncObserver
         if ($model instanceof Category || $model instanceof Variation) {
             return;
         }
+
+        $this->bumpCentralProducts();
 
         if ($model instanceof Product && $model->wasChanged('primary_image_url')) {
             EmbedProductImagesJob::dispatch($model->id);
@@ -87,6 +91,10 @@ class CentralCatalogSyncObserver
             $allTenants = Tenant::query()->orderBy('id')->get();
 
             foreach ($allTenants as $tenant) {
+                // Dedup plan phase 5: central-mode tenants read status live (no copy flag to update).
+                if (\App\Support\Catalog\CatalogSource::isCentral($tenant, 'products')) {
+                    continue;
+                }
                 tenancy()->initialize($tenant);
                 try {
                     // Use withoutGlobalScope so we can find the row even when
@@ -113,6 +121,10 @@ class CentralCatalogSyncObserver
 
     public function deleted(Category|Product|Variation|ProductVariant $model): void
     {
+        if ($model instanceof Product || $model instanceof ProductVariant) {
+            $this->bumpCentralProducts();
+        }
+
         if ($model instanceof Category) {
             app(CentralCatalogTenantSyncService::class)->syncAllTenants(['categories', 'products']);
 
@@ -133,5 +145,15 @@ class CentralCatalogSyncObserver
         }
 
         app(CentralCatalogTenantSyncService::class)->syncAllTenants(['products']);
+    }
+
+    /**
+     * Dedup plan phase 5 / invariant 8: tenants in `products = central` mode read central products and variants live
+     * (App\Repositories\Tenant\Catalog\ProductCatalog); the global tag invalidates every tenant's merged-product
+     * caches on any central product / variant change.
+     */
+    private function bumpCentralProducts(): void
+    {
+        CacheVersion::bump(\App\Repositories\Tenant\Catalog\ProductCatalog::CACHE_TAG);
     }
 }

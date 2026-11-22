@@ -24,6 +24,8 @@ class CacheVersion
         'CentralProductBadge', 'CentralProductLabel',
         // Dedup plan phase 3: central coupons / flash sales read live by tenants in `central` mode.
         'CentralCoupon', 'CentralFlashSale',
+        // Dedup plan phase 5: central products / variants read live by tenants in `central` mode.
+        'CentralProduct',
     ];
 
     /** Every tag the storefront caches are keyed on (see bumpStorefront()). */

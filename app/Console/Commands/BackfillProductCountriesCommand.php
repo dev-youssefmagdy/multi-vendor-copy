@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Product;
 use App\Models\Tenant;
+use App\Support\Catalog\CatalogSource;
 use App\Models\Tenant\Product as TenantProduct;
 use Illuminate\Console\Command;
 
@@ -36,6 +37,11 @@ class BackfillProductCountriesCommand extends Command
         $failed = 0;
 
         foreach ($tenants as $tenant) {
+            // Dedup plan phase 5: central-mode tenants read countries live from central; no copy to backfill.
+            if (CatalogSource::isCentral($tenant, 'products')) {
+                $this->line("  [{$tenant->id}] skipped (products = central).");
+                continue;
+            }
             tenancy()->initialize($tenant);
 
             try {

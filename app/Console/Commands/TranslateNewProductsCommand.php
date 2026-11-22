@@ -56,7 +56,12 @@ class TranslateNewProductsCommand extends Command
             tenancy()->initialize($tenant);
 
             try {
-                [$products, $languages] = $this->processTenant($openAi, $dryRun);
+                // Dedup plan phase 5: central-mode tenants have no `needs_ai_translation` copies; the missing
+                // (product, language, field) values of the MERGED read are translated and stored as tenant-only
+                // `central_product` translation rows (FieldOverrideStore::putTenantTranslation), never as copies.
+                [$products, $languages] = \App\Repositories\Tenant\Catalog\ProductCatalog::enabled($tenant)
+                    ? $this->processCentralTenant($openAi, $dryRun)
+                    : $this->processTenant($openAi, $dryRun);
                 $totalProducts += $products;
                 $totalLanguages += $languages;
             } catch (Throwable $e) {
@@ -71,6 +76,64 @@ class TranslateNewProductsCommand extends Command
         $this->info("Done. {$totalProducts} product(s) {$verb} translated across {$totalLanguages} language(s).");
 
         return self::SUCCESS;
+    }
+
+    /** @return array{0: int, 1: int} [products touched, languages] */
+    private function processCentralTenant(OpenAiTranslationService $openAi, bool $dryRun): array
+    {
+        $tenant = tenant();
+        $languages = TenantLanguage::query()->where('is_active', true)->where('translation_status', 'completed')->get();
+        $source = TenantLanguage::query()->where('is_default', true)->first();
+        $sourceLocale = strtolower((string) ($source?->code ?? config('app.fallback_locale', 'en')));
+        if ($languages->isEmpty()) {
+            return [0, 0];
+        }
+
+        $store = new \App\Repositories\Tenant\Catalog\FieldOverrideStore();
+        $products = \App\Models\Tenant\Catalog\MergedProduct::query()
+            ->where('source', 'central')->where('active', true)->with('translations.language')->limit(200)->get();
+        $storeContext = app(StoreContextService::class);
+        $touched = [];
+
+        foreach ($languages as $language) {
+            $target = strtolower((string) $language->code);
+            if ($target === $sourceLocale) {
+                continue;
+            }
+            $brand = $storeContext->build(targetLanguageName: $language->name, sourceLanguageName: $source?->name ?? $sourceLocale);
+
+            foreach ($products as $product) {
+                $values = [];
+                foreach ($product->translations as $t) {
+                    $values[(string) $t->language?->code][$t->field] = (string) $t->value;
+                }
+                $pending = [];
+                foreach (self::FIELDS as $field) {
+                    $src = trim((string) ($values[$sourceLocale][$field] ?? ''));
+                    if ($src !== '' && trim((string) ($values[$target][$field] ?? '')) === '') {
+                        $pending[] = ['group' => $product->id, 'field' => $field, 'text' => $src];
+                    }
+                }
+                if ($pending === []) {
+                    continue;
+                }
+                $touched[$product->id] = true;
+                if ($dryRun) {
+                    $this->line("  [c:{$product->source_id}] {$language->name}: " . implode(', ', array_column($pending, 'field')));
+                    continue;
+                }
+                $translated = $openAi->translateGroupedPending($pending, $sourceLocale, $target, $language->name, $brand);
+                foreach ($pending as $offset => $item) {
+                    $value = trim((string) ($translated[$offset] ?? ''));
+                    if ($value !== '') {
+                        $store->putTenantTranslation(\App\Repositories\Tenant\Catalog\ProductCatalog::CENTRAL_TRANSLATION_TYPE, (int) $product->source_id, $target, $item['field'], $value);
+                    }
+                }
+            }
+        }
+        $this->line("[{$tenant->id}] central mode: " . count($touched) . ' product(s) translated');
+
+        return [count($touched), $languages->count()];
     }
 
     private function processTenant(OpenAiTranslationService $openAi, bool $dryRun): array

@@ -113,6 +113,10 @@ class SyncCentralProductPriceToTenantsJob implements ShouldQueue
 
         foreach ($tenants as $tenant) {
             $tenantStep = microtime(true);
+            // Dedup plan phase 5 / §2b: tenants reading products live from central have no copies to write.
+            if (\App\Support\Catalog\CatalogSource::isCentral($tenant, 'products')) {
+                continue;
+            }
             tenancy()->initialize($tenant);
             $this->syncForTenant($priceMap, $targetProductId);
             info('[SyncCentralProductPriceToTenantsJob] synced tenant', [

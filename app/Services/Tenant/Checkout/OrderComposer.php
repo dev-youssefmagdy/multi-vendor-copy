@@ -159,6 +159,11 @@ class OrderComposer
         }
 
         return function (array $item) use ($products, $variants): array {
+            // Dedup plan phase 5: merged lines already carry their typed pair (ProductCatalog::lineColumns()).
+            if (isset($item['product_type'], $item['catalog_product_id'])) {
+                return array_intersect_key($item, array_flip(['product_type', 'catalog_product_id', 'variant_type', 'catalog_variant_id']));
+            }
+
             $product = $products[(int) ($item['product_id'] ?? 0)] ?? null;
             $variant = $variants[(int) ($item['product_variant_id'] ?? 0)] ?? null;
 
@@ -230,7 +235,7 @@ class OrderComposer
                 'product_id' => $product->id,
                 'product_variant_id' => $item['product_variant_id'] ?? ($item['variant']?->id),
                 'weight' => round((float) ($lineWeights[$item['key']] ?? 0), 3),
-            ]);
+            ], \App\Repositories\Tenant\Catalog\ProductCatalog::lineColumns($product, $item['variant'] ?? null));
 
             if ($isOwn) {
                 $ownItems[] = $payload;

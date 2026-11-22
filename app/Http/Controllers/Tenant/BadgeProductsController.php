@@ -49,7 +49,7 @@ class BadgeProductsController extends Controller
             'initialProducts'       => $initialProducts,
             'categoryTree'          => $categoryTree,
             'assignedCount'         => count($selectedProductIds),
-            'catalogCount'          => Product::query()->count(),
+            'catalogCount'          => \App\Repositories\Tenant\Catalog\ProductCatalog::query()->count(),
         ]);
     }
 
@@ -71,7 +71,7 @@ class BadgeProductsController extends Controller
             return response()->json(['error' => 'Please choose a category first.'], 422);
         }
 
-        $productIds = Product::query()
+        $productIds = \App\Repositories\Tenant\Catalog\ProductCatalog::query()
             ->whereHas('categories', fn ($q) => $q->where('categories.id', $categoryId))
             ->pluck('id')
             ->map(fn ($id) => (int) $id)

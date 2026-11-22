@@ -55,7 +55,9 @@ class AddEditProduct extends Component
         $tenantId = tenant()->getTenantKey();
 
         $this->pendingEditRequest = tenancy()->central(fn() => \App\Models\ProductEditRequest::where('tenant_id', $tenantId)
-            ->where('product_id', $this->productId)
+            ->when(\App\Repositories\Tenant\Catalog\ProductCatalog::enabled() && $product instanceof \App\Models\Tenant\Catalog\MergedProduct && $product->isCentral(),
+                fn ($q) => $q->where('central_product_id', (int) $product->source_id),
+                fn ($q) => $q->where('product_id', $this->productId))
             ->where('status', 'pending')
             ->first(['id', 'requested_translations', 'created_at'])
             ?->toArray());
@@ -113,7 +115,7 @@ class AddEditProduct extends Component
         // and route them through the admin approval flow instead of saving directly.
         $editRequestSubmitted = false;
         if ($this->productId) {
-            $existingProduct = Product::query()->findOrFail($this->productId);
+            $existingProduct = \App\Repositories\Tenant\Catalog\ProductCatalog::query()->findOrFail($this->productId);
             $currentTranslations = $existingProduct->translationsByLocale(['name', 'description']);
 
             [$changedTranslations, $previousValues] = $service->diffProductTranslations($currentTranslations, $validated['translations']);
@@ -131,6 +133,12 @@ class AddEditProduct extends Component
 
                 $editRequestSubmitted = true;
             }
+        }
+
+        // Dedup plan phase 5 (`products = central`): adopting / editing a CENTRAL product writes only tenant-owned override rows
+        // (visibility, price pin, variant price / active) plus the category / badge links; central fields stay read-only.
+        if (\App\Repositories\Tenant\Catalog\ProductCatalog::enabled() && $this->centralProductId) {
+            return $this->saveMerged($validated, $editRequestSubmitted);
         }
 
         $product = $service->saveProduct([
@@ -167,20 +175,62 @@ class AddEditProduct extends Component
         return redirect()->route('tenant.products.edit', $product);
     }
 
+    /** @param  array<string, mixed>  $validated */
+    private function saveMerged(array $validated, bool $editRequestSubmitted)
+    {
+        $catalog = app(\App\Repositories\Tenant\Catalog\ProductCatalog::class);
+        $cid = (int) $this->centralProductId;
+
+        $catalog->adopt($cid);
+        $catalog->setOverride($cid, [
+            'active' => (bool) $validated['active'],
+            'featured' => (bool) $validated['featured'],
+            // The typed price is the vendor's pinned default price (same rule as TenantPricingService::withDefaultOverride).
+            'price_override' => (float) $validated['price'] > 0 ? (float) $validated['price'] : null,
+        ]);
+
+        foreach ($validated['variants'] ?? [] as $variant) {
+            if (! empty($variant['central_product_variant_id'])) {
+                $catalog->setVariantOverride((int) $variant['central_product_variant_id'], $cid, [
+                    'active' => (bool) ($variant['active'] ?? true),
+                    'price_override' => (float) ($variant['sell_price'] ?? 0) > 0 ? (float) $variant['sell_price'] : null,
+                ]);
+            }
+        }
+
+        $product = \App\Repositories\Tenant\Catalog\ProductCatalog::query()->where('central_product_id', $cid)->firstOrFail();
+        if (\App\Repositories\Tenant\Catalog\CategoryCatalog::enabled()) {
+            app(\App\Repositories\Tenant\Catalog\CategoryAssignments::class)->syncProduct($product, (array) ($validated['categoryIds'] ?? []));
+        }
+        if (\App\Repositories\Tenant\Catalog\BadgeCatalog::enabled()) {
+            app(\App\Repositories\Tenant\Catalog\BadgeAssignments::class)->syncProduct($product, array_filter((array) $this->badgeIds, filled(...)));
+        }
+        CacheVersion::bumpMany(['ProductBadge', 'Product', 'ProductVariant']);
+
+        if ($editRequestSubmitted) {
+            session()->flash('status', __('Product updated. Your changes to the product name/description have been submitted for admin review and will be applied once approved.'));
+            session()->flash('status_type', 'info');
+        } else {
+            session()->flash('status', $this->productId ? __('Product updated successfully.') : __('Product created successfully.'));
+        }
+
+        return redirect()->route('tenant.products.edit', $product);
+    }
+
     protected function rules(): array
     {
         $rules = [
             // 'centralProductId' => ['nullable', 'integer'],
-            'slug' => ['nullable', 'string', 'max:300', Rule::unique('products', 'slug')->ignore($this->productId)],
+            'slug' => ['nullable', 'string', 'max:300', \App\Repositories\Tenant\Catalog\ProductCatalog::enabled() ? 'nullable' : Rule::unique('products', 'slug')->ignore($this->productId)],
             'price' => ['required', 'numeric', 'min:0'],
             'active' => ['boolean'],
             'featured' => ['boolean'],
             'categoryIds' => ['array'],
-            'categoryIds.*' => ['integer', 'exists:categories,id'],
+            'categoryIds.*' => \App\Repositories\Tenant\Catalog\CategoryCatalog::enabled() ? ['integer', 'min:1'] : ['integer', 'exists:categories,id'],
             'badgeIds' => ['array'],
-            'badgeIds.*' => ['integer', 'exists:product_badges,id'],
+            'badgeIds.*' => \App\Repositories\Tenant\Catalog\BadgeCatalog::enabled() ? ['string', 'max:32'] : ['integer', 'exists:product_badges,id'],
             'variants' => ['array'],
-            'variants.*.id' => ['nullable', 'integer', 'exists:product_variants,id'],
+            'variants.*.id' => \App\Repositories\Tenant\Catalog\ProductCatalog::enabled() ? ['nullable', 'integer'] : ['nullable', 'integer', 'exists:product_variants,id'],
             'variants.*.central_product_variant_id' => ['nullable', 'integer'],
             'variants.*.real_price' => ['nullable', 'numeric', 'min:0'],
             'variants.*.sell_price' => ['required', 'numeric', 'min:0'],

@@ -13,6 +13,7 @@ use App\Models\Tenant\Customer;
 use App\Models\Tenant\FlashSale;
 use App\Models\Tenant\Catalog\MergedFlashSale;
 use App\Repositories\Tenant\Catalog\FlashSaleCatalog;
+use App\Repositories\Tenant\Catalog\ProductCatalog;
 use App\Models\Tenant\Language;
 use App\Models\Tenant\Order;
 use App\Models\Tenant\OrderItem;
@@ -181,6 +182,10 @@ class StorefrontRepository
 
         $ttl ??= (int) config('cache.storefront.default_ttl', 3600);
         $version = collect($tags)->map(fn($tag) => CacheVersion::get($tag))->implode('.');
+        // Dedup plan phase 5 (invariant 8): merged products depend on central product edits too.
+        if (ProductCatalog::enabled() && array_intersect($tags, ['Product', 'ProductVariant'])) {
+            $version .= '.pc' . CacheVersion::get(ProductCatalog::CACHE_TAG);
+        }
         $fullKey = 'storefront:' . (tenant()?->id ?? 'central') . ":{$key}:v{$version}";
 
         return Cache::driver('file')->remember($fullKey, $ttl, $callback);
@@ -202,6 +207,14 @@ class StorefrontRepository
         // "default" key, then fall back to the scalar companion column. This keeps
         // filtering/sorting consistent with the price actually shown to the visitor.
         $countryId = $this->customerCountryId();
+
+        // Dedup plan phase 5: merged products / variants; same per-country key logic through ProductCatalog::countryPriceSql().
+        if (ProductCatalog::enabled()) {
+            $variant = ProductCatalog::countryPriceSql('pv', 'sell_price', 'real_price', 'default_sell_price', $countryId ? (int) $countryId : null);
+            $product = ProductCatalog::countryPriceSql('products', 'price', 'base_price', 'default_price', $countryId ? (int) $countryId : null);
+
+            return "COALESCE((SELECT MIN({$variant}) FROM " . ProductCatalog::variantsFrom() . " pv WHERE pv.product_id = products.id AND pv.active = 1), {$product})";
+        }
 
         if ($countryId) {
             return "COALESCE("
@@ -251,6 +264,11 @@ class StorefrontRepository
 
     protected function averageRatingExpression(): string
     {
+        if (ProductCatalog::enabled()) {
+            // Phase 5: ratings are keyed by the typed product pair (phase 1), compared to the merged product key.
+            return "COALESCE((SELECT AVG(product_rates.stars) FROM product_rates WHERE " . \App\Support\Catalog\ProductKey::sqlPairKey('product_rates.product_type', 'product_rates.catalog_product_id') . " = products.id), 0)";
+        }
+
         return "COALESCE((SELECT AVG(product_rates.stars) FROM product_rates WHERE product_rates.product_id = products.id), 0)";
     }
 
@@ -381,7 +399,7 @@ class StorefrontRepository
 
     protected function productBaseQuery(bool $withCategories = false, bool $excludeOutOfStock = false): Builder
     {
-        $query = Product::query()
+        $query = ProductCatalog::query()
             ->where('active', true)
             // ->whereRaw($this->basePriceExpression() . ' > 0')
             ->availableInCountry($this->visibilityCountryId())
@@ -401,7 +419,7 @@ class StorefrontRepository
             })->orWhere(function (Builder $q): void {
                 // Variant products: total variant stock is zero or negative
                 $q->whereHas('variants')
-                    ->whereRaw('(SELECT COALESCE(SUM(pv.stock), 0) FROM product_variants pv WHERE pv.product_id = products.id) <= 0');
+                    ->whereRaw('(SELECT COALESCE(SUM(pv.stock), 0) FROM ' . ProductCatalog::variantsFrom() . ' pv WHERE pv.product_id = products.id) <= 0');
             });
         }, boolean: 'and not');
     }
@@ -454,7 +472,7 @@ class StorefrontRepository
     {
         $categoryIds = $category ? array_merge([$category->id], $this->categoryDescendantIds($category->id)) : null;
 
-        $productIds = Product::query()
+        $productIds = ProductCatalog::query()
             ->where('active', true)
             ->availableInCountry($this->visibilityCountryId())
             ->when($categoryIds, fn ($q) => $q->whereHas('categories', fn ($c) => $c->whereIn('categories.id', $categoryIds)))
@@ -466,7 +484,7 @@ class StorefrontRepository
 
         // option id => set of product ids using it
         $productsByOption = [];
-        ProductVariant::query()
+        ProductCatalog::variantQuery()
             ->whereIn('product_id', $productIds)
             ->where('active', true)
             ->get(['product_id', 'option_ids'])
@@ -577,7 +595,7 @@ class StorefrontRepository
                         });
                 })->orWhere(function (Builder $q): void {
                     $q->whereHas('variants')
-                        ->whereRaw('(SELECT COALESCE(SUM(pv.stock), 0) FROM product_variants pv WHERE pv.product_id = products.id) > 0');
+                        ->whereRaw('(SELECT COALESCE(SUM(pv.stock), 0) FROM ' . ProductCatalog::variantsFrom() . ' pv WHERE pv.product_id = products.id) > 0');
                 });
             });
         } elseif ($availability === 'out_of_stock') {
@@ -588,7 +606,7 @@ class StorefrontRepository
                         ->where('stock', '<=', 0);
                 })->orWhere(function (Builder $q): void {
                     $q->whereHas('variants')
-                        ->whereRaw('(SELECT COALESCE(SUM(pv.stock), 0) FROM product_variants pv WHERE pv.product_id = products.id) <= 0');
+                        ->whereRaw('(SELECT COALESCE(SUM(pv.stock), 0) FROM ' . ProductCatalog::variantsFrom() . ' pv WHERE pv.product_id = products.id) <= 0');
                 });
             });
         }
@@ -610,10 +628,14 @@ class StorefrontRepository
                     . "product_variants.default_sell_price"
                     . ")";
 
+            if (ProductCatalog::enabled()) {
+                $effectiveSellPriceSql = ProductCatalog::countryPriceSql('product_variants', 'sell_price', 'real_price', 'default_sell_price', $countryId ? (int) $countryId : null);
+            }
+
             $query->whereExists(function ($subQuery) use ($effectiveSellPriceSql): void {
                 $subQuery
                     ->selectRaw('1')
-                    ->from('product_variants')
+                    ->from(ProductCatalog::enabled() ? DB::raw(ProductCatalog::variantsFrom() . ' as product_variants') : 'product_variants')
                     ->whereColumn('product_variants.product_id', 'products.id')
                     ->where('product_variants.active', true)
                     ->whereRaw('product_variants.real_price > ' . $effectiveSellPriceSql);
@@ -665,7 +687,7 @@ class StorefrontRepository
             $ids = [];
 
             foreach ($candidates->pluck('products.id')->unique()->chunk(200) as $chunk) {
-                Product::query()
+                ProductCatalog::query()
                     ->whereIn('products.id', $chunk->all())
                     ->with([
                         'variants',
@@ -1624,7 +1646,7 @@ class StorefrontRepository
     public function searchProducts(string $query, int $limit = 24): Collection
     {
         return $this->excludeOutOfStock(
-            Product::query()
+            ProductCatalog::query()
                 ->where('active', true)
                 // ->whereRaw($this->basePriceExpression() . ' > 0')
                 ->availableInCountry($this->visibilityCountryId())
@@ -1645,7 +1667,7 @@ class StorefrontRepository
             ->pluck('id');
 
         return $this->excludeOutOfStock(
-            Product::query()
+            ProductCatalog::query()
                 ->where('active', true)
                 // ->whereRaw($this->basePriceExpression() . ' > 0')
                 ->availableInCountry($this->visibilityCountryId())
@@ -1700,7 +1722,7 @@ class StorefrontRepository
     {
         // Out-of-stock products still open (the themes show "Out of Stock" and add-to-cart
         // refuses them); excluding them made a freshly published product with stock 0 a 404.
-        return Product::query()
+        return ProductCatalog::query()
             ->where('active', true)
             // ->whereRaw($this->basePriceExpression() . ' > 0')
             // Own products limited to other countries 404 like an inactive product.
@@ -2026,7 +2048,7 @@ class StorefrontRepository
 
         if ($fresh === null) {
             $position = array_flip($entry['ids']);
-            $items = $entry['ids'] === [] ? new Collection() : Product::query()
+            $items = $entry['ids'] === [] ? new Collection() : ProductCatalog::query()
                 ->whereIn('id', $entry['ids'])
                 ->get()
                 ->sortBy(fn(Product $product) => $position[$product->getKey()] ?? PHP_INT_MAX)
@@ -2057,7 +2079,7 @@ class StorefrontRepository
         $ids = $this->memo['active_product_ids'] ??= $this->cacheRemember(
             'active_product_ids',
             ['Product'],
-            fn() => Product::query()->where('active', true)->toBase()->pluck('id')->map(fn($id) => (int) $id)->all(),
+            fn() => ProductCatalog::query()->where('active', true)->toBase()->pluck('id')->map(fn($id) => (int) $id)->all(),
         );
 
         if ($ids === [] || $count < 1) {
@@ -2068,7 +2090,7 @@ class StorefrontRepository
         shuffle($picked);
         $position = array_flip($picked);
 
-        $products = Product::query()
+        $products = ProductCatalog::query()
             ->whereIn('id', $picked)
             // Re-checked: the pool may predate a deactivation not yet bumped.
             ->where('active', true)
@@ -2203,13 +2225,13 @@ class StorefrontRepository
         $productIds = collect($cart)->pluck('product_id')->filter()->unique()->values();
         $variantIds = collect($cart)->pluck('variant_id')->filter()->unique()->values();
 
-        $products = Product::query()
+        $products = ProductCatalog::query()
             ->whereIn('id', $productIds)
             ->with($this->productRelations())
             ->get()
             ->keyBy('id');
 
-        $variants = ProductVariant::query()
+        $variants = ProductCatalog::variantQuery()
             ->whereIn('id', $variantIds)
             ->with([
                 'centralVariant',

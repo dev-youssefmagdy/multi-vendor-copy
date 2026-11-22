@@ -357,7 +357,7 @@ class ProfilePage extends Component
 
         $stars = max(1, min(5, $stars));
 
-        if (! Product::find($productId)) {
+        if (! \App\Repositories\Tenant\Catalog\ProductCatalog::query()->find($productId)) {
             $this->dispatch('profile-swal', message: __('Product not found.'), type: 'error');
 
             return;
@@ -367,7 +367,11 @@ class ProfilePage extends Component
         $received = Order::query()
             ->where('customer_id', $customer->id)
             ->whereIn('status', [OrderStatus::Delivered->value, OrderStatus::Completed->value])
-            ->whereHas('items', fn ($q) => $q->where('product_id', $productId))
+            ->whereHas('items', function ($q) use ($productId) {
+                $ref = \App\Repositories\Tenant\Catalog\ProductCatalog::enabled() ? \App\Repositories\Tenant\Catalog\ProductCatalog::refColumnsForKey($productId) : null;
+
+                return $ref ? $q->where('product_type', $ref['product_type'])->where('catalog_product_id', $ref['catalog_product_id']) : $q->where('product_id', $productId);
+            })
             ->exists();
 
         if (! $received) {
@@ -376,7 +380,8 @@ class ProfilePage extends Component
             return;
         }
 
-        $existing = ProductRate::where('product_id', $productId)->where('customer_id', $customer->id)->first();
+        $ref = \App\Repositories\Tenant\Catalog\ProductCatalog::enabled() ? \App\Repositories\Tenant\Catalog\ProductCatalog::refColumnsForKey($productId) : null;
+        $existing = ProductRate::where($ref ? ['product_type' => $ref['product_type'], 'catalog_product_id' => $ref['catalog_product_id']] : ['product_id' => $productId])->where('customer_id', $customer->id)->first();
 
         if ($existing) {
             $existing->update(['stars' => $stars, 'comment' => trim($comment) ?: null]);
@@ -385,8 +390,7 @@ class ProfilePage extends Component
             return;
         }
 
-        ProductRate::create([
-            'product_id' => $productId,
+        ProductRate::create(($ref ?? ['product_id' => $productId]) + [
             'customer_id' => $customer->id,
             'stars' => $stars,
             'comment' => trim($comment) ?: null,

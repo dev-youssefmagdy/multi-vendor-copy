@@ -350,7 +350,50 @@ class CatalogSyncCheck
             )
             : null;
 
-        return $metrics + $this->fieldOverrideMetrics() + $this->dedupMetrics('field_overrides', 'field_overrides_');
+        return $metrics + $this->productParityMetrics() + $this->fieldOverrideMetrics()
+            + $this->dedupMetrics('field_overrides', 'field_overrides_') + $this->dedupMetrics('products');
+    }
+
+    /**
+     * Dedup phase 5 parity (gates, e.g. --gate=carried_without_override:0 --gate=dedup_verify_diffs:0):
+     *  carried_without_override  copies of live published central products with no tenant_product_overrides row
+     *                            (would vanish in central mode: run catalog:dedup-migrate products)
+     *  override_without_central   override rows whose central product is gone / unpublished (harmless, hidden)
+     *
+     * @return array<string, int|null>
+     */
+    private function productParityMetrics(): array
+    {
+        if (! $this->tenantHas('products', 'central_product_id') || ! isset($this->tenantColumns['tenant_product_overrides'])) {
+            return ['carried_without_override' => null, 'override_without_central' => null];
+        }
+        $p = $this->t('products');
+        $cp = CentralTable::name('products');
+        $o = $this->t('tenant_product_overrides');
+
+        // Gate for the cart remap (--gate=mobile_cart_items_without_ref:0): items without a typed pair cannot be remapped at the flip.
+        $cartsWithoutRef = 0;
+        if (isset($this->tenantColumns['mobile_carts'])) {
+            foreach ($this->db->select("SELECT `items` FROM {$this->t('mobile_carts')}") as $cart) {
+                foreach ((array) json_decode((string) $cart->items, true) as $item) {
+                    if (is_array($item) && (! isset($item['product_type']) || ! isset($item['catalog_product_id']))) {
+                        $cartsWithoutRef++;
+                    }
+                }
+            }
+        }
+
+        return [
+            'mobile_cart_items_without_ref' => $cartsWithoutRef,
+            'carried_without_override' => (int) $this->scalar(
+                "SELECT COUNT(*) FROM {$p} p JOIN {$cp} c ON c.id = p.central_product_id AND c.status = 'published' AND {$this->centralLive('products', 'c')}
+                 WHERE NOT EXISTS (SELECT 1 FROM {$o} o WHERE o.central_product_id = p.central_product_id)"
+            ),
+            'override_without_central' => (int) $this->scalar(
+                "SELECT COUNT(*) FROM {$o} o LEFT JOIN {$cp} c ON c.id = o.central_product_id
+                 WHERE c.id IS NULL OR c.status <> 'published' OR NOT ({$this->centralLive('products', 'c')})"
+            ),
+        ];
     }
 
     /** SQL (alias $alias) for "tenant product is NOT an own product". */

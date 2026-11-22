@@ -122,8 +122,8 @@ final class FlashSaleCatalog
         return "SELECT " . self::centralColumns('cfs') . "
                   FROM {$cfs} cfs
                  WHERE " . self::centralLive($db) . "
-                   AND EXISTS (SELECT 1 FROM {$cfp} cp JOIN `products` p ON p.`central_product_id` = cp.`product_id`
-                                WHERE cp.`central_flash_sale_id` = cfs.`id`)
+                   AND EXISTS (SELECT 1 FROM {$cfp} cp " . (ProductCatalog::enabled() ? '' : "JOIN `products` p ON p.`central_product_id` = cp.`product_id`") . "
+                                WHERE cp.`central_flash_sale_id` = cfs.`id`" . (ProductCatalog::enabled() ? ' AND ' . ProductCatalog::adoptedSql('cp.`product_id`') : '') . ")
                 UNION ALL
                 SELECT " . self::tenantColumns('fs') . "
                   FROM `flash_sales` fs
@@ -136,6 +136,19 @@ final class FlashSaleCatalog
         $db ??= DB::connection('tenant');
         $cfs = CentralTable::name('central_flash_sales');
         $cfp = CentralTable::name('central_flash_sale_product');
+
+        if (ProductCatalog::enabled()) {
+            // Phase 5: product_id = merged key; central pairs need an adoption row, own sales use the typed pair.
+            return "SELECT DISTINCT " . self::centralColumns('cfs') . ", cp.`product_id` AS `product_id`
+                      FROM {$cfp} cp
+                      JOIN {$cfs} cfs ON cfs.`id` = cp.`central_flash_sale_id` AND " . self::centralLive($db) . "
+                     WHERE " . ProductCatalog::adoptedSql('cp.`product_id`') . "
+                    UNION ALL
+                    SELECT " . self::tenantColumns('fs') . ", " . ProductCatalog::pairKeySql('fsp.`product_type`', 'fsp.`catalog_product_id`') . " AS `product_id`
+                      FROM `flash_sale_product` fsp
+                      JOIN `flash_sales` fs ON fs.`id` = fsp.`flash_sale_id` AND fs.`central_flash_sale_id` IS NULL
+                     WHERE fsp.`catalog_product_id` IS NOT NULL";
+        }
 
         return "SELECT DISTINCT " . self::centralColumns('cfs') . ", p.`id` AS `product_id`
                   FROM {$cfp} cp
@@ -193,7 +206,7 @@ final class FlashSaleCatalog
                      WHERE cp.`product_id` = products.`central_product_id` AND " . self::windowSql('cfs') . ' AND ' . $country($cfc, 'central_flash_sale_id', 'cfs');
         $own = "SELECT MAX(fs.`discount_percentage`) FROM `flash_sale_product` fsp
                   JOIN `flash_sales` fs ON fs.`id` = fsp.`flash_sale_id` AND fs.`central_flash_sale_id` IS NULL
-                 WHERE fsp.`product_id` = products.`id` AND " . self::windowSql('fs') . ' AND ' . $country('`flash_sale_country`', 'flash_sale_id', 'fs');
+                 WHERE " . (ProductCatalog::enabled() ? ProductCatalog::pairMatchSql('fsp.`product_type`', 'fsp.`catalog_product_id`') : 'fsp.`product_id` = products.`id`') . " AND " . self::windowSql('fs') . ' AND ' . $country('`flash_sale_country`', 'flash_sale_id', 'fs');
 
         return "GREATEST(COALESCE(({$central}), 0), COALESCE(({$own}), 0))";
     }

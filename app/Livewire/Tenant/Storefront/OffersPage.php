@@ -24,7 +24,7 @@ class OffersPage extends Component
 
     public function addToCart(int $productId): void
     {
-        $product = \App\Models\Tenant\Product::with(['variants', 'centralProduct'])
+        $product = \App\Repositories\Tenant\Catalog\ProductCatalog::query()->with(['variants', 'centralProduct'])
             ->where('active', true)
             ->availableInCountry(app(\App\Repositories\Tenant\StorefrontRepository::class)->visibilityCountryId())
             ->find($productId);

@@ -64,7 +64,7 @@ class ProductPage extends Component
     {
         $repo = app(StorefrontRepository::class);
 
-        $product = Product::with(['variants', 'centralProduct'])->where('active', true)->availableInCountry(app(\App\Repositories\Tenant\StorefrontRepository::class)->visibilityCountryId())->find($productId);
+        $product = \App\Repositories\Tenant\Catalog\ProductCatalog::query()->with(['variants', 'centralProduct'])->where('active', true)->availableInCountry(app(\App\Repositories\Tenant\StorefrontRepository::class)->visibilityCountryId())->find($productId);
         if (!$product) {
             return;
         }
