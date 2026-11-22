@@ -32,7 +32,7 @@ class StoreContextService
         $description = $tenant->data['store_description'] ?? $tenant->description ?? null;
 
         // ── Categories (top 8, root only) ───────────────────────────────────
-        $categoryNames = Category::query()
+        $categoryNames = \App\Repositories\Tenant\Catalog\CategoryCatalog::query() // dedup phase 4: merged when categories = central
             ->whereNull('parent_id')
             ->where('active', true)
             ->limit(8)

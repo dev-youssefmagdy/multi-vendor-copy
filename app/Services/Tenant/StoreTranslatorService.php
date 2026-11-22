@@ -136,6 +136,52 @@ class StoreTranslatorService
                 }
             });
 
+        return $this->translateExisting($existing, $fields, $morphClass, class_basename($modelClass), (int) $targetLanguageId, $sourceLocale, $targetLocale, $targetLanguage, $brandContext, $fallbackContext);
+    }
+
+    /**
+     * Dedup plan phase 4 (categories = central): AI texts of CENTRAL categories in a tenant-only target language
+     * (one central lacks, §4.2) are tenant rows `translatable_type = central_category` keyed by the central id. The
+     * source text is the merged one (central by language code, or the tenant-only row). Target languages central has
+     * are skipped (central provides those texts). Returns the number of categories translated.
+     */
+    public function translateCentralCategories(string $sourceLocale, string $targetLocale, string $targetLanguage = '', string $brandContext = ''): int
+    {
+        if (! \App\Repositories\Tenant\Catalog\CategoryCatalog::enabled()
+            || in_array($targetLocale, \App\Repositories\Tenant\Catalog\CategoryCatalog::centralLocales(), true)) {
+            return 0;
+        }
+
+        $fields = self::MODEL_FIELDS[Category::class];
+        $languageIds = Language::query()->pluck('id', 'code');
+        $sourceLanguageId = $languageIds->get($sourceLocale);
+        $targetLanguageId = $languageIds->get($targetLocale);
+        if (! $sourceLanguageId || ! $targetLanguageId) {
+            return 0;
+        }
+
+        $localeByLanguageId = [$sourceLanguageId => $sourceLocale, $targetLanguageId => $targetLocale];
+        $existing = [];
+        \App\Models\Tenant\Catalog\MergedCategoryTranslation::query()
+            ->where('translatable_id', '<', \App\Support\Catalog\CategoryKey::OWN_OFFSET)
+            ->whereIn('language_id', [$sourceLanguageId, $targetLanguageId])
+            ->whereIn('field', $fields)
+            ->get(['translatable_id', 'language_id', 'field', 'value'])
+            ->each(function ($row) use (&$existing, $localeByLanguageId) {
+                $locale = $localeByLanguageId[$row->language_id] ?? null;
+                if ($locale !== null) {
+                    $existing[$row->translatable_id][$locale][$row->field] = (string) $row->value;
+                }
+            });
+
+        return $this->translateExisting($existing, $fields, \App\Repositories\Tenant\Catalog\CategoryCatalog::CENTRAL_TRANSLATION_TYPE, 'Category', (int) $targetLanguageId, $sourceLocale, $targetLocale, $targetLanguage, $brandContext, null);
+    }
+
+    /**
+     * @param  array<int, array<string, array<string, string>>>  $existing  translatable id => locale => field => value
+     */
+    protected function translateExisting(array $existing, array $fields, string $morphClass, string $tag, int $targetLanguageId, string $sourceLocale, string $targetLocale, string $targetLanguage, string $brandContext, ?string $fallbackContext): int
+    {
         $pending = [];
 
         foreach ($existing as $translatableId => $locales) {
@@ -160,7 +206,7 @@ class StoreTranslatorService
             $sourceLocale,
             $targetLocale,
             $targetLanguage,
-            $brandContext ?: ($fallbackContext ?? ('Tenant store content: ' . class_basename($modelClass))),
+            $brandContext ?: ($fallbackContext ?? ('Tenant store content: ' . $tag)),
         );
 
         $now = now();
@@ -196,7 +242,7 @@ class StoreTranslatorService
 
         // Bulk upserts skip the Translation observer.
         if ($rows !== []) {
-            CacheVersion::bumpMany(['Translation', class_basename($modelClass)]);
+            CacheVersion::bumpMany(['Translation', $tag]);
         }
 
         return count($translatedIds);

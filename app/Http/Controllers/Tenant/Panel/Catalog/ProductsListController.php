@@ -247,6 +247,15 @@ final class ProductsListController extends PanelController
     {
         $options = [];
 
+        // Dedup phase 4: merged keys (central live + own) when categories = central; orphans listed as roots.
+        if (\App\Repositories\Tenant\Catalog\CategoryCatalog::enabled()) {
+            foreach (app(\App\Repositories\Tenant\Catalog\CategoryCatalog::class)->treeOptions() as $row) {
+                $options[(string) $row['id']] = str_repeat('— ', $row['depth']) . $row['name'];
+            }
+
+            return $options;
+        }
+
         $roots = Category::query()
             ->with(['translations.language', 'children.translations.language', 'children.children.translations.language', 'children.children.children.translations.language'])
             // Roots, plus children whose parent central hides (the `parent` relation is scoped), so they stay filterable.

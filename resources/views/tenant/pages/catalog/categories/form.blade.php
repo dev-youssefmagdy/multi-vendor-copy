@@ -18,6 +18,10 @@
     >
         <input type="hidden" name="active_locale" value="{{ $activeLocale }}" data-locale-input>
 
+        @if($platformLocked ?? false)
+            <x-tenant::alert type="info" :title="__('Platform category')">{{ __('This category is managed by the platform. Its parent, name and slug in the platform languages are read-only; you can still change its visibility, featured state, order, image and the texts of your own languages.') }}</x-tenant::alert>
+        @endif
+
         <x-tenant::card-collapse :title="__('Category Details')" :subtitle="__('Hierarchy, state, and storefront order.')">
             <div class="form-grid form-grid-2">
                 <x-tenant::select name="central_category_id" :label="__('Central Category')" disabled>
@@ -29,7 +33,8 @@
                 </x-tenant::select>
                 <input type="hidden" name="central_category_id" value="{{ $centralCategory['id'] ?? '' }}">
 
-                <x-tenant::select2 name="parent_id" :label="__('Parent Category')" :placeholder="__('Root')" :options="$parents" :value="$category?->parent_id" />
+                {{-- Dedup phase 4: a platform category keeps the platform hierarchy (read-only); own categories may sit under any category. --}}
+                <x-tenant::select2 name="parent_id" :label="__('Parent Category')" :placeholder="__('Root')" :options="$parents" :value="$category?->parent_id" :disabled="$platformLocked ?? false" />
                 <x-tenant::input type="number" name="order_number" :label="__('Order Number')" :value="$category?->order_number ?? 0" min="0" />
                 <x-tenant::switch name="active" :label="__('Category is active')" :checked="$category?->active ?? true" />
                 <x-tenant::switch name="featured" :label="__('Category is featured')" :checked="$category?->featured ?? false" />
@@ -77,12 +82,16 @@
             <x-tenant::locale-tabs :languages="$languages" :active="$activeLocale">
                 @foreach($languages as $language)
                     <x-tenant::locale-pane :code="$language->code" :active="$language->code === $activeLocale">
+                        @php($localeLocked = in_array($language->code, $lockedLocales ?? [], true))
+                        @if($localeLocked)
+                            <p class="text-muted">{{ __('Managed by the platform in this language: it cannot be changed here.') }}</p>
+                        @endif
                         <div class="form-grid">
-                            <x-tenant::input name="translations.{{ $language->code }}.name" :label="__('Name')" :value="$translations[$language->code]['name'] ?? ''" />
-                            <x-tenant::input name="translations.{{ $language->code }}.slug" :label="__('Slug')" placeholder="auto-generated-from-name" :value="$translations[$language->code]['slug'] ?? ''" />
-                            <x-tenant::input name="translations.{{ $language->code }}.meta_keywords" :label="__('Meta Keywords')" :value="$translations[$language->code]['meta_keywords'] ?? ''" />
-                            <x-tenant::input name="translations.{{ $language->code }}.meta_description" :label="__('Meta Description')" :value="$translations[$language->code]['meta_description'] ?? ''" />
-                            <x-tenant::textarea name="translations.{{ $language->code }}.description" :label="__('Description')" rows="8" :value="$translations[$language->code]['description'] ?? ''" />
+                            <x-tenant::input name="translations.{{ $language->code }}.name" :label="__('Name')" :value="$translations[$language->code]['name'] ?? ''" :readonly="$localeLocked" />
+                            <x-tenant::input name="translations.{{ $language->code }}.slug" :label="__('Slug')" placeholder="auto-generated-from-name" :value="$translations[$language->code]['slug'] ?? ''" :readonly="$localeLocked" />
+                            <x-tenant::input name="translations.{{ $language->code }}.meta_keywords" :label="__('Meta Keywords')" :value="$translations[$language->code]['meta_keywords'] ?? ''" :readonly="$localeLocked" />
+                            <x-tenant::input name="translations.{{ $language->code }}.meta_description" :label="__('Meta Description')" :value="$translations[$language->code]['meta_description'] ?? ''" :readonly="$localeLocked" />
+                            <x-tenant::textarea name="translations.{{ $language->code }}.description" :label="__('Description')" rows="8" :value="$translations[$language->code]['description'] ?? ''" :readonly="$localeLocked" />
                         </div>
                     </x-tenant::locale-pane>
                 @endforeach

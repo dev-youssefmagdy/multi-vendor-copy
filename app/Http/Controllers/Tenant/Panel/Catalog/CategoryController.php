@@ -6,7 +6,10 @@ namespace App\Http\Controllers\Tenant\Panel\Catalog;
 
 use App\Http\Controllers\Tenant\Panel\PanelController;
 use App\Http\Requests\Tenant\Panel\Catalog\SaveCategoryRequest;
+use App\Models\Tenant\Catalog\MergedCategory;
 use App\Models\Tenant\Category;
+use App\Repositories\Tenant\Catalog\CategoryAssignments;
+use App\Repositories\Tenant\Catalog\CategoryCatalog;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\Tenant\PlanLimitService;
 use App\Services\Tenant\TenantCategoryMediaService;
@@ -90,6 +93,9 @@ final class CategoryController extends PanelController
         $translations = $languages->mapWithKeys(fn ($language) => [$language->code => ['name' => '', 'slug' => '', 'description' => '', 'meta_keywords' => '', 'meta_description' => '']])->all();
         $currentThumbUrl = null;
         $centralCategory = null;
+        // Dedup phase 4 (categories = central): a platform category keeps its hierarchy and the platform's languages.
+        $platformLocked = $category instanceof MergedCategory && $category->isCentral();
+        $lockedLocales = $platformLocked ? $this->repo->centralCategoryLocales() : [];
 
         if ($category) {
             $category->load(['translations.language', 'files']);
@@ -105,10 +111,26 @@ final class CategoryController extends PanelController
             'languages' => $languages,
             'activeLocale' => $activeLocale,
             'translations' => $translations,
-            'parents' => $this->repo->categoryOptions($category?->parent_id),
+            'parents' => $this->parentOptions($category),
             'centralCategory' => $centralCategory,
             'currentThumbUrl' => $currentThumbUrl,
+            'platformLocked' => $platformLocked,
+            'lockedLocales' => $lockedLocales,
         ]);
+    }
+
+    /** Parent picker; in central mode an own category cannot pick itself or one of its descendants (no cycles). */
+    private function parentOptions(?Category $category): array
+    {
+        $options = $this->repo->categoryOptions($category?->parent_id);
+
+        if ($category instanceof MergedCategory && CategoryCatalog::enabled()) {
+            foreach (app(CategoryCatalog::class)->withDescendants((int) $category->id) as $key) {
+                unset($options[$key]);
+            }
+        }
+
+        return $options;
     }
 
     public function store(SaveCategoryRequest $request): JsonResponse
@@ -125,7 +147,7 @@ final class CategoryController extends PanelController
     {
         $validated = $request->validated();
 
-        if ($validated['central_category_id'] ?? null) {
+        if (! CategoryCatalog::enabled() && ($validated['central_category_id'] ?? null)) {
             $snapshot = $this->repo->centralCategorySnapshot((int) $validated['central_category_id']);
 
             if (!$snapshot) {
@@ -179,14 +201,18 @@ final class CategoryController extends PanelController
 
     public function toggleActive(Category $category): JsonResponse
     {
-        $category->update(['active' => !$category->active]);
+        $category instanceof MergedCategory
+            ? app(CategoryAssignments::class)->update($category, ['active' => ! $category->active]) // dedup phase 4
+            : $category->update(['active' => !$category->active]);
 
         return $this->success(__('Category status updated successfully.'));
     }
 
     public function toggleFeatured(Category $category): JsonResponse
     {
-        $category->update(['featured' => !$category->featured]);
+        $category instanceof MergedCategory
+            ? app(CategoryAssignments::class)->update($category, ['featured' => ! $category->featured]) // dedup phase 4
+            : $category->update(['featured' => !$category->featured]);
 
         return $this->success(__('Category featured state updated successfully.'));
     }
@@ -195,7 +221,9 @@ final class CategoryController extends PanelController
     {
         abort_if($category->central_category_id !== null, 403, __('Only tenant-created categories can be deleted.'));
 
-        $category->delete();
+        $category instanceof MergedCategory
+            ? $this->service->deleteOwnCategory((int) $category->source_id) // dedup phase 4: the tenant row behind the merged one
+            : $category->delete();
 
         return $this->success(__('Category deleted successfully.'));
     }

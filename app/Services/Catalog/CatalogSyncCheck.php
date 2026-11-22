@@ -189,7 +189,8 @@ class CatalogSyncCheck
 
         return $metrics + match ($section) {
             'products' => $this->productMetrics(),
-            'categories' => $this->visibilityMetric('categories', 'central_category_id', 'categories', "c.status = 'published'"),
+            'categories' => $this->visibilityMetric('categories', 'central_category_id', 'categories', "c.status = 'published'")
+                + $this->categoryParityMetrics() + $this->dedupMetrics('categories'),
             'badges' => ['duplicate_texts' => (int) $this->scalar(
                 "SELECT COUNT(*) FROM (SELECT text FROM {$this->t('product_badges')} GROUP BY text HAVING COUNT(*) > 1) d"
             )] + $this->badgeParityMetrics() + $this->dedupMetrics('badges'),
@@ -654,6 +655,77 @@ class CatalogSyncCheck
         return $totals
             + ($missing !== [] ? ['note' => 'typed columns missing (migration not run): ' . implode(', ', array_keys($missing))] : [])
             + ['tables' => $tables];
+    }
+
+    /**
+     * Dedup phase 4 category parity (gates, e.g. --gate=pairs_missing_in_copy:0 --gate=dedup_verify_diffs:0):
+     *  pairs_missing_in_copy   central category_product pairs of carried products in published, in-scope categories with
+     *                          no copy pivot row (sync lag: would appear in central mode → run the products sync first)
+     *  stale_central_links     sync-made copy links (`source = central`) central no longer has
+     *  sort_overrides_pending  copy rows of a central pair whose sort ≠ central sort without a matching override
+     *  links_pending           vendor links (`source = tenant`) on copies central lacks, without an override row
+     *  category_overrides_pending copies whose active / featured / order_number differ from the central default or that
+     *                          carry a thumb, without an override row
+     *  override_rows / pair_override_rows  phase-4 rows (null before the tenant migration)
+     *
+     * @return array<string, int|null>
+     */
+    private function categoryParityMetrics(): array
+    {
+        if (! $this->tenantHas('categories', 'central_category_id') || ! isset($this->tenantColumns['category_product'], $this->centralColumns['category_product'])) {
+            return [];
+        }
+
+        $t = $this->t('category_product');
+        $k = $this->t('categories');
+        $p = $this->t('products');
+        $o = $this->t('tenant_category_product_overrides');
+        $co = $this->t('tenant_category_overrides');
+        $ccp = CentralTable::name('category_product');
+        $cc = CentralTable::name('categories');
+        [$expected, $bindings] = $this->expectedCategories();
+        $visible = "c.status = 'published' AND {$this->centralLive('categories')} AND {$expected}";
+        $hasPairs = isset($this->tenantColumns['tenant_category_product_overrides']);
+        $hasOverrides = isset($this->tenantColumns['tenant_category_overrides']);
+        $source = $this->tenantHas('category_product', 'source') ? 't.source' : "'tenant'";
+        $isCentral = "({$this->notOwn('p')} AND p.central_product_id IS NOT NULL)";
+        $centralPair = "SELECT cp.sort_order FROM {$ccp} cp WHERE cp.category_id = k.central_category_id AND cp.product_id = p.central_product_id AND {$isCentral}";
+        $pairOverride = fn (string $extra) => $hasPairs
+            ? "EXISTS (SELECT 1 FROM {$o} o WHERE o.category_type = 'central' AND o.category_id = k.central_category_id
+                  AND ((o.product_type = 'central' AND {$isCentral} AND o.product_id = p.central_product_id) OR (o.product_type = 'tenant' AND NOT {$isCentral} AND o.product_id = p.id)) {$extra})"
+            : '0 = 1';
+        $thumbType = $this->db->getPdo()->quote(\App\Models\Tenant\Category::class);
+
+        $row = $this->db->selectOne(
+            "SELECT
+                SUM(CASE WHEN {$source} = 'central' AND NOT EXISTS ({$centralPair}) THEN 1 ELSE 0 END) AS stale_links,
+                SUM(CASE WHEN EXISTS ({$centralPair} AND cp.sort_order <> t.sort_order) AND NOT {$pairOverride('AND o.sort_order = t.sort_order')} THEN 1 ELSE 0 END) AS sort_pending,
+                SUM(CASE WHEN {$source} = 'tenant' AND NOT EXISTS ({$centralPair}) AND NOT {$pairOverride("AND o.source = 'tenant'")} THEN 1 ELSE 0 END) AS links_pending
+             FROM {$t} t
+             JOIN {$k} k ON k.id = t.category_id AND k.central_category_id IS NOT NULL
+             JOIN {$p} p ON p.id = t.product_id"
+        );
+
+        return [
+            'pairs_missing_in_copy' => (int) $this->scalar(
+                "SELECT COUNT(*) FROM {$ccp} cp JOIN {$cc} c ON c.id = cp.category_id AND {$visible}
+                   JOIN {$p} p ON p.central_product_id = cp.product_id AND {$this->notOwn('p')}
+                  WHERE NOT EXISTS (SELECT 1 FROM {$t} t JOIN {$k} k ON k.id = t.category_id
+                                     WHERE k.central_category_id = cp.category_id AND t.product_id = p.id)",
+                $bindings,
+            ),
+            'stale_central_links' => (int) $row->stale_links,
+            'sort_overrides_pending' => (int) $row->sort_pending,
+            'links_pending' => (int) $row->links_pending,
+            'category_overrides_pending' => (int) $this->scalar(
+                "SELECT COUNT(*) FROM {$k} k JOIN {$cc} c ON c.id = k.central_category_id AND {$this->centralLive('categories')}
+                  WHERE (k.active = 0 OR k.featured <> c.is_featured OR k.order_number <> c.order_number
+                         OR EXISTS (SELECT 1 FROM {$this->t('files')} f WHERE f.model_type = {$thumbType} AND f.model_id = k.id AND f.`key` = 'thumb'))"
+                . ($hasOverrides ? " AND NOT EXISTS (SELECT 1 FROM {$co} co WHERE co.central_category_id = k.central_category_id)" : '')
+            ),
+            'override_rows' => $hasOverrides ? (int) $this->scalar("SELECT COUNT(*) FROM {$co}") : null,
+            'pair_override_rows' => $hasPairs ? (int) $this->scalar("SELECT COUNT(*) FROM {$o}") : null,
+        ];
     }
 
     /**

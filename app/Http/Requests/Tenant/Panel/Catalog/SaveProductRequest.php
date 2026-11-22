@@ -26,7 +26,7 @@ final class SaveProductRequest extends TenantFormRequest
             'active' => ['boolean'],
             'featured' => ['boolean'],
             'category_ids' => ['array'],
-            'category_ids.*' => ['integer', 'exists:categories,id'],
+            'category_ids.*' => app(\App\Repositories\Tenant\Catalog\ProductCategorySelection::class)->itemRules(),
             'badge_ids' => ['array'],
             'badge_ids.*' => app(\App\Repositories\Tenant\Catalog\ProductBadgeSelection::class)->itemRules(),
             'active_locale' => ['required', 'string'],

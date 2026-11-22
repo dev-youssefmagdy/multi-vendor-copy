@@ -117,9 +117,8 @@ class BestSellingPage extends Component
 
         $categories = $repo->activeCategories();
 
-        $categoryId = is_numeric($this->categoryId) && (int) $this->categoryId > 0
-            ? (int) $this->categoryId
-            : null;
+        // Dedup phase 4: key / legacy id or ref, resolved in the current mode (numeric input unchanged).
+        $categoryId = \App\Repositories\Tenant\Catalog\CategoryCatalog::filterId($this->categoryId);
 
         $products = match (true) {
             $this->isImageSearch => $repo->imageSearchProducts(

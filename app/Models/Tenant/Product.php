@@ -143,8 +143,29 @@ class Product extends Model
         return null;
     }
 
+    /**
+     * The product's categories. Dedup plan phase 4: while `catalog_source.categories` is `central`, merged categories
+     * (MergedCategory: central live + overrides ∪ own; `id` = CategoryKey) over the merged membership
+     * (CategoryCatalog::membershipSql()), so eager loads (`categories.translations.language`, `categories.files`),
+     * `whereHas('categories', … 'categories.id' …)` and `->categories->first()` keep working; otherwise the synced pivot,
+     * unchanged. Writes in central mode: CategoryAssignments (the merged relation is read-only).
+     */
     public function categories(): BelongsToMany
     {
+        if (\App\Repositories\Tenant\Catalog\CategoryCatalog::enabled()) {
+            return (new \App\Models\Tenant\Catalog\Relations\DerivedPivotBelongsToMany(
+                \App\Models\Tenant\Catalog\MergedCategory::query(),
+                $this,
+                \App\Repositories\Tenant\Catalog\CategoryCatalog::membershipSql(),
+                'merged_category_product',
+                'product_id',
+                'category_key',
+                'id',
+                'id',
+                'categories',
+            ))->withPivot(['sort_order', 'pair_source'])->withTimestamps();
+        }
+
         return $this->belongsToMany(Category::class)->withTimestamps();
     }
 

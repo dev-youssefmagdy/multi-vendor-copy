@@ -107,7 +107,7 @@ class PlanLimitService
     {
         return match ($feature) {
             self::FEATURE_PRODUCTS => Product::query()->count(),
-            self::FEATURE_CATEGORIES => Category::query()->whereNull('parent_id')->count(),
+            self::FEATURE_CATEGORIES => \App\Repositories\Tenant\Catalog\CategoryCatalog::query()->whereNull('parent_id')->count(), // dedup phase 4: merged in central mode
             self::FEATURE_BANNERS => Banner::query()->count(),
             self::FEATURE_LANGUAGES => $this->activePlanLanguagesCount(),
             self::FEATURE_ORDERS_PER_MONTH => Order::query()

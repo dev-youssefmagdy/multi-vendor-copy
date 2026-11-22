@@ -417,7 +417,7 @@ class TenantNavigation
 
     public static function categorySelected(): bool
     {
-        return Category::query()->exists();
+        return \App\Repositories\Tenant\Catalog\CategoryCatalog::query()->exists(); // dedup phase 4: merged in central mode
     }
 
     public static function productSynced(): bool

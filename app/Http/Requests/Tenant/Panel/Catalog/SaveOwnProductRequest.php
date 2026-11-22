@@ -49,7 +49,7 @@ final class SaveOwnProductRequest extends TenantFormRequest
             'active' => ['boolean'],
             'featured' => ['boolean'],
             'category_ids' => ['array'],
-            'category_ids.*' => ['integer'],
+            'category_ids.*' => app(\App\Repositories\Tenant\Catalog\ProductCategorySelection::class)->itemRules(withExists: false),
             'badge_ids' => ['array'],
             'badge_ids.*' => app(\App\Repositories\Tenant\Catalog\ProductBadgeSelection::class)->itemRules(withExists: false),
             'countries' => ['array'],
@@ -112,7 +112,9 @@ final class SaveOwnProductRequest extends TenantFormRequest
         $validator->after(function (Validator $validator): void {
             // One whereIn query per list instead of one `exists` query per id.
             // Badge refs (dedup phase 2, badges = central) are validated per item by ProductBadgeSelection::itemRules().
-            $lists = ['category_ids' => 'categories'] + (\App\Repositories\Tenant\Catalog\BadgeCatalog::enabled() ? [] : ['badge_ids' => 'product_badges']);
+            // Category keys / refs (dedup phase 4, categories = central) are validated per item by ProductCategorySelection::itemRules().
+            $lists = (\App\Repositories\Tenant\Catalog\CategoryCatalog::enabled() ? [] : ['category_ids' => 'categories'])
+                + (\App\Repositories\Tenant\Catalog\BadgeCatalog::enabled() ? [] : ['badge_ids' => 'product_badges']);
             foreach ($lists as $field => $table) {
                 if ($validator->errors()->has($field) || $validator->errors()->has("{$field}.*")) {
                     continue;

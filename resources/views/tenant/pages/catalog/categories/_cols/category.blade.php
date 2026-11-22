@@ -11,7 +11,9 @@
     <div class="entity-body">
         <div class="entity-title" title="{{ $label }}">{{ $label }}</div>
         <div class="entity-subtitle" title="/{{ $category->slug }}">/{{ $category->slug }}</div>
-        @if($central)
+        @if(($category->source ?? null) === 'central')
+            <div class="entity-subtitle"><x-tenant::badge color="cyan">{{ __('Platform category') }}</x-tenant::badge></div>
+        @elseif($central)
             <div class="entity-subtitle" title="{{ __('Central: :name', ['name' => $central['name']]) }}">{{ __('Central: :name', ['name' => $central['name']]) }}</div>
         @endif
     </div>

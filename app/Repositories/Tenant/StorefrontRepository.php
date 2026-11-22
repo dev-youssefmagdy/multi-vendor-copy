@@ -730,11 +730,23 @@ class StorefrontRepository
 
     protected function applyCategoryFilter($query, int|string|null $categoryId): Builder
     {
-        if (!is_numeric($categoryId) || (int) $categoryId <= 0) {
+        // Dedup phase 4: accepts a key / legacy id or a ref ("c:12" / "t:3"), resolved in the current mode's id space.
+        $categoryId = $this->categoryFilterId($categoryId);
+        if ($categoryId === null) {
             return $query;
         }
 
-        return $query->whereHas('categories', fn(Builder $categoryQuery) => $categoryQuery->where('categories.id', (int) $categoryId));
+        return $query->whereHas('categories', fn(Builder $categoryQuery) => $categoryQuery->where('categories.id', $categoryId));
+    }
+
+    /** `category_id` filter value → id of the current mode (sync: tenant id; central: CategoryKey), null = none. */
+    protected function categoryFilterId(mixed $value): ?int
+    {
+        if (is_numeric($value)) {
+            return (int) $value > 0 ? (int) $value : null;
+        }
+
+        return \App\Repositories\Tenant\Catalog\CategoryCatalog::filterId($value);
     }
 
     protected function productsByBadgeQuery(string $badgeText, bool $excludeOutOfStock = false): Builder
@@ -1384,9 +1396,26 @@ class StorefrontRepository
         return $ids;
     }
 
+    /**
+     * The category↔product pivot joined by the category listings, aliased `category_product`: the synced table, or
+     * (dedup phase 4, categories = central) the merged membership keyed by `category_key` with the same `sort_order`.
+     */
+    protected function categoryPivotTable(): string|\Illuminate\Contracts\Database\Query\Expression
+    {
+        return \App\Repositories\Tenant\Catalog\CategoryCatalog::enabled()
+            ? DB::raw('(' . \App\Repositories\Tenant\Catalog\CategoryCatalog::membershipSql() . ') as `category_product`')
+            : 'category_product';
+    }
+
+    protected function categoryPivotKey(): string
+    {
+        return \App\Repositories\Tenant\Catalog\CategoryCatalog::enabled() ? 'category_key' : 'category_id';
+    }
+
     public function activeCategories(): Collection
     {
-        return $this->memo['active_categories'] ??= $this->cacheRemember('active_categories', ['Category', 'Product', 'CentralCategory'], fn() => Category::query()
+        // Dedup phase 4: merged categories (CategoryCatalog) when categories = central; own cache key per mode.
+        return $this->memo['active_categories'] ??= $this->cacheRemember('active_categories' . \App\Repositories\Tenant\Catalog\CategoryCatalog::cacheSuffix(), ['Category', 'Product', 'CentralCategory'], fn() => \App\Repositories\Tenant\Catalog\CategoryCatalog::query()
             ->where('active', true)
             ->withCount(['products', 'children']) // For fallback thumb in header menu
             ->with(['translations.language', 'files', 'centralCategory.files'])
@@ -1398,8 +1427,8 @@ class StorefrontRepository
 
     public function rootCategoriesWithChildren(): Collection
     {
-        return $this->memo['root_categories'] ??= $this->cacheRemember('root_categories', ['Category', 'Product', 'CentralCategory'], fn() => $this->pruneEmptyLeaves(
-            Category::query()
+        return $this->memo['root_categories'] ??= $this->cacheRemember('root_categories' . \App\Repositories\Tenant\Catalog\CategoryCatalog::cacheSuffix(), ['Category', 'Product', 'CentralCategory'], fn() => $this->pruneEmptyLeaves(
+            \App\Repositories\Tenant\Catalog\CategoryCatalog::query()
                 ->where('active', true)
                 ->whereNull('parent_id')
                 ->with([
@@ -1452,7 +1481,8 @@ class StorefrontRepository
 
         $locale = app()->getLocale();
 
-        return Category::query()
+        // Dedup phase 4: merged rows when categories = central (D3: an own slug wins, a colliding central slug reads `-c`).
+        return \App\Repositories\Tenant\Catalog\CategoryCatalog::query()
             ->where('active', true)
             ->whereHas(
                 'translations',
@@ -1463,7 +1493,7 @@ class StorefrontRepository
             )
             ->with(['translations.language', 'files'])
             ->first()
-            ?? Category::query()
+            ?? \App\Repositories\Tenant\Catalog\CategoryCatalog::query()
                 ->where('active', true)
                 ->whereHas(
                     'translations',
@@ -1497,9 +1527,9 @@ class StorefrontRepository
     public function productsByCategory(Category $category, int $limit = 20): Collection
     {
         return $this->productBaseQuery()
-            ->join('category_product', function ($join) use ($category) {
+            ->join($this->categoryPivotTable(), function ($join) use ($category) {
                 $join->on('category_product.product_id', '=', 'products.id')
-                    ->where('category_product.category_id', $category->id);
+                    ->where('category_product.' . $this->categoryPivotKey(), $category->id);
             })
             ->orderBy('category_product.sort_order', 'asc')
             ->orderByRaw($this->effectivePriceExpression() . ' asc')
@@ -1572,9 +1602,9 @@ class StorefrontRepository
                 $this->applyProductSort($query, $sort);
             }
         } elseif ($category && $userSort === 'latest' && $sort === 'latest') {
-            $query->join('category_product', function ($join) use ($categoryIdWithChildrenIds) {
+            $query->join($this->categoryPivotTable(), function ($join) use ($categoryIdWithChildrenIds) {
                 $join->on('category_product.product_id', '=', 'products.id')
-                    ->whereIn('category_product.category_id', $categoryIdWithChildrenIds);
+                    ->whereIn('category_product.' . $this->categoryPivotKey(), $categoryIdWithChildrenIds);
             })
                 ->orderBy('category_product.sort_order', 'asc')
                 ->orderByDesc('products.created_at')
@@ -1833,8 +1863,8 @@ class StorefrontRepository
             }
 
             $query = $this->productBaseQuery(excludeOutOfStock: true)->whereIn('products.id', $candidateIds->all());
-            if (is_numeric($categoryId) && (int) $categoryId > 0) {
-                $ids = array_merge([(int) $categoryId], $this->categoryDescendantIds((int) $categoryId));
+            if (($filterCategoryId = $this->categoryFilterId($categoryId)) !== null) {
+                $ids = array_merge([$filterCategoryId], $this->categoryDescendantIds($filterCategoryId));
                 $query->whereHas('categories', fn(Builder $q) => $q->whereIn('categories.id', $ids));
             }
 

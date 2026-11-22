@@ -25,6 +25,13 @@ final class CategoryProductsController extends PanelController
     {
         $ids = (array) $request->input('ids', []);
 
+        if ($category instanceof \App\Models\Tenant\Catalog\MergedCategory) {
+            // Dedup phase 4: sort overrides (central category) / category_product.sort_order (own category).
+            app(\App\Repositories\Tenant\Catalog\CategoryAssignments::class)->sortProducts($category, $ids);
+
+            return $this->success(__('Product order saved.'));
+        }
+
         foreach ($ids as $index => $productId) {
             $category->products()->updateExistingPivot((int) $productId, ['sort_order' => $index]);
         }

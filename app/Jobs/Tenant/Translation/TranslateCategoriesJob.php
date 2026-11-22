@@ -26,6 +26,9 @@ class TranslateCategoriesJob extends TranslatesStoreSection
             targetLocale: $this->targetLocale,
             targetLanguage: $this->targetLanguage,
             brandContext: $this->brandContext,
-        );
+        )
+            // Dedup phase 4 (categories = central): central categories have no tenant copy; their tenant-only-language
+            // texts are `central_category` rows (0 in sync mode).
+            + $service->translateCentralCategories($this->sourceLocale, $this->targetLocale, $this->targetLanguage, $this->brandContext);
     }
 }

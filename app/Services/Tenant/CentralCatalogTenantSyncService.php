@@ -30,6 +30,10 @@ class CentralCatalogTenantSyncService
 
     protected function dispatchProductToTenants(Product $product, iterable $tenants): void
     {
+        // Dedup plan phase 4 / invariant 8: a product push can change central category_product pairs, which tenants
+        // in categories = central mode read live (no copy to refresh): invalidate their category caches globally.
+        CacheVersion::bump(\App\Repositories\Tenant\Catalog\CategoryCatalog::CACHE_TAG);
+
         foreach ($tenants as $tenant) {
             // Dedup plan §2b: tenants reading products live from central get no copy.
             if ($this->tenantCatalogSyncService->skipsCentralSection($tenant, 'products')) {
@@ -145,9 +149,13 @@ class CentralCatalogTenantSyncService
                 'labels' => LabelCatalog::CACHE_TAG,
                 'coupons' => \App\Repositories\Tenant\Catalog\CouponCatalog::CACHE_TAG,
                 'flash-sales' => \App\Repositories\Tenant\Catalog\FlashSaleCatalog::CACHE_TAG,
+                // Dedup phase 4: central categories and the central category_product pairs (products fan-out).
+                'categories' => \App\Repositories\Tenant\Catalog\CategoryCatalog::CACHE_TAG,
+                'products' => \App\Repositories\Tenant\Catalog\CategoryCatalog::CACHE_TAG,
             ],
             array_flip($sections),
         ));
+        $globalTags = array_values(array_unique($globalTags));
         if ($globalTags !== []) {
             CacheVersion::bumpMany($globalTags);
         }

@@ -90,9 +90,24 @@ class Category extends Model
         return $this->belongsToMany(Product::class)->withPivot('sort_order')->withTimestamps()->orderByPivot('sort_order');
     }
 
-    public function files(): MorphMany
+    /** MorphMany here; MergedCategory (dedup phase 4) narrows it to the one thumb file (HasMany on thumb_file_id). */
+    public function files(): MorphMany|HasMany
     {
         return $this->morphMany(File::class, 'model');
+    }
+
+    /**
+     * Panel routes `{category}`: while the tenant's `catalog_source.categories` is `central` (dedup phase 4) the value is
+     * a merged-category key or ref (CategoryCatalog) and resolves to a MergedCategory (central or own); otherwise the
+     * stock binding on the synced table.
+     */
+    public function resolveRouteBinding($value, $field = null)
+    {
+        if ($field === null && \App\Repositories\Tenant\Catalog\CategoryCatalog::enabled()) {
+            return app(\App\Repositories\Tenant\Catalog\CategoryCatalog::class)->find($value);
+        }
+
+        return parent::resolveRouteBinding($value, $field);
     }
 
     function centralCategory(): BelongsTo

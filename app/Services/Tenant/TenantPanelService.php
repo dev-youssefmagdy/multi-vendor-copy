@@ -160,11 +160,8 @@ class TenantPanelService
             $product->save();
             // New links default to category_product.source = tenant; existing links keep their source. Links to
             // categories central currently hides are not in the form, so keep them (dedup plan R1/R2).
-            $product->categories()->sync(array_merge(
-                $attributes['category_ids'] ?? [],
-                $this->centrallyHiddenCategoryIds($product),
-            ));
-            \App\Support\Catalog\CatalogRefWriter::fillQuietly('category_product', ['product_id' => [$product->id]]);
+            // Dedup phase 4: categories = central → keys / refs through CategoryAssignments (keeps hidden links too).
+            app(\App\Repositories\Tenant\Catalog\ProductCategorySelection::class)->save($product, (array) ($attributes['category_ids'] ?? []));
             $product->syncTranslations($attributes['translations'] ?? []);
 
             if ($centralLinked) {
@@ -380,7 +377,7 @@ class TenantPanelService
     }
 
     /** @return int[] category ids linked to the product whose category central currently hides */
-    protected function centrallyHiddenCategoryIds(Product $product): array
+    public function centrallyHiddenCategoryIds(Product $product): array
     {
         if (! $product->exists || ! Category::hasCentralVisibleColumn()) {
             return [];
@@ -397,6 +394,12 @@ class TenantPanelService
 
     public function saveCategory(array $attributes, ?Category $category = null): Category
     {
+        // Dedup phase 4 (categories = central): a platform category saves only the vendor's overrides; an own category
+        // is the tenant row behind the merged one (typed parent). Sync mode: unchanged below.
+        if (\App\Repositories\Tenant\Catalog\CategoryCatalog::enabled()) {
+            return $this->saveMergedCategory($attributes, $category);
+        }
+
         return DB::transaction(function () use ($attributes, $category) {
             $category ??= new Category();
 
@@ -430,6 +433,64 @@ class TenantPanelService
         });
     }
 
+    /** saveCategory() while the tenant's categories section is `central` (dedup plan phase 4). Returns the merged row. */
+    protected function saveMergedCategory(array $attributes, ?Category $category): Category
+    {
+        $catalog = app(\App\Repositories\Tenant\Catalog\CategoryCatalog::class);
+        $assignments = app(\App\Repositories\Tenant\Catalog\CategoryAssignments::class);
+
+        if ($category instanceof \App\Models\Tenant\Catalog\MergedCategory && $category->isCentral()) {
+            return DB::transaction(function () use ($attributes, $category, $catalog, $assignments) {
+                $assignments->update($category, [
+                    'order_number' => (int) ($attributes['order_number'] ?? 0),
+                    'active' => (bool) ($attributes['active'] ?? true),
+                    'featured' => (bool) ($attributes['featured'] ?? false),
+                ]);
+                // Only languages central lacks are the vendor's (§4.2); platform languages stay read-only.
+                $assignments->saveTenantOnlyTranslations($category, (array) ($attributes['translations'] ?? []));
+
+                return $catalog->find($category->ref);
+            });
+        }
+
+        $own = $category instanceof \App\Models\Tenant\Catalog\MergedCategory
+            ? Category::query()->findOrFail($category->source_id)
+            : ($category ?? new Category());
+
+        return DB::transaction(function () use ($attributes, $own, $catalog, $assignments) {
+            $translations = $attributes['translations'] ?? [];
+            foreach ($translations as $locale => &$localeData) {
+                $localeName = trim((string) data_get($localeData, 'name', ''));
+                $localeSlugInput = trim((string) data_get($localeData, 'slug', ''));
+
+                if ($localeName === '' && $localeSlugInput === '') {
+                    continue;
+                }
+
+                $generated = Str::slug($localeSlugInput ?: $localeName);
+                $localeData['slug'] = $this->uniqueTenantCategorySlug($generated, $locale, $own->getKey());
+            }
+            unset($localeData);
+
+            $assignments->saveOwn($own, $attributes, $attributes['parent_id'] ?? null);
+            $own->syncTranslations($translations);
+            CacheVersion::bump('Category');
+
+            return $catalog->find(\App\Support\Catalog\CatalogRef::tenant($own->id));
+        });
+    }
+
+    /** Deletes an OWN category (central mode); typed children become roots (`parent_id` children: FK SET NULL). */
+    public function deleteOwnCategory(int $id): void
+    {
+        DB::transaction(function () use ($id) {
+            Category::query()->where('parent_type', 'tenant')->where('catalog_parent_id', $id)
+                ->update(['parent_type' => null, 'catalog_parent_id' => null]);
+            Category::query()->whereKey($id)->firstOrFail()->delete();
+            CacheVersion::bumpMany(['Category', 'Product']);
+        });
+    }
+
     protected function uniqueTenantCategorySlug(string $base, string $locale, mixed $ignoreId = null): string
     {
         $base = $base ?: Str::random(8);
@@ -444,6 +505,13 @@ class TenantPanelService
                 ->where('field', 'slug')
                 ->where('value', $slug)
                 ->exists()
+            // Dedup phase 4 (D3): in central mode a new own slug must not collide with a platform category either.
+            || (\App\Repositories\Tenant\Catalog\CategoryCatalog::enabled() && \App\Models\Tenant\Catalog\MergedCategoryTranslation::query()
+                ->where('translatable_id', '<', \App\Support\Catalog\CategoryKey::OWN_OFFSET)
+                ->whereHas('language', fn($q) => $q->where('code', $locale))
+                ->where('field', 'slug')
+                ->where('value', $slug)
+                ->exists())
         ) {
             $index++;
             $slug = sprintf('%s-%s', $base, $index);

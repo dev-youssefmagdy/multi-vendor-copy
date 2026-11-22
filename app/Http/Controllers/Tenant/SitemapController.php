@@ -51,7 +51,8 @@ class SitemapController
             });
 
         // Active categories — slug is a translated field stored in the translations table
-        Category::where('active', true)
+        // Dedup phase 4: merged categories when categories = central.
+        \App\Repositories\Tenant\Catalog\CategoryCatalog::query()->where('active', true)
             ->select(['id', 'updated_at'])
             ->with('translations.language')
             ->orderBy('id')

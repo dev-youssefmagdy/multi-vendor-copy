@@ -18,13 +18,13 @@ use Illuminate\Support\Facades\Schema;
  *                                              value is back to the pre-approval value): they follow central afterwards.
  *                                              Without it a tenant with stale pairs is `failed` (freeze kept, exit 1).
  *
- * Sections: badges, labels, field_overrides, coupons, flash_sales (DedupRunner::SECTIONS). Progress rows in `catalog_dedup_runs`, reports in
+ * Sections: badges, labels, field_overrides, coupons, flash_sales, categories (DedupRunner::SECTIONS). Progress rows in `catalog_dedup_runs`, reports in
  * storage/app/dedup-reports/<section>/<tenant>[.dry-run|.verify].json. No cleanup here (phase 7).
  */
 class CatalogDedupMigrateCommand extends Command
 {
     protected $signature = 'catalog:dedup-migrate
-        {section : badges | labels | field_overrides | coupons | flash_sales}
+        {section : badges | labels | field_overrides | coupons | flash_sales | categories}
         {--tenant=* : Tenant id(s); default every tenant}
         {--dry-run : Classify and report only; write nothing}
         {--verify : Read-only shadow-read diff old (synced) vs new (merged) read}

@@ -122,7 +122,7 @@ class OffersPage extends Component
             'hasMore' => $result['has_more'],
             'maxDiscount' => $result['max_discount'],
             'categories' => $repo->activeCategories(),
-            'currentCategoryId' => is_numeric($this->categoryId) && (int) $this->categoryId > 0 ? (int) $this->categoryId : null,
+            'currentCategoryId' => \App\Repositories\Tenant\Catalog\CategoryCatalog::filterId($this->categoryId), // dedup phase 4: key / ref
             'sort' => $this->sort,
             'flashOnly' => $this->flashOnly,
             'minDiscount' => $minDiscount,

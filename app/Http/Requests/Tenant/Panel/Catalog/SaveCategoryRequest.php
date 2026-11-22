@@ -18,7 +18,19 @@ final class SaveCategoryRequest extends TenantFormRequest
     {
         $rules = [
             'central_category_id' => ['nullable', 'integer'],
-            'parent_id' => ['nullable', 'integer', 'exists:categories,id'],
+            // Dedup phase 4 (categories = central): a merged-category key or ref (central or own).
+            'parent_id' => \App\Repositories\Tenant\Catalog\CategoryCatalog::enabled()
+                ? ['nullable', function (string $attribute, mixed $value, \Closure $fail) {
+                    $catalog = app(\App\Repositories\Tenant\Catalog\CategoryCatalog::class);
+                    $parent = filled($value) ? $catalog->find($value) : null;
+                    if (filled($value) && $parent === null) {
+                        $fail(__('validation.exists', ['attribute' => __('parent category')]));
+                    } elseif ($parent !== null && ($current = $this->route('category')) instanceof \App\Models\Tenant\Catalog\MergedCategory
+                        && in_array((int) $parent->id, $catalog->withDescendants((int) $current->id), true)) {
+                        $fail(__('A category cannot be its own parent or sit under one of its sub-categories.'));
+                    }
+                }]
+                : ['nullable', 'integer', 'exists:categories,id'],
             'order_number' => ['nullable', 'integer', 'min:0'],
             'active' => ['boolean'],
             'featured' => ['boolean'],

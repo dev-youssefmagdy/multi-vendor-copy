@@ -251,6 +251,10 @@ class TenantPanelRepository
      */
     protected function resolveCategoryIdsWithDescendants(int $categoryId): array
     {
+        if (\App\Repositories\Tenant\Catalog\CategoryCatalog::enabled()) {
+            return app(\App\Repositories\Tenant\Catalog\CategoryCatalog::class)->withDescendants($categoryId); // merged keys (dedup phase 4)
+        }
+
         $category = Category::query()->with('children.children.children.children')->find($categoryId);
 
         if (! $category) {
@@ -504,7 +508,8 @@ class TenantPanelRepository
 
     public function queryCategories(array $filters): Builder
     {
-        return Category::query()
+        // Dedup phase 4: merged rows (central live + overrides ∪ own) when categories = central.
+        return \App\Repositories\Tenant\Catalog\CategoryCatalog::query()
             ->with(['translations.language', 'parent.translations.language', 'products'])
             ->when(filled($filters['search'] ?? null), function ($query) use ($filters) {
                 $search = trim((string) $filters['search']);
@@ -515,12 +520,18 @@ class TenantPanelRepository
             ->orderBy('order_number');
     }
 
+    /** Dedup phase 4: tenant language codes whose central category texts are the platform's (read-only). */
+    public function centralCategoryLocales(): array
+    {
+        return \App\Repositories\Tenant\Catalog\CategoryCatalog::centralLocales();
+    }
+
     public function categoryStats(): array
     {
         return [
-            'total' => Category::query()->count(),
-            'active' => Category::query()->where('active', true)->count(),
-            'featured' => Category::query()->where('featured', true)->count(),
+            'total' => \App\Repositories\Tenant\Catalog\CategoryCatalog::query()->count(),
+            'active' => \App\Repositories\Tenant\Catalog\CategoryCatalog::query()->where('active', true)->count(),
+            'featured' => \App\Repositories\Tenant\Catalog\CategoryCatalog::query()->where('featured', true)->count(),
         ];
     }
 
@@ -1186,6 +1197,10 @@ class TenantPanelRepository
      */
     public function categoryOptions(?int $keepId = null): array
     {
+        if (\App\Repositories\Tenant\Catalog\CategoryCatalog::enabled()) {
+            return app(\App\Repositories\Tenant\Catalog\CategoryCatalog::class)->options($keepId); // keys of the merged set (dedup phase 4)
+        }
+
         $defaultLangId = $this->defaultLanguageId();
 
         $options = DB::table('categories as c')
@@ -1228,6 +1243,10 @@ class TenantPanelRepository
      */
     public function categoryTreeOptions(): array
     {
+        if (\App\Repositories\Tenant\Catalog\CategoryCatalog::enabled()) {
+            return app(\App\Repositories\Tenant\Catalog\CategoryCatalog::class)->treeOptions(); // keys of the merged set (dedup phase 4)
+        }
+
         $defaultLangId = $this->defaultLanguageId();
 
         $rows = DB::table('categories as c')
@@ -2844,7 +2863,15 @@ class TenantPanelRepository
             ->keyBy('product_id');
 
         // Category saturation: primary category ID per product, then count peers in that category.
-        $categoryRows = DB::table('category_product as cp')
+        // Dedup phase 4: the merged membership (category key as category_id) when categories = central; otherwise the
+        // synced pivot exactly as before.
+        $cpTable = fn () => \App\Repositories\Tenant\Catalog\CategoryCatalog::enabled()
+            ? DB::query()->fromSub(
+                DB::query()->fromRaw('(' . \App\Repositories\Tenant\Catalog\CategoryCatalog::membershipSql() . ') as m')->select('m.product_id', 'm.category_key as category_id'),
+                'cp',
+            )
+            : DB::table('category_product as cp');
+        $categoryRows = $cpTable()
             ->whereIn('cp.product_id', $productIds)
             ->select('cp.product_id', DB::raw('MIN(cp.category_id) as category_id'))
             ->groupBy('cp.product_id')
@@ -2854,7 +2881,7 @@ class TenantPanelRepository
         $categoryIds = $categoryRows->pluck('category_id')->filter()->unique()->values()->all();
         $peerCounts = [];
         if (! empty($categoryIds)) {
-            $peerCounts = DB::table('category_product as cp')
+            $peerCounts = $cpTable()
                 ->join('products as p', 'p.id', '=', 'cp.product_id')
                 ->whereIn('cp.category_id', $categoryIds)
                 ->where('p.active', true)

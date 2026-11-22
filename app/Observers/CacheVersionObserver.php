@@ -55,8 +55,13 @@ class CacheVersionObserver
             // Product cards/prices carry the active flash-sale discount.
             $model instanceof TenantFlashSale => ['FlashSale', 'Product'],
             $model instanceof CentralCategory => ['CentralCategory'],
-            // Central translations only matter to tenant caches for countries.
-            $model instanceof CentralTranslation => self::ownerTag($model->translatable_type) === 'Country' ? ['Country'] : [],
+            // Central translations matter to tenant caches for countries and (dedup phase 4: read live by tenants in
+            // categories = central mode) categories.
+            $model instanceof CentralTranslation => match (self::ownerTag($model->translatable_type)) {
+                'Country' => ['Country'],
+                'Category' => ['CentralCategory'],
+                default => [],
+            },
             default => [class_basename($model)],
         };
     }

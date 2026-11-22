@@ -27,8 +27,8 @@ class FullStarPage extends Component
 
         $this->search = trim((string) request('keyword', ''));
 
-        $categoryId = request('category_id');
-        $this->categoryId = is_numeric($categoryId) && (int) $categoryId > 0 ? (int) $categoryId : null;
+        // Dedup phase 4: key / legacy id or ref, resolved in the current mode (numeric input unchanged).
+        $this->categoryId = \App\Repositories\Tenant\Catalog\CategoryCatalog::filterId(request('category_id'));
     }
 
     public function addToCart(int $productId): void

@@ -1355,6 +1355,13 @@ class TenantCatalogSyncService
             return;
         }
 
+        // Dedup plan phase 4: a tenant reading categories live from central gets no category_product copies, from the
+        // full products sync nor from the single-product push (both are the `products` section, so the `categories`
+        // section guard alone does not cover them).
+        if (($current = tenant()) instanceof Tenant && $this->skipsCentralSection($current, 'categories')) {
+            return;
+        }
+
         // Before the tenant DB has the column (2026_11_21_000005) links can't be told apart: attach only.
         $hasSource = Schema::connection('tenant')->hasColumn('category_product', 'source');
         $current = [];

@@ -26,6 +26,8 @@ final class DedupRunner
         // Dedup plan phase 3.
         'coupons' => CouponsDedup::class,
         'flash_sales' => FlashSalesDedup::class,
+        // Dedup plan phase 4.
+        'categories' => CategoriesDedup::class,
     ];
 
     public static function handler(string $section): DedupSection
