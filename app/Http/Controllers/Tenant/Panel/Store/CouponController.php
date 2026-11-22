@@ -8,6 +8,8 @@ use App\Enums\Tenant\CouponType;
 use App\Http\Controllers\Tenant\Panel\PanelController;
 use App\Http\Requests\Tenant\Panel\Store\SaveCouponRequest;
 use App\Models\Tenant\Coupon;
+use App\Repositories\Tenant\Catalog\CatalogCoupon;
+use App\Repositories\Tenant\Catalog\CouponCatalog;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\Tenant\TenantPanelService;
 use App\Support\CountryScope;
@@ -62,6 +64,11 @@ final class CouponController extends PanelController
         $filters = $this->filters($request, ['country']);
         $countriesById = CountryScope::tenantCountries()->keyBy('id');
 
+        // Dedup plan phase 3: central mode lists live central coupons (read-only) + own coupons.
+        if (CouponCatalog::enabled()) {
+            return $this->mergedData($filters['country'] ?? null, $countriesById);
+        }
+
         $query = $this->repo->queryCoupons($filters['country'] ?? null)->with('countryRows');
 
         return DataTables::eloquent($query)
@@ -78,8 +85,38 @@ final class CouponController extends PanelController
             ->toJson();
     }
 
+    /** Central-mode list (CouponCatalog): same columns; platform coupons are read-only. */
+    private function mergedData(int|string|null $country, $countriesById): JsonResponse
+    {
+        $rows = app(CouponCatalog::class)->all($country)->map(fn (CatalogCoupon $coupon) => [
+            'coupon' => e($coupon->name ?? $coupon->code)
+                . ($coupon->isCentral() ? ' <span class="badge badge-cyan">' . e(__('Platform')) . '</span>' : ''),
+            'type' => e(__($coupon->type->label())),
+            'value' => $coupon->type === CouponType::Percentage
+                ? e(number_format((float) $coupon->value, 2)).'%'
+                : '$'.e(number_format((float) $coupon->value, 2)),
+            'countries' => CountryScope::badges($coupon->countryIds(), $countriesById),
+            'window' => e(optional($coupon->start_date)->format('M d, Y') ?: '-').' - '.e(optional($coupon->end_date)->format('M d, Y') ?: '-'),
+            'actions' => $coupon->isCentral()
+                ? '<span style="font-size:11.5px;color:var(--t3);">' . e(__('Managed by platform')) . '</span>'
+                : view('tenant.pages.store.coupons._cols.actions', ['coupon' => $coupon->id])->render(),
+        ])->values();
+
+        return DataTables::collection($rows)
+            ->addIndexColumn()
+            ->rawColumns(['coupon', 'countries', 'actions'])
+            ->toJson();
+    }
+
+    /** Central mode: a legacy sync copy of a central coupon is not the tenant's (it is ignored by every read). */
+    private function assertOwn(Coupon $coupon): void
+    {
+        abort_if(CouponCatalog::enabled() && $coupon->central_coupon_id !== null, 404);
+    }
+
     public function show(Coupon $coupon): JsonResponse
     {
+        $this->assertOwn($coupon);
         $defaultLocale = $this->repo->activeLanguages()->firstWhere('is_default', true)?->code ?? 'en';
         $translations = $coupon->translationsByLocale(['name']);
 
@@ -102,6 +139,7 @@ final class CouponController extends PanelController
 
     public function update(SaveCouponRequest $request, Coupon $coupon): JsonResponse
     {
+        $this->assertOwn($coupon);
         return $this->save($request, $coupon);
     }
 
@@ -147,6 +185,7 @@ final class CouponController extends PanelController
 
     public function destroy(Coupon $coupon): JsonResponse
     {
+        $this->assertOwn($coupon);
         $this->service->deleteModel($coupon);
 
         return $this->success(__('Coupon deleted successfully.'));

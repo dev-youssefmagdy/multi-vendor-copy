@@ -11,6 +11,8 @@ use App\Livewire\Tenant\Storefront\Concerns\CalculatesFreeShipping;
 use App\Livewire\Tenant\Storefront\Concerns\ChecksCartStock;
 use App\Livewire\Tenant\Storefront\Concerns\HasStorefrontLayout;
 use App\Models\Tenant\Coupon;
+use App\Repositories\Tenant\Catalog\CatalogCoupon;
+use App\Repositories\Tenant\Catalog\CouponCatalog;
 use App\Models\Tenant\CustomerAddress;
 use App\Models\Tenant\Order;
 use App\Models\Tenant\OrderItem;
@@ -296,11 +298,7 @@ class CheckoutPage extends Component
             return;
         }
 
-        $coupon = Coupon::query()
-            ->where('code', $code)
-            ->where(fn($q) => $q->whereNull('start_date')->orWhere('start_date', '<=', now()))
-            ->where(fn($q) => $q->whereNull('end_date')->orWhere('end_date', '>=', now()))
-            ->first();
+        $coupon = app(CouponCatalog::class)->findValidByCode($code);
 
         if (!$coupon) {
             $this->addError('data.coupon.code', __('This coupon code is invalid or has expired.'));
@@ -427,7 +425,7 @@ class CheckoutPage extends Component
 
         $appliedCoupon = null;
         if ($couponCode = session('storefront_coupon')) {
-            $appliedCoupon = Coupon::query()->where('code', $couponCode)->first();
+            $appliedCoupon = app(CouponCatalog::class)->findByCode($couponCode);
         }
 
         $gatewayId = $this->data['payment']['gateway_id'];
@@ -550,7 +548,7 @@ class CheckoutPage extends Component
         // ── Coupon / discount ─────────────────────────────────────────────────
         $appliedCoupon = null;
         if ($couponSession = session('storefront_coupon')) {
-            $appliedCoupon = Coupon::query()->where('code', $couponSession)->first();
+            $appliedCoupon = app(CouponCatalog::class)->findByCode($couponSession);
             if ($appliedCoupon && $appliedCoupon->minimum_spend !== null && $cartTotal < (float) $appliedCoupon->minimum_spend) {
                 $minimumSpend = trim($symbol . ' ' . number_format((float) $appliedCoupon->minimum_spend * $rate, 2));
                 session()->forget('storefront_coupon');

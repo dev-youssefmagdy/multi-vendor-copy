@@ -123,16 +123,13 @@ class HomeController extends CatalogController
         $couponCode = null;
 
         if ($sales->isNotEmpty()) {
-            $couponCode = Coupon::query()
-                ->where(fn ($q) => $q->whereNull('start_date')->orWhere('start_date', '<=', now()))
-                ->where(fn ($q) => $q->whereNull('end_date')->orWhere('end_date', '>=', now()))
-                ->forCountry(app(CustomerCountryResolver::class)->resolveId())
-                ->latest()->value('code');
+            $couponCode = app(\App\Repositories\Tenant\Catalog\CouponCatalog::class)->latestValidCodeForCountry(app(CustomerCountryResolver::class)->resolveId());
         }
 
         return ['flash' => [
             'sales' => $sales->map(fn ($s) => [
-                'id' => $s->id,
+                // Dedup plan phase 3: merged sales have a ref id ("c:12"); the API keeps an integer id (display only).
+                'id' => $s instanceof \App\Models\Tenant\Catalog\MergedFlashSale ? (int) $s->source_id : $s->id,
                 'discount_percentage' => $s->discount_percentage,
                 'ends_at' => $s->end_date?->toIso8601String(),
                 'banner' => $s->banner_url,

@@ -10,6 +10,8 @@ use App\Livewire\Tenant\Storefront\Concerns\ChecksCartStock;
 use App\Livewire\Tenant\Storefront\Concerns\HasStorefrontLayout;
 use App\Models\Product as CentralProduct;
 use App\Models\Tenant\Coupon;
+use App\Repositories\Tenant\Catalog\CatalogCoupon;
+use App\Repositories\Tenant\Catalog\CouponCatalog;
 use App\Models\Tenant\Product;
 use App\Repositories\Tenant\StorefrontRepository;
 use App\Services\Tenant\CustomerCountryResolver;
@@ -114,11 +116,7 @@ class CartPage extends Component
             return;
         }
 
-        $coupon = Coupon::query()
-            ->where('code', $code)
-            ->where(fn($q) => $q->whereNull('start_date')->orWhere('start_date', '<=', now()))
-            ->where(fn($q) => $q->whereNull('end_date')->orWhere('end_date', '>=', now()))
-            ->first();
+        $coupon = app(CouponCatalog::class)->findValidByCode($code);
 
         if (!$coupon) {
             $this->addError('coupon', __('This coupon code is invalid or has expired.'));
@@ -226,7 +224,7 @@ class CartPage extends Component
         $appliedCoupon = null;
         $couponCode = session('storefront_coupon');
         if ($couponCode) {
-            $appliedCoupon = Coupon::query()->where('code', $couponCode)->first();
+            $appliedCoupon = app(CouponCatalog::class)->findByCode($couponCode);
             if ($appliedCoupon && $appliedCoupon->minimum_spend !== null && $cartTotal < (float) $appliedCoupon->minimum_spend) {
                 $currency = $repo->currentCurrency();
                 $rate = (float) ($currency?->conversion_rate ?? 1.0);

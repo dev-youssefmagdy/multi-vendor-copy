@@ -41,6 +41,10 @@ class Order extends Model
         'shipping_charge',
         'coupon_discount',
         'coupon_source',
+        // Dedup plan phase 3: coupon snapshot + typed ref (OrderComposer only; ORDER_FORMULAS.md §4).
+        'coupon_code',
+        'coupon_type',
+        'catalog_coupon_id',
         'platform_profit',
         'vendor_profit',
         'collected_by',
@@ -99,6 +103,17 @@ class Order extends Model
     public function coupon(): BelongsTo
     {
         return $this->belongsTo(Coupon::class, 'discount_id');
+    }
+
+    /**
+     * Code of the coupon used at checkout: the `coupon_code` snapshot (dedup plan phase 3; a central coupon has no tenant
+     * row in central mode), else the tenant coupon row for orders placed before the snapshot existed.
+     */
+    public function appliedCouponCode(): ?string
+    {
+        $snapshot = $this->getAttribute('coupon_code');
+
+        return filled($snapshot) ? (string) $snapshot : $this->coupon?->code;
     }
 
     public function paymentGateway(): BelongsTo

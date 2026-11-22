@@ -9,6 +9,8 @@ use App\Enums\ShippingZoneStatus;
 use App\Livewire\Tenant\Storefront\Concerns\ChecksCartStock;
 use App\Models\Product as CentralProduct;
 use App\Models\Tenant\Coupon;
+use App\Repositories\Tenant\Catalog\CatalogCoupon;
+use App\Repositories\Tenant\Catalog\CouponCatalog;
 use App\Models\Tenant\Customer;
 use App\Models\Tenant\Order;
 use App\Models\Tenant\Product as TenantProduct;
@@ -105,7 +107,7 @@ class PlacesOrders
         $cartItems = $repo->cartItems();
 
         $appliedCoupon = $couponCode
-            ? Coupon::query()->where('code', $couponCode)->first()
+            ? app(CouponCatalog::class)->findByCode($couponCode)
             : null;
 
         $gatewayId = $payment['gateway_id'] ?? null;

@@ -28,6 +28,12 @@
 * Typed catalog refs on order lines (2026-11-23, dedup plan phase 1): `order_items.product_type/catalog_product_id/variant_type/catalog_variant_id`
   written by `OrderComposer::create()` (`lineRefs()`, one batch lookup) and the `OrderItem` save hook; old rows by `catalog:backfill-refs`.
   Identity only, no formula change (ORDER_FORMULAS.md §4). Readers keep `product_id`/`product_variant_id` until the products cutover.
+* Coupons / flash sales read live from central (2026-11-25, dedup plan phase 3, behind `catalog_source.coupons` /
+  `.flash-sales`): coupon lookups go through `CouponCatalog`, flash sales through `Product::flashSales()` /
+  `FlashSaleCatalog`; `coupon_source` / `discount_source` decided by the merged row's `source` (same values as before).
+  New `orders.coupon_code` / `coupon_type` / `catalog_coupon_id` (identity only, ORDER_FORMULAS.md §4). No formula change.
+  Behaviour change in central mode only: a central coupon switched off (`active = 0`) is no longer redeemable (the sync
+  never copied `active`). Tests `tests/Feature/Tenant/CatalogPhase3CouponsTest.php`, `CatalogPhase3FlashSalesTest.php`.
 * Settlement ledger = existing central Settlement Payments (`vendor_settlements`) + `orders.payout_released`. NO `order_transactions` table (removed on user request).
 * Rounding: line discount is rounded to cents first, grand_total = components (docs example 181.935 -> 181.93 stored; order 183.13).
 * Legacy backfill: orders with real line cost are re-expressed with the new formula (order #4 -> platform 202.96 / vendor -19.78); others keep historical split.
@@ -36,7 +42,7 @@
 * `OrderPricing::unitPrice/item/order/couponDiscount` (app/Support/OrderPricing.php)
 * `OrderProfitCalculator::platformProfitForOrder / vendorProfitForOrder / vendorOwnPlatformForOrder / platformOwnVendorForOrder / platformShareDueFromVendor / vendorShareDueFromPlatform / isFinanciallyVoid / netOrderTotal / collectedByVendor`
 * Order accessors: `items_grand_total, items_fixed_shipping, items_discount, items_tax, discount_amount (=coupon_discount), grand_total, vendor_settlements_paid (from Settlement Payments), platform_payouts_paid (payout_released), vendor_total_with_fee, vendor_settled`
-* Order columns: `platform_profit, vendor_profit, coupon_discount, coupon_source, collected_by`; OrderItem: `cost, profit_amount, price, sub_total, fixed_shipping, discount, discount_source, tax, shipping_fee, weight, grand_total`
+* Order columns: `platform_profit, vendor_profit, coupon_discount, coupon_source, collected_by, coupon_code, coupon_type, catalog_coupon_id`; OrderItem: `cost, profit_amount, price, sub_total, fixed_shipping, discount, discount_source, tax, shipping_fee, weight, grand_total`
 * `Product/ProductVariant::priceBreakdownForCountry($countryId)` => cost, profit_amount, price, fixed_shipping
 
 ## QA results (T7)

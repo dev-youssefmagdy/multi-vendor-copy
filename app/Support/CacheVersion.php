@@ -22,6 +22,8 @@ class CacheVersion
         'HomeVariant', 'BladeTheme', 'CentralCategory', 'Country', 'Template',
         // Dedup plan phase 2 (invariant 8): central badges / labels read live by tenants in `central` mode.
         'CentralProductBadge', 'CentralProductLabel',
+        // Dedup plan phase 3: central coupons / flash sales read live by tenants in `central` mode.
+        'CentralCoupon', 'CentralFlashSale',
     ];
 
     /** Every tag the storefront caches are keyed on (see bumpStorefront()). */

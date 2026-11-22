@@ -4,7 +4,9 @@ namespace App\Models\Tenant;
 
 use App\Models\Tenant\Catalog\MergedProductBadge;
 use App\Models\Tenant\Catalog\MergedProductLabel;
+use App\Models\Tenant\Catalog\MergedProductFlashSale;
 use App\Repositories\Tenant\Catalog\BadgeCatalog;
+use App\Repositories\Tenant\Catalog\FlashSaleCatalog;
 use App\Repositories\Tenant\Catalog\LabelCatalog;
 use App\Services\Tenant\CustomerCountryResolver;
 use Carbon\Carbon;
@@ -146,8 +148,17 @@ class Product extends Model
         return $this->belongsToMany(Category::class)->withTimestamps();
     }
 
-    public function flashSales(): BelongsToMany
+    /**
+     * The product's flash sales. Dedup plan phase 3 (flash sales = DROP): while `catalog_source.flash-sales` is `central`,
+     * merged rows (live central sales of carried products ∪ own sales, FlashSaleCatalog / MergedProductFlashSale) with
+     * the same attributes / scopes (`activeWindow()`, `forCountry()`); otherwise the synced copies, unchanged.
+     */
+    public function flashSales(): BelongsToMany|HasMany
     {
+        if (FlashSaleCatalog::enabled()) {
+            return $this->hasMany(MergedProductFlashSale::class, 'product_id', 'id');
+        }
+
         return $this->belongsToMany(FlashSale::class, 'flash_sale_product')->withTimestamps();
     }
 
@@ -312,7 +323,8 @@ class Product extends Model
         return (float) $this->rates()->avg('stars') ?? 0.0;
     }
 
-    public function activeStorefrontFlashSale(): ?FlashSale
+    /** Best active flash sale for the visitor: Tenant\FlashSale (sync mode) or MergedProductFlashSale (central mode). */
+    public function activeStorefrontFlashSale(): FlashSale|MergedProductFlashSale|null
     {
         $moment = Carbon::now();
 
@@ -321,8 +333,8 @@ class Product extends Model
             : $this->flashSales()->activeWindow($moment)->forCountry(app(CustomerCountryResolver::class)->resolveId())->get();
 
         return $flashSales
-            ->filter(fn(FlashSale $flashSale) => $flashSale->isCurrentlyActive($moment))
-            ->sortByDesc(fn(FlashSale $flashSale) => (float) $flashSale->discount_percentage)
+            ->filter(fn(FlashSale|MergedProductFlashSale $flashSale) => $flashSale->isCurrentlyActive($moment))
+            ->sortByDesc(fn(FlashSale|MergedProductFlashSale $flashSale) => (float) $flashSale->discount_percentage)
             ->first();
     }
 

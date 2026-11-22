@@ -376,12 +376,7 @@ class HomePage extends Component
         $flashCouponCode = null;
         if ($wants('flashCoupon') && $flashSales->isNotEmpty() && in_array('flash_sale_strip', $homeSections, true)) {
             $countryId = app(CustomerCountryResolver::class)->resolveId();
-            $flashCouponCode = Coupon::query()
-                ->where(fn($q) => $q->whereNull('start_date')->orWhere('start_date', '<=', now()))
-                ->where(fn($q) => $q->whereNull('end_date')->orWhere('end_date', '>=', now()))
-                ->forCountry($countryId)
-                ->latest()
-                ->value('code');
+            $flashCouponCode = app(\App\Repositories\Tenant\Catalog\CouponCatalog::class)->latestValidCodeForCountry($countryId);
         }
 
         $data = array_merge($this->sharedData(), [

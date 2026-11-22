@@ -11,6 +11,8 @@ use App\Models\Tenant\Category;
 use App\Models\Tenant\Currency;
 use App\Models\Tenant\Customer;
 use App\Models\Tenant\FlashSale;
+use App\Models\Tenant\Catalog\MergedFlashSale;
+use App\Repositories\Tenant\Catalog\FlashSaleCatalog;
 use App\Models\Tenant\Language;
 use App\Models\Tenant\Order;
 use App\Models\Tenant\OrderItem;
@@ -226,6 +228,11 @@ class StorefrontRepository
     {
         // $countryId is cast to int from the resolved central country id — safe to interpolate.
         $countryId = $this->customerCountryId();
+
+        // Dedup plan phase 3: central flash sales read live (same best-discount rule, own sales from the tenant tables).
+        if (FlashSaleCatalog::enabled()) {
+            return FlashSaleCatalog::discountExpression($countryId ? (int) $countryId : null);
+        }
 
         $windowClause = "flash_sales.active = 1 AND (flash_sales.start_date IS NULL OR flash_sales.start_date <= CURRENT_TIMESTAMP) AND (flash_sales.end_date IS NULL OR flash_sales.end_date >= CURRENT_TIMESTAMP)";
         $baseFrom = "FROM flash_sale_product INNER JOIN flash_sales ON flash_sales.id = flash_sale_product.flash_sale_id WHERE flash_sale_product.product_id = products.id AND {$windowClause}";
@@ -1978,7 +1985,7 @@ class StorefrontRepository
         $fresh = null;
         $entry = $this->cacheRemember(
             "home_products_page1:{$perPage}:" . ($this->customerCountryId() ?? 'default') . ':vis' . ($this->visibilityCountryId() ?? 'none'),
-            ['Product', 'ProductVariant', 'FlashSale'],
+            ['Product', 'ProductVariant', 'FlashSale', ...(FlashSaleCatalog::enabled() ? [FlashSaleCatalog::CACHE_TAG] : [])],
             function () use (&$fresh, $query, $perPage) {
                 $fresh = $this->pageWithoutCount($query, $perPage);
 
@@ -2060,13 +2067,14 @@ class StorefrontRepository
 
         // Own products limited to other countries are not shown (Product::isAvailableInCountry()).
         $countryId = $this->visibilityCountryId();
-        $flashSales->each(fn(FlashSale $flashSale) => $flashSale->setRelation(
+        // FlashSale (synced copies) or MergedFlashSale (dedup plan phase 3, central mode): same attributes.
+        $flashSales->each(fn(FlashSale|MergedFlashSale $flashSale) => $flashSale->setRelation(
             'products',
             $flashSale->products->filter(fn(Product $product) => $product->isAvailableInCountry($countryId))->values()
         ));
 
         $this->hydrateProductCards(new Collection(
-            $flashSales->flatMap(fn(FlashSale $flashSale) => $flashSale->products->all())->all()
+            $flashSales->flatMap(fn(FlashSale|MergedFlashSale $flashSale) => $flashSale->products->all())->all()
         ));
 
         return $this->memo['active_flash_sales'] = $flashSales;
@@ -2090,6 +2098,16 @@ class StorefrontRepository
         // bare product rows are cached: card relations (variants, central product /
         // variant data, translations, flash sales, badges…) are hydrated per request,
         // so central catalog edits — which bump no tenant tag — show up immediately.
+        // Dedup plan phase 3: central mode reads merged sales (own key + the global central tag, invariant 8).
+        if (FlashSaleCatalog::enabled()) {
+            return $this->memo['active_flash_sale_rows'] = $this->cacheRemember(
+                'active_flash_sales_merged_' . ($countryId ?? 'default'),
+                ['FlashSale', 'Product', 'ProductVariant', 'ProductBadge', FlashSaleCatalog::CACHE_TAG],
+                fn () => app(FlashSaleCatalog::class)->sales(activeOnly: true, country: $countryId),
+                ttl: (int) config('cache.storefront.flash_sales_ttl', 60),
+            );
+        }
+
         return $this->memo['active_flash_sale_rows'] = $this->cacheRemember(
             'active_flash_sales_' . ($countryId ?? 'default'),
             ['FlashSale', 'Product', 'ProductVariant', 'ProductBadge'],
@@ -2121,7 +2139,7 @@ class StorefrontRepository
             'flash_products_by_price_' . md5($byId->keys()->implode(','))
                 . '_' . ($this->customerCountryId() ?? 'default')
                 . '_' . ($this->currentCurrency()?->code ?? 'none'),
-            ['FlashSale', 'Product', 'ProductVariant'],
+            ['FlashSale', 'Product', 'ProductVariant', ...(FlashSaleCatalog::enabled() ? [FlashSaleCatalog::CACHE_TAG] : [])],
             fn() => $products
                 ->sortBy(fn($product) => (float) $product->storefrontPricing()['current_price'])
                 ->map(fn(Product $product) => (int) $product->getKey())

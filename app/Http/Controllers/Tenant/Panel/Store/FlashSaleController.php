@@ -6,7 +6,9 @@ namespace App\Http\Controllers\Tenant\Panel\Store;
 
 use App\Http\Controllers\Tenant\Panel\PanelController;
 use App\Http\Requests\Tenant\Panel\Store\SaveFlashSaleRequest;
+use App\Models\Tenant\Catalog\MergedFlashSale;
 use App\Models\Tenant\FlashSale;
+use App\Repositories\Tenant\Catalog\FlashSaleCatalog;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\FlashSaleMediaService;
 use App\Services\Tenant\TenantPanelService;
@@ -68,6 +70,11 @@ final class FlashSaleController extends PanelController
         $filters = $this->filters($request, ['country']);
         $countriesById = CountryScope::tenantCountries()->keyBy('id');
 
+        // Dedup plan phase 3: central mode lists live central sales (read-only) + own sales.
+        if (FlashSaleCatalog::enabled()) {
+            return $this->mergedData($filters['country'] ?? null, $countriesById);
+        }
+
         $query = $this->repo->queryFlashSales($filters['country'] ?? null)->with('countryRows');
 
         // Batch productNamesForIds()/productImagesForIds() ONCE per draw
@@ -128,6 +135,41 @@ final class FlashSaleController extends PanelController
             ->toJson();
     }
 
+    /** Central-mode list (FlashSaleCatalog): same columns as data(); platform sales are read-only. */
+    private function mergedData(int|string|null $country, $countriesById): JsonResponse
+    {
+        $sales = app(FlashSaleCatalog::class)->sales(country: $country);
+        $ids = $sales->flatMap(fn (MergedFlashSale $s) => $s->products->pluck('id'))->unique()->map(fn ($id) => (int) $id)->values()->all();
+        $names = $this->repo->productNamesForIds($ids);
+        $images = $this->repo->productImagesForIds($ids);
+
+        $rows = $sales->map(fn (MergedFlashSale $sale) => [
+            'product' => view('tenant.pages.store.flash-sales._cols.product', ['flashSale' => $sale, 'names' => $names, 'images' => $images])->render(),
+            'banner' => view('tenant.pages.store.flash-sales._cols.banner', ['flashSale' => $sale])->render(),
+            'discount' => e(number_format((float) $sale->discount_percentage, 2)).'%',
+            'countries' => CountryScope::badges($sale->countryIds(), $countriesById),
+            'window' => e(optional($sale->start_date)->format('M d, Y') ?: '-').' - '.e(optional($sale->end_date)->format('M d, Y') ?: '-'),
+            'source' => $sale->isCentral()
+                ? '<span class="badge badge-cyan">' . e(__('Platform')) . '</span>'
+                : '<span class="badge badge-indigo">' . e(__('Store')) . '</span>',
+            'status' => '<span class="badge '.($sale->active ? 'badge-green' : 'badge-amber').'">'.e($sale->active ? __('Active') : __('Inactive')).'</span>',
+            'actions' => $sale->isCentral()
+                ? '<span style="font-size:11.5px;color:var(--t3);">' . e(__('Managed by platform')) . '</span>'
+                : view('tenant.pages.store.flash-sales._cols.actions', ['flashSale' => (int) $sale->source_id])->render(),
+        ])->values();
+
+        return DataTables::collection($rows)
+            ->addIndexColumn()
+            ->rawColumns(['product', 'banner', 'countries', 'source', 'status', 'actions'])
+            ->toJson();
+    }
+
+    /** Central mode: a legacy sync copy of a central sale is not the tenant's (ignored by every read). */
+    private function assertOwn(FlashSale $flashSale): void
+    {
+        abort_if(FlashSaleCatalog::enabled() && $flashSale->central_flash_sale_id !== null, 404);
+    }
+
     public function searchProducts(Request $request): JsonResponse
     {
         $result = $this->repo->searchProducts(
@@ -143,6 +185,7 @@ final class FlashSaleController extends PanelController
 
     public function show(FlashSale $flashSale): JsonResponse
     {
+        $this->assertOwn($flashSale);
         $flashSale->loadMissing(['product', 'products']);
 
         $productIds = $flashSale->products->pluck('id')
@@ -176,6 +219,7 @@ final class FlashSaleController extends PanelController
 
     public function update(SaveFlashSaleRequest $request, FlashSale $flashSale, FlashSaleMediaService $mediaService): JsonResponse
     {
+        $this->assertOwn($flashSale);
         return $this->save($request, $flashSale, $mediaService);
     }
 
@@ -229,6 +273,7 @@ final class FlashSaleController extends PanelController
 
     public function destroy(FlashSale $flashSale): JsonResponse
     {
+        $this->assertOwn($flashSale);
         $this->service->deleteModel($flashSale);
 
         return $this->success(__('Flash sale deleted successfully.'));
@@ -263,6 +308,7 @@ final class FlashSaleController extends PanelController
 
     public function attachProduct(Request $request, FlashSale $flashSale): JsonResponse
     {
+        $this->assertOwn($flashSale);
         $productId = (int) $request->input('product_id');
 
         if (!$productId) {

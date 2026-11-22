@@ -835,6 +835,17 @@ class TenantPanelRepository
 
     public function couponStats(): array
     {
+        // Dedup plan phase 3: central mode counts the merged coupons (live central applicable + own).
+        if (\App\Repositories\Tenant\Catalog\CouponCatalog::enabled()) {
+            $all = app(\App\Repositories\Tenant\Catalog\CouponCatalog::class)->all();
+
+            return [
+                'total' => $all->count(),
+                'active' => $all->filter(fn ($c) => $c->end_date === null || $c->end_date->gte(now()))->count(),
+                'scheduled' => $all->filter(fn ($c) => $c->start_date !== null && $c->start_date->gt(now()))->count(),
+            ];
+        }
+
         return [
             'total' => Coupon::query()->count(),
             'active' => Coupon::query()->where(function ($query) {
@@ -860,6 +871,23 @@ class TenantPanelRepository
 
     public function flashSaleStats(): array
     {
+        // Dedup plan phase 3: central mode counts the merged sales (live central with carried products + own).
+        if (\App\Repositories\Tenant\Catalog\FlashSaleCatalog::enabled()) {
+            $db = DB::connection('tenant');
+            $row = $db->query()->fromRaw('(' . \App\Repositories\Tenant\Catalog\FlashSaleCatalog::salesSql($db) . ') as s')
+                ->selectRaw('COUNT(*) as total, SUM(active = 1) as active_count, AVG(discount_percentage) as avg_discount')
+                ->first();
+            $productCount = $db->query()->fromRaw('(' . \App\Repositories\Tenant\Catalog\FlashSaleCatalog::membershipSql($db) . ') as m')
+                ->distinct()->count('m.product_id');
+
+            return [
+                'total' => (int) ($row->total ?? 0),
+                'active' => (int) ($row->active_count ?? 0),
+                'avg_discount' => (float) ($row->avg_discount ?? 0),
+                'products' => (int) $productCount,
+            ];
+        }
+
         $row = DB::table('flash_sales')
             ->selectRaw('COUNT(*) as total, SUM(active = 1) as active_count, AVG(discount_percentage) as avg_discount')
             ->first();
@@ -2889,7 +2917,9 @@ class TenantPanelRepository
         $markup = $rawPct > 0 ? '+'.round($rawPct * 0.3, 0).'%' : '+0%';
         $suggested = $cost > 0 ? '$'.number_format($cost * 1.5, 2) : '—';
 
-        $inFlashSale = FlashSale::query()
+        $inFlashSale = \App\Repositories\Tenant\Catalog\FlashSaleCatalog::enabled()
+            ? app(\App\Repositories\Tenant\Catalog\FlashSaleCatalog::class)->productInActiveSale((int) $product->id)
+            : FlashSale::query()
             ->where(function ($q) use ($product) {
                 $q->where('product_id', $product->id)
                     ->orWhereHas('products', fn ($r) => $r->where('products.id', $product->id));

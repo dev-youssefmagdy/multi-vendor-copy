@@ -12,6 +12,9 @@ use App\Models\Tenant\OrderItem;
 use App\Models\Tenant\PaymentGateway;
 use App\Models\Tenant\Product as TenantProduct;
 use App\Models\Tenant\ProductVariant as TenantProductVariant;
+use App\Repositories\Tenant\Catalog\CatalogCoupon;
+use App\Repositories\Tenant\Catalog\CouponCatalog;
+use App\Repositories\Tenant\Catalog\FlashSaleCatalog;
 use App\Services\Tenant\OrderLifecycleService;
 use App\Support\Catalog\CatalogRefColumns;
 use App\Support\Catalog\CatalogRefResolver;
@@ -111,10 +114,10 @@ class OrderComposer
             $fixed = (float) $breakdown['fixed_shipping'];
         }
 
+        // Flash-sale owner from the sale's source (dedup plan phase 3): merged rows carry `source`, synced copies keep the
+        // central_flash_sale_id rule; both give the same value for the same sale.
         $flashSale = $pricing['flash_sale'] ?? null;
-        $source = $flashSale === null
-            ? null
-            : ($flashSale->central_flash_sale_id !== null ? OrderPricing::SOURCE_CENTRAL : OrderPricing::SOURCE_VENDOR);
+        $source = $flashSale === null ? null : FlashSaleCatalog::discountSource($flashSale);
 
         $line = OrderPricing::item(
             $cost,
@@ -169,6 +172,28 @@ class OrderComposer
     }
 
     /**
+     * Coupon identity columns of an order (dedup plan phase 3, ORDER_FORMULAS.md §4): `coupon_code` snapshot and the typed
+     * ref `coupon_type` / `catalog_coupon_id` (a sync copy stands for its central coupon). Empty until the tenant
+     * migration added the columns, and for orders without a coupon. Identity only: no money column depends on it.
+     *
+     * @return array<string, mixed>
+     */
+    public static function couponRef(Coupon|CatalogCoupon|null $coupon): array
+    {
+        if ($coupon === null || ! CouponCatalog::orderColumnsReady((new Order())->getConnection())) {
+            return [];
+        }
+
+        $ref = CouponCatalog::refOf($coupon);
+
+        return [
+            'coupon_code' => (string) $coupon->code,
+            'coupon_type' => $ref->source,
+            'catalog_coupon_id' => $ref->id,
+        ];
+    }
+
+    /**
      * Create the order(s) for a cart. Mixed carts (own + central lines) yield two orders:
      * central (primary, carries shipping) and own (companion).
      *
@@ -182,7 +207,7 @@ class OrderComposer
     {
         /** @var Customer $customer */
         $customer = $ctx['customer'];
-        /** @var ?Coupon $coupon */
+        /** @var Coupon|CatalogCoupon|null $coupon  Tenant\Coupon (sync mode) or a merged CatalogCoupon (central mode) */
         $coupon = $ctx['coupon'] ?? null;
         $selectedGateway = $ctx['gateway'] ?? null;
         $gatewayId = $ctx['gateway_id'] ?? null;
@@ -230,7 +255,7 @@ class OrderComposer
         $discountPercent = 0.0;
         if ($coupon) {
             $couponTotal = OrderPricing::couponDiscount((string) ($coupon->type->value ?? $coupon->type), (float) $coupon->value, (float) $allGrand);
-            $couponSource = $coupon->central_coupon_id !== null ? OrderPricing::SOURCE_CENTRAL : OrderPricing::SOURCE_VENDOR;
+            $couponSource = CouponCatalog::orderSource($coupon);
             $discountPercent = $allGrand > 0 ? round($couponTotal / $allGrand * 100, 4) : 0.0;
         }
 
@@ -248,10 +273,11 @@ class OrderComposer
 
         $lifecycle = app(OrderLifecycleService::class);
         $lineRefs = self::lineRefs(array_merge($ownItems, $centralItems));
+        $couponRef = self::couponRef($coupon);
 
         $persist = function (array $items, float $shipping, float $coupon_discount) use (
             $customer, $coupon, $selectedGateway, $gatewayId, $discountPercent, $couponSource,
-            $collectedBy, $centralGateway, $groupUuid, $ctx, $lifecycle, $lineRefs
+            $collectedBy, $centralGateway, $groupUuid, $ctx, $lifecycle, $lineRefs, $couponRef
         ): Order {
             $totals = OrderPricing::order($items, $shipping, $coupon_discount, $couponSource);
 
@@ -276,7 +302,7 @@ class OrderComposer
                 'vendor_gateway_id' => $centralGateway?->id,
                 'vendor_gateway_fee' => $centralGateway ? $centralGateway->calculateFee(max(0.0, $totals['platform_profit'])) : 0,
                 'shipping_address' => $ctx['shipping_address'],
-            ]);
+            ] + $couponRef);
 
             foreach ($items as $item) {
                 OrderItem::create(array_merge($item, ['order_id' => $order->id], $lineRefs($item)));

@@ -140,7 +140,12 @@ class CentralCatalogTenantSyncService
         // Dedup plan phase 2 / invariant 8: tenants reading badges / labels live from central get no sync job, so a
         // central change must invalidate their caches through the global version tags instead.
         $globalTags = array_values(array_intersect_key(
-            ['badges' => BadgeCatalog::CACHE_TAG, 'labels' => LabelCatalog::CACHE_TAG],
+            [
+                'badges' => BadgeCatalog::CACHE_TAG,
+                'labels' => LabelCatalog::CACHE_TAG,
+                'coupons' => \App\Repositories\Tenant\Catalog\CouponCatalog::CACHE_TAG,
+                'flash-sales' => \App\Repositories\Tenant\Catalog\FlashSaleCatalog::CACHE_TAG,
+            ],
             array_flip($sections),
         ));
         if ($globalTags !== []) {

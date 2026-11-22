@@ -6,6 +6,8 @@ namespace App\Services\Mobile;
 
 use App\Livewire\Tenant\Storefront\Concerns\CalculatesFreeShipping;
 use App\Models\Tenant\Coupon;
+use App\Repositories\Tenant\Catalog\CatalogCoupon;
+use App\Repositories\Tenant\Catalog\CouponCatalog;
 use App\Models\Tenant\Customer;
 use App\Repositories\Tenant\StorefrontRepository;
 use App\Services\Tenant\Checkout\PlacesOrders;
@@ -22,17 +24,14 @@ class MobileCartPresenter
     use CalculatesFreeShipping;
 
     /** Applied coupon if still valid for the customer's country, else null (and cleared from the session). */
-    public function validCoupon(): ?Coupon
+    public function validCoupon(): Coupon|CatalogCoupon|null
     {
         $code = session('storefront_coupon');
         if (!$code) {
             return null;
         }
 
-        $coupon = Coupon::query()->where('code', $code)
-            ->where(fn ($q) => $q->whereNull('start_date')->orWhere('start_date', '<=', now()))
-            ->where(fn ($q) => $q->whereNull('end_date')->orWhere('end_date', '>=', now()))
-            ->first();
+        $coupon = app(CouponCatalog::class)->findValidByCode($code);
 
         if (!$coupon || !$coupon->appliesToCountry(app(CustomerCountryResolver::class)->resolveId())) {
             session()->forget('storefront_coupon');
@@ -69,7 +68,7 @@ class MobileCartPresenter
                 $couponError = 'minimum_spend_not_met';
             } else {
                 $couponDiscount = OrderPricing::couponDiscount((string) ($coupon->type->value ?? $coupon->type), (float) $coupon->value, $itemsTotal);
-                $couponSource = $coupon->central_coupon_id !== null ? OrderPricing::SOURCE_CENTRAL : OrderPricing::SOURCE_VENDOR;
+                $couponSource = CouponCatalog::orderSource($coupon);
             }
         }
 

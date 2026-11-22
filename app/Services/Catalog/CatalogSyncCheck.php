@@ -194,6 +194,8 @@ class CatalogSyncCheck
                 "SELECT COUNT(*) FROM (SELECT text FROM {$this->t('product_badges')} GROUP BY text HAVING COUNT(*) > 1) d"
             )] + $this->badgeParityMetrics() + $this->dedupMetrics('badges'),
             'labels' => $this->labelParityMetrics() + $this->dedupMetrics('labels'),
+            'coupons' => $this->couponParityMetrics() + $this->dedupMetrics('coupons'),
+            'flash-sales' => $this->flashSaleParityMetrics() + $this->dedupMetrics('flash_sales'),
             default => [],
         } + (isset(self::TRANSLATED[$section]) ? ['translations' => $this->translationParity($section, $table, $link, $centralTable, $centralKey)] : []);
     }
@@ -652,6 +654,116 @@ class CatalogSyncCheck
         return $totals
             + ($missing !== [] ? ['note' => 'typed columns missing (migration not run): ' . implode(', ', array_keys($missing))] : [])
             + ['tables' => $tables];
+    }
+
+    /**
+     * Dedup phase 3 coupon parity (gates, e.g. --gate=applicable_missing:0):
+     *  applicable_missing      live central coupons applicable to the tenant (all countries or intersecting its active
+     *                          tenant_countries, the syncCoupons() rule) without a copy (sync lag)
+     *  copies_not_applicable   copies of live central coupons that no longer apply to the tenant
+     *  inactive_central_copies copies of switched-off central coupons (redeemable in sync mode, hidden in central mode)
+     *  stale_copies            copy code/type/value/minimum spend/window ≠ central
+     *  code_collisions         own coupons whose code a live central coupon also uses (D6: tenant wins)
+     *  orders_coupon_refs_pending orders with a coupon whose typed ref / code snapshot is not written yet (NULL before
+     *                          the phase-3 tenant migration)
+     *
+     * @return array<string, int|null>
+     */
+    private function couponParityMetrics(): array
+    {
+        if (! $this->tenantHas('coupons', 'central_coupon_id') || ! isset($this->centralColumns['central_coupons'], $this->centralColumns['central_coupon_country'])) {
+            return [];
+        }
+
+        $t = $this->t('coupons');
+        $cc = CentralTable::name('central_coupons');
+        $ccc = CentralTable::name('central_coupon_country');
+        $tc = CentralTable::name('tenant_countries');
+        $live = $this->centralLive('central_coupons');
+        $tenantId = (string) $this->tenant->getTenantKey();
+        $applicable = "(NOT EXISTS (SELECT 1 FROM {$ccc} x WHERE x.central_coupon_id = c.id)
+                        OR EXISTS (SELECT 1 FROM {$ccc} x JOIN {$tc} tc ON tc.country_id = x.country_id AND tc.tenant_id = ? AND tc.is_active = 1
+                                    WHERE x.central_coupon_id = c.id))";
+
+        $pending = null;
+        if ($this->tenantHas('orders', 'coupon_type') && $this->tenantHas('orders', 'coupon_code')) {
+            $pending = (int) $this->scalar(
+                "SELECT COUNT(*) FROM {$this->t('orders')} o JOIN {$t} k ON k.id = o.discount_id WHERE o.coupon_type IS NULL OR o.coupon_code IS NULL"
+            );
+        }
+
+        return [
+            'applicable_missing' => (int) $this->scalar(
+                "SELECT COUNT(*) FROM {$cc} c WHERE {$live} AND {$applicable} AND NOT EXISTS (SELECT 1 FROM {$t} k WHERE k.central_coupon_id = c.id)",
+                [$tenantId],
+            ),
+            'copies_not_applicable' => (int) $this->scalar(
+                "SELECT COUNT(*) FROM {$t} k JOIN {$cc} c ON c.id = k.central_coupon_id WHERE {$live} AND NOT {$applicable}",
+                [$tenantId],
+            ),
+            'inactive_central_copies' => (int) $this->scalar(
+                "SELECT COUNT(*) FROM {$t} k JOIN {$cc} c ON c.id = k.central_coupon_id WHERE {$live} AND c.active = 0"
+            ),
+            'stale_copies' => (int) $this->scalar(
+                "SELECT COUNT(*) FROM {$t} k JOIN {$cc} c ON c.id = k.central_coupon_id WHERE {$live}
+                   AND NOT (k.code <=> c.code AND k.type <=> c.type AND k.value <=> c.value AND k.minimum_spend <=> c.minimum_spend
+                            AND k.start_date <=> c.start_date AND k.end_date <=> c.end_date)"
+            ),
+            'code_collisions' => (int) $this->scalar(
+                "SELECT COUNT(*) FROM {$t} k WHERE k.central_coupon_id IS NULL AND EXISTS (SELECT 1 FROM {$cc} c WHERE {$live} AND c.code = k.code)"
+            ),
+            'orders_coupon_refs_pending' => $pending,
+        ];
+    }
+
+    /**
+     * Dedup phase 3 flash-sale parity (all 0 before the flash_sales verify can pass):
+     *  pairs_missing_in_copy / pairs_extra_in_copy  central sale × carried product pairs vs the copy pivot
+     *  stale_copies                                 copy discount / window / active ≠ central
+     *  country_mismatch                             copy country set ≠ central set
+     *
+     * @return array<string, int>
+     */
+    private function flashSaleParityMetrics(): array
+    {
+        if (! $this->tenantHas('flash_sales', 'central_flash_sale_id') || ! isset($this->tenantColumns['flash_sale_product'], $this->centralColumns['central_flash_sale_product'])) {
+            return [];
+        }
+
+        $t = $this->t('flash_sale_product');
+        $s = $this->t('flash_sales');
+        $p = $this->t('products');
+        $fc = $this->t('flash_sale_country');
+        $cfs = CentralTable::name('central_flash_sales');
+        $cfp = CentralTable::name('central_flash_sale_product');
+        $cfc = CentralTable::name('central_flash_sale_country');
+        $live = $this->centralLive('central_flash_sales');
+
+        return [
+            'pairs_missing_in_copy' => (int) $this->scalar(
+                "SELECT COUNT(*) FROM (SELECT DISTINCT cp.central_flash_sale_id, p.id FROM {$cfp} cp
+                   JOIN {$cfs} c ON c.id = cp.central_flash_sale_id AND {$live}
+                   JOIN {$p} p ON p.central_product_id = cp.product_id
+                  WHERE NOT EXISTS (SELECT 1 FROM {$t} t JOIN {$s} s ON s.id = t.flash_sale_id
+                                     WHERE s.central_flash_sale_id = cp.central_flash_sale_id AND t.product_id = p.id)) d"
+            ),
+            'pairs_extra_in_copy' => (int) $this->scalar(
+                "SELECT COUNT(*) FROM {$t} t JOIN {$s} s ON s.id = t.flash_sale_id AND s.central_flash_sale_id IS NOT NULL
+                   LEFT JOIN {$p} p ON p.id = t.product_id
+                  WHERE NOT EXISTS (SELECT 1 FROM {$cfp} cp JOIN {$cfs} c ON c.id = cp.central_flash_sale_id AND {$live}
+                                     WHERE cp.central_flash_sale_id = s.central_flash_sale_id AND cp.product_id = p.central_product_id)"
+            ),
+            'stale_copies' => (int) $this->scalar(
+                "SELECT COUNT(*) FROM {$s} s JOIN {$cfs} c ON c.id = s.central_flash_sale_id WHERE {$live}
+                   AND NOT (s.discount_percentage <=> c.discount_percentage AND s.start_date <=> c.start_date
+                            AND s.end_date <=> c.end_date AND s.active <=> c.active)"
+            ),
+            'country_mismatch' => (int) $this->scalar(
+                "SELECT COUNT(*) FROM {$s} s JOIN {$cfs} c ON c.id = s.central_flash_sale_id WHERE {$live}
+                   AND NOT ((SELECT GROUP_CONCAT(x.country_id ORDER BY x.country_id) FROM {$fc} x WHERE x.flash_sale_id = s.id)
+                            <=> (SELECT GROUP_CONCAT(y.country_id ORDER BY y.country_id) FROM {$cfc} y WHERE y.central_flash_sale_id = c.id))"
+            ),
+        ];
     }
 
     /** SQL for "central row is live" (alias $alias); before the soft-delete migration every row is live. */

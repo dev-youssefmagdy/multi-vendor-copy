@@ -207,7 +207,7 @@ class OrderController extends Controller
             'discount_amount' => $order->discount_amount,
             'tax_amount' => $order->items_tax,
             'shipping_address' => $order->shipping_address,
-            'coupon_code' => $order->coupon?->code,
+            'coupon_code' => $order->appliedCouponCode(),
             'items' => $order->items->map(fn ($item) => [
                 'id' => $item->id,
                 'product_id' => $item->product_id,

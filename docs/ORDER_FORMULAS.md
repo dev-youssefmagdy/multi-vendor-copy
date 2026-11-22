@@ -109,7 +109,7 @@ platform_own_vendor = vendor_profit   - (vendor_profit if payout_released else 0
 ## 4. Schema
 
 `orders`: DROP `owner_profit`, `vendor_cost`; ADD `vendor_profit`, `platform_profit`, `coupon_discount`,
-`coupon_source`, `collected_by`.
+`coupon_source`, `collected_by`, `coupon_code`, `coupon_type`, `catalog_coupon_id` (phase 3: snapshot + typed ref, nullable).
 
 `order_items` (column order): `id, order_id, product_id, product_variant_id, qty, cost, profit_amount, price,
 sub_total, fixed_shipping, discount, discount_source, tax, shipping_fee, weight, grand_total, timestamps`.
@@ -129,6 +129,20 @@ deletes order lines; the line keeps `product_id` and its money snapshot. Readers
   the products cutover (dedup plan phase 5). When the variant FK sets `product_variant_id` to NULL the pair keeps the history.
 * NULL pair = not backfilled yet, or the tenant row was already gone at backfill time (reported by `catalog:sync-check --section=refs`).
 
+`orders` coupon identity (2026-11-25, dedup plan phase 3), appended: `coupon_code` (snapshot of the code at checkout),
+`coupon_type` (`central` | `tenant`) + `catalog_coupon_id` (central id when central, tenant id when tenant; index
+`orders_coupon_ref_index`). Written by `OrderComposer::create()` (`OrderComposer::couponRef()`), old rows by
+`php artisan catalog:dedup-migrate coupons`.
+* `discount_id` stays the TENANT coupon id; it is NULL for a central coupon once the tenant's `catalog_source.coupons` is
+  `central` (no tenant row exists). Readers of the code use `Order::appliedCouponCode()` (snapshot, else the row).
+* Ownership rules are unchanged, only where they are read from: `orders.coupon_source` = `central` iff the coupon is
+  central's (`CouponCatalog::orderSource()`: merged coupon `source`, or `central_coupon_id` on a sync copy);
+  `order_items.discount_source` = `central` iff the flash sale is central's (`FlashSaleCatalog::discountSource()`: merged
+  row `source`, or `central_flash_sale_id` on a sync copy). Same values in sync and central mode for the same cart.
+* Identity only: no formula reads these columns; money snapshots are never recomputed from live central data.
+* Per-tenant coupon usage (D4) = `CouponCatalog::usageCount()` = the tenant's orders by (`coupon_type`, `catalog_coupon_id`),
+  the two orders of a mixed cart counting once. No usage limit exists (none existed before either).
+
 ## 5. Where the formulas live in code (keep in sync with this file)
 
 | Concern | Code |
@@ -139,6 +153,8 @@ deletes order lines; the line keeps `product_id` and its money snapshot. Readers
 | Cost / profit / fixed-shipping split of a unit price | `Product` / `ProductVariant::priceBreakdownForCountry()` |
 | Shipping eligibility (own = no shipping) | `OrderComposer::isOwnProduct()` / `isShippableCartItem()` |
 | Building lines + persisting orders (checkout, API) | `App\Services\Tenant\Checkout\OrderComposer` (used by `PlacesOrders` and `CheckoutPage`) |
+| Coupon lookup (storefront, checkout, mobile, panel) and order coupon ref | `App\Repositories\Tenant\Catalog\CouponCatalog` (sync mode = the old `Tenant\Coupon` queries); `OrderComposer::couponRef()` |
+| Flash-sale discount per product (relation, SQL sort/filter expression, home strips) | `Product::flashSales()` / `App\Repositories\Tenant\Catalog\FlashSaleCatalog` (central mode) |
 | Typed catalog refs of order lines (`product_type` / `catalog_product_id`, `variant_type` / `catalog_variant_id`) | `OrderComposer::lineRefs()` → `App\Support\Catalog\CatalogRefResolver`; `HasCatalogRefs` on `OrderItem` |
 | Cart / checkout totals | `StorefrontRepository::cartItems()/cartTotal()` - priced with the **storefront (session) country**, identical in cart and checkout; the delivery-address country only selects the shipping zone fee |
 | Vendor -> platform payment | `VendorPurchaseService` + `VendorSettlementPaymentController` (creates a `VendorSettlement` record) |

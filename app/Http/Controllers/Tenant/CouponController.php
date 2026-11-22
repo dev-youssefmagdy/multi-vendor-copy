@@ -7,6 +7,8 @@ namespace App\Http\Controllers\Tenant;
 use App\Enums\Tenant\CouponType;
 use App\Http\Controllers\Controller;
 use App\Models\Tenant\Coupon;
+use App\Repositories\Tenant\Catalog\CatalogCoupon;
+use App\Repositories\Tenant\Catalog\CouponCatalog;
 use App\Repositories\Tenant\StorefrontRepository;
 use App\Services\Tenant\CustomerCountryResolver;
 use Illuminate\Http\JsonResponse;
@@ -22,7 +24,7 @@ class CouponController extends Controller
             return response()->json(['coupon' => null]);
         }
 
-        $coupon = Coupon::where('code', $code)->first();
+        $coupon = app(CouponCatalog::class)->findByCode($code);
         if (!$coupon) {
             session()->forget('storefront_coupon');
             return response()->json(['coupon' => null]);
@@ -42,11 +44,7 @@ class CouponController extends Controller
         $validated = $request->validate(['code' => 'required|string|max:50']);
         $code = trim($validated['code']);
 
-        $coupon = Coupon::query()
-            ->where('code', $code)
-            ->where(fn($q) => $q->whereNull('start_date')->orWhere('start_date', '<=', now()))
-            ->where(fn($q) => $q->whereNull('end_date')->orWhere('end_date', '>=', now()))
-            ->first();
+        $coupon = app(CouponCatalog::class)->findValidByCode($code);
 
         if (!$coupon) {
             return response()->json(['success' => false, 'message' => __('This coupon code is invalid or has expired.')], 422);
@@ -83,7 +81,7 @@ class CouponController extends Controller
         return response()->json(['success' => true]);
     }
 
-    private function transform(Coupon $coupon): array
+    private function transform(Coupon|CatalogCoupon $coupon): array
     {
         $repo = app(StorefrontRepository::class);
         $cartTotal = $repo->cartTotal();
