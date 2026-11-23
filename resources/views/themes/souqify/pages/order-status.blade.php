@@ -347,7 +347,7 @@
                         @if ($isDelivered)
                         @php
                             $reviewProduct   = $order->items->first()?->product ?? $order->items->first()?->variant?->product;
-                            $reviewProductId = $reviewProduct?->id ?? null;
+                            $reviewProductId = $order->items->first(fn($i) => $i->catalog_product_key)?->catalog_product_key;
                             $alreadyReviewed = $reviewProductId && in_array($reviewProductId, $reviewedProductIds ?? []);
                         @endphp
                             <button type="button" wire:click="openReviewModal"

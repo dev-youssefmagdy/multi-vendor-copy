@@ -302,7 +302,7 @@ order-cancel-action, order-cancellation-summary, order-refunds-summary, return-i
 
                             {{-- Leave a Review (delivered/completed) --}}
                             @php
-                                $__firstPid = $order->items->first()?->product_id;
+                                $__firstPid = $order->items->first(fn($i) => $i->catalog_product_key)?->catalog_product_key;
                                 $__hasReview = $__firstPid && isset($myReviews[$__firstPid]);
                             @endphp
                             @if ($isCompleted)
@@ -386,7 +386,7 @@ order-cancel-action, order-cancellation-summary, order-refunds-summary, return-i
         <div class="px-6 pt-5 pb-6 flex flex-col gap-5">
 
             {{-- Product selector (only shown when order has multiple distinct products) --}}
-            @php $reviewableItems = $order->items->filter(fn($i) => $i->product_id)->unique('product_id'); @endphp
+            @php $reviewableItems = $order->items->filter(fn($i) => $i->catalog_product_key)->unique('catalog_product_key'); @endphp
             @if ($reviewableItems->count() > 1)
             <div class="flex flex-col gap-1.5">
                 <label class="text-sm font-medium text-[#364153] font-['Inter']">{{ __('Product') }}</label>
@@ -394,7 +394,7 @@ order-cancel-action, order-cancellation-summary, order-refunds-summary, return-i
                     class="w-full border border-[#D1D5DC] rounded-xl px-4 py-2.5 text-sm text-[#0A0A0A] focus:outline-none focus:border-[var(--color-primary)] transition-colors bg-white">
                     @foreach ($reviewableItems as $rItem)
                     @php $rProduct = $rItem->product ?? $rItem->variant?->product; @endphp
-                    <option value="{{ $rItem->product_id }}">
+                    <option value="{{ $rItem->catalog_product_key }}">
                         {{ $rProduct?->translationValue('name') ?? $rProduct?->slug ?? __('Item #:id', ['id' => $rItem->id]) }}
                     </option>
                     @endforeach

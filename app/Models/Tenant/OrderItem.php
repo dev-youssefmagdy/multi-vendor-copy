@@ -63,6 +63,26 @@ class OrderItem extends Model
         return \App\Support\Catalog\ProductKey::fromPair($this->attributes['product_type'] ?? null, $this->attributes['catalog_product_id'] ?? null);
     }
 
+    /** Key the storefront (cart, ratings, reviews) knows this line's product by: merged key in central mode, tenant id otherwise. */
+    public function getCatalogProductKeyAttribute(): ?int
+    {
+        if (\App\Repositories\Tenant\Catalog\ProductCatalog::enabled() && $this->product_key) {
+            return $this->product_key;
+        }
+
+        return $this->product_id ? (int) $this->product_id : null;
+    }
+
+    /** Same for the variant (cart key `v_<key>`). */
+    public function getCatalogVariantKeyAttribute(): ?int
+    {
+        if (\App\Repositories\Tenant\Catalog\ProductCatalog::enabled() && $this->variant_key) {
+            return $this->variant_key;
+        }
+
+        return $this->product_variant_id ? (int) $this->product_variant_id : null;
+    }
+
     public function getVariantKeyAttribute(): ?int
     {
         return \App\Support\Catalog\ProductKey::fromPair($this->attributes['variant_type'] ?? null, $this->attributes['catalog_variant_id'] ?? null);

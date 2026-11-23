@@ -18,10 +18,13 @@ final class SaveProductRequest extends TenantFormRequest
     public function rules(): array
     {
         $product = $this->route('product');
+        // Central products mode (B-P8-7): a platform product is a read-only merged row (key id, no tenant row), so slug
+        // uniqueness / tenant variant ids do not apply; only tenant-owned fields are posted.
+        $central = $product instanceof \App\Models\Tenant\Catalog\MergedProduct && $product->isCentral();
 
         $rules = [
             'central_product_id' => ['nullable', 'integer'],
-            'slug' => ['nullable', 'string', 'max:300', Rule::unique('products', 'slug')->ignore($product?->id)],
+            'slug' => $central ? ['nullable', 'string', 'max:300'] : ['nullable', 'string', 'max:300', Rule::unique('products', 'slug')->ignore($product?->id)],
             'price' => ['required', 'numeric', 'min:0'],
             'active' => ['boolean'],
             'featured' => ['boolean'],
@@ -31,7 +34,9 @@ final class SaveProductRequest extends TenantFormRequest
             'badge_ids.*' => app(\App\Repositories\Tenant\Catalog\ProductBadgeSelection::class)->itemRules(),
             'active_locale' => ['required', 'string'],
             'variants' => ['array'],
-            'variants.*.id' => ['nullable', 'integer', 'exists:product_variants,id'],
+            'variants.*.id' => $central ? ['nullable', 'integer'] : ['nullable', 'integer', 'exists:product_variants,id'],
+            'stock_override' => ['nullable', 'integer', 'min:0'],
+            'weight_grams_override' => ['nullable', 'integer', 'min:0'],
             'variants.*.central_product_variant_id' => ['nullable', 'integer'],
             'variants.*.real_price' => ['nullable', 'numeric', 'min:0'],
             'variants.*.sell_price' => ['required', 'numeric', 'min:0'],

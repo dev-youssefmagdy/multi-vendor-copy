@@ -72,6 +72,79 @@ class TenantPanelService
         });
     }
 
+    /**
+     * Central products mode (dedup plan phase 5 / B-P8-7): saves ONLY the tenant-owned fields of a platform product as
+     * override rows (`active`, `featured`, vendor profit from the sale price, stock / weight override, per-variant
+     * active + profit). Central-owned fields (slug, translations, central cost, variant identity) are never written;
+     * translation changes go through submitProductEditRequest(). Prices are derived by TenantPricingService (profit rows),
+     * never stored as money; order snapshots are untouched.
+     *
+     * @param array<string, mixed> $attributes
+     */
+    public function saveCentralProductOverrides(\App\Models\Tenant\Catalog\MergedProduct $product, array $attributes): void
+    {
+        $central = \App\Models\Product::query()->find((int) $product->source_id);
+        $catalog = app(\App\Repositories\Tenant\Catalog\ProductCatalog::class);
+        $pricing = app(TenantPricingService::class);
+
+        $fields = [
+            'active' => (bool) ($attributes['active'] ?? false),
+            'featured' => (bool) ($attributes['featured'] ?? false),
+        ];
+        foreach (['stock_override' => 'int', 'weight_grams_override' => 'int'] as $key => $cast) {
+            if (array_key_exists($key, $attributes)) {
+                $fields[$key] = $attributes[$key] !== null && $attributes[$key] !== '' ? (int) $attributes[$key] : null;
+            }
+        }
+
+        $submitted = $attributes['price'] ?? null;
+        if ($central && is_numeric($submitted) && abs((float) $submitted - (float) $product->default_price) >= 0.005) {
+            $result = $this->centralLinkedPrices(
+                $pricing,
+                $pricing->centralBasePrice($central),
+                $central->fixed_shipping_costs ?: $product->fixed_shipping_costs,
+                is_array($product->profit) ? $product->profit : null,
+                (float) $submitted,
+                (float) $product->default_price,
+            );
+            $fields['profit'] = $result['profit'];
+        }
+
+        $product->update($fields);
+
+        if (! $central) {
+            return;
+        }
+        $existing = $product->variants()->get()->keyBy('central_product_variant_id');
+        foreach ((array) ($attributes['variants'] ?? []) as $row) {
+            $centralVariant = filled($row['central_product_variant_id'] ?? null)
+                ? \App\Models\ProductVariant::query()->where('product_id', $central->id)->find((int) $row['central_product_variant_id'])
+                : null;
+            if (! $centralVariant) {
+                continue;
+            }
+            $current = $existing->get($centralVariant->id);
+            $vf = ['active' => (bool) ($row['active'] ?? true)];
+            $sell = is_numeric($row['sell_price'] ?? null) ? (float) $row['sell_price'] : null;
+            $margin = is_numeric($row['profit_margin'] ?? null) ? (float) $row['profit_margin'] : null;
+            $stored = $current ? (float) $current->default_sell_price : null;
+            if ($stored === null || ($sell !== null && abs($sell - $stored) >= 0.005) || ($margin !== null && $stored > 0 && (float) $centralVariant->price > 0
+                    && abs($margin - round(($stored - (float) $centralVariant->price) / (float) $centralVariant->price * 100, 2)) >= 0.005)) {
+                $result = $this->centralLinkedPrices(
+                    $pricing,
+                    (float) $centralVariant->price,
+                    $centralVariant->fixed_shipping_costs ?: $central->fixed_shipping_costs,
+                    $current && is_array($current->profit) ? $current->profit : null,
+                    $sell,
+                    $stored,
+                    $margin,
+                );
+                $vf['profit'] = $result['profit'];
+            }
+            $catalog->setVariantOverride((int) $centralVariant->id, (int) $central->id, $vf);
+        }
+    }
+
     public function saveProduct(array $attributes, ?Product $product = null): Product
     {
         return DB::transaction(function () use ($attributes, $product) {

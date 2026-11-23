@@ -166,8 +166,7 @@ test.describe('order lifecycle', () => {
         await expect(page.getByRole('heading', { name: /^0 reviews$/ })).toHaveCount(0);
     });
 
-    test('customer rates from the order status page', async ({ page, tenant, mode }) => {
-        test.fixme(mode === 'central', 'App bug (dedup plan §12 Phase 8, B-P8-3): OrderStatusPage review keys on order_items.product_id, NULL for central lines in central products mode -> "product is required".');
+    test('customer rates from the order status page', async ({ page, tenant }) => {
         await customerLogin(page, tenant);
         await openStore(page, tenant, `/orders/${uuid}/status`);
         await withLivewire(page, () => page.getByRole('button', { name: /Leave a Review|Edit Review/ }).first().click());

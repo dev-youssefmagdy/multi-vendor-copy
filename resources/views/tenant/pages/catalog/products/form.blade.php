@@ -41,7 +41,14 @@
                 @if($centralProduct)
                     <input type="hidden" name="central_product_id" value="{{ $centralProduct['id'] }}">
                 @endif
-                <x-tenant::input type="text" name="slug" :label="__('Slug')" :value="$product?->slug" />
+                @php $__centralRow = $product instanceof \App\Models\Tenant\Catalog\MergedProduct && $product->isCentral(); @endphp
+                {{-- Central products mode: the slug is platform-owned (read-only, not posted). --}}
+                <x-tenant::input type="text" name="slug" :label="__('Slug')" :value="$product?->slug" :disabled="$__centralRow" />
+                @if($__centralRow)
+                    @php $__ov = \App\Repositories\Tenant\Catalog\ProductCatalog::db()->table(\App\Repositories\Tenant\Catalog\ProductCatalog::OVERRIDES)->where('central_product_id', (int) $product->source_id)->first(['stock_override', 'weight_grams_override']); @endphp
+                    <x-tenant::input type="number" min="0" step="1" name="stock_override" :label="__('Stock override')" :value="$__ov->stock_override ?? ''" :help="__('Leave empty to follow the platform stock.')" />
+                    <x-tenant::input type="number" min="0" step="1" name="weight_grams_override" :label="__('Weight override (grams)')" :value="$__ov->weight_grams_override ?? ''" />
+                @endif
                 <div>
                     <x-tenant::input type="number" step="0.01" name="price" :label="__('Sale Price')" :value="$product ? number_format((float) ($product->default_price ?? 0), 2, '.', '') : '0.00'" />
                     @if($centralProduct)

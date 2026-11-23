@@ -262,22 +262,24 @@ class ProfilePage extends Component
         $addedQty = 0;
 
         foreach ($order->items as $item) {
-            if (! $item->product_id) {
+            $pKey = $item->catalog_product_key;
+            if (! $pKey) {
                 continue;
             }
+            $vKey = $item->catalog_variant_key;
 
             $addedQty += max(1, (int) $item->qty);
 
-            $key = $item->product_variant_id
-                ? 'v_'.$item->product_variant_id
-                : 'p_'.$item->product_id;
+            $key = $vKey
+                ? 'v_'.$vKey
+                : 'p_'.$pKey;
 
             if (isset($cart[$key])) {
                 $cart[$key]['qty'] += max(1, (int) $item->qty);
             } else {
                 $cart[$key] = [
-                    'product_id' => $item->product_id,
-                    'variant_id' => $item->product_variant_id ?: null,
+                    'product_id' => $pKey,
+                    'variant_id' => $vKey ?: null,
                     'qty' => max(1, (int) $item->qty),
                 ];
             }

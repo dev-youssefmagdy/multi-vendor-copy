@@ -118,7 +118,7 @@ class OrderStatusPage extends Component
             return;
         }
 
-        $this->reviewProductId = $order->items->first()?->product_id;
+        $this->reviewProductId = $order->items->first(fn ($i) => $i->catalog_product_key)?->catalog_product_key;
         $this->fillExistingReview($customer->id);
         $this->showReviewModal = true;
     }
@@ -133,10 +133,27 @@ class OrderStatusPage extends Component
     }
 
     /** Prefill the modal with the customer's existing rating of the selected product (edit mode). */
+    /** The customer's rating of a product by storefront key: typed pair in central mode, tenant id otherwise. */
+    protected function rateQuery(int $key, int $customerId)
+    {
+        $ref = \App\Repositories\Tenant\Catalog\ProductCatalog::enabled()
+            ? \App\Repositories\Tenant\Catalog\ProductCatalog::refColumnsForKey($key)
+            : null;
+
+        return ProductRate::where($ref
+            ? ['product_type' => $ref['product_type'], 'catalog_product_id' => $ref['catalog_product_id']]
+            : ['product_id' => $key])->where('customer_id', $customerId);
+    }
+
+    protected function rateKey(ProductRate $r): ?int
+    {
+        return \App\Repositories\Tenant\Catalog\ProductCatalog::enabled() && $r->product_key ? $r->product_key : ($r->product_id ? (int) $r->product_id : null);
+    }
+
     protected function fillExistingReview(int $customerId): void
     {
         $existing = $this->reviewProductId
-            ? ProductRate::where('product_id', $this->reviewProductId)->where('customer_id', $customerId)->first()
+            ? $this->rateQuery((int) $this->reviewProductId, $customerId)->first()
             : null;
 
         $this->reviewStars = $existing ? (int) $existing->stars : 5;
@@ -176,9 +193,9 @@ class OrderStatusPage extends Component
         $repo = app(StorefrontRepository::class);
         $order = $repo->orderByUuid($this->uuid);
 
-        $productIds = $order?->items->pluck('product_id')->filter()->toArray() ?? [];
+        $productIds = $order?->items->pluck('catalog_product_key')->filter()->map(fn ($k) => (int) $k)->all() ?? [];
 
-        if (! in_array($this->reviewProductId, $productIds)) {
+        if (! in_array((int) $this->reviewProductId, $productIds, true)) {
             $this->dispatch('order-status-swal', message: __('Invalid product selected.'), type: 'error');
 
             return;
@@ -191,7 +208,10 @@ class OrderStatusPage extends Component
             return;
         }
 
-        $existing = ProductRate::where('product_id', $this->reviewProductId)->where('customer_id', $customer->id)->first();
+        $existing = $this->rateQuery((int) $this->reviewProductId, $customer->id)->first();
+        $refCols = \App\Repositories\Tenant\Catalog\ProductCatalog::enabled()
+            ? \App\Repositories\Tenant\Catalog\ProductCatalog::refColumnsForKey((int) $this->reviewProductId)
+            : null;
 
         if ($existing) {
             $existing->update(['stars' => $this->reviewStars, 'comment' => $this->reviewComment ?: null]);
@@ -201,8 +221,7 @@ class OrderStatusPage extends Component
             return;
         }
 
-        ProductRate::create([
-            'product_id' => $this->reviewProductId,
+        ProductRate::create(($refCols ?? ['product_id' => (int) $this->reviewProductId]) + [
             'customer_id' => $customer->id,
             'stars' => $this->reviewStars,
             'comment' => $this->reviewComment ?: null,
@@ -232,22 +251,24 @@ class OrderStatusPage extends Component
         $addedQty = 0;
 
         foreach ($order->items as $item) {
-            if (! $item->product_id) {
+            $pKey = $item->catalog_product_key;
+            if (! $pKey) {
                 continue;
             }
+            $vKey = $item->catalog_variant_key;
 
             $addedQty += max(1, (int) $item->qty);
 
-            $key = $item->product_variant_id
-                ? 'v_'.$item->product_variant_id
-                : 'p_'.$item->product_id;
+            $key = $vKey
+                ? 'v_'.$vKey
+                : 'p_'.$pKey;
 
             if (isset($cart[$key])) {
                 $cart[$key]['qty'] += max(1, (int) $item->qty);
             } else {
                 $cart[$key] = [
-                    'product_id' => $item->product_id,
-                    'variant_id' => $item->product_variant_id ?: null,
+                    'product_id' => $pKey,
+                    'variant_id' => $vKey ?: null,
                     'qty' => max(1, (int) $item->qty),
                 ];
             }
@@ -292,12 +313,12 @@ class OrderStatusPage extends Component
         $data = array_merge($this->sharedData(), [
             'order' => $order,
             'myReviews' => $customer
-                ? ProductRate::where('customer_id', $customer->id)->get(['product_id', 'stars', 'comment'])
-                    ->mapWithKeys(fn ($r) => [$r->product_id => ['stars' => (int) $r->stars, 'comment' => (string) $r->comment]])
+                ? ProductRate::where('customer_id', $customer->id)->get(['product_id', 'product_type', 'catalog_product_id', 'stars', 'comment'])
+                    ->mapWithKeys(fn ($r) => [$this->rateKey($r) => ['stars' => (int) $r->stars, 'comment' => (string) $r->comment]])
                     ->all()
                 : [],
             'reviewedProductIds' => $customer
-                ? ProductRate::where('customer_id', $customer->id)->pluck('product_id')->toArray()
+                ? ProductRate::where('customer_id', $customer->id)->get(['product_id', 'product_type', 'catalog_product_id'])->map(fn ($r) => $this->rateKey($r))->filter()->values()->toArray()
                 : [],
             'returnRequests' => $returnRequests,
             'returnWindowOpen' => $returnWindowOpen,

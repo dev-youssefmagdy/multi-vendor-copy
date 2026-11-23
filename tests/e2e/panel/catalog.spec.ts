@@ -82,8 +82,7 @@ test.describe('tenant panel', () => {
         await expect(page.getByRole('heading', { level: 1, name: fx.central.products.adopt.name })).toBeVisible();
     });
 
-    test('override a central product: the vendor sale price reaches the storefront', async ({ page, tenant, fx, mode }) => {
-        test.fixme(mode === 'central', 'App bug B-P8-7 (dedup plan §12 Phase 8): saving a central product in the panel edit form fails in central products mode (SaveProductRequest checks slug / variant ids against the copy tables and TenantPanelService::saveProduct() saves the read-only MergedProduct) -> 422.');
+    test('override a central product: the vendor sale price reaches the storefront', async ({ page, tenant, fx }) => {
         const p = fx.central.products.override;
         // Sale Price is the vendor's DEFAULT price: look at it as a visitor from a country without its own profit row.
         const storePrice = async () => {

@@ -170,6 +170,7 @@ final class ProductController extends PanelController
         }
 
         $editRequestSubmitted = false;
+        $isCentralRow = $product instanceof \App\Models\Tenant\Catalog\MergedProduct && $product->isCentral();
 
         if ($product) {
             $currentTranslations = $product->translationsByLocale(['name', 'description']);
@@ -186,6 +187,21 @@ final class ProductController extends PanelController
 
                 $editRequestSubmitted = true;
             }
+        }
+
+        if ($isCentralRow) {
+            // Central products mode: tenant-owned fields as override rows; platform-owned fields stay read-only.
+            $this->service->saveCentralProductOverrides($product, $validated);
+            app(\App\Repositories\Tenant\Catalog\ProductCategorySelection::class)->save($product, (array) ($validated['category_ids'] ?? []));
+            app(ProductBadgeSelection::class)->save($product, (array) ($validated['badge_ids'] ?? []));
+            CacheVersion::bumpMany(['ProductBadge', 'Product']);
+
+            return $this->success(
+                $editRequestSubmitted
+                    ? __('Product updated. Your changes to the product name/description have been submitted for admin review and will be applied once approved.')
+                    : __('Product updated successfully.'),
+                redirect: route('tenant.products.edit', $product),
+            );
         }
 
         $saved = $this->service->saveProduct([

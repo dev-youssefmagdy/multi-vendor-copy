@@ -89,7 +89,7 @@ final class ProductCatalog
         return CatalogRefColumns::hasTable($db, self::OVERRIDES) && CatalogRefColumns::hasTable($db, self::VARIANT_OVERRIDES);
     }
 
-    private static function db(): ConnectionInterface
+    public static function db(): ConnectionInterface
     {
         return DB::connection('tenant');
     }
