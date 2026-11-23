@@ -323,7 +323,9 @@ class OrderCancellationTest extends TestCase
             ->assertJsonPath('message', 'Cancelled, rejected or refunded orders cannot be moved through shipping states.');
 
         // ── COD order delivered (cash collected, not flagged paid) → manual refund ─
-        $cod = $this->tenant->run(fn () => $this->createOrder($customer, [[$variant, 2]], OrderStatus::Delivered, attributes: ['shipping_charge' => 10]));
+        // Manual refunds are offered on catalog orders only (own-product orders are the store's own business), so use a catalog variant here.
+        $catalogVariant = $this->tenant->run(fn () => $this->createCentralCatalogVariant(stock: 20, price: 50.0)['variant']);
+        $cod = $this->tenant->run(fn () => $this->createOrder($customer, [[$catalogVariant, 2]], OrderStatus::Delivered, attributes: ['shipping_charge' => 10]));
         $this->assertFalse($cod->paid);
 
         $this->panel('post', "/orders/{$cod->id}/refunds/validate", [])->assertStatus(422)->assertJsonValidationErrors(['amount', 'reason']);
@@ -359,7 +361,7 @@ class OrderCancellationTest extends TestCase
         });
 
         // An undelivered COD order has nothing to refund.
-        $codPending = $this->tenant->run(fn () => $this->createOrder($customer, [[$variant, 1]], OrderStatus::Shipped));
+        $codPending = $this->tenant->run(fn () => $this->createOrder($customer, [[$catalogVariant, 1]], OrderStatus::Shipped));
         $this->panel('post', "/orders/{$codPending->id}/refunds", ['amount' => 5, 'reason' => 'x'])
             ->assertStatus(422)
             ->assertJsonValidationErrors(['amount']);
@@ -394,7 +396,7 @@ class OrderCancellationTest extends TestCase
     {
         [$customer, $variant, $cancelled] = $this->tenant->run(function (): array {
             $customer = $this->createCustomer();
-            $variant = $this->createOwnProductVariant(stock: 10, price: 30.0);
+            $variant = $this->createCentralCatalogVariant(stock: 10, price: 30.0)["variant"];
             // Placed for online payment (awaiting the gateway).
             $order = $this->createOrder($customer, [[$variant, 2]], OrderStatus::Pending, attributes: ['payment_method' => 'stripe']);
 

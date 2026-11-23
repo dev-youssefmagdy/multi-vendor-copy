@@ -103,6 +103,9 @@ platform_own_vendor = vendor_profit   - (vendor_profit if payout_released else 0
 * Platform -> vendor money is tracked by `orders.payout_released` / `TenantPayout`.
 * Cancelled / rejected / fully-refunded orders produce 0 for all figures. A partial refund reduces the
   vendor's share only (platform_profit unchanged).
+* **Return refund (2026-11-23):** refundable value of `qty` of a line = `(line.grand_total - coupon_discount * line.grand_total / items_grand_total) * qty / line.qty`
+  (`OrderPricing::returnLineValue`, used by `RefundCalculator::forReturn`), so Σ lines + shipping = order grand_total, the same invariant `forCancellation` uses.
+  Previously it read the legacy `sub_total x (1 - discount_percentage + tax_percentage)`, which ignored fixed shipping, flash discount, item tax and the coupon_discount column.
 * Vendor panel and central/admin panel show the **same** numbers; the vendor panel has a "Pay platform"
   action that reuses the existing order-details settlement flow.
 

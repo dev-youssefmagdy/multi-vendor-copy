@@ -127,7 +127,7 @@ final class ManufacturingController extends PanelController
             'tenant_id' => tenant('id'),
             'product_id' => $validated['linked_product_id'] ?? null,
             'product_name' => $validated['product_name'],
-            'description' => $validated['description'] ?: null,
+            'description' => ($validated['description'] ?? null) ?: null,
             'quantity' => $validated['quantity'],
             'reference_url' => $validated['reference_url'] ?? null,
             'images' => $images ?: null,

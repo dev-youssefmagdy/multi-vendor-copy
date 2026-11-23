@@ -382,7 +382,8 @@ class RefundServiceTest extends TestCase
         $this->assertSame(40.0, $ledger->collected_sales);
         $this->assertSame(160.0, $ledger->refunded_total);
         $this->assertSame(1, $ledger->paid_orders_count);
-        $this->assertSame(40.0, $ledger->vendor_profit_total);
+        // vendor_profit = 2 x 40 (shipping 20 is platform profit, formulas section 2); a partial refund reduces the vendor share only: 80 - 60.
+        $this->assertSame(20.0, $ledger->vendor_profit_total);
         $this->assertNull(tenant());
 
         $aggregated = app(TenantAdminAggregateService::class)->orders()->keyBy('order_number');

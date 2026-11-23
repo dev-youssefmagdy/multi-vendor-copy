@@ -98,3 +98,5 @@ Not tested / notes:
   (`StorefrontRepository::activeFlashDiscountExpression`, `Product::activeStorefrontFlashSale`, product cards and the `flash_sale` listing filter are all country-aware now).
 * Coupon validity: `Coupon::appliesToCountry()` (was `availableInCountry()`).
 * Central -> tenant sync copies the country set; coupons are only synced to tenants serving at least one targeted country, with the set trimmed to the tenant's countries.
+
+* **2026-11-23 test baseline fixes:** `RefundCalculator::forReturn` now values a returned line as `OrderPricing::returnLineValue()` (line `grand_total` less its prorated `coupon_discount` share, x qty / line qty) instead of the legacy `sub_total x (1 - discount_percentage + tax_percentage)`; documented in ORDER_FORMULAS.md section 3. Test helper `BuildsOrders::createOrder` now stores the T1 line columns (`cost`, `profit_amount`, `fixed_shipping`, `grand_total`) and the order `platform_profit` / `vendor_profit` through `OrderPricing::order()`.

@@ -131,6 +131,22 @@ final class OrderPricing
         ];
     }
 
+    /**
+     * Refundable value of $qty of $itemQty units of one line: the line's grand_total (fixed shipping, flash
+     * discount and tax already inside) minus its share of the order coupon (prorated by items_grand_total),
+     * so that the lines of an order plus shipping add up to the order grand_total. Shipping and the
+     * return fee are handled by the caller.
+     */
+    public static function returnLineValue(float $itemGrandTotal, float $itemsGrandTotal, float $couponDiscount, int $qty, int $itemQty): float
+    {
+        $itemQty = max(1, $itemQty);
+        $couponShare = ($itemsGrandTotal > 0 && $couponDiscount > 0)
+            ? $couponDiscount * $itemGrandTotal / $itemsGrandTotal
+            : 0.0;
+
+        return max(0.0, self::money(($itemGrandTotal - $couponShare) * $qty / $itemQty));
+    }
+
     /** Coupon value for a cart: percentage of items_grand_total, or a fixed amount capped at it. */
     public static function couponDiscount(string $type, float $value, float $itemsGrandTotal): float
     {

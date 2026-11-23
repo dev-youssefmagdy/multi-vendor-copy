@@ -69,6 +69,12 @@ class CountryDetectorService
         return $memo[$iso2];
     }
 
+    /** The request's session, or null outside a web request (CLI, queue, tests): detection must not throw there. */
+    protected function session(Request $request): ?\Illuminate\Contracts\Session\Session
+    {
+        return $request->hasSession() ? $request->session() : null;
+    }
+
     protected function extractIso2(Request $request): ?string
     {
         // 0. Vendor-panel preview of the storefront as a given country: request-only.
@@ -82,13 +88,13 @@ class CountryDetectorService
         //    session so subsequent page loads keep the override.
         $override = $request->query('country');
         if (is_string($override) && strlen($override) === 2) {
-            $request->session()?->put('storefront_country_override', strtoupper($override));
-            $request->session()?->put('storefront_detected_country', strtoupper($override));
+            $this->session($request)?->put('storefront_country_override', strtoupper($override));
+            $this->session($request)?->put('storefront_detected_country', strtoupper($override));
             return strtoupper($override);
         }
 
         // 2. Explicit override from an earlier ?country=XX in this session.
-        $sessionOverride = $request->session()?->get('storefront_country_override');
+        $sessionOverride = $this->session($request)?->get('storefront_country_override');
         if (is_string($sessionOverride) && strlen($sessionOverride) === 2) {
             return $sessionOverride;
         }
@@ -97,19 +103,19 @@ class CountryDetectorService
         //    XX = unknown, T1 = Tor exit node: not a country.
         $cf = strtoupper((string) $request->server('HTTP_CF_IPCOUNTRY'));
         if (strlen($cf) === 2 && !in_array($cf, ['XX', 'T1'], true)) {
-            $request->session()?->put('storefront_detected_country', $cf);
+            $this->session($request)?->put('storefront_detected_country', $cf);
             return $cf;
         }
 
         // 4. Custom header some load balancers / CDNs inject.
         $custom = strtoupper((string) $request->header('X-Country-Code'));
         if (strlen($custom) === 2) {
-            $request->session()?->put('storefront_detected_country', $custom);
+            $this->session($request)?->put('storefront_detected_country', $custom);
             return $custom;
         }
 
         // 5. Session-cached detection (no IP header on this request).
-        $cached = $request->session()?->get('storefront_detected_country');
+        $cached = $this->session($request)?->get('storefront_detected_country');
         if (is_string($cached) && strlen($cached) === 2) {
             return $cached;
         }
@@ -120,7 +126,7 @@ class CountryDetectorService
         $acceptLang = (string) $request->header('Accept-Language', '');
         if ($acceptLang !== '' && preg_match('/[a-z]{2,3}-([A-Z]{2})/', $acceptLang, $m)) {
             $iso2 = strtoupper($m[1]);
-            $request->session()?->put('storefront_detected_country', $iso2);
+            $this->session($request)?->put('storefront_detected_country', $iso2);
             return $iso2;
         }
 

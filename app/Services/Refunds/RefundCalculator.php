@@ -7,17 +7,16 @@ namespace App\Services\Refunds;
 use App\Enums\ReturnReason;
 use App\Models\Tenant\Order;
 use App\Models\Tenant\OrderItem;
+use App\Support\OrderPricing;
 use InvalidArgumentException;
 
 /**
  * Pure refundable-amount calculator (RETURN_EXCHANGE_REFUND_PLAN.md B.4). No DB access:
  * it only reads the given order (with its `items` relation) and item.
  *
- * Line values follow Order::grand_total: an item's `sub_total` is already net of its
- * item-level (flash-sale) discount — `discount` only records the savings — and item tax is
- * already included, so the net value of a line is
- *     sub_total × (1 − order discount % + order tax %)
- * which makes Σ lines + shipping = grand_total.
+ * Line values follow docs/ORDER_FORMULAS.md section 1: a line's value is its `grand_total`
+ * (sub_total + fixed_shipping - flash discount + tax) minus its share of the order coupon
+ * (OrderPricing::returnLineValue), which makes Σ lines + shipping = order grand_total.
  */
 class RefundCalculator
 {
@@ -53,7 +52,7 @@ class RefundCalculator
     /**
      * Refund for returning $qty units of $item.
      *
-     * - items_amount = net line value (incl. the prorated order discount / tax) × qty / item qty
+     * - items_amount = line grand_total less its prorated coupon share × qty / item qty
      * - shipping is refunded only for a seller-fault reason when the whole order comes back
      * - the policy fee is waived for seller-fault reasons
      * - amount = max(0, items + shipping − fee), capped at the order's remaining refundable amount
@@ -75,9 +74,13 @@ class RefundCalculator
             throw new InvalidArgumentException("Return quantity must be between 1 and {$itemQty}.");
         }
 
-        $orderAdjustment = 1 - ((float) $order->discount_percentage / 100) + ((float) $order->tax_percentage / 100);
-        $lineNet = (float) $item->sub_total * $orderAdjustment;
-        $itemsAmount = max(0.0, round($lineNet * $qty / $itemQty, 2));
+        $itemsAmount = OrderPricing::returnLineValue(
+            (float) $item->grand_total,
+            $order->items_grand_total,
+            $order->discount_amount,
+            $qty,
+            $itemQty,
+        );
 
         $wholeOrder ??= $order->items->count() <= 1 && $qty >= $itemQty;
         $sellerFault = $reason->isSellerFault();

@@ -52,9 +52,11 @@ class ProductLabelsTest extends TestCase
         // Label side (label form).
         $fast->products()->sync([$a->id, $b->id]);
         // Product side (product form).
-        $a->labels()->sync([$fast->id, $hot->id]);
+        // A product carries at most one label (unique product_id), so this moves $a from "Fast delivery" to "Hot".
+        $a->labels()->sync([$hot->id]);
 
-        $this->assertSame(['Hot', 'Fast delivery'], $a->labels()->pluck('text')->all());
+        $this->assertSame(['Hot'], $a->labels()->pluck('text')->all());
+        $this->assertSame(['Fast delivery'], $b->labels()->pluck('text')->all());
         $this->assertSame([$a->id], $hot->products()->pluck('products.id')->all());
 
         $hot->update(['active' => false]);

@@ -113,7 +113,7 @@ final class BannerController extends PanelController
         }
 
         $this->service->saveBanner([
-            'url' => $validated['url'] ?: null,
+            'url' => ($validated['url'] ?? null) ?: null,
             'image_path' => $imagePath,
             'serial_number' => $validated['serial_number'],
             'country_ids' => $request->countryIds(),

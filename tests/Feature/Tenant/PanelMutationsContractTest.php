@@ -8,6 +8,7 @@ use App\Models\Tenant\Category;
 use App\Models\Tenant\Customer;
 use App\Models\Tenant\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\Feature\Tenant\Concerns\SetsUpTenantPanel;
 use Tests\TestCase;
 
@@ -188,8 +189,9 @@ class PanelMutationsContractTest extends TestCase
         yield 'Store\ThemesController@activate' => ['post', '/store/themes/__THEME_ID__/activate', [], false];
 
         yield 'Store\HomeVariantsController@selectVariant' => ['post', '/store/home-variants', [
+            'theme_id' => '__THEME_ID__',
             'variant' => 'default',
-        ], false];
+        ], true];
 
         yield 'Finance\WalletController@subscribe' => ['post', '/finance/wallet/subscription', [
             'gateway' => 'stripe',
@@ -201,7 +203,7 @@ class PanelMutationsContractTest extends TestCase
         yield 'Tenant\EmailVerificationController@send' => ['post', '/email/verification-notification', [], false];
     }
 
-    /** @dataProvider scenarios */
+    #[DataProvider('scenarios')]
     public function test_mutation_contract(string $method, string $uri, array $payload, bool $hasRequiredFields, int $expectRequiredStatus = 422): void
     {
         $uri = $this->resolvePlaceholders($uri);
@@ -242,6 +244,9 @@ class PanelMutationsContractTest extends TestCase
 
     private function resolvePlaceholders(string $uri): string
     {
+        // The tenant panel lives under /admin (scenario URIs are written relative to it).
+        $uri = '/admin/'.ltrim($uri, '/');
+
         return strtr($uri, [
             '__PRODUCT_ID__' => (string) $this->ensureProduct()->id,
             '__OWN_PRODUCT_ID__' => (string) $this->makeOwnProduct()->id,
@@ -258,6 +263,8 @@ class PanelMutationsContractTest extends TestCase
                 $value = $this->ensureProduct()->id;
             } elseif ($value === '__CATEGORY_ID__') {
                 $value = $this->ensureCategory()->id;
+            } elseif ($value === '__THEME_ID__') {
+                $value = $this->activeTheme->id;
             }
         });
 
@@ -266,35 +273,35 @@ class PanelMutationsContractTest extends TestCase
 
     private function ensureProduct(): Product
     {
-        return $this->product ??= Product::create([
+        return $this->product ??= $this->tenant->run(fn () => Product::create([
             'sku' => 'MUT-SKU-1',
             'active' => true,
             'price' => 20,
-        ]);
+        ]));
     }
 
     private function makeOwnProduct(): Product
     {
-        return Product::create([
+        return $this->tenant->run(fn () => Product::create([
             'sku' => 'OWN-MUT-SKU-' . uniqid(),
             'active' => true,
             'price' => 10,
-            'is_tenant_owned' => true,
-        ]);
+            'is_own_product' => true,
+        ]));
     }
 
     private function ensureCategory(): Category
     {
-        return $this->category ??= Category::create(['active' => true]);
+        return $this->category ??= $this->tenant->run(fn () => Category::create(['active' => true]));
     }
 
     private function ensureCustomer(): Customer
     {
-        return $this->customer ??= Customer::create([
+        return $this->customer ??= $this->tenant->run(fn () => Customer::create([
             'full_name' => 'Existing Customer',
             'email' => 'existing-customer@example.com',
             'password' => bcrypt('password'),
             'active' => true,
-        ]);
+        ]));
     }
 }

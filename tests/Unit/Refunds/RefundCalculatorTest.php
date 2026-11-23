@@ -16,8 +16,8 @@ use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 /**
- * Pure RefundCalculator: in-memory orders (no DB). Order::grand_total =
- * Σ sub_total − order discount + order tax + shipping.
+ * Pure RefundCalculator: in-memory orders (no DB). Order::grand_total = Σ item grand_total
+ * (sub_total − item discount + item tax) + shipping − coupon_discount (docs/ORDER_FORMULAS.md section 1).
  */
 class RefundCalculatorTest extends TestCase
 {
@@ -244,13 +244,13 @@ class RefundCalculatorTest extends TestCase
     }
 
     #[Test]
-    public function the_flash_sale_discount_column_is_not_subtracted_twice(): void
+    public function the_flash_sale_discount_is_subtracted_once(): void
     {
-        // sub_total is already at the flash price (2 × 40); `discount` only records the savings.
+        // sub_total is the undiscounted 2 × 40; item grand_total = sub_total - discount = 60 (formulas section 1).
         $order = $this->order([[40, 2]], itemDiscount: 20);
 
-        $this->assertSame(80.0, $order->grand_total);
-        $this->assertSame(80.0, $this->calculator->forReturn($order, $order->items->first(), 2, ReturnReason::Other)->amount);
+        $this->assertSame(60.0, $order->grand_total);
+        $this->assertSame(60.0, $this->calculator->forReturn($order, $order->items->first(), 2, ReturnReason::Other)->amount);
     }
 
     #[Test]
@@ -295,24 +295,33 @@ class RefundCalculatorTest extends TestCase
         float $refunded = 0,
         float $itemDiscount = 0,
     ): Order {
+        // $discountPct = coupon as a % of the subtotal, $taxPct = tax as a % of each line's subtotal.
+        $subtotal = array_sum(array_map(fn (array $l) => round($l[0] * $l[1], 2), $lines));
+
         $order = new Order([
             'uuid' => 'order-test',
             'status' => OrderStatus::Processing,
             'paid' => $paid,
-            'discount_percentage' => $discountPct,
-            'tax_percentage' => $taxPct,
+            'coupon_discount' => round($subtotal * $discountPct / 100, 2),
             'shipping_charge' => $shipping,
             'refunded_amount' => $refunded,
         ]);
 
-        $items = collect($lines)->values()->map(function (array $line, int $index) use ($itemDiscount) {
+        $items = collect($lines)->values()->map(function (array $line, int $index) use ($itemDiscount, $taxPct) {
+            $subTotal = round($line[0] * $line[1], 2);
+            $discount = $index === 0 ? $itemDiscount : 0;
+            $tax = round($subTotal * $taxPct / 100, 2);
             $item = new OrderItem([
                 'qty' => $line[1],
+                'cost' => 0,
+                'profit_amount' => $line[0],
                 'price' => $line[0],
-                'sub_total' => round($line[0] * $line[1], 2),
-                'discount' => $index === 0 ? $itemDiscount : 0,
-                'tax' => 0,
+                'sub_total' => $subTotal,
+                'fixed_shipping' => 0,
+                'discount' => $discount,
+                'tax' => $tax,
                 'shipping_fee' => 0,
+                'grand_total' => round($subTotal - $discount + $tax, 2),
             ]);
             $item->id = $index + 1;
 

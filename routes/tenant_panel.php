@@ -225,10 +225,10 @@ Route::middleware(['auth:tenant', 'tenant.tour'])->group(function () {
         Route::get('/data', [OwnProductsListController::class, 'data'])->name('data');
         Route::get('/create', [OwnProductController::class, 'create'])->name('create');
         Route::post('/', [OwnProductController::class, 'store'])->name('store');
-        Route::post('/validate', [OwnProductController::class, 'validateStore'])->name('validate');
+        Route::post('/validate', [OwnProductController::class, 'validateStore'])->name('validate')->middleware('throttle:tenant-validate');
         Route::get('/{product}/edit', [OwnProductController::class, 'edit'])->name('edit');
         Route::put('/{product}', [OwnProductController::class, 'update'])->name('update');
-        Route::post('/{product}/validate', [OwnProductController::class, 'validateUpdate'])->name('validate.update');
+        Route::post('/{product}/validate', [OwnProductController::class, 'validateUpdate'])->name('validate.update')->middleware('throttle:tenant-validate');
         Route::delete('/{product}', [OwnProductsListController::class, 'destroy'])->name('destroy');
     });
 
@@ -395,10 +395,10 @@ Route::middleware(['auth:tenant', 'tenant.tour'])->group(function () {
         Route::post('/{id}/approve/validate', [ReturnController::class, 'validateApprove'])->whereNumber('id')->middleware('throttle:tenant-validate')->name('approve.validate');
 
         Route::post('/{id}/reject', [ReturnController::class, 'reject'])->whereNumber('id')->name('reject');
-        Route::post('/{id}/reject/validate', [ReturnController::class, 'validateReject'])->whereNumber('id')->name('reject.validate');
+        Route::post('/{id}/reject/validate', [ReturnController::class, 'validateReject'])->whereNumber('id')->name('reject.validate')->middleware('throttle:tenant-validate');
 
         Route::post('/{id}/request-info', [ReturnController::class, 'requestMoreInfo'])->whereNumber('id')->name('request-info');
-        Route::post('/{id}/request-info/validate', [ReturnController::class, 'validateRequestInfo'])->whereNumber('id')->name('request-info.validate');
+        Route::post('/{id}/request-info/validate', [ReturnController::class, 'validateRequestInfo'])->whereNumber('id')->name('request-info.validate')->middleware('throttle:tenant-validate');
 
         Route::post('/{id}/received', [ReturnController::class, 'markItemReceived'])->whereNumber('id')->name('received');
 
@@ -418,10 +418,10 @@ Route::middleware(['auth:tenant', 'tenant.tour'])->group(function () {
         Route::post('/{id}/close', [ReturnController::class, 'close'])->whereNumber('id')->name('close');
 
         Route::post('/{id}/refunded', [ReturnController::class, 'markRefunded'])->whereNumber('id')->name('refunded');
-        Route::post('/{id}/refunded/validate', [ReturnController::class, 'validateRefunded'])->whereNumber('id')->name('refunded.validate');
+        Route::post('/{id}/refunded/validate', [ReturnController::class, 'validateRefunded'])->whereNumber('id')->name('refunded.validate')->middleware('throttle:tenant-validate');
 
         Route::post('/{id}/notes', [ReturnController::class, 'addNote'])->whereNumber('id')->name('notes');
-        Route::post('/{id}/notes/validate', [ReturnController::class, 'validateNote'])->whereNumber('id')->name('notes.validate');
+        Route::post('/{id}/notes/validate', [ReturnController::class, 'validateNote'])->whereNumber('id')->name('notes.validate')->middleware('throttle:tenant-validate');
     });
 
     Route::prefix('customers')->name('tenant.customers.')->middleware('tenant.permission:sales.customers.manage')->group(function () {
@@ -495,7 +495,7 @@ Route::middleware(['auth:tenant', 'tenant.tour'])->group(function () {
             ->name('wallet.subscribe');
         Route::post('/wallet/subscription/validate', [WalletController::class, 'validateSubscribe'])
             ->middleware('tenant.permission:finance.wallet.view')
-            ->name('wallet.subscribe.validate');
+            ->name('wallet.subscribe.validate')->middleware('throttle:tenant-validate');
         Route::get('/billing', [BillingController::class, 'index'])
             ->middleware('tenant.permission:finance.billing.view')
             ->name('billing');
@@ -530,7 +530,7 @@ Route::middleware(['auth:tenant', 'tenant.tour'])->group(function () {
         Route::post('/vendor-purchases/{orderId}/settle/validate', [VendorSettleOrderController::class, 'validateSettle'])
             ->whereNumber('orderId')
             ->middleware('tenant.permission:finance.vendor-purchases.view')
-            ->name('vendor-purchase-settle.pay.validate');
+            ->name('vendor-purchase-settle.pay.validate')->middleware('throttle:tenant-validate');
         Route::get('/settlement-payments', [SettlementPaymentsController::class, 'index'])
             ->middleware('tenant.permission:finance.vendor-purchases.view')
             ->name('settlement-payments');
@@ -554,7 +554,7 @@ Route::middleware(['auth:tenant', 'tenant.tour'])->group(function () {
             ->name('buy-languages.purchase');
         Route::post('/buy-languages/validate', [BuyLanguageController::class, 'validatePurchase'])
             ->middleware('tenant.permission:settings.languages.purchase')
-            ->name('buy-languages.purchase.validate');
+            ->name('buy-languages.purchase.validate')->middleware('throttle:tenant-validate');
     });
 
     // Language purchase payment flow (no extra permission middleware – controller guards the logic)
@@ -626,7 +626,7 @@ Route::middleware(['auth:tenant', 'tenant.tour'])->group(function () {
         Route::middleware('tenant.permission:store.mobile-app.manage')->group(function () {
             Route::get('/mobile-app', [MobileAppController::class, 'index'])->name('mobile-app');
             Route::put('/mobile-app', [MobileAppController::class, 'save'])->name('mobile-app.save');
-            Route::post('/mobile-app/validate', [MobileAppController::class, 'validateSave'])->name('mobile-app.validate');
+            Route::post('/mobile-app/validate', [MobileAppController::class, 'validateSave'])->name('mobile-app.validate')->middleware('throttle:tenant-validate');
             Route::get('/mobile-themes', [MobileAppController::class, 'themes'])->name('mobile-themes');
             Route::post('/mobile-themes/{themeSlug}/{variantKey}/activate', [MobileAppController::class, 'activate'])->name('mobile-themes.activate');
             Route::put('/mobile-themes/colors', [MobileAppController::class, 'saveColors'])->name('mobile-themes.colors');
@@ -637,10 +637,10 @@ Route::middleware(['auth:tenant', 'tenant.tour'])->group(function () {
             Route::get('/pages/data', [PagesController::class, 'data'])->name('pages.data');
             Route::get('/pages/create', [PageFormController::class, 'create'])->name('pages.create');
             Route::post('/pages', [PageFormController::class, 'store'])->name('pages.store');
-            Route::post('/pages/validate', [PageFormController::class, 'validateStore'])->name('pages.validate');
+            Route::post('/pages/validate', [PageFormController::class, 'validateStore'])->name('pages.validate')->middleware('throttle:tenant-validate');
             Route::get('/pages/{page}/edit', [PageFormController::class, 'edit'])->whereNumber('page')->name('pages.edit');
             Route::put('/pages/{page}', [PageFormController::class, 'update'])->whereNumber('page')->name('pages.update');
-            Route::post('/pages/{page}/validate', [PageFormController::class, 'validateUpdate'])->whereNumber('page')->name('pages.validate.update');
+            Route::post('/pages/{page}/validate', [PageFormController::class, 'validateUpdate'])->whereNumber('page')->name('pages.validate.update')->middleware('throttle:tenant-validate');
             Route::delete('/pages/{page}', [PagesController::class, 'destroy'])->whereNumber('page')->name('pages.destroy');
         });
         Route::middleware('tenant.permission:store.coupons.manage')->group(function () {
@@ -648,9 +648,9 @@ Route::middleware(['auth:tenant', 'tenant.tour'])->group(function () {
             Route::get('/coupons/data', [CouponController::class, 'data'])->name('coupons.data');
             Route::get('/coupons/item/{coupon}', [CouponController::class, 'show'])->whereNumber('coupon')->name('coupons.show');
             Route::post('/coupons', [CouponController::class, 'store'])->name('coupons.store');
-            Route::post('/coupons/validate', [CouponController::class, 'validateStore'])->name('coupons.validate');
+            Route::post('/coupons/validate', [CouponController::class, 'validateStore'])->name('coupons.validate')->middleware('throttle:tenant-validate');
             Route::put('/coupons/item/{coupon}', [CouponController::class, 'update'])->whereNumber('coupon')->name('coupons.update');
-            Route::post('/coupons/item/{coupon}/validate', [CouponController::class, 'validateUpdate'])->whereNumber('coupon')->name('coupons.validate.update');
+            Route::post('/coupons/item/{coupon}/validate', [CouponController::class, 'validateUpdate'])->whereNumber('coupon')->name('coupons.validate.update')->middleware('throttle:tenant-validate');
             Route::delete('/coupons/item/{coupon}', [CouponController::class, 'destroy'])->whereNumber('coupon')->name('coupons.destroy');
             Route::get('/coupons/list/{countryId?}', [CouponController::class, 'list'])->whereNumber('countryId')->name('coupons.list');
         });
@@ -661,9 +661,9 @@ Route::middleware(['auth:tenant', 'tenant.tour'])->group(function () {
             Route::get('/flash-sales/products/search', [FlashSaleController::class, 'searchProducts'])->name('flash-sales.products.search');
             Route::get('/flash-sales/item/{flashSale}', [FlashSaleController::class, 'show'])->whereNumber('flashSale')->name('flash-sales.show');
             Route::post('/flash-sales', [FlashSaleController::class, 'store'])->name('flash-sales.store');
-            Route::post('/flash-sales/validate', [FlashSaleController::class, 'validateStore'])->name('flash-sales.validate');
+            Route::post('/flash-sales/validate', [FlashSaleController::class, 'validateStore'])->name('flash-sales.validate')->middleware('throttle:tenant-validate');
             Route::put('/flash-sales/item/{flashSale}', [FlashSaleController::class, 'update'])->whereNumber('flashSale')->name('flash-sales.update');
-            Route::post('/flash-sales/item/{flashSale}/validate', [FlashSaleController::class, 'validateUpdate'])->whereNumber('flashSale')->name('flash-sales.validate.update');
+            Route::post('/flash-sales/item/{flashSale}/validate', [FlashSaleController::class, 'validateUpdate'])->whereNumber('flashSale')->name('flash-sales.validate.update')->middleware('throttle:tenant-validate');
             Route::delete('/flash-sales/item/{flashSale}', [FlashSaleController::class, 'destroy'])->whereNumber('flashSale')->name('flash-sales.destroy');
             Route::get('/flash-sales/list/{countryId?}', [FlashSaleController::class, 'list'])->whereNumber('countryId')->name('flash-sales');
             Route::get('/flash-sales/available-for-product', [FlashSaleController::class, 'availableForProduct'])->name('flash-sales.available-for-product');
@@ -674,37 +674,37 @@ Route::middleware(['auth:tenant', 'tenant.tour'])->group(function () {
             Route::get('/appearance', [AppearanceController::class, 'index'])->name('appearance');
 
             Route::put('/appearance/general', [AppearanceController::class, 'saveGeneral'])->name('appearance.general');
-            Route::post('/appearance/general/validate', [AppearanceController::class, 'validateGeneral'])->name('appearance.general.validate');
+            Route::post('/appearance/general/validate', [AppearanceController::class, 'validateGeneral'])->name('appearance.general.validate')->middleware('throttle:tenant-validate');
 
             Route::put('/appearance/colors/{theme}/{variant}', [AppearanceController::class, 'saveColors'])->whereNumber(['theme', 'variant'])->name('appearance.colors');
-            Route::post('/appearance/colors/{theme}/{variant}/validate', [AppearanceController::class, 'validateColors'])->whereNumber(['theme', 'variant'])->name('appearance.colors.validate');
+            Route::post('/appearance/colors/{theme}/{variant}/validate', [AppearanceController::class, 'validateColors'])->whereNumber(['theme', 'variant'])->name('appearance.colors.validate')->middleware('throttle:tenant-validate');
             Route::post('/appearance/colors/{theme}/{variant}/reset', [AppearanceController::class, 'resetColors'])->whereNumber(['theme', 'variant'])->name('appearance.colors.reset');
 
             Route::get('/appearance/social', [SocialLinkController::class, 'index'])->name('appearance.social.index');
             Route::get('/appearance/social/{link}', [SocialLinkController::class, 'show'])->whereNumber('link')->name('appearance.social.show');
             Route::post('/appearance/social', [SocialLinkController::class, 'store'])->name('appearance.social.store');
-            Route::post('/appearance/social/validate', [SocialLinkController::class, 'validateStore'])->name('appearance.social.validate');
+            Route::post('/appearance/social/validate', [SocialLinkController::class, 'validateStore'])->name('appearance.social.validate')->middleware('throttle:tenant-validate');
             Route::put('/appearance/social/{link}', [SocialLinkController::class, 'update'])->whereNumber('link')->name('appearance.social.update');
-            Route::post('/appearance/social/{link}/validate', [SocialLinkController::class, 'validateUpdate'])->whereNumber('link')->name('appearance.social.validate.update');
+            Route::post('/appearance/social/{link}/validate', [SocialLinkController::class, 'validateUpdate'])->whereNumber('link')->name('appearance.social.validate.update')->middleware('throttle:tenant-validate');
             Route::delete('/appearance/social/{link}', [SocialLinkController::class, 'destroy'])->whereNumber('link')->name('appearance.social.destroy');
 
             Route::put('/appearance/promo-banner', [AppearanceController::class, 'savePromoBanner'])->name('appearance.promo-banner');
-            Route::post('/appearance/promo-banner/validate', [AppearanceController::class, 'validatePromoBanner'])->name('appearance.promo-banner.validate');
+            Route::post('/appearance/promo-banner/validate', [AppearanceController::class, 'validatePromoBanner'])->name('appearance.promo-banner.validate')->middleware('throttle:tenant-validate');
 
             Route::put('/appearance/top-header-links', [AppearanceController::class, 'saveTopHeaderLinks'])->name('appearance.top-header-links');
-            Route::post('/appearance/top-header-links/validate', [AppearanceController::class, 'validateTopHeaderLinks'])->name('appearance.top-header-links.validate');
+            Route::post('/appearance/top-header-links/validate', [AppearanceController::class, 'validateTopHeaderLinks'])->name('appearance.top-header-links.validate')->middleware('throttle:tenant-validate');
 
             Route::put('/appearance/footer', [AppearanceController::class, 'saveFooter'])->name('appearance.footer');
-            Route::post('/appearance/footer/validate', [AppearanceController::class, 'validateFooter'])->name('appearance.footer.validate');
+            Route::post('/appearance/footer/validate', [AppearanceController::class, 'validateFooter'])->name('appearance.footer.validate')->middleware('throttle:tenant-validate');
         });
 
         Route::middleware('tenant.permission:store.appearance.manage')->group(function () {
             Route::get('/banners', [BannerController::class, 'index'])->name('banners.index');
             Route::get('/banners/item/{banner}', [BannerController::class, 'show'])->whereNumber('banner')->name('banners.show');
             Route::post('/banners', [BannerController::class, 'store'])->name('banners.store');
-            Route::post('/banners/validate', [BannerController::class, 'validateStore'])->name('banners.validate');
+            Route::post('/banners/validate', [BannerController::class, 'validateStore'])->name('banners.validate')->middleware('throttle:tenant-validate');
             Route::put('/banners/item/{banner}', [BannerController::class, 'update'])->whereNumber('banner')->name('banners.update');
-            Route::post('/banners/item/{banner}/validate', [BannerController::class, 'validateUpdate'])->whereNumber('banner')->name('banners.validate.update');
+            Route::post('/banners/item/{banner}/validate', [BannerController::class, 'validateUpdate'])->whereNumber('banner')->name('banners.validate.update')->middleware('throttle:tenant-validate');
             Route::delete('/banners/item/{banner}', [BannerController::class, 'destroy'])->whereNumber('banner')->name('banners.destroy');
             Route::post('/banners/order', [BannerController::class, 'updateOrder'])->name('banners.order');
             Route::get('/banners/list/{countryId?}', [BannerController::class, 'list'])->whereNumber('countryId')->name('banners');
@@ -713,7 +713,7 @@ Route::middleware(['auth:tenant', 'tenant.tour'])->group(function () {
             Route::get('/blade-theme', [BladeThemeController::class, 'index'])->name('blade-theme');
             Route::get('/blade-theme/starter-kit', [BladeThemeStarterKitController::class, 'download'])->name('blade-theme.starter-kit');
             Route::post('/blade-theme', [BladeThemeController::class, 'upload'])->name('blade-theme.upload');
-            Route::post('/blade-theme/validate', [BladeThemeController::class, 'validateUpload'])->name('blade-theme.upload.validate');
+            Route::post('/blade-theme/validate', [BladeThemeController::class, 'validateUpload'])->name('blade-theme.upload.validate')->middleware('throttle:tenant-validate');
             Route::post('/blade-theme/deactivate', [BladeThemeController::class, 'deactivate'])->name('blade-theme.deactivate');
             Route::delete('/blade-theme/{upload}', [BladeThemeController::class, 'destroy'])->whereNumber('upload')->name('blade-theme.destroy');
         });
@@ -739,7 +739,7 @@ Route::middleware(['auth:tenant', 'tenant.tour'])->group(function () {
         Route::middleware('tenant.permission:settings.tracking.manage')->group(function () {
             Route::get('/tracking', [TrackingSettingsController::class, 'index'])->name('tracking');
             Route::put('/tracking', [TrackingSettingsController::class, 'update'])->name('tracking.update');
-            Route::post('/tracking/validate', [TrackingSettingsController::class, 'validateUpdate'])->name('tracking.validate');
+            Route::post('/tracking/validate', [TrackingSettingsController::class, 'validateUpdate'])->name('tracking.validate')->middleware('throttle:tenant-validate');
         });
 
         Route::middleware('tenant.permission:store.subscribers.manage')->group(function () {
@@ -764,7 +764,7 @@ Route::middleware(['auth:tenant', 'tenant.tour'])->group(function () {
             Route::get('/languages-manage/data', [LanguagesManageController::class, 'data'])->name('languages-manage.data');
             Route::get('/languages-manage/available', [LanguagesManageController::class, 'available'])->name('languages-manage.available.data');
             Route::post('/languages-manage/purchase', [LanguagesManageController::class, 'purchase'])->name('languages-manage.purchase');
-            Route::post('/languages-manage/purchase/validate', [LanguagesManageController::class, 'validatePurchase'])->name('languages-manage.purchase.validate');
+            Route::post('/languages-manage/purchase/validate', [LanguagesManageController::class, 'validatePurchase'])->name('languages-manage.purchase.validate')->middleware('throttle:tenant-validate');
             Route::patch('/languages-manage/{language}/active', [LanguagesManageController::class, 'toggleActive'])->name('languages-manage.toggle-active');
             Route::post('/languages-manage/{language}/default', [LanguagesManageController::class, 'makeDefault'])->name('languages-manage.default');
         });
@@ -772,10 +772,10 @@ Route::middleware(['auth:tenant', 'tenant.tour'])->group(function () {
         Route::middleware('tenant.permission:settings.domains.manage')->group(function () {
             Route::get('/domains', [DomainsController::class, 'index'])->name('domains');
             Route::post('/domains', [DomainsController::class, 'store'])->name('domains.store');
-            Route::post('/domains/validate', [DomainsController::class, 'validateStore'])->name('domains.validate');
+            Route::post('/domains/validate', [DomainsController::class, 'validateStore'])->name('domains.validate')->middleware('throttle:tenant-validate');
             Route::get('/domains/{domainRequest}', [DomainsController::class, 'show'])->name('domains.show');
             Route::put('/domains/{domainRequest}', [DomainsController::class, 'update'])->name('domains.update');
-            Route::post('/domains/{domainRequest}/validate', [DomainsController::class, 'validateUpdate'])->name('domains.validate.update');
+            Route::post('/domains/{domainRequest}/validate', [DomainsController::class, 'validateUpdate'])->name('domains.validate.update')->middleware('throttle:tenant-validate');
             Route::post('/domains/{domainRequest}/check-dns', [DomainsController::class, 'checkDns'])->name('domains.check-dns');
             Route::delete('/domains/{domainRequest}', [DomainsController::class, 'destroy'])->name('domains.destroy');
         });
@@ -784,7 +784,7 @@ Route::middleware(['auth:tenant', 'tenant.tour'])->group(function () {
             Route::get('/ai-translation', [AiTranslationController::class, 'index'])->name('ai-translation');
             Route::get('/ai-translation/history/data', [AiTranslationController::class, 'historyData'])->name('ai-translation.history.data');
             Route::get('/ai-translation/status', [AiTranslationController::class, 'status'])->name('ai-translation.status');
-            Route::post('/ai-translation/purchase/validate', [AiTranslationController::class, 'validatePurchase'])->name('ai-translation.purchase.validate');
+            Route::post('/ai-translation/purchase/validate', [AiTranslationController::class, 'validatePurchase'])->name('ai-translation.purchase.validate')->middleware('throttle:tenant-validate');
             Route::post('/ai-translation/{language}/run', [AiTranslationController::class, 'run'])->whereNumber('language')->name('ai-translation.run');
             Route::post('/ai-translation/{language}/purchase', [AiTranslationController::class, 'purchase'])->whereNumber('language')->name('ai-translation.purchase');
 
@@ -796,11 +796,11 @@ Route::middleware(['auth:tenant', 'tenant.tour'])->group(function () {
         Route::middleware('tenant.permission:settings.admins.manage')->group(function () {
             Route::get('/admins', [AdminsController::class, 'index'])->name('admins');
             Route::get('/admins/data', [AdminsController::class, 'data'])->name('admins.data');
-            Route::post('/admins/validate', [AdminsController::class, 'validateStore'])->name('admins.validate');
+            Route::post('/admins/validate', [AdminsController::class, 'validateStore'])->name('admins.validate')->middleware('throttle:tenant-validate');
             Route::post('/admins', [AdminsController::class, 'store'])->name('admins.store');
             Route::get('/admins/{admin}', [AdminsController::class, 'show'])->name('admins.show');
             Route::put('/admins/{admin}', [AdminsController::class, 'update'])->name('admins.update');
-            Route::post('/admins/{admin}/validate', [AdminsController::class, 'validateUpdate'])->name('admins.validate.update');
+            Route::post('/admins/{admin}/validate', [AdminsController::class, 'validateUpdate'])->name('admins.validate.update')->middleware('throttle:tenant-validate');
             Route::post('/admins/{admin}/activate', [AdminsController::class, 'activate'])->name('admins.activate');
             Route::post('/admins/{admin}/deactivate', [AdminsController::class, 'deactivate'])->name('admins.deactivate');
             Route::delete('/admins/{admin}', [AdminsController::class, 'destroy'])->name('admins.destroy');
@@ -809,11 +809,11 @@ Route::middleware(['auth:tenant', 'tenant.tour'])->group(function () {
         Route::middleware('tenant.permission:settings.roles.manage')->group(function () {
             Route::get('/roles-permissions', [RolesPermissionsController::class, 'index'])->name('roles-permissions');
             Route::get('/roles-permissions/data', [RolesPermissionsController::class, 'data'])->name('roles-permissions.data');
-            Route::post('/roles-permissions/validate', [RolesPermissionsController::class, 'validateStore'])->name('roles-permissions.validate');
+            Route::post('/roles-permissions/validate', [RolesPermissionsController::class, 'validateStore'])->name('roles-permissions.validate')->middleware('throttle:tenant-validate');
             Route::post('/roles-permissions', [RolesPermissionsController::class, 'store'])->name('roles-permissions.store');
             Route::get('/roles-permissions/{role}', [RolesPermissionsController::class, 'show'])->name('roles-permissions.show');
             Route::put('/roles-permissions/{role}', [RolesPermissionsController::class, 'update'])->name('roles-permissions.update');
-            Route::post('/roles-permissions/{role}/validate', [RolesPermissionsController::class, 'validateUpdate'])->name('roles-permissions.validate.update');
+            Route::post('/roles-permissions/{role}/validate', [RolesPermissionsController::class, 'validateUpdate'])->name('roles-permissions.validate.update')->middleware('throttle:tenant-validate');
             Route::delete('/roles-permissions/{role}', [RolesPermissionsController::class, 'destroy'])->name('roles-permissions.destroy');
         });
 
@@ -822,7 +822,7 @@ Route::middleware(['auth:tenant', 'tenant.tour'])->group(function () {
             Route::get('/payment-gateways/data', [PaymentGatewaysController::class, 'data'])->name('payment-gateways.data');
             Route::get('/payment-gateways/{gateway}', [PaymentGatewaysController::class, 'show'])->name('payment-gateways.show');
             Route::put('/payment-gateways/{gateway}', [PaymentGatewaysController::class, 'update'])->name('payment-gateways.update');
-            Route::post('/payment-gateways/{gateway}/validate', [PaymentGatewaysController::class, 'validateUpdate'])->name('payment-gateways.validate.update');
+            Route::post('/payment-gateways/{gateway}/validate', [PaymentGatewaysController::class, 'validateUpdate'])->name('payment-gateways.validate.update')->middleware('throttle:tenant-validate');
             Route::post('/payment-gateways/{gateway}/primary', [PaymentGatewaysController::class, 'setPrimary'])->name('payment-gateways.primary');
             Route::post('/payment-gateways/{gateway}/check-connection', [PaymentGatewaysController::class, 'checkConnection'])->name('payment-gateways.check');
 
@@ -834,39 +834,39 @@ Route::middleware(['auth:tenant', 'tenant.tour'])->group(function () {
             Route::get('/email-templates/data', [EmailTemplateController::class, 'data'])->name('email-templates.data');
             Route::get('/email-templates/{emailTemplate}/edit', [EmailTemplateController::class, 'edit'])->name('email-templates.edit');
             Route::put('/email-templates/{emailTemplate}', [EmailTemplateController::class, 'update'])->name('email-templates.update');
-            Route::post('/email-templates/{emailTemplate}/validate', [EmailTemplateController::class, 'validateUpdate'])->name('email-templates.validate');
+            Route::post('/email-templates/{emailTemplate}/validate', [EmailTemplateController::class, 'validateUpdate'])->name('email-templates.validate')->middleware('throttle:tenant-validate');
             Route::post('/email-templates/{emailTemplate}/resync', [EmailTemplateController::class, 'resync'])->name('email-templates.resync');
 
             Route::get('/mail', [MailConfigurationsController::class, 'index'])->name('mail');
             Route::put('/mail', [MailConfigurationsController::class, 'update'])->name('mail.update');
-            Route::post('/mail/validate', [MailConfigurationsController::class, 'validateUpdate'])->name('mail.validate');
+            Route::post('/mail/validate', [MailConfigurationsController::class, 'validateUpdate'])->name('mail.validate')->middleware('throttle:tenant-validate');
             Route::post('/mail/test', [MailConfigurationsController::class, 'sendTest'])->name('mail.test');
-            Route::post('/mail/test/validate', [MailConfigurationsController::class, 'validateSendTest'])->name('mail.test.validate');
+            Route::post('/mail/test/validate', [MailConfigurationsController::class, 'validateSendTest'])->name('mail.test.validate')->middleware('throttle:tenant-validate');
         });
 
         Route::middleware('tenant.permission:settings.account.manage')->group(function () {
             Route::get('/account', [AccountSettingsController::class, 'show'])->name('account');
             Route::put('/account', [AccountSettingsController::class, 'update'])->name('account.update');
-            Route::post('/account/validate', [AccountSettingsController::class, 'validateUpdate'])->name('account.validate');
+            Route::post('/account/validate', [AccountSettingsController::class, 'validateUpdate'])->name('account.validate')->middleware('throttle:tenant-validate');
 
             Route::get('/general', [GeneralSettingsController::class, 'index'])->name('general');
             Route::put('/general', [GeneralSettingsController::class, 'update'])->name('general.update');
-            Route::post('/general/validate', [GeneralSettingsController::class, 'validateUpdate'])->name('general.validate');
+            Route::post('/general/validate', [GeneralSettingsController::class, 'validateUpdate'])->name('general.validate')->middleware('throttle:tenant-validate');
             Route::post('/general/country-request', [GeneralSettingsController::class, 'submitCountryRequest'])->name('general.country-request');
-            Route::post('/general/country-request/validate', [GeneralSettingsController::class, 'validateCountryRequest'])->name('general.country-request.validate');
+            Route::post('/general/country-request/validate', [GeneralSettingsController::class, 'validateCountryRequest'])->name('general.country-request.validate')->middleware('throttle:tenant-validate');
             Route::post('/general/category-request', [GeneralSettingsController::class, 'submitCategoryRequest'])->name('general.category-request');
-            Route::post('/general/category-request/validate', [GeneralSettingsController::class, 'validateCategoryRequest'])->name('general.category-request.validate');
+            Route::post('/general/category-request/validate', [GeneralSettingsController::class, 'validateCategoryRequest'])->name('general.category-request.validate')->middleware('throttle:tenant-validate');
 
             Route::get('/compliance', [ComplianceCenterController::class, 'show'])->name('compliance');
             Route::post('/compliance', [ComplianceCenterController::class, 'update'])->name('compliance.update');
-            Route::post('/compliance/validate', [ComplianceCenterController::class, 'validateUpdate'])->name('compliance.validate');
+            Route::post('/compliance/validate', [ComplianceCenterController::class, 'validateUpdate'])->name('compliance.validate')->middleware('throttle:tenant-validate');
             Route::get('/compliance/cities-by-country/{countryId}', [ComplianceCenterController::class, 'citiesByCountry'])->name('compliance.cities-by-country');
         });
 
         Route::middleware('tenant.permission:sales.returns.manage')->group(function () {
             Route::get('/return-policy', [ReturnPolicyController::class, 'index'])->name('return-policy');
             Route::put('/return-policy', [ReturnPolicyController::class, 'update'])->name('return-policy.update');
-            Route::post('/return-policy/validate', [ReturnPolicyController::class, 'validateUpdate'])->name('return-policy.validate');
+            Route::post('/return-policy/validate', [ReturnPolicyController::class, 'validateUpdate'])->name('return-policy.validate')->middleware('throttle:tenant-validate');
         });
     });
 });

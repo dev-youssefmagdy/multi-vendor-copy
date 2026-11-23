@@ -113,8 +113,11 @@ class ApplyStorefrontSessionContext
 
             if ($currentThemeVariant) {
                 $request->attributes->set('storefrontCurrentThemeVariant', $currentThemeVariant);
-                view()->share('storefrontThemeVariant', $currentThemeVariant);
             }
+
+            // Always shared (null when the theme has no variant): views read `$storefrontThemeVariant?->key`
+            // and an undefined variable would 500 them.
+            view()->share('storefrontThemeVariant', $currentThemeVariant);
 
             view()->share('storefrontColors', $this->storefrontRepository->resolvedThemeColors());
         }

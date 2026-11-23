@@ -7,7 +7,11 @@ use App\Enums\DeliveryScope;
 use App\Enums\ProductStatus;
 use App\Enums\ShippingZoneStatus;
 use App\Enums\VariationStatus;
+use App\Enums\ActivationStatus;
+use App\Models\AdminRole;
+use App\Models\AdminUser;
 use App\Models\Category;
+use App\Models\Language;
 use App\Models\Product;
 use App\Models\ShippingZone;
 use App\Models\Variation;
@@ -15,6 +19,7 @@ use App\Models\VariationOption;
 use App\Services\ProductService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -25,6 +30,7 @@ class ProductManagementTest extends TestCase
     public function test_product_service_creates_translated_product_with_media_and_delivery_zones(): void
     {
         Storage::fake('public');
+        $this->ensureLanguages(['en', 'ar']); // translations are stored only for languages that exist
 
         $category = Category::query()->create([
             'slug' => 'electronics',
@@ -35,7 +41,6 @@ class ProductManagementTest extends TestCase
         ]);
 
         $variation = Variation::query()->create([
-            'slug' => 'color',
             'status' => VariationStatus::Active,
         ]);
         $variation->syncTranslations([
@@ -116,7 +121,15 @@ class ProductManagementTest extends TestCase
             ],
         ]);
 
-        $response = $this->get('http://localhost/admin/products');
+        $role = AdminRole::query()->create([
+            'name' => 'Catalog '.uniqid(), 'permissions' => ['catalog.products.view', 'catalog.products.manage'], 'permissions_count' => 2,
+        ]);
+        $admin = AdminUser::query()->create([
+            'role_id' => $role->id, 'name' => 'Admin', 'email' => uniqid('admin').'@example.com',
+            'password' => Hash::make('password12345'), 'status' => ActivationStatus::Active,
+        ]);
+
+        $response = $this->actingAs($admin, 'admin')->get('http://localhost/admin/products');
 
         $response
             ->assertOk()
@@ -127,8 +140,8 @@ class ProductManagementTest extends TestCase
 
     public function test_product_service_generates_variants_from_selected_variation_options(): void
     {
+        $this->ensureLanguages(['en']);
         $color = Variation::query()->create([
-            'slug' => 'color',
             'status' => VariationStatus::Active,
         ]);
         $color->syncTranslations([
@@ -137,8 +150,6 @@ class ProductManagementTest extends TestCase
 
         $red = VariationOption::query()->create([
             'variation_id' => $color->id,
-            'slug' => 'red',
-            'sort_order' => 0,
         ]);
         $red->syncTranslations([
             'en' => ['name' => 'Red'],
@@ -146,15 +157,12 @@ class ProductManagementTest extends TestCase
 
         $blue = VariationOption::query()->create([
             'variation_id' => $color->id,
-            'slug' => 'blue',
-            'sort_order' => 1,
         ]);
         $blue->syncTranslations([
             'en' => ['name' => 'Blue'],
         ]);
 
         $size = Variation::query()->create([
-            'slug' => 'size',
             'status' => VariationStatus::Active,
         ]);
         $size->syncTranslations([
@@ -163,8 +171,6 @@ class ProductManagementTest extends TestCase
 
         $small = VariationOption::query()->create([
             'variation_id' => $size->id,
-            'slug' => 'small',
-            'sort_order' => 0,
         ]);
         $small->syncTranslations([
             'en' => ['name' => 'Small'],
@@ -172,8 +178,6 @@ class ProductManagementTest extends TestCase
 
         $medium = VariationOption::query()->create([
             'variation_id' => $size->id,
-            'slug' => 'medium',
-            'sort_order' => 1,
         ]);
         $medium->syncTranslations([
             'en' => ['name' => 'Medium'],
@@ -194,15 +198,12 @@ class ProductManagementTest extends TestCase
                     'name' => 'Variant Product',
                 ],
             ],
-            'variation_groups' => [
-                [
-                    'variation_id' => $color->id,
-                    'option_ids' => [$red->id, $blue->id],
-                ],
-                [
-                    'variation_id' => $size->id,
-                    'option_ids' => [$small->id, $medium->id],
-                ],
+            // ProductService takes explicit variants (one per option combination), each with its option ids.
+            'variants' => [
+                ['option_ids' => [$red->id, $small->id], 'price' => 10, 'stock' => 5],
+                ['option_ids' => [$red->id, $medium->id], 'price' => 10, 'stock' => 5],
+                ['option_ids' => [$blue->id, $small->id], 'price' => 10, 'stock' => 5],
+                ['option_ids' => [$blue->id, $medium->id], 'price' => 10, 'stock' => 5],
             ],
         ]);
 
@@ -212,7 +213,7 @@ class ProductManagementTest extends TestCase
         $this->assertCount(4, $product->variants);
 
         $signatures = $product->variants
-            ->map(fn($variant) => $variant->options->pluck('slug')->sort()->values()->implode(':'))
+            ->map(fn($variant) => $variant->options->map(fn($o) => strtolower((string) $o->name))->sort()->values()->implode(':'))
             ->sort()
             ->values()
             ->all();
@@ -223,5 +224,16 @@ class ProductManagementTest extends TestCase
             'medium:red',
             'red:small',
         ], $signatures);
+    }
+
+    /** @param list<string> $codes */
+    private function ensureLanguages(array $codes): void
+    {
+        foreach ($codes as $code) {
+            Language::query()->firstOrCreate(['code' => $code], [
+                'name' => strtoupper($code), 'native_name' => strtoupper($code),
+                'direction' => $code === 'ar' ? 'rtl' : 'ltr', 'is_active' => true,
+            ]);
+        }
     }
 }

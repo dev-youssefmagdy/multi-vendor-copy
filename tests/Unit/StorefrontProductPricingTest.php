@@ -15,10 +15,11 @@ class StorefrontProductPricingTest extends TestCase
     {
         Carbon::setTestNow('2026-04-08 12:00:00');
 
-        $product = new Product(['price' => 100]);
-        $variant = new ProductVariant(['sell_price' => 80, 'real_price' => 120, 'active' => true]);
+        $product = $this->ownProduct();
+        $variant = new ProductVariant(['sell_price' => ['default' => 80], 'real_price' => 120, 'active' => true]);
 
         $product->setRelation('variants', new Collection([$variant]));
+        $variant->setRelation('product', $product);
         $product->setRelation('flashSales', new Collection());
 
         $pricing = $product->storefrontPricing($variant);
@@ -34,8 +35,8 @@ class StorefrontProductPricingTest extends TestCase
     {
         Carbon::setTestNow('2026-04-08 12:00:00');
 
-        $product = new Product(['price' => 100]);
-        $variant = new ProductVariant(['sell_price' => 80, 'real_price' => 120, 'active' => true]);
+        $product = $this->ownProduct();
+        $variant = new ProductVariant(['sell_price' => ['default' => 80], 'real_price' => 120, 'active' => true]);
         $flashSale = new FlashSale([
             'discount_percentage' => 25,
             'active' => true,
@@ -44,14 +45,16 @@ class StorefrontProductPricingTest extends TestCase
         ]);
 
         $product->setRelation('variants', new Collection([$variant]));
+        $variant->setRelation('product', $product);
         $product->setRelation('flashSales', new Collection([$flashSale]));
 
         $pricing = $product->storefrontPricing($variant);
 
+        // The strikethrough during a flash sale is the vendor's normal sell price (80), not real_price.
         $this->assertSame(60.0, $pricing['current_price']);
-        $this->assertSame(120.0, $pricing['original_price']);
+        $this->assertSame(80.0, $pricing['original_price']);
         $this->assertTrue($pricing['has_discount']);
-        $this->assertSame(50.0, $pricing['discount_percentage']);
+        $this->assertSame(25.0, $pricing['discount_percentage']);
         $this->assertTrue($pricing['is_flash_sale']);
         $this->assertSame(25.0, $pricing['flash_sale_percentage']);
     }
@@ -60,8 +63,8 @@ class StorefrontProductPricingTest extends TestCase
     {
         Carbon::setTestNow('2026-04-08 12:00:00');
 
-        $product = new Product(['price' => 100]);
-        $variant = new ProductVariant(['sell_price' => 90, 'active' => true]);
+        $product = $this->ownProduct();
+        $variant = new ProductVariant(['sell_price' => ['default' => 90], 'active' => true]);
 
         $inactiveFlashSale = new FlashSale([
             'discount_percentage' => 50,
@@ -78,6 +81,7 @@ class StorefrontProductPricingTest extends TestCase
         ]);
 
         $product->setRelation('variants', new Collection([$variant]));
+        $variant->setRelation('product', $product);
         $product->setRelation('flashSales', new Collection([$inactiveFlashSale, $expiredFlashSale]));
 
         $pricing = $product->storefrontPricing($variant);
@@ -87,6 +91,18 @@ class StorefrontProductPricingTest extends TestCase
         $this->assertFalse($pricing['has_discount']);
         $this->assertSame(0.0, $pricing['discount_percentage']);
         $this->assertFalse($pricing['is_flash_sale']);
+    }
+
+    /**
+     * Catalog variants are priced cost + profit (docs/ORDER_FORMULAS.md section 1); the vendor-typed
+     * sell_price / real_price (strikethrough) apply to own products, which is what these cases exercise.
+     */
+    private function ownProduct(): Product
+    {
+        $product = new Product(['price' => 100]);
+        $product->forceFill(['is_own_product' => true, 'central_product_id' => null]);
+
+        return $product;
     }
 
     protected function tearDown(): void

@@ -13,6 +13,7 @@ use App\Models\Tenant\Order;
 use App\Models\Tenant\OrderItem;
 use App\Models\Tenant\Product;
 use App\Models\Tenant\ProductVariant;
+use App\Support\OrderPricing;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -166,6 +167,23 @@ trait BuildsOrders
             $this->createOrderItem($order, $line);
         }
 
+        // Stored split per docs/ORDER_FORMULAS.md section 2 (what OrderComposer::create() persists), unless the test set it.
+        if (! array_key_exists('platform_profit', $attributes) && ! array_key_exists('vendor_profit', $attributes)) {
+            $order->load('items');
+            $totals = OrderPricing::order(
+                $order->items->map(fn (OrderItem $item): array => $item->only([
+                    'cost', 'profit_amount', 'qty', 'fixed_shipping', 'discount', 'discount_source', 'tax', 'grand_total',
+                ]))->all(),
+                (float) $order->shipping_charge,
+                (float) ($order->coupon_discount ?? 0),
+                $order->coupon_source,
+            );
+            $order->forceFill([
+                'platform_profit' => $totals['platform_profit'],
+                'vendor_profit' => $totals['vendor_profit'],
+            ])->save();
+        }
+
         return $order->load('items.variant', 'items.product');
     }
 
@@ -197,11 +215,17 @@ trait BuildsOrders
             'product_variant_id' => $variant?->id,
             'qty' => $qty,
             'price' => $price,
+            // Money snapshot per docs/ORDER_FORMULAS.md section 1: price = cost + profit_amount (own product:
+            // cost 0, profit = sell price), item_grand_total = sub_total + fixed_shipping - discount + tax.
+            'cost' => (float) ($line['cost'] ?? 0),
+            'profit_amount' => round($price - (float) ($line['cost'] ?? 0), 2),
             'sub_total' => round($price * $qty, 2),
+            'fixed_shipping' => 0,
             'discount' => 0,
             'tax' => 0,
             'weight' => 0,
             'shipping_fee' => 0,
+            'grand_total' => round($price * $qty, 2),
         ]);
     }
 }

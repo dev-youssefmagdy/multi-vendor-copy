@@ -25,6 +25,8 @@ class PanelRouteCoverageTest extends TestCase
     {
         parent::setUp();
         $this->setUpTenantPanel();
+        // EnsureTenantTourSeen redirects every GET page to the onboarding tour until the admin has seen it.
+        $this->tenant->run(fn () => $this->admin->forceFill(['tour_seen_at' => now()])->save());
     }
 
     protected function tearDown(): void
@@ -81,16 +83,28 @@ class PanelRouteCoverageTest extends TestCase
 
     public function test_every_export_route_streams_a_csv_with_utf8_bom(): void
     {
+        $failures = [];
+
         foreach ($this->exportRoutes() as $name => $uri) {
             $response = $this->actingAsTenantAdmin()->get($this->tenantUrl($uri));
 
-            $response->assertOk();
-            $contentType = $response->headers->get('Content-Type');
-            $this->assertStringContainsString('text/csv', (string) $contentType, "Route [{$name}] content-type was {$contentType}");
+            if ($response->getStatusCode() !== 200) {
+                $failures[] = "Route [{$name}] ({$uri}) answered {$response->getStatusCode()}, Location: ".$response->headers->get('Location');
 
-            $content = $response->streamedContent();
-            $this->assertStringStartsWith("\xEF\xBB\xBF", $content, "Route [{$name}] body does not start with a UTF-8 BOM.");
+                continue;
+            }
+
+            $contentType = (string) $response->headers->get('Content-Type');
+            if (! str_contains($contentType, 'text/csv')) {
+                $failures[] = "Route [{$name}] content-type was {$contentType}";
+            }
+
+            if (! str_starts_with($response->streamedContent(), "\xEF\xBB\xBF")) {
+                $failures[] = "Route [{$name}] body does not start with a UTF-8 BOM.";
+            }
         }
+
+        $this->assertSame([], $failures, implode("\n", $failures));
     }
 
     /**
@@ -139,7 +153,7 @@ class PanelRouteCoverageTest extends TestCase
     /** @return array<string, string> route name => relative URI */
     private function dataRoutes(): array
     {
-        $customer = Customer::query()->first();
+        $customer = $this->tenant->run(fn () => Customer::query()->first());
 
         $routes = [];
 

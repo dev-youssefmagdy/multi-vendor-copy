@@ -1507,9 +1507,13 @@ class TenantPanelService
                     : ['tenant_id' => $tenantId, 'product_id' => $product->id],
                 [
                     'product_id' => $centralMode ? 0 : $product->id,
-                    'product_type' => $centralMode ? 'central' : null,
-                    'catalog_product_id' => $centralMode ? (int) $product->source_id : null,
-                    'central_product_id' => $centralMode ? (int) $product->source_id : null,
+                    // Sync mode: leave the typed pair unset so HasCatalogRefs derives it from the copy's central link
+                    // (an explicit null here would count as "set by the caller" and keep the pair NULL).
+                    ...($centralMode ? [
+                        'product_type' => 'central',
+                        'catalog_product_id' => (int) $product->source_id,
+                        'central_product_id' => (int) $product->source_id,
+                    ] : []),
                     'product_slug' => $product->slug,
                     'requested_translations' => $changedTranslations,
                     'current_translations' => $currentTranslations,

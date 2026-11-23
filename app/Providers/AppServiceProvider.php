@@ -114,6 +114,10 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
 
+        // Default for theme views that read `$storefrontThemeVariant?->key`: ApplyStorefrontSessionContext overrides it
+        // per request, but a Livewire render outside that middleware (or a theme without variants) must not 500.
+        View::share('storefrontThemeVariant', null);
+
         $this->configureSessionDomain();
 
         Blade::anonymousComponentPath(resource_path('views/tenant/components'), 'tenant');

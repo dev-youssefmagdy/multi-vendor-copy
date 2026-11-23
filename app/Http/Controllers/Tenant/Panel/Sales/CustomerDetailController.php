@@ -158,7 +158,7 @@ final class CustomerDetailController extends PanelController
 
         CustomerAddress::query()->create([
             'customer_id' => $customerId,
-            'label' => $validated['label'] ?: null,
+            'label' => ($validated['label'] ?? null) ?: null,
             'full_name' => $validated['full_name'] ?: null,
             'email' => $validated['email'] ?: null,
             'phone' => $this->sanitizePhone($validated['phone'] ?? null),
@@ -185,7 +185,7 @@ final class CustomerDetailController extends PanelController
         }
 
         $address->update([
-            'label' => $validated['label'] ?: null,
+            'label' => ($validated['label'] ?? null) ?: null,
             'full_name' => $validated['full_name'] ?: null,
             'email' => $validated['email'] ?: null,
             'phone' => $this->sanitizePhone($validated['phone'] ?? null),
