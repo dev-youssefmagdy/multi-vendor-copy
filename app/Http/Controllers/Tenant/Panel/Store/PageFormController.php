@@ -9,6 +9,7 @@ use App\Http\Requests\Tenant\Panel\Store\SavePageRequest;
 use App\Models\Tenant\Page;
 use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\Tenant\TenantPanelService;
+use App\Repositories\Tenant\Catalog\ConfigCatalog;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -50,6 +51,10 @@ final class PageFormController extends PanelController
             $translations = array_replace_recursive($translations, $page->translationsByLocale(['title', 'body']));
         }
 
+        // Dedup plan phase 6 (`pages` = central): platform locales and the slug of a platform page are read-only.
+        $lockedLocales = $page ? ConfigCatalog::pageLockedLocales($page->getRawOriginal('slug'), $page->getRawOriginal('source')) : [];
+        $platformLocked = $page !== null && $page->getRawOriginal('source') === 'central' && ConfigCatalog::enabled('pages');
+
         return view('tenant.pages.store.pages.form', [
             'page' => $page,
             'pageTitle' => $page ? __('Edit Page') : __('Add Page'),
@@ -59,6 +64,8 @@ final class PageFormController extends PanelController
             'languages' => $languages,
             'activeLocale' => $defaultLocale,
             'translations' => $translations,
+            'platformLocked' => $platformLocked,
+            'lockedLocales' => $lockedLocales,
         ]);
     }
 

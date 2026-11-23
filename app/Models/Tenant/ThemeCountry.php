@@ -10,6 +10,12 @@ class ThemeCountry extends Model
 {
     use HasFactory;
 
+    /** Dedup plan phase 6: hides countries the central template no longer allows (themes = central only). */
+    protected static function booted(): void
+    {
+        static::addGlobalScope('config-visible', new \App\Support\Catalog\ConfigVisibleScope('theme-countries'));
+    }
+
     protected $table = 'theme_country';
 
     protected $fillable = [

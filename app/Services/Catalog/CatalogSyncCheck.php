@@ -167,7 +167,8 @@ class CatalogSyncCheck
 
         $spec = self::SPECS[$section];
         if ($spec === null) {
-            return ['note' => 'no central link (keyed by name); mode only'];
+            // Phase 6: settings are keyed by name; the dedup run is the only measurable thing.
+            return ['note' => 'no central link (keyed by name)'] + $this->dedupMetrics('settings');
         }
 
         [$table, $link, $centralTable, $centralKey, $expected] = $spec;
@@ -197,6 +198,11 @@ class CatalogSyncCheck
             'labels' => $this->labelParityMetrics() + $this->dedupMetrics('labels'),
             'coupons' => $this->couponParityMetrics() + $this->dedupMetrics('coupons'),
             'flash-sales' => $this->flashSaleParityMetrics() + $this->dedupMetrics('flash_sales'),
+            // Dedup plan phase 6: config entities report the dedup migrate / verify state (fail-closed gate
+            // `dedup_verify_diffs:0`, like every other section).
+            'languages', 'currencies', 'themes', 'pages' => $this->dedupMetrics($section),
+            'payment-gateways' => $this->dedupMetrics('payment_gateways'),
+            'email-templates' => $this->dedupMetrics('email_templates'),
             default => [],
         } + (isset(self::TRANSLATED[$section]) ? ['translations' => $this->translationParity($section, $table, $link, $centralTable, $centralKey)] : []);
     }

@@ -172,6 +172,14 @@ class AppServiceProvider extends ServiceProvider
         TenantTransaction::observe(TenantTransactionObserver::class);
         Variation::observe(CentralCatalogSyncObserver::class);
 
+        // Dedup plan phase 6: central config read live by tenants in `central` mode (global CentralConfig version).
+        foreach ([
+            Currency::class, EmailTemplate::class, \App\Models\EmailTemplateTranslation::class, Language::class, PaymentGateway::class,
+            StaticPage::class, Template::class, \App\Models\AppSetting::class, \App\Models\TenantLanguagePurchase::class,
+        ] as $configModel) {
+            $configModel::observe(\App\Observers\CentralConfigObserver::class);
+        }
+
         // Storefront home-page cache invalidation: bump each model's cache
         // version on write so StorefrontRepository's versioned cache keys
         // (see cacheRemember) never serve stale data past the next relevant change.

@@ -7,11 +7,13 @@ use App\Enums\PaymentGatewayType;
 use App\Models\PaymentGateway as CentralPaymentGateway;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use App\Models\Tenant\Concerns\OverlaysCentralConfig;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PaymentGateway extends Model
 {
+    use OverlaysCentralConfig;
     use HasFactory;
 
     protected $fillable = [
@@ -33,6 +35,11 @@ class PaymentGateway extends Model
         'last_transaction_at',
         'last_error',
     ];
+
+    protected static function configCatalogSection(): string
+    {
+        return 'payment-gateways';
+    }
 
     protected function casts(): array
     {

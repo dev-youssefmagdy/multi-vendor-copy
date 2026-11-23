@@ -152,7 +152,7 @@ class CentralCatalogTenantSyncService
                 // Dedup phase 4: central categories and the central category_product pairs (products fan-out).
                 'categories' => \App\Repositories\Tenant\Catalog\CategoryCatalog::CACHE_TAG,
                 'products' => \App\Repositories\Tenant\Catalog\CategoryCatalog::CACHE_TAG,
-            ],
+            ] + array_fill_keys(\App\Repositories\Tenant\Catalog\ConfigCatalog::SECTIONS, \App\Repositories\Tenant\Catalog\ConfigCatalog::CACHE_TAG),
             array_flip($sections),
         ));
         $globalTags = array_values(array_unique($globalTags));
@@ -164,7 +164,9 @@ class CentralCatalogTenantSyncService
             // Dedup plan §2b: drop the sections this tenant reads live from central (all on `sync` = unchanged).
             $tenantSections = array_values(array_filter(
                 $sections,
-                fn (string $section) => ! $this->tenantCatalogSyncService->skipsCentralSection($tenant, $section),
+                // Phase 6: a config section on `central` still runs, as an identity-row insert only (no data copy).
+                fn (string $section) => in_array($section, \App\Repositories\Tenant\Catalog\ConfigCatalog::SECTIONS, true)
+                    || ! $this->tenantCatalogSyncService->skipsCentralSection($tenant, $section),
             ));
 
             if ($sections !== [] && $tenantSections === []) {

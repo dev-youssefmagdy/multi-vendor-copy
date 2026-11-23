@@ -3,10 +3,12 @@
 namespace App\Models\Tenant;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Tenant\Concerns\OverlaysCentralConfig;
 use Illuminate\Database\Eloquent\Model;
 
 class Currency extends Model
 {
+    use OverlaysCentralConfig;
     use HasFactory;
 
     protected $fillable = [
@@ -18,6 +20,11 @@ class Currency extends Model
         'is_active',
         'is_default',
     ];
+
+    protected static function configCatalogSection(): string
+    {
+        return 'currencies';
+    }
 
     protected function casts(): array
     {

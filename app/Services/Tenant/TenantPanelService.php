@@ -562,12 +562,29 @@ class TenantPanelService
     {
         return DB::transaction(function () use ($attributes, $page) {
             $page ??= new Page();
+            // Dedup plan phase 6 (`pages` = central): a platform page keeps its slug (its identity) and the platform's
+            // locales stay read-only; the stored copies of those locales are kept as they are (rollback / phase 7).
+            $platform = $page->exists && $page->getRawOriginal('source') === 'central' && \App\Repositories\Tenant\Catalog\ConfigCatalog::enabled('pages');
+            $locked = $platform ? \App\Repositories\Tenant\Catalog\ConfigCatalog::pageLockedLocales($page->getRawOriginal('slug'), 'central') : [];
+            $translations = array_diff_key($attributes['translations'] ?? [], array_flip($locked));
+            if ($locked !== []) {
+                $languageCodes = Language::query()->withoutGlobalScopes()->pluck('code', 'id');
+                $copies = \App\Models\Tenant\Translation::query()->where('translatable_type', $page->getMorphClass())->where('translatable_id', $page->getKey())->get(['language_id', 'field', 'value']);
+                foreach ($copies as $copy) {
+                    $code = $languageCodes->get($copy->language_id);
+                    if ($code !== null && in_array($code, $locked, true)) {
+                        $translations[$code][$copy->field] = $copy->value;
+                    }
+                }
+            }
             $page->fill([
-                'slug' => Str::slug($attributes['slug'] ?: data_get($attributes, 'translations.' . ($attributes['default_locale'] ?? 'en') . '.title', 'page')),
+                'slug' => $platform
+                    ? $page->getRawOriginal('slug')
+                    : Str::slug($attributes['slug'] ?: data_get($attributes, 'translations.' . ($attributes['default_locale'] ?? 'en') . '.title', 'page')),
                 'active' => (bool) ($attributes['active'] ?? true),
             ]);
             $page->save();
-            $page->syncTranslations($attributes['translations'] ?? []);
+            $page->syncTranslations($translations);
             $this->markDefaultPagesReviewed();
 
             return $page->fresh('translations.language');

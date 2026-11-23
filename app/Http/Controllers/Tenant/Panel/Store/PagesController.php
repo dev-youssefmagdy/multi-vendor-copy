@@ -11,6 +11,7 @@ use App\Repositories\Tenant\TenantPanelRepository;
 use App\Services\Tenant\TenantPanelService;
 use App\Support\Tenant\Metric;
 use App\Support\Tenant\TableColumn;
+use App\Repositories\Tenant\Catalog\ConfigCatalog;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -78,8 +79,18 @@ final class PagesController extends PanelController
 
     public function destroy(Page $page): JsonResponse
     {
+        // Dedup plan phase 6: a platform page (`pages` = central) is the platform's; the vendor can only hide it.
+        if (self::isPlatformPage($page)) {
+            return $this->failure(__('Platform pages cannot be deleted. Switch the page off instead.'), 403);
+        }
+
         $this->service->deleteModel($page);
 
         return $this->success(__('Page deleted successfully.'));
+    }
+
+    public static function isPlatformPage(Page $page): bool
+    {
+        return $page->getRawOriginal('source') === 'central' && ConfigCatalog::enabled('pages');
     }
 }

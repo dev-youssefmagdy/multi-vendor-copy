@@ -30,6 +30,14 @@ final class DedupRunner
         'categories' => CategoriesDedup::class,
         // Dedup plan phase 5.
         'products' => ProductsDedup::class,
+        // Dedup plan phase 6 (config entities; ConfigDedup).
+        'languages' => LanguagesDedup::class,
+        'currencies' => CurrenciesDedup::class,
+        'settings' => SettingsDedup::class,
+        'payment_gateways' => PaymentGatewaysDedup::class,
+        'themes' => ThemesDedup::class,
+        'email_templates' => EmailTemplatesDedup::class,
+        'pages' => PagesDedup::class,
     ];
 
     public static function handler(string $section): DedupSection

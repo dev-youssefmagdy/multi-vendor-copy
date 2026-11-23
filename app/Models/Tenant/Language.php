@@ -4,6 +4,7 @@ namespace App\Models\Tenant;
 
 use App\Enums\LanguageDirection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Tenant\Concerns\OverlaysCentralConfig;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Tenant\File as TenantFile;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Cache;
 
 class Language extends Model
 {
+    use OverlaysCentralConfig;
     use HasFactory;
 
     protected $fillable = [
@@ -57,6 +59,11 @@ class Language extends Model
                 });
             }
         });
+    }
+
+    protected static function configCatalogSection(): string
+    {
+        return 'languages';
     }
 
     protected function casts(): array

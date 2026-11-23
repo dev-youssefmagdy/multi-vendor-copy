@@ -3,11 +3,13 @@
 namespace App\Models\Tenant;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Tenant\Concerns\OverlaysCentralConfig;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Theme extends Model
 {
+    use OverlaysCentralConfig;
     use HasFactory;
 
     protected $fillable = [
@@ -18,6 +20,11 @@ class Theme extends Model
         'is_universal',
         'preview_path',
     ];
+
+    protected static function configCatalogSection(): string
+    {
+        return 'themes';
+    }
 
     protected function casts(): array
     {

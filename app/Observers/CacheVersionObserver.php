@@ -60,6 +60,7 @@ class CacheVersionObserver
             $model instanceof CentralTranslation => match (self::ownerTag($model->translatable_type)) {
                 'Country' => ['Country'],
                 'Category' => ['CentralCategory'],
+                'StaticPage' => ['CentralConfig'],
                 default => [],
             },
             default => [class_basename($model)],

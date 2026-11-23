@@ -186,6 +186,10 @@ class StorefrontRepository
         if (ProductCatalog::enabled() && array_intersect($tags, ['Product', 'ProductVariant'])) {
             $version .= '.pc' . CacheVersion::get(ProductCatalog::CACHE_TAG);
         }
+        // Dedup plan phase 6 (invariant 8): config read live from central (currency / language / theme / settings).
+        if (array_intersect($tags, ['Currency', 'Language', 'Theme', 'Setting', 'Translation']) && ($suffix = \App\Repositories\Tenant\Catalog\ConfigCatalog::cacheSuffix()) !== '') {
+            $version .= $suffix;
+        }
         $fullKey = 'storefront:' . (tenant()?->id ?? 'central') . ":{$key}:v{$version}";
 
         return Cache::driver('file')->remember($fullKey, $ttl, $callback);

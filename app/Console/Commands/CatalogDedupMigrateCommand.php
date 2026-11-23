@@ -18,13 +18,14 @@ use Illuminate\Support\Facades\Schema;
  *                                              value is back to the pre-approval value): they follow central afterwards.
  *                                              Without it a tenant with stale pairs is `failed` (freeze kept, exit 1).
  *
- * Sections: badges, labels, field_overrides, coupons, flash_sales, categories, products (DedupRunner::SECTIONS). Progress rows in `catalog_dedup_runs`, reports in
+ * Sections: badges, labels, field_overrides, coupons, flash_sales, categories, products and (phase 6) languages, currencies, settings,
+ * payment_gateways, themes, email_templates, pages (DedupRunner::SECTIONS). Progress rows in `catalog_dedup_runs`, reports in
  * storage/app/dedup-reports/<section>/<tenant>[.dry-run|.verify].json. No cleanup here (phase 7).
  */
 class CatalogDedupMigrateCommand extends Command
 {
     protected $signature = 'catalog:dedup-migrate
-        {section : badges | labels | field_overrides | coupons | flash_sales | categories | products}
+        {section : badges | labels | field_overrides | coupons | flash_sales | categories | products | languages | currencies | settings | payment_gateways | themes | email_templates | pages}
         {--tenant=* : Tenant id(s); default every tenant}
         {--dry-run : Classify and report only; write nothing}
         {--verify : Read-only shadow-read diff old (synced) vs new (merged) read}
@@ -89,7 +90,7 @@ class CatalogDedupMigrateCommand extends Command
         $this->line("Reports: storage/app/dedup-reports/{$section}/");
 
         if ($step === 'verify') {
-            $flag = ['flash_sales' => 'flash-sales'][$section] ?? $section;
+            $flag = ['flash_sales' => 'flash-sales', 'payment_gateways' => 'payment-gateways', 'email_templates' => 'email-templates'][$section] ?? $section;
             $diffs === 0 ? $this->info('Verify: 0 diffs.') : $this->error("Verify: {$diffs} diff(s); do not flip catalog_source.{$flag} for those tenants.");
 
             return $failed === 0 && $diffs === 0 ? self::SUCCESS : self::FAILURE;

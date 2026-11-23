@@ -103,7 +103,9 @@ class TenantCatalogSyncService
         // try {
         foreach ($sections as $section) {
             if ($this->skipsCentralSection($tenant, $section)) {
-                continue; // summary stays 0
+                $summary[$section] = $this->ensureConfigIdentity($tenant, $section);
+
+                continue;
             }
 
             $summary[$section] = match ($section) {
@@ -138,6 +140,17 @@ class TenantCatalogSyncService
     {
         if ($template->central_email_template_id === null) {
             return 0;
+        }
+
+        // Dedup plan phase 6: in `central` mode the template is not a copy; "re-sync" just drops the vendor's override.
+        if (\App\Support\Catalog\CatalogSource::isCentral($tenant, 'email-templates')) {
+            tenancy()->initialize($tenant); // same as syncSection(): callers may run outside the tenant
+        }
+        if (\App\Repositories\Tenant\Catalog\ConfigCatalog::enabled('email-templates', $tenant)) {
+            \Illuminate\Support\Facades\DB::connection('tenant')->table('email_template_translations')->where('email_template_id', $template->id)->update(['central_overridden' => 0]);
+            \Illuminate\Support\Facades\DB::connection('tenant')->table('email_templates')->where('id', $template->id)->update(['central_overridden' => 0]);
+
+            return 1;
         }
 
         $this->overwriteEmailTemplateIds = [(int) $template->central_email_template_id];
@@ -242,6 +255,25 @@ class TenantCatalogSyncService
     }
 
     /**
+     * Dedup plan phase 6: a config section (languages, currencies, ...) read from central copies NO data any more, but
+     * the tenant still needs a local identity row per central row (local FKs). Inserts the missing ones only; every
+     * other (products / categories / ...) section does nothing here (returns 0). Needs tenancy initialised.
+     */
+    protected function ensureConfigIdentity(Tenant $tenant, string $section): int
+    {
+        if (! in_array($section, \App\Repositories\Tenant\Catalog\ConfigCatalog::SECTIONS, true)
+            || ! \App\Repositories\Tenant\Catalog\ConfigCatalog::enabled($section, $tenant)) {
+            return 0;
+        }
+
+        $counts = app(\App\Services\Catalog\ConfigIdentity::class)->ensure($section);
+        \App\Repositories\Tenant\Catalog\ConfigCatalog::flushMemo();
+        CacheVersion::bumpMany(['Language', 'Currency', 'Theme', 'Setting']);
+
+        return array_sum($counts);
+    }
+
+    /**
      * Dedup plan phase 1 dual-write: the typed reference pairs of pivot rows this sync wrote (raw inserts / sync()
      * skip model events). Only NULL pairs are filled; no-op until `tenants:migrate` added the columns; never throws.
      *
@@ -258,7 +290,7 @@ class TenantCatalogSyncService
     protected function runSection(Tenant $tenant, string $section): int
     {
         if ($this->skipsCentralSection($tenant, $section)) {
-            return 0;
+            return $this->ensureConfigIdentity($tenant, $section);
         }
 
         return match ($section) {

@@ -26,6 +26,8 @@ class CacheVersion
         'CentralCoupon', 'CentralFlashSale',
         // Dedup plan phase 5: central products / variants read live by tenants in `central` mode.
         'CentralProduct',
+        // Dedup plan phase 6: central config (languages, currencies, settings, gateways, themes, email templates, pages).
+        'CentralConfig',
     ];
 
     /** Every tag the storefront caches are keyed on (see bumpStorefront()). */
@@ -115,7 +117,7 @@ class CacheVersion
      * is set to 'array', we use that instead so tests don't need a
      * writable filesystem cache directory.
      */
-    private static function store(): \Illuminate\Contracts\Cache\Repository
+    public static function store(): \Illuminate\Contracts\Cache\Repository
     {
         $configured = config('cache.default');
         return Cache::driver(app()->runningUnitTests() && $configured !== 'file' ? $configured : 'file');
