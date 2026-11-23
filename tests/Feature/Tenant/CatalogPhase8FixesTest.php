@@ -97,9 +97,8 @@ class CatalogPhase8FixesTest extends TestCase
     /** Rollout finding: best-selling / trending / sold counts joined order_items.product_id (tenant id) to merged keys. */
     public function test_sales_queries_credit_central_lines_to_the_merged_product_key(): void
     {
-        $this->deliveredCentralOrder();
-
         $this->tenant->run(function () {
+            $this->deliveredCentralOrder();
             $this->assertTrue(ProductCatalog::enabled());
             $key = (int) $this->x['central_product']->id; // a central product's merged key is its central id
 
