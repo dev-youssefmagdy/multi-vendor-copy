@@ -94,6 +94,26 @@ class CatalogPhase8FixesTest extends TestCase
         return [$customer, $order];
     }
 
+    /** Rollout finding: best-selling / trending / sold counts joined order_items.product_id (tenant id) to merged keys. */
+    public function test_sales_queries_credit_central_lines_to_the_merged_product_key(): void
+    {
+        $this->deliveredCentralOrder();
+
+        $this->tenant->run(function () {
+            $this->assertTrue(ProductCatalog::enabled());
+            $key = (int) $this->x['central_product']->id; // a central product's merged key is its central id
+
+            $sales = \App\Services\HomeProductService::salesSubquery(30)->get()->keyBy('sold_product_id');
+            $this->assertSame(2, (int) ($sales[$key]->qty_all ?? 0), 'the central line is credited to its merged key');
+
+            $top = \App\Services\HomeProductService::applyBestSellingOrder(ProductCatalog::query()->where('active', true), 30)->first();
+            $this->assertSame($key, (int) $top->id, 'the sold central product ranks first');
+
+            $sold = app(\App\Services\Tenant\HomeViewData::class)->soldQtyLast30Days([$key], 0);
+            $this->assertSame(2, (int) ($sold[$key] ?? 0));
+        });
+    }
+
     public function test_order_status_review_and_reorder_resolve_central_lines_by_typed_pair(): void
     {
         $this->tenant->run(function () {

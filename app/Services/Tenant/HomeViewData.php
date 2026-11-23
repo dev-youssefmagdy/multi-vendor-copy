@@ -102,16 +102,24 @@ class HomeViewData
         sort($ids);
         $key = 'sold_qty_30d:' . md5(implode(',', $ids));
 
+        // Central products mode: $productIds are merged keys, so lines are matched by their typed pair (QA rollout
+        // finding: matching tenant ids against central keys credited sales to the wrong products).
+        $merged = \App\Repositories\Tenant\Catalog\ProductCatalog::enabled();
+        $lineKey = \App\Repositories\Tenant\Catalog\ProductCatalog::orderLineKeySql();
+        $key .= $merged ? ':merged' : '';
+
         return collect($this->memo($key, fn () => $this->remember($key, ['Order', 'OrderItem', 'Product'], fn (): array => OrderItem::query()
-            ->selectRaw('COALESCE(order_items.product_id, product_variants.product_id) as product_id, SUM(order_items.qty) as total_qty')
+            ->selectRaw("{$lineKey} as product_id, SUM(order_items.qty) as total_qty")
             ->leftJoin('product_variants', 'product_variants.id', '=', 'order_items.product_variant_id')
             ->join('orders', 'orders.id', '=', 'order_items.order_id')
             ->where('orders.created_at', '>=', now()->subDays(30))
-            ->where(function ($q) use ($productIds): void {
-                $q->whereIn('order_items.product_id', $productIds)
-                    ->orWhereIn('product_variants.product_id', $productIds);
-            })
-            ->groupBy(DB::raw('COALESCE(order_items.product_id, product_variants.product_id)'))
+            ->when($merged,
+                fn ($q) => $q->whereIn(DB::raw($lineKey), $productIds),
+                fn ($q) => $q->where(function ($q) use ($productIds): void {
+                    $q->whereIn('order_items.product_id', $productIds)
+                        ->orWhereIn('product_variants.product_id', $productIds);
+                }))
+            ->groupBy(DB::raw($lineKey))
             ->pluck('total_qty', 'product_id')
             ->all(), $ttl)));
     }

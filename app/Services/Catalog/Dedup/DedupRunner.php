@@ -58,10 +58,16 @@ final class DedupRunner
         $tenantId = (string) $tenant->getTenantKey();
         $report = ['tenant' => $tenantId, 'section' => $section, 'step' => $step, 'started_at' => now()->toIso8601String()];
 
+        // A cart remap (`--remap-carts`) only rewrites mobile cart item ids: it is recorded under its own step so it
+        // never counts as a fresh `migrate` (that would make the cleanup gate demand a new verify).
+        $recordedStep = ! empty($options['remap_carts'])
+            ? ($step === 'dry-run' ? 'remap-carts-dry' : 'remap-carts')
+            : $step;
+
         $run = CatalogDedupRun::query()->create([
             'tenant_id' => $tenantId,
             'section' => $section,
-            'step' => $step,
+            'step' => $recordedStep,
             'status' => CatalogDedupRun::RUNNING,
             'started_at' => now(),
         ]);

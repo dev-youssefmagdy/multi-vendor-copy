@@ -27,7 +27,9 @@ class HomeProductService
             LabelCatalog::enabled() ? [LabelCatalog::CACHE_TAG] : [],
         );
         $version = collect($tags)->map(fn($tag) => CacheVersion::get($tag))->implode('.');
-        $fullKey = 'storefront:' . (tenant()?->id ?? 'central') . ":home_products:{$key}:v{$version}";
+        // The products mode is part of the key: sync lists hold tenant ids, central lists merged keys.
+        $mode = \App\Repositories\Tenant\Catalog\ProductCatalog::enabled() ? ':merged' : '';
+        $fullKey = 'storefront:' . (tenant()?->id ?? 'central') . ":home_products:{$key}{$mode}:v{$version}";
         $ttl = (int) config('cache.storefront.home_products_ttl', 3600);
 
         return Cache::driver('file')->remember($fullKey, $ttl, $callback);
@@ -61,17 +63,19 @@ class HomeProductService
     public static function salesSubquery(int $days = 30): \Illuminate\Database\Query\Builder
     {
         $since = now()->subDays(max(1, $days))->toDateTimeString();
+        // Same key space as products.id (merged key in central products mode, tenant id otherwise).
+        $key = \App\Repositories\Tenant\Catalog\ProductCatalog::orderLineKeySql();
 
         return DB::table('order_items')
             ->join('orders', 'orders.id', '=', 'order_items.order_id')
             ->leftJoin('product_variants', 'product_variants.id', '=', 'order_items.product_variant_id')
             ->whereNotIn('orders.status', self::NON_SALE_STATUSES)
-            ->whereRaw('COALESCE(order_items.product_id, product_variants.product_id) IS NOT NULL')
-            ->groupBy(DB::raw('COALESCE(order_items.product_id, product_variants.product_id)'))
+            ->whereRaw("{$key} IS NOT NULL")
+            ->groupBy(DB::raw($key))
             ->selectRaw(
-                'COALESCE(order_items.product_id, product_variants.product_id) as sold_product_id,
+                "{$key} as sold_product_id,
                  SUM(order_items.qty) as qty_all,
-                 SUM(CASE WHEN orders.created_at >= ? THEN order_items.qty ELSE 0 END) as qty_window',
+                 SUM(CASE WHEN orders.created_at >= ? THEN order_items.qty ELSE 0 END) as qty_window",
                 [$since]
             );
     }
@@ -244,20 +248,20 @@ class HomeProductService
         $now = now();
         $windowStart = (clone $now)->subHours($windowHours);
 
+        // Same key space as products.id (merged key in central products mode, tenant id otherwise).
+        $key = \App\Repositories\Tenant\Catalog\ProductCatalog::orderLineKeySql();
+
         $salesQuery = OrderItem::query()
             ->selectRaw(
-                'COALESCE(order_items.product_id, product_variants.product_id) as product_id,
-                 SUM(order_items.qty / (1 + TIMESTAMPDIFF(HOUR, orders.created_at, ?))) as trend_score',
+                "{$key} as product_id,
+                 SUM(order_items.qty / (1 + TIMESTAMPDIFF(HOUR, orders.created_at, ?))) as trend_score",
                 [$now]
             )
             ->leftJoin('product_variants', 'product_variants.id', '=', 'order_items.product_variant_id')
             ->join('orders', 'orders.id', '=', 'order_items.order_id')
-            ->where(function ($query) {
-                $query->whereNotNull('order_items.product_id')
-                    ->orWhereNotNull('product_variants.product_id');
-            })
+            ->whereRaw("{$key} IS NOT NULL")
             ->where('orders.created_at', '>=', $windowStart)
-            ->groupBy(DB::raw('COALESCE(order_items.product_id, product_variants.product_id)'));
+            ->groupBy(DB::raw($key));
 
         return $this->baseQuery($countryId)
             ->joinSub($salesQuery, 'trend_totals', fn($join) => $join->on('trend_totals.product_id', '=', 'products.id'))

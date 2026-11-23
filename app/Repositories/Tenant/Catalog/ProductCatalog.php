@@ -50,6 +50,18 @@ final class ProductCatalog
 
     private static bool $warned = false;
 
+    /**
+     * SQL: the product of an order line, in the same key space as `products.id` of the current read.
+     * Sync mode: the tenant product id (the line's own, else its variant's). Central mode: the merged product key of
+     * the line's typed pair (central lines carry no tenant product id, and tenant ids are not central ids).
+     */
+    public static function orderLineKeySql(string $orderItems = 'order_items', string $variants = 'product_variants'): string
+    {
+        return self::enabled()
+            ? ProductKey::sqlPairKey("{$orderItems}.`product_type`", "{$orderItems}.`catalog_product_id`")
+            : "COALESCE({$orderItems}.product_id, {$variants}.product_id)";
+    }
+
     public static function enabled(?Tenant $tenant = null): bool
     {
         $tenant ??= tenant();
