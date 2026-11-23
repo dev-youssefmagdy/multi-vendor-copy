@@ -97,9 +97,13 @@ class NotificationLinks
     /** `$centralProductId` is the CENTRAL product id carried by the notification payload. */
     private static function tenantProduct(int $centralProductId): ?string
     {
-        $id = \App\Models\Tenant\Product::withoutGlobalScope('centralVisible')
-            ->where('central_product_id', $centralProductId)
-            ->value('id');
+        // Dedup plan phase 5/7: in `products` = central mode the panel route key is the merged key (= the central id of
+        // an adopted product) and the tenant copy may already be deleted by `catalog:dedup-cleanup products`.
+        $id = \App\Repositories\Tenant\Catalog\ProductCatalog::enabled()
+            ? \App\Repositories\Tenant\Catalog\ProductCatalog::query()->where('central_product_id', $centralProductId)->value('id')
+            : \App\Models\Tenant\Product::withoutGlobalScope('centralVisible')
+                ->where('central_product_id', $centralProductId)
+                ->value('id');
 
         return $id
             ? self::route('tenant.products.edit', ['product' => $id])

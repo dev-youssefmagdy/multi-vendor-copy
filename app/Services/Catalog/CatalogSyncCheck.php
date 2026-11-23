@@ -121,6 +121,54 @@ class CatalogSyncCheck
         });
     }
 
+    /**
+     * Gate evaluation of a run() report (used by `catalog:sync-check` and the Phase 7 `catalog:dedup-cleanup` gates).
+     * Fails closed: a gated metric that is NULL / non-numeric fails; with $explicit a metric no selected section
+     * reports, or a skipped tenant, fails too.
+     *
+     * @param  array<string, int>  $gates  metric => max
+     * @return list<string>
+     */
+    public static function evaluateGates(array $report, array $gates, bool $explicit = true): array
+    {
+        $missing = new \stdClass();
+        $failures = [];
+        foreach ($report as $tenant) {
+            if (($tenant['skipped'] ?? null) !== null) {
+                if ($explicit) {
+                    $failures[] = "{$tenant['tenant']}: skipped ({$tenant['skipped']}), gates not evaluated";
+                }
+
+                continue;
+            }
+
+            $reported = array_fill_keys(array_keys($gates), false);
+            foreach ($tenant['sections'] as $section => $metrics) {
+                foreach ($gates as $metric => $max) {
+                    $value = data_get($metrics, $metric, $missing);
+                    if ($value === $missing) {
+                        continue; // this section does not measure the metric
+                    }
+                    $reported[$metric] = true;
+                    if (! is_int($value)) {
+                        // Fail closed: NULL = not measured (e.g. never verified), which must not pass a gate.
+                        $failures[] = "{$tenant['tenant']} / {$section}: {$metric} = " . ($value === null ? 'NULL' : json_encode($value)) . " (not measured; max {$max})";
+                    } elseif ($value > $max) {
+                        $failures[] = "{$tenant['tenant']} / {$section}: {$metric} = {$value} (max {$max})";
+                    }
+                }
+            }
+
+            foreach ($explicit ? $reported : [] as $metric => $seen) {
+                if (! $seen) {
+                    $failures[] = "{$tenant['tenant']}: {$metric} is not reported by any selected section";
+                }
+            }
+        }
+
+        return $failures;
+    }
+
     /** @return array<string, mixed> */
     private function checkTenant(Tenant $tenant, array $sections): array
     {
@@ -557,12 +605,17 @@ class CatalogSyncCheck
         $migrate = $last('migrate');
         $verify = $last('verify');
         $verifyCounts = $verify ? (array) json_decode((string) $verify->counts, true) : [];
+        // Dedup plan phase 7: `cleaned` / `restored` = the latest DONE cleanup or restore run (null = never cleaned).
+        $cleanup = $prefix === '' ? $this->db->selectOne(
+            "SELECT step FROM `catalog_dedup_runs` WHERE tenant_id = ? AND section = ? AND step IN ('cleanup', 'restore') AND status = 'done' ORDER BY id DESC LIMIT 1",
+            [(string) $this->tenant->getTenantKey(), $section],
+        ) : null;
 
         return [
             $prefix . 'dedup_migrate' => $migrate->status ?? null,
             $prefix . 'dedup_verify' => $verify->status ?? null,
             $prefix . 'dedup_verify_diffs' => $verify && $verify->status === 'done' ? (int) ($verifyCounts['diffs'] ?? 0) : null,
-        ];
+        ] + ($prefix === '' ? ['dedup_cleanup' => $cleanup === null ? null : ($cleanup->step === 'cleanup' ? 'cleaned' : 'restored')] : []);
     }
 
     /**

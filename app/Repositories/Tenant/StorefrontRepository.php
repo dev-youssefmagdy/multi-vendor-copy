@@ -18,7 +18,6 @@ use App\Models\Tenant\Language;
 use App\Models\Tenant\Order;
 use App\Models\Tenant\OrderItem;
 use App\Models\Tenant\Product;
-use App\Models\Tenant\ProductBadge;
 use App\Models\Tenant\ProductVariant;
 use App\Models\Tenant\Setting;
 use App\Models\Tenant\SocialLink;
@@ -2104,11 +2103,6 @@ class StorefrontRepository
             ->values();
 
         return $this->hydrateProductCards($products);
-    }
-
-    public function activeBadges(): Collection
-    {
-        return ProductBadge::query()->where('active', true)->orderBy('text')->get();
     }
 
     // ─── Flash Sales ─────────────────────────────────────────────────────────

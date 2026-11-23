@@ -47,7 +47,7 @@ class CatalogSyncCheckCommand extends Command
         }
 
         $report = $check->run((array) $this->option('tenant'), $sections);
-        $failures = $this->evaluate($report, $gates, (array) $this->option('gate') !== []);
+        $failures = CatalogSyncCheck::evaluateGates($report, $gates, (array) $this->option('gate') !== []);
 
         if ($this->option('json')) {
             $this->line(json_encode(['gates' => $gates, 'failures' => $failures, 'tenants' => $report], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
@@ -77,47 +77,6 @@ class CatalogSyncCheckCommand extends Command
         }
 
         return $gates;
-    }
-
-    /** @return list<string> */
-    private function evaluate(array $report, array $gates, bool $explicit = true): array
-    {
-        $missing = new \stdClass();
-        $failures = [];
-        foreach ($report as $tenant) {
-            if (($tenant['skipped'] ?? null) !== null) {
-                if ($explicit) {
-                    $failures[] = "{$tenant['tenant']}: skipped ({$tenant['skipped']}), gates not evaluated";
-                }
-
-                continue;
-            }
-
-            $reported = array_fill_keys(array_keys($gates), false);
-            foreach ($tenant['sections'] as $section => $metrics) {
-                foreach ($gates as $metric => $max) {
-                    $value = data_get($metrics, $metric, $missing);
-                    if ($value === $missing) {
-                        continue; // this section does not measure the metric
-                    }
-                    $reported[$metric] = true;
-                    if (! is_int($value)) {
-                        // Fail closed: NULL = not measured (e.g. never verified), which must not pass a gate.
-                        $failures[] = "{$tenant['tenant']} / {$section}: {$metric} = " . ($value === null ? 'NULL' : json_encode($value)) . " (not measured; max {$max})";
-                    } elseif ($value > $max) {
-                        $failures[] = "{$tenant['tenant']} / {$section}: {$metric} = {$value} (max {$max})";
-                    }
-                }
-            }
-
-            foreach ($explicit ? $reported : [] as $metric => $seen) {
-                if (! $seen) {
-                    $failures[] = "{$tenant['tenant']}: {$metric} is not reported by any selected section";
-                }
-            }
-        }
-
-        return $failures;
     }
 
     private function render(array $report, array $gates, array $failures): void

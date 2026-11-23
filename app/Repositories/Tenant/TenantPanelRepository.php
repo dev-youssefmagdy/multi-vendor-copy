@@ -189,11 +189,6 @@ class TenantPanelRepository
             ->get();
     }
 
-    public function paginateProducts(array $filters, int $perPage = 10): LengthAwarePaginator
-    {
-        return $this->queryProducts($filters)->paginate($perPage);
-    }
-
     public function queryProducts(array $filters): Builder
     {
         $imageSearchIds = array_values(array_filter(
@@ -466,11 +461,6 @@ class TenantPanelRepository
             'image_url' => $category->thumb_url,
             'featured' => (bool) $category->is_featured,
         ];
-    }
-
-    public function paginateCategories(array $filters, int $perPage = 10): LengthAwarePaginator
-    {
-        return $this->queryCategories($filters)->paginate($perPage);
     }
 
     public function queryManufacturingRequests(array $filters): Builder
@@ -843,11 +833,6 @@ class TenantPanelRepository
         return Coupon::query()->with('translations.language')->filterByCountry($country)->latest();
     }
 
-    public function paginateCoupons(int|string|null $country = null, int $perPage = 10): LengthAwarePaginator
-    {
-        return $this->queryCoupons($country)->paginate($perPage);
-    }
-
     public function couponStats(): array
     {
         // Dedup plan phase 3: central mode counts the merged coupons (live central applicable + own).
@@ -877,11 +862,6 @@ class TenantPanelRepository
             ->with(['product.translations.language', 'products.translations.language', 'files'])
             ->filterByCountry($country)
             ->latest();
-    }
-
-    public function paginateFlashSales(int|string|null $country = null, int $perPage = 10): LengthAwarePaginator
-    {
-        return $this->queryFlashSales($country)->paginate($perPage);
     }
 
     public function flashSaleStats(): array
