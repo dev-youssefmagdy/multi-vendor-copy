@@ -159,13 +159,13 @@ final class CustomerDetailController extends PanelController
         CustomerAddress::query()->create([
             'customer_id' => $customerId,
             'label' => ($validated['label'] ?? null) ?: null,
-            'full_name' => $validated['full_name'] ?: null,
-            'email' => $validated['email'] ?: null,
+            'full_name' => ($validated['full_name'] ?? null) ?: null,
+            'email' => ($validated['email'] ?? null) ?: null,
             'phone' => $this->sanitizePhone($validated['phone'] ?? null),
             'address_line_1' => $validated['address_line_1'],
-            'city' => $validated['city'] ?: null,
-            'state' => $validated['state'] ?: null,
-            'country' => $validated['country'] ?: null,
+            'city' => ($validated['city'] ?? null) ?: null,
+            'state' => ($validated['state'] ?? null) ?: null,
+            'country' => ($validated['country'] ?? null) ?: null,
             'is_default' => $validated['is_default'] ?? false,
         ]);
 
@@ -186,13 +186,13 @@ final class CustomerDetailController extends PanelController
 
         $address->update([
             'label' => ($validated['label'] ?? null) ?: null,
-            'full_name' => $validated['full_name'] ?: null,
-            'email' => $validated['email'] ?: null,
+            'full_name' => ($validated['full_name'] ?? null) ?: null,
+            'email' => ($validated['email'] ?? null) ?: null,
             'phone' => $this->sanitizePhone($validated['phone'] ?? null),
             'address_line_1' => $validated['address_line_1'],
-            'city' => $validated['city'] ?: null,
-            'state' => $validated['state'] ?: null,
-            'country' => $validated['country'] ?: null,
+            'city' => ($validated['city'] ?? null) ?: null,
+            'state' => ($validated['state'] ?? null) ?: null,
+            'country' => ($validated['country'] ?? null) ?: null,
             'is_default' => $validated['is_default'] ?? false,
         ]);
 

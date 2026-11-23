@@ -17,7 +17,7 @@ final class SaveCustomerAddressRequest extends TenantFormRequest
     {
         return [
             'label' => ['nullable', 'string', 'max:191'],
-            'full_name' => ['nullable', 'string', 'max:191'],
+            'full_name' => ['required', 'string', 'max:191'],
             'email' => ['nullable', 'email', 'max:191'],
             'phone' => ['nullable', 'string', 'max:50'],
             'address_line_1' => ['required', 'string', 'max:500'],

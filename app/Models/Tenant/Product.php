@@ -229,7 +229,14 @@ class Product extends Model
                 ->orderBy('badge_id');
         }
 
-        return $this->belongsToMany(ProductBadge::class, 'product_badge_product')->withTimestamps();
+        // A card shows the FIRST badge, so the order must be defined and equal to the central-mode order above
+        // (central badges by central id, then the tenant's own): otherwise the badge shown for a product with two
+        // badges changes when the tenant flips `badges` to central (the tenant copy ids differ from the central ids).
+        return $this->belongsToMany(ProductBadge::class, 'product_badge_product')
+            ->withTimestamps()
+            ->orderByRaw('product_badges.central_product_badge_id IS NULL')
+            ->orderBy('product_badges.central_product_badge_id')
+            ->orderBy('product_badges.id');
     }
 
     /**

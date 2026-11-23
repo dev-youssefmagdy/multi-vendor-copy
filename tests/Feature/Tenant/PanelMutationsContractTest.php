@@ -104,6 +104,7 @@ class PanelMutationsContractTest extends TestCase
         ], true];
 
         yield 'Sales\CustomerDetailController@storeAddress' => ['post', '/customers/__CUSTOMER_ID__/addresses', [
+            'full_name' => 'Test Recipient',
             'address_line_1' => '456 Test Blvd',
         ], true];
 
