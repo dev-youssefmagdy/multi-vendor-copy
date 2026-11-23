@@ -97,7 +97,7 @@ class MergedCategory extends Category
     public function products(): BelongsToMany
     {
         return (new DerivedPivotBelongsToMany(
-            (new Product())->newQuery(),
+            \App\Repositories\Tenant\Catalog\ProductCatalog::query(), // merged products (keys) once products = central (Phase 8 E2E finding)
             $this,
             CategoryCatalog::membershipSql(),
             'merged_category_product',

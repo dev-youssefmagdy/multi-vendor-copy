@@ -5,9 +5,12 @@
     "scripts": {
         "build": "vite build && npm run build:tw3",
         "dev": "vite",
-        "build:tw3": "node resources/tailwind-v3/build.cjs"
+        "build:tw3": "node resources/tailwind-v3/build.cjs",
+        "e2e": "playwright test",
+        "e2e:report": "playwright show-report"
     },
     "devDependencies": {
+        "@playwright/test": "^1.56.1",
         "@tailwindcss/vite": "^4.0.0",
         "axios": "^1.11.0",
         "concurrently": "^9.0.1",

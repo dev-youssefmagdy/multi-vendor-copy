@@ -45,7 +45,9 @@ final class BadgeSortController extends PanelController
 
         if ($badge instanceof CatalogBadge) {
             $ids = $this->catalog->productIds($badge, $activeCountryId);
-            $products = Product::query()->whereIn('id', $ids)->get()
+            // productIds() are merged product KEYS once products = central: resolve them through the merged read (the copy
+            // table answered nothing whenever copy ids differ from central ids; Phase 8 E2E finding).
+            $products = \App\Repositories\Tenant\Catalog\ProductCatalog::query()->whereIn('id', $ids)->get()
                 ->sortBy(fn (Product $product) => array_search((int) $product->id, $ids, true))->values();
         } else {
             $products = $badge->productsForCountry($activeCountryId)->get();

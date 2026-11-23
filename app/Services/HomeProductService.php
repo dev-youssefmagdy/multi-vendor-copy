@@ -170,7 +170,9 @@ class HomeProductService
 
         $products = $this->baseQuery($countryId)
             ->whereNotIn('products.id', $interactedIds)
-            ->whereHas('categories', fn($q) => $q->whereIn('id', $categoryIds))
+            // Qualified: category_product has its own surrogate `id` since dedup phase 5 (unqualified `id` was ambiguous
+            // and 500'd the home page for any visitor with viewed products; Phase 8 E2E finding).
+            ->whereHas('categories', fn($q) => $q->whereIn($q->getModel()->qualifyColumn('id'), $categoryIds))
             ->orderByDesc('products.orders_count')
             ->orderByDesc('products.created_at')
             ->limit($limit)

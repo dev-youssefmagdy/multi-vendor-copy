@@ -25,3 +25,8 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 /lang/*
+# Browser E2E (Playwright, dedup plan Phase 8)
+/.env.e2e
+/tests/e2e/.state
+/test-results
+/playwright-report

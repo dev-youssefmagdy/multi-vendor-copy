@@ -249,7 +249,9 @@ final class FlashSaleCatalog
             ->orderBy('m.product_id')
             ->get(['m.id', 'm.product_id']);
 
-        $products = Product::query()->whereIn('id', $pairs->pluck('product_id')->unique()->all())->get()->keyBy('id');
+        // membershipSql() yields merged product KEYS once products = central: resolve them through the merged read, not
+        // the copy table (key != copy id for any tenant whose copy ids differ from central ids; Phase 8 E2E finding).
+        $products = ProductCatalog::query()->whereIn('id', $pairs->pluck('product_id')->unique()->all())->get()->keyBy('id');
 
         foreach ($sales as $sale) {
             $sale->setRelation('products', new EloquentCollection(

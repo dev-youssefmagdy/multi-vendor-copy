@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Tenant\Panel\Catalog;
 
 use App\Http\Controllers\Tenant\Panel\PanelController;
-use App\Models\Tenant\Product;
 use App\Support\CacheVersion;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,7 +16,9 @@ final class ProductSortController extends PanelController
     {
         $search = trim((string) $request->query('search', ''));
 
-        $products = Product::query()
+        // Merged read once products = central: the rows carry the merged KEY that update() → setOrderNumber() expects
+        // (the copy table's ids were posted as central keys and re-sorted / adopted the wrong products; Phase 8 E2E finding).
+        $products = \App\Repositories\Tenant\Catalog\ProductCatalog::query()
             ->with('translations.language')
             ->when(filled($search), function ($query) use ($search) {
                 $query->where(function ($nested) use ($search) {

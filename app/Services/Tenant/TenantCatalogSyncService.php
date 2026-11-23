@@ -485,8 +485,12 @@ class TenantCatalogSyncService
 
     protected function syncSettings(): int
     {
+        // Central secrets (openai_api_key, ...) are never copied into a tenant (same rule as the Phase 6 overlay,
+        // ConfigCatalog::inheritsSetting()): their encrypted value also overflows `settings.value` (varchar 255) and
+        // made the settings section, i.e. every new tenant's provisioning, fail (Phase 8 E2E finding).
         $settings = $this->central(fn() => CentralAppSetting::query()
             ->where('key', 'not like', 'mail\_%')
+            ->where('type', '!=', AppSettingType::Secret->value)
             ->orderBy('key')
             ->get());
         $centralMailSettings = $this->central(fn() => CentralAppSetting::query()
@@ -1739,6 +1743,11 @@ class TenantCatalogSyncService
      */
     protected function tenantCentralProductIds(): array
     {
+        // Products = central (dedup phase 5): the override row IS the adoption list (copies may be gone after cleanup).
+        if (\App\Repositories\Tenant\Catalog\ProductCatalog::enabled()) {
+            return DB::connection('tenant')->table('tenant_product_overrides')->pluck('central_product_id')->map(fn ($id) => (int) $id)->all();
+        }
+
         return Product::withoutGlobalScope('centralVisible')
             ->whereNotNull('central_product_id')
             ->pluck('central_product_id')
@@ -1818,7 +1827,20 @@ class TenantCatalogSyncService
     public function syncNewProductsForTenant(Tenant $tenant, ?array $centralProductIds = null): int
     {
         if ($this->skipsCentralSection($tenant, 'products')) {
-            return 0;
+            // Dedup phase 5: adoption = insert the override row, no copy (was: returned 0, so the panel's
+            // "Add to my store" / "Sync all new products" did nothing for a central-mode tenant; Phase 8 E2E finding).
+            tenancy()->initialize($tenant);
+            if (! \App\Repositories\Tenant\Catalog\ProductCatalog::enabled()) {
+                return 0;
+            }
+            $catalog = app(\App\Repositories\Tenant\Catalog\ProductCatalog::class);
+            $ids = $centralProductIds ?? $this->pendingNewProductsQuery()->pluck('id')->all();
+            $added = 0;
+            foreach (array_values(array_unique(array_map('intval', $ids))) as $id) {
+                $added += $catalog->adopt($id) ? 1 : 0;
+            }
+
+            return $added;
         }
 
         set_time_limit(0);

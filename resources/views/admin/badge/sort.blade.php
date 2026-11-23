@@ -106,7 +106,9 @@
 
 @push('scripts')
 <script>
-(() => {
+// app.js (which sets window.Sortable) is a deferred Vite module: it runs after this inline script, so initialise on
+// DOMContentLoaded (was: Sortable undefined here -> rows could not be dragged; Phase 8 E2E finding).
+document.addEventListener('DOMContentLoaded', () => {
     const root = document.querySelector('[data-badge-sort]');
     const list = root?.querySelector('[data-bs-list]');
     if (!root || !list) return;
@@ -162,6 +164,6 @@
             saving = saving.then(save); // serialise: one save at a time, in drag order
         },
     });
-})();
+});
 </script>
 @endpush

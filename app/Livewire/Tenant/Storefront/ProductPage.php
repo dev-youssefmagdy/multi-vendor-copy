@@ -134,10 +134,16 @@ class ProductPage extends Component
             : $variants->first();
 
         // Sold count via order items
-        $soldCount = OrderItem::query()
-            ->where('product_id', $product->id)
-            ->orWhereHas('variant', fn($query) => $query->where('product_id', $product->id))
-            ->sum('qty');
+        // Central products mode: lines are identified by the typed pair (product_id is NULL for central lines and the
+        // `variant` relation keys on a derived attribute, so whereHas('variant') cannot be compiled: Phase 8 E2E finding).
+        $soldCount = \App\Repositories\Tenant\Catalog\ProductCatalog::enabled()
+            ? (int) OrderItem::query()
+                ->tap(fn ($query) => \App\Repositories\Tenant\Catalog\ProductCatalog::wherePairKey($query->getQuery(), (int) $product->getKey()))
+                ->sum('qty')
+            : OrderItem::query()
+                ->where('product_id', $product->id)
+                ->orWhereHas('variant', fn($query) => $query->where('product_id', $product->id))
+                ->sum('qty');
 
         // Review count
         $reviewCount = $product->rates->count();

@@ -89,7 +89,7 @@ final class BadgeController extends PanelController
             'categoryTree' => $this->repo->categoryTreeOptions(),
             'stats' => Metric::cards([
                 ['label' => __('Selected'), 'value' => count($selectedProductIds), 'format' => 'number', 'caption' => __('Products currently selected for the :badge badge.', ['badge' => $badge->text]), 'dot' => 'dot-cyan'],
-                ['label' => __('Catalog Products'), 'value' => Product::query()->count(), 'format' => 'number', 'caption' => __('Total products available to assign to this badge.'), 'dot' => 'dot-green'],
+                ['label' => __('Catalog Products'), 'value' => \App\Repositories\Tenant\Catalog\ProductCatalog::query()->count(), 'format' => 'number', 'caption' => __('Total products available to assign to this badge.'), 'dot' => 'dot-green'],
             ]),
         ]);
     }
@@ -120,7 +120,8 @@ final class BadgeController extends PanelController
             return $this->failure(__('Please choose a category first.'));
         }
 
-        $productIds = Product::query()
+        // Merged read (keys) once products = central; the copy table holds other ids (Phase 8 E2E finding).
+        $productIds = \App\Repositories\Tenant\Catalog\ProductCatalog::query()
             ->where('active', true)
             ->whereHas('categories', fn ($q) => $q->where('categories.id', $categoryId))
             ->pluck('id')
@@ -147,7 +148,9 @@ final class BadgeController extends PanelController
         $countryId = $request->integer('country_id') ?: null;
         $ids = array_filter(array_map('intval', $request->input('product_ids', [])));
         // Drop ids the storefront would never render (inactive / centrally hidden).
-        $ids = Product::query()->where('active', true)->whereIn('id', $ids)->pluck('id')
+        // Product KEYS in central products mode: filter through the merged read, not the copy table (which silently dropped
+        // every central product from the assignment; Phase 8 E2E finding).
+        $ids = \App\Repositories\Tenant\Catalog\ProductCatalog::query()->where('active', true)->whereIn('id', $ids)->pluck('id')
             ->map(fn ($id) => (int) $id)->sortBy(fn ($id) => array_search($id, $ids, true))->values()->all();
 
         if ($badge instanceof CatalogBadge) {
