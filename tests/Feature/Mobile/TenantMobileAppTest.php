@@ -21,11 +21,14 @@ use Tests\Feature\Tenant\Concerns\BuildsOrders;
 use Tests\Feature\Tenant\Concerns\SetsUpTenantPanel;
 use Tests\Support\FakePaymentGateway;
 use Tests\Support\FakePaymentManager;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /** Phase 8 (PUBLISH_TO_STORES.md): per-tenant white-label app ids, well-known files and return scheme. */
 class TenantMobileAppTest extends TestCase
 {
+    // Fresh parallel (ParaTest) databases: do not rely on another test having migrated the DB first.
+    use RefreshDatabase;
     use SetsUpTenantPanel, BuildsOrders;
 
     private const FP = '14:6D:E9:83:C5:73:06:50:D8:EE:B9:95:2F:34:FC:64:16:A0:83:42:E6:1D:BE:A8:8A:04:96:B2:3F:CF:44:E5';

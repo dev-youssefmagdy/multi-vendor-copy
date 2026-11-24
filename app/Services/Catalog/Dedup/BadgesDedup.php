@@ -76,6 +76,7 @@ final class BadgesDedup implements DedupSection
 
         $now = now();
         $syncMode = ! CatalogSource::isCentral($tenant, 'badges');
+        $sameOrderGroups = $this->groupsInCentralOrder($rows, $wouldLink, $centralPairs);
         foreach ($rows as $row) {
             $centralBadgeId = $row->central_badge_id ?? ($wouldLink[(int) $row->tenant_badge_id] ?? null);
             if ($centralBadgeId === null) {
@@ -101,7 +102,11 @@ final class BadgesDedup implements DedupSection
                     'product_type' => CatalogRef::CENTRAL, 'product_id' => (int) $row->central_product_id,
                     'country_key' => (int) ($row->country_id ?? 0),
                 ])->first(['id', 'sort_order']);
-                $sameAsCentral = (int) $centralPairs[$key]['sort_order'] === (int) $row->sort_order;
+                // Compare ORDER, not raw values: the sync never copied central's sort_order, it numbered the copy
+                // 0, 1, 2… (central often stores ties / 1-based values). A group whose sequence equals central's
+                // effective order (sort_order, product id) needs no override and keeps following central; a group the
+                // vendor reordered keeps its whole order (every pair of the group gets an override, tenant scale).
+                $sameAsCentral = isset($sameOrderGroups[$this->groupKey($centralBadgeId, $row->country_id)]);
 
                 if ($override !== null) {
                     // QA D-P2-5: while the tenant is still on `sync` its copy is the truth, so a later vendor reorder
@@ -268,6 +273,49 @@ final class BadgesDedup implements DedupSection
         return [$pairs, $texts];
     }
 
+    private function groupKey(int $centralBadgeId, mixed $countryId): string
+    {
+        return $centralBadgeId . '|' . ($countryId === null ? '-' : (int) $countryId);
+    }
+
+    /**
+     * (central badge, country) groups whose tenant copy lists the shared central products in the same order central
+     * shows them (central: sort_order, central product id; copy: sort_order, row id).
+     *
+     * @return array<string, true>
+     */
+    private function groupsInCentralOrder(array $rows, array $wouldLink, array $centralPairs): array
+    {
+        $groups = [];
+        foreach ($rows as $row) {
+            $centralBadgeId = $row->central_badge_id ?? ($wouldLink[(int) $row->tenant_badge_id] ?? null);
+            if ($centralBadgeId === null || $row->central_product_id === null || $row->own) {
+                continue;
+            }
+            $key = $this->pairKey((int) $centralBadgeId, (int) $row->central_product_id, $row->country_id);
+            if (! isset($centralPairs[$key])) {
+                continue;
+            }
+            $groups[$this->groupKey((int) $centralBadgeId, $row->country_id)][] = [
+                'cpid' => (int) $row->central_product_id, 'tenant' => [(int) $row->sort_order, (int) $row->id],
+                'central' => [(int) $centralPairs[$key]['sort_order'], (int) $row->central_product_id],
+            ];
+        }
+
+        $same = [];
+        foreach ($groups as $group => $members) {
+            $tenant = $members;
+            usort($tenant, fn ($a, $b) => $a['tenant'] <=> $b['tenant']);
+            $central = $members;
+            usort($central, fn ($a, $b) => $a['central'] <=> $b['central']);
+            if (array_column($tenant, 'cpid') === array_column($central, 'cpid')) {
+                $same[$group] = true;
+            }
+        }
+
+        return $same;
+    }
+
     private function pairKey(int $badgeId, int $centralProductId, mixed $countryId): string
     {
         return $badgeId . '|' . $centralProductId . '|' . ($countryId === null ? '-' : (int) $countryId);
@@ -278,12 +326,30 @@ final class BadgesDedup implements DedupSection
         return CatalogRefColumns::has($this->db(), 'products', 'is_own_product') ? "COALESCE({$alias}.`is_own_product`, 0)" : '0';
     }
 
-    /** @return array<string, int> tuple => occurrences */
+    /**
+     * Tuples with the POSITION inside (badge, country) instead of the raw sort_order: the copy is numbered 0, 1, 2… by
+     * the sync while central keeps its own values, so only the order customers see is compared (storefront order:
+     * sort_order, product id).
+     *
+     * @return array<string, int> tuple => occurrences
+     */
     private function tuples(array $rows): array
     {
+        $groups = [];
+        foreach ($rows as $row) {
+            $groups[$row->text . '|' . ($row->country_id === null ? '-' : (int) $row->country_id)][] = $row;
+        }
+        $position = [];
+        foreach ($groups as $members) {
+            usort($members, fn ($a, $b) => [(int) $a->sort_order, (int) $a->product_id] <=> [(int) $b->sort_order, (int) $b->product_id]);
+            foreach ($members as $i => $member) {
+                $position[spl_object_id($member)] = $i;
+            }
+        }
+
         $out = [];
         foreach ($rows as $row) {
-            $key = implode('|', [$row->text, (int) $row->active, (int) $row->product_id, $row->country_id === null ? '-' : (int) $row->country_id, (int) $row->sort_order]);
+            $key = implode('|', [$row->text, (int) $row->active, (int) $row->product_id, $row->country_id === null ? '-' : (int) $row->country_id, $position[spl_object_id($row)]]);
             $out[$key] = ($out[$key] ?? 0) + 1;
         }
 

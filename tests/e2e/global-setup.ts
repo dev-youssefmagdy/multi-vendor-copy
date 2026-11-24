@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { chromium } from '@playwright/test';
 import { artisanJson } from './support/artisan';
-import { FIXTURES_FILE, STATE_DIR, loadE2eEnv } from './support/env';
+import { FIXTURES_FILE, STATE_DIR, VENDOR_FILE, loadE2eEnv } from './support/env';
 
 /**
  * 1. Builds / refreshes the dedicated E2E tenants and fixtures (idempotent `php artisan e2e:prepare`).
@@ -58,6 +58,21 @@ export default async function globalSetup(): Promise<void> {
             await page.getByRole('button', { name: 'Login to Central' }).click();
             await page.waitForURL((u) => !u.pathname.endsWith('/login'), { timeout: 30_000 });
         });
+
+        // `vendor` project: a REAL tenant, read-only. Fixtures come from a read-only probe; the panel session comes
+        // from the central admin impersonation flow (no user is created in the tenant DB, no password needed).
+        if (env.E2E_VENDOR_TENANT) {
+            const vendor = artisanJson(['e2e:vendor-probe', env.E2E_VENDOR_TENANT]);
+            vendor.url = `${env.E2E_SCHEME}://${vendor.domain}`;
+            fs.writeFileSync(VENDOR_FILE, JSON.stringify(vendor, null, 2));
+            const full = path.join(STATE_DIR, 'auth-vendor-owner.json');
+            const context = await browser.newContext({ storageState: path.join(STATE_DIR, 'auth-admin.json') });
+            const page = await context.newPage();
+            await page.goto(`${fx.central_url}/admin/plans/registered-users/${vendor.id}/impersonate`);
+            await page.waitForURL((u) => u.hostname === vendor.domain && u.pathname.startsWith('/admin/dashboard'), { timeout: 45_000 });
+            await context.storageState({ path: full });
+            await context.close();
+        }
     } finally {
         await browser.close();
     }

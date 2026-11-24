@@ -8,10 +8,13 @@ use App\Http\Controllers\Mobile\PageController;
 use App\Models\Tenant\Order;
 use Tests\Feature\Tenant\Concerns\BuildsOrders;
 use Tests\Feature\Tenant\Concerns\SetsUpTenantPanel;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class MobileCatalogGapsTest extends TestCase
 {
+    // Fresh parallel (ParaTest) databases: do not rely on another test having migrated the DB first.
+    use RefreshDatabase;
     use SetsUpTenantPanel, BuildsOrders;
 
     protected function setUp(): void

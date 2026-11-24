@@ -93,8 +93,16 @@ function choose(el, option) {
 let bound = false;
 
 export function init(el) {
+    // Idempotent: init() moves the panel to <body>, so a second init on the same picker (re-registration) found no
+    // panel inside it and threw "Cannot read properties of null (reading 'querySelector')" on the dashboard.
+    if (el._panel) {
+        return;
+    }
     const trigger = el.querySelector('[data-country-trigger]');
     const panel = el.querySelector('[data-country-panel]');
+    if (!trigger || !panel) {
+        return;
+    }
     const search = panel.querySelector('[data-country-search]');
 
     // The panel lives on <body> so no parent overflow/transform (cards, the

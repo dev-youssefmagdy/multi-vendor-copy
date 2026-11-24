@@ -12,10 +12,13 @@ use App\Services\Mobile\MobilePasswordReset;
 use Tests\Feature\Tenant\Concerns\BuildsOrders;
 use Tests\Feature\Tenant\Concerns\SetsUpTenantPanel;
 use Tests\Support\FakePaymentGateway;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class MobileCommerceTest extends TestCase
 {
+    // Fresh parallel (ParaTest) databases: do not rely on another test having migrated the DB first.
+    use RefreshDatabase;
     use SetsUpTenantPanel, BuildsOrders;
 
     private ProductVariant $variant;

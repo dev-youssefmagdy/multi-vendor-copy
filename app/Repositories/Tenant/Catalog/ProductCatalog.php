@@ -114,6 +114,10 @@ final class ProductCatalog
         if (CatalogRefColumns::has($db, 'products', 'deleted_at', CentralTable::database())) {
             $parts[] = "{$alias}.`deleted_at` IS NULL";
         }
+        // E2E fixtures are visible only to the dedicated E2E tenants (rollout QA step 4).
+        if ($hidden = \App\Support\Catalog\E2eFixtures::hiddenProductIds()) {
+            $parts[] = \App\Support\Catalog\E2eFixtures::notInSql("{$alias}.`id`", $hidden);
+        }
 
         return '(' . implode(' AND ', $parts) . ')';
     }
@@ -413,7 +417,13 @@ final class ProductCatalog
     /** SQL: "central product id (expression) is adopted by this tenant" (an override row exists). */
     public static function adoptedSql(string $centralIdExpr): string
     {
-        return "EXISTS (SELECT 1 FROM `" . self::OVERRIDES . "` ad WHERE ad.`central_product_id` = {$centralIdExpr})";
+        $sql = "EXISTS (SELECT 1 FROM `" . self::OVERRIDES . "` ad WHERE ad.`central_product_id` = {$centralIdExpr})";
+        // E2E fixtures are visible only to the dedicated E2E tenants (rollout QA step 4).
+        if ($hidden = \App\Support\Catalog\E2eFixtures::hiddenProductIds()) {
+            $sql = "({$sql} AND " . \App\Support\Catalog\E2eFixtures::notInSql($centralIdExpr, $hidden) . ')';
+        }
+
+        return $sql;
     }
 
     /** SQL: merged key of a typed product pair stored in two columns (alias-qualified). */
@@ -609,6 +619,9 @@ final class ProductCatalog
     /** Adoption = insert the override row (idempotent). Returns true when newly adopted. */
     public function adopt(int $centralProductId): bool
     {
+        if (in_array($centralProductId, \App\Support\Catalog\E2eFixtures::hiddenProductIds(), true)) {
+            return false; // E2E fixture: never adopted by a real tenant
+        }
         $created = self::db()->table(self::OVERRIDES)->insertOrIgnore([
             'central_product_id' => $centralProductId, 'adopted_at' => now(), 'created_at' => now(), 'updated_at' => now(),
         ]) > 0;

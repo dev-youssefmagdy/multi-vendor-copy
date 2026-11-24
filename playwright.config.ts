@@ -8,6 +8,7 @@ import { loadE2eEnv } from './tests/e2e/support/env';
  *  - `admin`   central admin panel specs (tests/e2e/admin), mode independent; they check the central-mode tenant too.
  *  - `sync`    tenant panel + storefront + order lifecycle against tenant `e2e-sync` (every catalog section on `sync`).
  *  - `central` the same specs against tenant `e2e-central` (every catalog / config section on `central`).
+ *  - `vendor`  read-only smoke against a REAL tenant (E2E_VENDOR_TENANT), impersonated panel + guest storefront.
  *
  * Global setup runs `php artisan e2e:prepare` (idempotent) and stores the fixture map in tests/e2e/.state/fixtures.json.
  */
@@ -44,5 +45,7 @@ export default defineConfig({
         { name: 'admin', testMatch: 'admin/**/*.spec.ts', use: { mode: 'central' } as any },
         { name: 'sync', testMatch: tenantSpecs, use: { mode: 'sync' } as any },
         { name: 'central', testMatch: tenantSpecs, use: { mode: 'central' } as any },
+        // real tenant (E2E_VENDOR_TENANT), non-destructive smoke: no orders, no saves, no users created
+        { name: 'vendor', testMatch: 'vendor/**/*.spec.ts' },
     ],
 });

@@ -12,10 +12,13 @@ use App\Models\Tenant\MobileAppTheme;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Schema;
 use Tests\Feature\Tenant\Concerns\SetsUpTenantPanel;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class MobilePanelTest extends TestCase
 {
+    // Fresh parallel (ParaTest) databases: do not rely on another test having migrated the DB first.
+    use RefreshDatabase;
     use SetsUpTenantPanel;
 
     private bool $createdVariants = false;

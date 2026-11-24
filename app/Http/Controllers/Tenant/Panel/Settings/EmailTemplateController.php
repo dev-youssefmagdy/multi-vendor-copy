@@ -135,6 +135,11 @@ final class EmailTemplateController extends PanelController
             return $this->failure(__('No active tenant context.'), 422);
         }
 
+        // Vendor-created template (no central counterpart): nothing to re-sync from.
+        if ($emailTemplate->central_email_template_id === null) {
+            return $this->failure(__('This email template has no central version to re-sync from.'), 422);
+        }
+
         $syncService->resetEmailTemplateFromCentral($tenant, $emailTemplate);
 
         return $this->success(__('Email template re-synced from central successfully.'), [], route('tenant.settings.email-templates.edit', $emailTemplate));

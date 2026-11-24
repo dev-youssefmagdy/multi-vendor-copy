@@ -18,6 +18,7 @@ use App\Models\Variation;
 use App\Models\VariationOption;
 use App\Services\CatalogTranslatorService;
 use App\Services\Tenant\CentralCatalogTenantSyncService;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\File;
@@ -28,6 +29,9 @@ use Tests\TestCase;
 
 class LanguageCatalogTranslationTest extends TestCase
 {
+    // Was relying on an already-migrated testing DB (failed with "countries doesn't exist" in a fresh parallel DB).
+    use RefreshDatabase;
+
     public function test_creating_a_language_generates_php_and_json_translation_files(): void
     {
         $langPath = $this->useTemporaryLangPath([

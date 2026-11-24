@@ -447,7 +447,8 @@ class E2ePrepareCommand extends Command
         ApplyTenantProfitPercentageJob::dispatchSync($tenant->id);
         tenancy()->end();
 
-        $tenantService->syncTenantOwnerAdmin($tenant, ['email' => $attributes['email'], 'name' => 'E2E Owner', 'shop_name' => $attributes['shop_name']]);
+        // a fresh tenant DB has no owner yet: admins.password is NOT NULL, so the first insert needs it
+        $tenantService->syncTenantOwnerAdmin($tenant, ['email' => $attributes['email'], 'name' => 'E2E Owner', 'shop_name' => $attributes['shop_name'], 'password' => self::password()]);
         tenancy()->end();
 
         $own = $tenant->run(fn () => $this->seedTenant($tenant, $central));

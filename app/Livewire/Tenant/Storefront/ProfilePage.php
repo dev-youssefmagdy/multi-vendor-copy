@@ -414,8 +414,11 @@ class ProfilePage extends Component
         }
 
         $myReviews = $customer
-            ? ProductRate::where('customer_id', $customer->id)->get(['product_id', 'stars', 'comment'])
-                ->mapWithKeys(fn ($r) => [$r->product_id => ['stars' => (int) $r->stars, 'comment' => (string) $r->comment]])
+            // Keyed like OrderStatusPage::rateKey(): merged key in central products mode (product_id is NULL for
+            // central lines there), tenant product id otherwise. Themes look reviews up by `$product->id`.
+            ? ProductRate::where('customer_id', $customer->id)->get(['product_id', 'product_type', 'catalog_product_id', 'stars', 'comment'])
+                ->mapWithKeys(fn ($r) => [(\App\Repositories\Tenant\Catalog\ProductCatalog::enabled() && $r->product_key ? $r->product_key : (int) $r->product_id) => ['stars' => (int) $r->stars, 'comment' => (string) $r->comment]])
+                ->filter(fn ($v, $k) => (int) $k > 0)
                 ->all()
             : [];
         $reviewedProductIds = array_keys($myReviews);

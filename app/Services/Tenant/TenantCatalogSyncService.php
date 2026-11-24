@@ -887,7 +887,8 @@ class TenantCatalogSyncService
      */
     protected function syncCategories(array $rootCategoryIds): int
     {
-        [$categories, $centralCodes] = $this->central(function () use ($rootCategoryIds) {
+        $hiddenIds = \App\Support\Catalog\E2eFixtures::hiddenCategoryIds();
+        [$categories, $centralCodes] = $this->central(function () use ($rootCategoryIds, $hiddenIds) {
             $categoryIds = !empty($rootCategoryIds)
                 ? $this->expandCategoryIds($rootCategoryIds)
                 : [];
@@ -896,6 +897,7 @@ class TenantCatalogSyncService
                 CentralCategory::query()
                     ->with('translations')
                     ->when(!empty($categoryIds), fn($q) => $q->whereIn('id', $categoryIds))
+                    ->when($hiddenIds !== [], fn($q) => $q->whereNotIn('id', $hiddenIds))
                     ->orderBy('id')
                     ->get(),
                 $this->centralLanguageCodes(),
@@ -1004,8 +1006,10 @@ class TenantCatalogSyncService
     {
         $currentTenantId = tenant()?->id;
         $this->pricing = app(TenantPricingService::class);
+        // E2E fixtures are visible only to the dedicated E2E tenants (rollout QA step 4).
+        $hiddenIds = \App\Support\Catalog\E2eFixtures::hiddenProductIds();
 
-        [$catalogIds, $assignedIds, $shippingCosts, $centralCodes] = $this->central(function () use ($rootCategoryIds, $currentTenantId) {
+        [$catalogIds, $assignedIds, $shippingCosts, $centralCodes] = $this->central(function () use ($rootCategoryIds, $currentTenantId, $hiddenIds) {
             $categoryIds = !empty($rootCategoryIds)
                 ? $this->expandCategoryIds($rootCategoryIds)
                 : [];
@@ -1016,6 +1020,7 @@ class TenantCatalogSyncService
             $catalogIds = CentralProduct::withTrashed()
                 ->when(!empty($categoryIds), fn($q) => $q->whereHas('categories', fn($query) =>
                     $query->whereIn('id', $categoryIds)))
+                ->when($hiddenIds !== [], fn($q) => $q->whereNotIn('id', $hiddenIds))
                 ->orderBy('id')
                 ->pluck('id')
                 ->all();
@@ -1025,6 +1030,7 @@ class TenantCatalogSyncService
                 ? CentralProduct::withTrashed()
                     ->whereHas('tenantAssignments', fn($q) => $q->where('tenant_id', $currentTenantId))
                     ->whereNotIn('id', $catalogIds)
+                    ->when($hiddenIds !== [], fn($q) => $q->whereNotIn('id', $hiddenIds))
                     ->orderBy('id')
                     ->pluck('id')
                     ->all()
@@ -1801,8 +1807,9 @@ class TenantCatalogSyncService
         $carried = $this->tenantCentralProductIds();
         $categoryIds = (array) (tenant()?->category_ids ?? []);
         $tenantId = tenant()?->getTenantKey();
+        $hiddenIds = \App\Support\Catalog\E2eFixtures::hiddenProductIds();
 
-        return $this->central(function () use ($carried, $categoryIds, $tenantId) {
+        return $this->central(function () use ($carried, $categoryIds, $tenantId, $hiddenIds) {
             $expanded = $categoryIds !== [] ? $this->expandCategoryIds($categoryIds) : [];
 
             return CentralProduct::query()
@@ -1810,6 +1817,7 @@ class TenantCatalogSyncService
                 ->where(fn ($q) => $q->whereDoesntHave('tenantAssignments')
                     ->orWhereHas('tenantAssignments', fn ($a) => $a->where('tenant_id', $tenantId)))
                 ->when($carried !== [], fn ($q) => $q->whereNotIn('id', $carried))
+                ->when($hiddenIds !== [], fn ($q) => $q->whereNotIn('id', $hiddenIds))
                 ->when($expanded !== [], fn ($q) => $q->where(fn ($w) => $w
                     ->whereHas('categories', fn ($c) => $c->whereIn('categories.id', $expanded))
                     ->orWhereHas('tenantAssignments', fn ($a) => $a->where('tenant_id', $tenantId))))
@@ -1887,6 +1895,9 @@ class TenantCatalogSyncService
     {
         if ($this->skipsCentralSection($tenant, 'products')) {
             return;
+        }
+        if (in_array((int) $centralProduct->id, \App\Support\Catalog\E2eFixtures::hiddenProductIds($tenant), true)) {
+            return; // E2E fixture: only the dedicated E2E tenants carry it
         }
 
         $this->profitPercentage = max(0, (float) ($tenant->profit_percentage ?? 0));
@@ -2355,8 +2366,9 @@ class TenantCatalogSyncService
 
     protected function syncCoupons(): int
     {
+        $hiddenIds = \App\Support\Catalog\E2eFixtures::hiddenCouponIds();
         $centralCoupons = $this->central(
-            fn() => CentralCoupon::query()->get()
+            fn() => CentralCoupon::query()->when($hiddenIds !== [], fn($q) => $q->whereNotIn('id', $hiddenIds))->get()
         );
         $this->central(fn() => CentralCoupon::hydrateCountryIds($centralCoupons));
 

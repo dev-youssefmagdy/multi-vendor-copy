@@ -392,6 +392,42 @@ class CatalogPhase2BadgesTest extends TestCase
         $this->assertSame([0, 0, 0], [$labels['pairs_missing_in_copy'], $labels['pairs_extra_in_copy'], $labels['stale_copies']]);
     }
 
+    /**
+     * Rollout QA step 4 (E2E admin spec central-admin.spec.ts:203): the sync numbers the copy 0, 1, 2… while central keeps
+     * its own values (1-based / ties). Same ORDER must not become a sort override, or a later central reorder never
+     * reaches the tenant.
+     */
+    public function test_dedup_migrate_badges_compares_order_not_raw_sort_values(): void
+    {
+        $p = $this->products();
+        $a = $p['a']['central_product']->id;
+        $b = $p['b']['central_product']->id;
+        $badge = $this->centralBadge('p2-order', [$a => 1, $b => 2]);
+        app(TenantCatalogSyncService::class)->syncSection($this->tenant, 'badges');
+        tenancy()->end();
+        $this->assertSame([0, 1], $this->inTenant(fn () => DB::table('product_badge_product')
+            ->where('product_badge_id', ProductBadge::query()->where('central_product_badge_id', $badge->id)->value('id'))
+            ->orderBy('sort_order')->pluck('sort_order')->map(fn ($v) => (int) $v)->all()), 'copy is renumbered from 0');
+
+        $this->artisan('catalog:dedup-migrate', ['section' => 'badges', '--tenant' => [$this->tenant->id]])->assertSuccessful();
+        $migrate = json_decode(File::get(DedupRunner::reportPath('badges', (string) $this->tenant->id, 'migrate')), true);
+        $this->assertSame(0, $migrate['counts']['sort_override']);
+        $this->inTenant(fn () => $this->assertSame(0, DB::table(BadgeCatalog::OVERRIDES)->where('badge_id', $badge->id)->whereNotNull('sort_order')->count()));
+
+        $this->artisan('catalog:dedup-migrate', ['section' => 'badges', '--tenant' => [$this->tenant->id], '--verify' => true])->assertSuccessful();
+        $verify = json_decode(File::get(DedupRunner::reportPath('badges', (string) $this->tenant->id, 'verify')), true);
+        $this->assertSame(0, $verify['diffs'], json_encode($verify));
+
+        // After the flip a central reorder reaches the tenant.
+        $this->flip('badges');
+        $this->central(fn () => DB::table('product_badge_product')->where('product_badge_id', $badge->id)->where('product_id', $a)->update(['sort_order' => 3]));
+        \App\Support\CacheVersion::flushMemo();
+        $this->inTenant(fn () => $this->assertSame(
+            [(int) $p['b']['product']->id, (int) $p['a']['product']->id],
+            array_map('intval', app(BadgeCatalog::class)->productIds(app(BadgeCatalog::class)->find('c:' . $badge->id), null)),
+        ));
+    }
+
     private function syncCheck(string $section): array
     {
         tenancy()->end();

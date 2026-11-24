@@ -324,6 +324,10 @@ final class CategoryCatalog
         if ($scope !== null) {
             $parts[] = "{$alias}.`id` IN (" . implode(',', array_map('intval', $scope ?: [0])) . ')';
         }
+        // E2E fixtures are visible only to the dedicated E2E tenants (rollout QA step 4).
+        if ($hidden = \App\Support\Catalog\E2eFixtures::hiddenCategoryIds()) {
+            $parts[] = \App\Support\Catalog\E2eFixtures::notInSql("{$alias}.`id`", $hidden);
+        }
 
         return '(' . implode(' AND ', $parts) . ')';
     }

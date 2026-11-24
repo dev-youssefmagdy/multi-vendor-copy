@@ -185,7 +185,10 @@ export default defineConfig({
                     if (id.includes('node_modules/select2')) return undefined;
                     if (id.includes('node_modules/toastr')) return undefined;
                     if (id.includes('node_modules/jquery')) return 'vendor-jquery';
-                    if (id.includes('node_modules/flatpickr')) return 'vendor-flatpickr';
+                    // flatpickr: no forced chunk. Grouping its ESM modules into one manual chunk made Rolldown export an
+                    // undefined `flatpickr_exports` binding (panel coupons / flash-sales date pickers crashed); it is only
+                    // loaded through the dynamic import in resources/js/tenant/vendor/flatpickr.js, which chunks it alone.
+                    if (id.includes('node_modules/flatpickr')) return undefined;
                     if (id.includes('node_modules/chart.js')) return 'vendor-charts';
                     if (id.includes('node_modules/intl-tel-input')) return 'vendor-phone';
                     if (id.includes('node_modules/sweetalert2')) return 'vendor-swal';

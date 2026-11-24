@@ -286,8 +286,13 @@ final class CouponCatalog
         }
 
         $tenantCountries = $this->tenantCountryIds();
+        // E2E fixtures are visible only to the dedicated E2E tenants (rollout QA step 4).
+        $hidden = array_flip(\App\Support\Catalog\E2eFixtures::hiddenCouponIds());
 
-        return $rows->map(function (object $row) use ($countries, $tenantCountries) {
+        return $rows->map(function (object $row) use ($countries, $tenantCountries, $hidden) {
+            if (isset($hidden[(int) $row->id])) {
+                return null;
+            }
             $set = $countries->get($row->id, []);
             if ($set !== []) {
                 $set = array_values(array_intersect($set, $tenantCountries));
